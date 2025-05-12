@@ -20,7 +20,7 @@ This tool automatically generates a Model Context Protocol (MCP) server from an 
 
 1. Clone this repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/rehanthestar21/agent-make-mcp
 cd agent-make-mcp
 ```
 
