@@ -33,8 +33,7 @@ ENV/
 *.swp
 *.swo
 
-# Generated MCP
-generated_mcp/
+
 
 # Logs
 *.log
