@@ -21,7 +21,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Path to the OpenAPI spec
-    spec_path = os.path.join(script_dir, 'openapi.json')
+    spec_path = os.path.join(script_dir, 'slack_web_openapi_v2.json')
     
     # Get MCP name from spec
     mcp_name = get_mcp_name(spec_path)

@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "agent-make-mcp"
 version = "0.1.0"
 description = "Tool to generate MCP servers from OpenAPI specifications"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["Rehan Agrawal <rehagraw@cisco.com>"]
 packages = [
     { include = "*.py" },
 ]

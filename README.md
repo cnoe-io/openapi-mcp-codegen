@@ -20,7 +20,7 @@ This tool automatically generates a Model Context Protocol (MCP) server from an 
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/rehanthestar21/agent-make-mcp
+git clone <https://github.com/cnoe-io/agent-utils>
 cd agent-make-mcp
 ```
 
@@ -31,16 +31,21 @@ poetry install
 
 ## Usage
 
-1. Place your OpenAPI specification JSON file in the project directory as `openapi.json`
+1. Place your OpenAPI specification JSON file in the project directory
 
-2. Run the generator:
+2. Open `generate_mcp.py` and update line 24 to point to your JSON file:
+```python
+spec_path = os.path.join(script_dir, 'your_openapi_spec.json')  # Replace with your JSON filename
+```
+
+3. Run the generator:
 ```bash
 poetry run python generate_mcp.py
 ```
 
-3. The generator will create a new directory called `generated_mcp` containing your MCP server
+4. The generator will create a new directory called `yourapi_mcp` containing your MCP server
 
-4. Follow the setup instructions printed by the generator
+5. Follow the setup instructions printed by the generator
 
 ## Generated MCP Server Structure
 
@@ -74,9 +79,16 @@ The generated MCP server can be customized by:
 3. Extending the API client in `api/client.py`
 4. Adding utility functions in the `utils/` directory
 
+## Maintainers
+
+This project is maintained by:
+- Rehan Agrawal (rehagraw@cisco.com)
+
+For any questions or issues, please contact the maintainers.
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
