@@ -29,7 +29,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Path to the OpenAPI spec - can be either JSON or YAML
-    spec_path = os.path.join(script_dir, 'openapi_backstage.yaml')
+    spec_path = os.path.join(script_dir, 'examples/openapi_petstore.json')
     
     # Get MCP name from spec
     mcp_name = get_mcp_name(spec_path)
