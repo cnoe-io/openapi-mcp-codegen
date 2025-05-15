@@ -83,10 +83,9 @@ The generated MCP server can be customized by:
 
 ## Maintainers
 
-This project is maintained by:
-- Rehan Agrawal (rehagraw@cisco.com)
+[MAINTAINERS.md](MAINTAINERS.md)
 
-For any questions or issues, please contact the maintainers.
+- Contributions welcome via PR or issue!
 
 ## Contributing
 
