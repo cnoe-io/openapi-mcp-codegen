@@ -5,6 +5,8 @@ This tool automatically generates a Model Context Protocol (MCP) server from an 
 ## Features
 
 - Automatically generates a complete MCP server structure
+- Supports both JSON and YAML OpenAPI specifications
+- Automatically detects file type (.json, .yaml, or .yml)
 - Creates tool modules for each API endpoint
 - Generates API client code
 - Sets up proper logging and error handling
@@ -31,11 +33,11 @@ poetry install
 
 ## Usage
 
-1. Place your OpenAPI specification JSON file in the project directory
+1. Place your OpenAPI specification file (JSON or YAML) in the project directory
 
-2. Open `generate_mcp.py` and update line 24 to point to your JSON file:
+2. Open `generate_mcp.py` and update line 24 to point to your specification file:
 ```python
-spec_path = os.path.join(script_dir, 'your_openapi_spec.json')  # Replace with your JSON filename
+spec_path = os.path.join(script_dir, 'your_openapi_spec.json')  # Replace with your filename (.json, .yaml, or .yml)
 ```
 
 3. Run the generator:

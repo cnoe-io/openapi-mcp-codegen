@@ -36,6 +36,9 @@ ENV/
 # JSON files
 *.json
 
+# YAML files
+*.yaml
+
 # Logs
 *.log
 
