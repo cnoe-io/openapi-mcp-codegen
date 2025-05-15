@@ -33,12 +33,6 @@ ENV/
 *.swp
 *.swo
 
-# JSON files
-*.json
-
-# YAML files
-*.yaml
-
 # Logs
 *.log
 
