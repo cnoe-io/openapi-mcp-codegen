@@ -23,7 +23,7 @@ This tool automatically generates a Model Context Protocol (MCP) server from an 
 1. Clone this repository:
 ```bash
 git clone <https://github.com/cnoe-io/agent-utils>
-cd agent-make-mcp
+cd agent-utils
 ```
 
 2. Install dependencies:
