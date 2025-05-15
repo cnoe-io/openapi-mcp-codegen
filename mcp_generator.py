@@ -9,6 +9,7 @@ It follows the same structure as the PagerDuty MCP server.
 import json
 import os
 import logging
+import yaml
 from typing import Dict, Any, List, Optional, Tuple
 from pathlib import Path
 import shutil
@@ -34,7 +35,11 @@ class MCPGenerator:
         """Load and parse the OpenAPI specification"""
         try:
             with open(self.openapi_spec_path, 'r') as f:
-                self.spec = json.load(f)
+                if self.openapi_spec_path.endswith('.yaml') or self.openapi_spec_path.endswith('.yml'):
+                    self.spec = yaml.safe_load(f)
+                else:
+                    self.spec = json.load(f)
+                    
             self.base_path = self.spec.get('servers', [{}])[0].get('url', '').rstrip('/')
             
             # Get the API title and convert to lowercase for the MCP name
@@ -45,8 +50,8 @@ class MCPGenerator:
         except FileNotFoundError:
             logger.error(f"OpenAPI spec file not found: {self.openapi_spec_path}")
             raise
-        except json.JSONDecodeError:
-            logger.error(f"Invalid JSON in OpenAPI spec file: {self.openapi_spec_path}")
+        except (json.JSONDecodeError, yaml.YAMLError) as e:
+            logger.error(f"Invalid format in OpenAPI spec file: {self.openapi_spec_path}")
             raise
         except Exception as e:
             logger.error(f"Error loading OpenAPI spec: {str(e)}")

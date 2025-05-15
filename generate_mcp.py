@@ -5,12 +5,20 @@ Script to generate an MCP server from an OpenAPI specification
 
 import os
 import json
+import yaml
 from mcp_generator import MCPGenerator
+
+def load_spec(spec_path):
+    """Load the OpenAPI spec from either JSON or YAML file"""
+    with open(spec_path, 'r') as f:
+        if spec_path.endswith('.yaml') or spec_path.endswith('.yml'):
+            return yaml.safe_load(f)
+        else:
+            return json.load(f)
 
 def get_mcp_name(spec_path):
     """Get the MCP name from the OpenAPI spec"""
-    with open(spec_path, 'r') as f:
-        spec = json.load(f)
+    spec = load_spec(spec_path)
     # Get the first word from the title and append _mcp
     title = spec.get('info', {}).get('title', 'generated')
     base_name = title.split()[0].lower()  # Take first word and convert to lowercase
@@ -20,8 +28,8 @@ def main():
     # Get the directory of this script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    # Path to the OpenAPI spec
-    spec_path = os.path.join(script_dir, 'slack_web_openapi_v2.json')
+    # Path to the OpenAPI spec - can be either JSON or YAML
+    spec_path = os.path.join(script_dir, 'openapi_backstage.yaml')
     
     # Get MCP name from spec
     mcp_name = get_mcp_name(spec_path)
