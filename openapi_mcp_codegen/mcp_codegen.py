@@ -30,6 +30,7 @@ class MCPGenerator:
         self.spec = None
         self.base_path = None
         self.mcp_name = None
+        self.src_output_dir = None
 
     def load_spec(self):
         """Load and parse the OpenAPI specification"""
@@ -44,9 +45,12 @@ class MCPGenerator:
 
             # Get the API title and convert to lowercase for the MCP name
             self.mcp_name = self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
+            self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
             logger.info(f"Successfully loaded OpenAPI spec from {self.openapi_spec_path}")
             logger.info(f"Base URL: {self.base_path}")
             logger.info(f"MCP name: {self.mcp_name}")
+            logger.info(f"Output directory: {self.output_dir}")
+            logger.info(f"Source output directory: {self.src_output_dir}")
         except FileNotFoundError:
             logger.error(f"OpenAPI spec file not found: {self.openapi_spec_path}")
             raise
@@ -68,7 +72,7 @@ class MCPGenerator:
             ]
 
             for dir_name in dirs:
-                dir_path = os.path.join(self.output_dir, dir_name)
+                dir_path = os.path.join(self.src_output_dir, dir_name)
                 os.makedirs(dir_path, exist_ok=True)
                 logger.debug(f"Created directory: {dir_path}")
 
@@ -101,7 +105,7 @@ class PaginationInfo(BaseModel):
     more: Optional[bool] = None
 
 '''
-            with open(os.path.join(self.output_dir, 'models', 'base.py'), 'w', encoding='utf-8') as f:
+            with open(os.path.join(self.src_output_dir, 'models', 'base.py'), 'w', encoding='utf-8') as f:
                 f.write(base_models)
             logger.info("Generated base models")
 
@@ -148,7 +152,7 @@ from .base import APIResponse, PaginationInfo
                 model_code += '    pagination: Optional[PaginationInfo] = None\n'
 
                 # Write model file
-                model_path = os.path.join(self.output_dir, 'models', f'{schema_name}.py')
+                model_path = os.path.join(self.src_output_dir, 'models', f'{schema_name}.py')
                 with open(model_path, 'w', encoding='utf-8') as f:
                     f.write(model_code)
                 logger.info(f"Generated model for {schema_name}")
@@ -323,7 +327,7 @@ async def make_api_request(
         logger.error(f"Unexpected error: {error_message}")
         return (False, {"error": f"Unexpected error: {error_message}"})
 '''
-            client_path = os.path.join(self.output_dir, 'api', 'client.py')
+            client_path = os.path.join(self.src_output_dir, 'api', 'client.py')
             with open(client_path, 'w', encoding='utf-8') as f:
                 f.write(client_code)
             logger.info(f"Generated API client at {client_path}")
@@ -407,7 +411,7 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
 '''
                 tool_code += func_code
             # Write the tool module
-            tool_path = os.path.join(self.output_dir, 'tools', f'{module_name}.py')
+            tool_path = os.path.join(self.src_output_dir, 'tools', f'{module_name}.py')
             with open(tool_path, 'w', encoding='utf-8') as f:
                 f.write(tool_code)
             logger.info(f"Generated tool module at {tool_path}")
@@ -419,6 +423,7 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
         """Generate parameter assignment code"""
         try:
             code = []
+            index = 0
             for param in parameters:
                 # Skip parameters without a name
                 if 'name' not in param:
@@ -426,11 +431,21 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
 
                 name = param['name']
                 if param.get('in') == 'query':
-                    code.append(f'if {name} is not None:\n        params["{name}"] = {name}')
+                    if index > 0:
+                        code.append(f'    if {name} is not None:\n        params["{name}"] = {name}')
+                    else:
+                        code.append(f'if {name} is not None:\n        params["{name}"] = {name}')
                 elif param.get('in') == 'path':
-                    code.append(f'if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
+                    if index > 0:
+                        code.append(f'    if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
+                    else:
+                        code.append(f'if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
                 elif param.get('in') == 'body':
-                    code.append(f'if {name} is not None:\n        data = {name}')
+                    if index > 0:
+                        code.append(f'    if {name} is not None:\n        data = {name}')
+                    else:
+                        code.append(f'if {name} is not None:\n        data = {name}')
+                index += 1
             return '\n'.join(code)
         except Exception as e:
             logger.error(f"Error generating parameter assignments: {str(e)}")
@@ -469,8 +484,8 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
                 for op_id in operation_ids:
                     server_code += f'mcp.tool()({module}.{op_id})\n'
                 server_code += '\n'
-            server_code += '''\n# Start server when run directly\nif __name__ == "__main__":\n    mcp.run()\n'''
-            server_path = os.path.join(self.output_dir, 'server.py')
+            server_code += '''\n# Start server when run directly\ndef main():\n    mcp.run()\n\nif __name__ == "__main__":\n    main()\n'''
+            server_path = os.path.join(self.src_output_dir, 'server.py')
             with open(server_path, 'w', encoding='utf-8') as f:
                 f.write(server_code)
             logger.info(f"Generated server at {server_path}")
@@ -486,7 +501,7 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
 
 __version__ = "0.1.0"
 '''
-            root_init_path = os.path.join(self.output_dir, '__init__.py')
+            root_init_path = os.path.join(self.src_output_dir, '__init__.py')
             with open(root_init_path, 'w', encoding='utf-8') as f:
                 f.write(root_init)
             logger.debug(f"Generated {root_init_path}")
@@ -496,7 +511,7 @@ __version__ = "0.1.0"
 
 from . import *
 '''
-            tools_init_path = os.path.join(self.output_dir, 'tools', '__init__.py')
+            tools_init_path = os.path.join(self.src_output_dir, 'tools', '__init__.py')
             with open(tools_init_path, 'w', encoding='utf-8') as f:
                 f.write(tools_init)
             logger.debug(f"Generated {tools_init_path}")
@@ -504,7 +519,7 @@ from . import *
             # Other init files
             init_content = '''"""Package module."""\n'''
             for dir_name in ['api', 'models', 'utils']:
-                init_path = os.path.join(self.output_dir, dir_name, '__init__.py')
+                init_path = os.path.join(self.src_output_dir, dir_name, '__init__.py')
                 with open(init_path, 'w', encoding='utf-8') as f:
                     f.write(init_content)
                 logger.debug(f"Generated {init_path}")
@@ -517,30 +532,29 @@ from . import *
     def generate_pyproject(self):
         """Generate pyproject.toml"""
         try:
-            pyproject = f'''[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+            pyproject = f'''[project]
 name = "mcp_{self.mcp_name}"
 version = "0.1.0"
-description = "Generated MCP server for {self.spec.get('info', {}).get('title', 'API')}"
-authors = ["Your Name <your.email@example.com>"]
-packages = [
-    {{ include = "*.py" }},
+description = "Generated MCP server for {self.spec.get('info', {}).get('title', 'API')} from OpenAPI specification"
+authors = [
+  {{ name = "Your Name", email = "your.email@example.com" }}
 ]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.poetry.scripts]
+mcp_{self.mcp_name} = "mcp_{self.mcp_name}.server:main"
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"
-httpx = "^0.24.0"
-python-dotenv = "^1.0.0"
-pydantic = "^2.0.0"
+python = ">=3.10,<4.0"
+httpx = ">=0.24.0"
+python-dotenv = ">=1.0.0"
+pydantic = ">=2.0.0"
+mcp = ">=1.9.0"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
-black = "^23.0"
-isort = "^5.0"
-flake8 = "^6.0"
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 '''
 
             pyproject_path = os.path.join(self.output_dir, 'pyproject.toml')

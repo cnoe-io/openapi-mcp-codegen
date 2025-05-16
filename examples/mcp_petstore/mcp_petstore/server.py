@@ -64,5 +64,8 @@ mcp.tool()(user_logout.logoutUser)
 
 
 # Start server when run directly
-if __name__ == "__main__":
+def main():
     mcp.run()
+
+if __name__ == "__main__":
+    main()

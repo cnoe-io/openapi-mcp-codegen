@@ -28,7 +28,7 @@ async def loginUser(username: Optional[str] = None, password: Optional[str] = No
     # Add parameters to request
     if username is not None:
         params["username"] = username
-if password is not None:
+    if password is not None:
         params["password"] = password
     success, response = await make_api_request(
         "/user/login",
