@@ -1,4 +1,4 @@
-# 🚀 OpenAPI MCP Generator Tool
+# 🚀 OpenAPI to MCP Server Code Generator
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)](https://www.python.org/)
 [![Poetry](https://img.shields.io/badge/poetry-1.0%2B-blueviolet?logo=python)](https://python-poetry.org/)

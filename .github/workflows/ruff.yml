@@ -33,4 +33,4 @@ jobs:
         run: |
           pip install ruff
       - name: run ruff linter # python linting
-        run: ruff check openapi_mcp_codegen tests
+        run: make lint

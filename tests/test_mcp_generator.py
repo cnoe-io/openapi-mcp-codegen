@@ -3,7 +3,6 @@ import tempfile
 import shutil
 import json
 import pytest
-from unittest import mock
 from openapi_mcp_codegen.mcp_codegen import MCPGenerator
 import yaml
 

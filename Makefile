@@ -54,7 +54,7 @@ lint: setup-venv
 
 ruff-fix: setup-venv
 	@echo "Running ruff and fix lint errors..."
-	. .venv/bin/activate && ruff check openapi_mcp_codegen --fix
+	. .venv/bin/activate && ruff check openapi_mcp_codegen tests --fix
 
 generate: setup-venv install
 	@echo "Running the application with arguments: $(filter-out $@,$(MAKECMDGOALS))"
@@ -110,4 +110,6 @@ help:
 	@echo "  ruff-fix                       Run ruff and fix lint errors"
 	@echo "  generate [ARGS]                Build, install, and run the application with optional arguments"
 	@echo "  cz-changelog                   Generate changelog using commitizen"
+	@echo "  test                           Run tests using pytest"
+	@echo "  test-venv                      Set up test virtual environment and install test dependencies"
 	@echo "  help                           Show this help message"
