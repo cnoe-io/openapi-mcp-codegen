@@ -4,6 +4,9 @@
 [![Poetry](https://img.shields.io/badge/poetry-1.0%2B-blueviolet?logo=python)](https://python-poetry.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
+[![lint](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/lint.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/lint.yml)
+[![Dependabot Updates](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates)
+
 ---
 
 Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
