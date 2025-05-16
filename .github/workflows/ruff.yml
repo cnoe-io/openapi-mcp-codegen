@@ -29,8 +29,13 @@ jobs:
           fetch-depth: 0
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install ruff
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Poetry and Ruff
         run: |
-          pip install ruff
-      - name: run ruff linter # python linting
-        run: make lint
+          pip install poetry ruff
+      - name: Run ruff linter # python linting
+        run: |
+          make lint
