@@ -32,7 +32,5 @@ jobs:
       - name: Install ruff
         run: |
           pip install ruff
-      - name: Change directory to openapi-mcp-codegen
-        run: cd openapi-mcp-codegen
       - name: run ruff linter # python linting
-        run: make lint
+        run: ruff check openapi_mcp_codegen tests
