@@ -27,6 +27,8 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
@@ -39,5 +41,3 @@ jobs:
           pip install ruff
       - name: run ruff linter # python linting
         run: make lint
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
