@@ -124,3 +124,12 @@ If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.
 ## 🧑‍💼 Code of Conduct
 
 This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
+---
+
+## 🙏 Acknowledgements
+
+- [MCP on PyPI](https://pypi.org/project/mcp/) — official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) Python package
+- Thanks to the MCP community for their documentation and support.
+- Built with [Poetry](https://python-poetry.org/) and open source tools.
+- Special thanks to all contributors and users for their feedback and improvements.
