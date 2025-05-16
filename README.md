@@ -1,6 +1,8 @@
 # MCP Generator Tool
 
-This tool automatically generates a Model Context Protocol (MCP) server from an OpenAPI specification. It follows the same structure as the PagerDuty MCP server, making it easy to create new MCP servers for any API that has an OpenAPI specification.
+- This tool automatically generates a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from an OpenAPI specification.
+
+- It follows the same structure as the PagerDuty MCP server, making it easy to create new MCP servers for any API that has an OpenAPI specification.
 
 ## Features
 
@@ -21,8 +23,9 @@ This tool automatically generates a Model Context Protocol (MCP) server from an 
 ## Installation
 
 1. Clone this repository:
+
 ```bash
-git clone <https://github.com/cnoe-io/agent-utils>
+git clone https://github.com/cnoe-io/openapi-mcp-codegen
 cd agent-utils
 ```
 
@@ -35,19 +38,14 @@ poetry install
 
 1. Place your OpenAPI specification file (JSON or YAML) in the project directory
 
-2. Open `generate_mcp.py` and update line 24 to point to your specification file:
-```python
-spec_path = os.path.join(script_dir, 'your_openapi_spec.json')  # Replace with your filename (.json, .yaml, or .yml)
-```
+2. Use the `make generate` target
 
-3. Run the generator:
 ```bash
-poetry run python generate_mcp.py
+make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
 ```
 
-4. The generator will create a new directory called `yourapi_mcp` containing your MCP server
-
-5. Follow the setup instructions printed by the generator
+    - The generator will code either in new directory called `mcp_<server-name>` or the directory your specified
+    - Follow the setup instructions printed by the generator
 
 ## Generated MCP Server Structure
 
@@ -85,12 +83,10 @@ The generated MCP server can be customized by:
 
 [MAINTAINERS.md](MAINTAINERS.md)
 
-- Contributions welcome via PR or issue!
-
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+[CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+[Apache 2.0](LICENSE)

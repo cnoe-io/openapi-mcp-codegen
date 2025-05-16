@@ -1,18 +1,25 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-name = "agent-make-mcp"
+[project]
+name = "openapi_mcp_codegen"
 version = "0.1.0"
-description = "Tool to generate MCP servers from OpenAPI specifications"
-authors = ["Rehan Agrawal <rehagraw@cisco.com>"]
-packages = [
-    { include = "*.py" },
+license = "Apache-2.0"
+description = "Utility tool to generate MCP servers from OpenAPI specification"
+authors = [
+    { name = "Rehan Agrawal", email = "rehagraw@cisco.com" },
+    { name = "Sri Aradhyula", email = "sraradhy@cisco.com" },
+]
+maintainers = [
+    { name = "Rehan Agrawal", email = "rehagraw@cisco.com" },
+    { name = "Sri Aradhyula", email = "sraradhy@cisco.com" },
+]
+dependencies = [
+    "click>=8.2.0",
+    "pyyaml>=6.0.2",
+    "pip (>=25.1.1,<26.0.0)",
 ]
 
+
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4.0"
+python = ">=3.10,<4.0"
 httpx = "^0.24.0"
 python-dotenv = "^1.0.0"
 pydantic = "^2.0.0"
@@ -23,6 +30,15 @@ pytest = "^7.0"
 black = "^23.0"
 isort = "^5.0"
 flake8 = "^6.0"
+pip = "^25.1.1"
 
 [tool.poetry.scripts]
-generate-mcp = "generate_mcp:main" 
+openapi_mcp_codegen = "openapi_mcp_codegen.__main__:main"
+
+[tool.uv.sources]
+openapi-mcp-codegen = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "openapi-mcp-codegen",
+]

@@ -1,7 +1,4 @@
-# Project Maintainers
+# Maintainers
 
-## Primary Maintainer
-
-### Rehan Agrawal
-- **Email:** rehagraw@cisco.com
-- **Role:** Primary Maintainer 
+- [rehanthestar21](https://github.com/rehanthestar21)
+- [sriaradhyula](https://github.com/sriaradhyula)

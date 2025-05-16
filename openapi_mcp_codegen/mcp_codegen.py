@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright 2025 CNOE
+# SPDX-License-Identifier: Apache-2.0
+
 """
 MCP Generator Tool
 
@@ -10,11 +13,8 @@ import json
 import os
 import logging
 import yaml
-from typing import Dict, Any, List, Optional, Tuple
-from pathlib import Path
-import shutil
-import httpx
-from dotenv import load_dotenv
+import sys
+from typing import Dict, Any, List
 
 # Configure logging
 logging.basicConfig(
@@ -30,18 +30,18 @@ class MCPGenerator:
         self.spec = None
         self.base_path = None
         self.mcp_name = None
-        
+
     def load_spec(self):
         """Load and parse the OpenAPI specification"""
         try:
-            with open(self.openapi_spec_path, 'r') as f:
+            with open(self.openapi_spec_path, 'r', encoding='utf-8') as f:
                 if self.openapi_spec_path.endswith('.yaml') or self.openapi_spec_path.endswith('.yml'):
                     self.spec = yaml.safe_load(f)
                 else:
                     self.spec = json.load(f)
-                    
+
             self.base_path = self.spec.get('servers', [{}])[0].get('url', '').rstrip('/')
-            
+
             # Get the API title and convert to lowercase for the MCP name
             self.mcp_name = self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
             logger.info(f"Successfully loaded OpenAPI spec from {self.openapi_spec_path}")
@@ -50,13 +50,13 @@ class MCPGenerator:
         except FileNotFoundError:
             logger.error(f"OpenAPI spec file not found: {self.openapi_spec_path}")
             raise
-        except (json.JSONDecodeError, yaml.YAMLError) as e:
+        except (json.JSONDecodeError, yaml.YAMLError):
             logger.error(f"Invalid format in OpenAPI spec file: {self.openapi_spec_path}")
             raise
         except Exception as e:
             logger.error(f"Error loading OpenAPI spec: {str(e)}")
             raise
-        
+
     def create_directory_structure(self):
         """Create the MCP server directory structure"""
         try:
@@ -66,17 +66,17 @@ class MCPGenerator:
                 'tools',
                 'utils'
             ]
-            
+
             for dir_name in dirs:
                 dir_path = os.path.join(self.output_dir, dir_name)
                 os.makedirs(dir_path, exist_ok=True)
                 logger.debug(f"Created directory: {dir_path}")
-                
+
             logger.info("Created MCP server directory structure")
         except Exception as e:
             logger.error(f"Error creating directory structure: {str(e)}")
             raise
-            
+
     def generate_models(self):
         """Generate model files based on OpenAPI schemas"""
         try:
@@ -101,7 +101,7 @@ class PaginationInfo(BaseModel):
     more: Optional[bool] = None
 
 '''
-            with open(os.path.join(self.output_dir, 'models', 'base.py'), 'w') as f:
+            with open(os.path.join(self.output_dir, 'models', 'base.py'), 'w', encoding='utf-8') as f:
                 f.write(base_models)
             logger.info("Generated base models")
 
@@ -117,46 +117,46 @@ from pydantic import BaseModel, Field
 from .base import APIResponse, PaginationInfo
 
 '''
-                
+
                 # Add model class
                 model_code += f'class {model_name}(BaseModel):\n'
                 model_code += f'    """{schema.get("description", f"{model_name} model")}"""\n\n'
-                
+
                 # Add properties
                 properties = schema.get('properties', {})
                 required = schema.get('required', [])
-                
+
                 for prop_name, prop in properties.items():
                     prop_type = self._get_python_type(prop)
                     if prop_name in required:
                         model_code += f'    {prop_name}: {prop_type}\n'
                     else:
                         model_code += f'    {prop_name}: Optional[{prop_type}] = None\n'
-                    
+
                     if prop.get('description'):
                         model_code += f'    """{prop["description"]}"""\n'
-                
+
                 # Add response model
                 model_code += f'\nclass {model_name}Response(APIResponse):\n'
                 model_code += f'    """Response model for {model_name}"""\n'
                 model_code += f'    data: Optional[{model_name}] = None\n'
-                
+
                 # Add list response model
                 model_code += f'\nclass {model_name}ListResponse(APIResponse):\n'
                 model_code += f'    """List response model for {model_name}"""\n'
                 model_code += f'    data: List[{model_name}] = Field(default_factory=list)\n'
-                model_code += f'    pagination: Optional[PaginationInfo] = None\n'
-                
+                model_code += '    pagination: Optional[PaginationInfo] = None\n'
+
                 # Write model file
                 model_path = os.path.join(self.output_dir, 'models', f'{schema_name}.py')
-                with open(model_path, 'w') as f:
+                with open(model_path, 'w', encoding='utf-8') as f:
                     f.write(model_code)
                 logger.info(f"Generated model for {schema_name}")
-                
+
         except Exception as e:
             logger.error(f"Error generating models: {str(e)}")
             raise
-            
+
     def _get_python_type(self, schema: Dict[str, Any]) -> str:
         """Convert OpenAPI type to Python type"""
         schema_type = schema.get('type')
@@ -174,7 +174,7 @@ from .base import APIResponse, PaginationInfo
             return 'Dict'
         else:
             return 'str'
-            
+
     def generate_api_client(self):
         """Generate the API client module"""
         try:
@@ -221,7 +221,7 @@ async def make_api_request(
         Tuple of (success, data) where data is either the response JSON or an error dict
     """
     logger.debug(f"Making {method} request to {path}")
-    
+
     if not token:
         logger.debug("No token provided, using default token")
         token = DEFAULT_TOKEN
@@ -318,19 +318,19 @@ async def make_api_request(
     except Exception as e:
         # Ensure no sensitive data is included in error messages
         error_message = str(e)
-        if token and token in error_message:
+        if token and token in error_messaged:
             error_message = error_message.replace(token, "[REDACTED]")
         logger.error(f"Unexpected error: {error_message}")
         return (False, {"error": f"Unexpected error: {error_message}"})
 '''
             client_path = os.path.join(self.output_dir, 'api', 'client.py')
-            with open(client_path, 'w') as f:
+            with open(client_path, 'w', encoding='utf-8') as f:
                 f.write(client_code)
             logger.info(f"Generated API client at {client_path}")
         except Exception as e:
             logger.error(f"Error generating API client: {str(e)}")
             raise
-            
+
     def generate_tool_module(self, path: str, operations: Dict[str, Any]):
         """Generate a tool module for a specific API path, skip if path has '{'"""
         try:
@@ -342,7 +342,7 @@ async def make_api_request(
 import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
-from ..api.client import make_api_request
+from mcp_{self.mcp_name}.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -383,9 +383,9 @@ logger = logging.getLogger("mcp_tools")
 async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
     """
     {summary}
-    
+
     {description}
-    
+
     Returns:
         API response data
     """
@@ -408,13 +408,13 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
                 tool_code += func_code
             # Write the tool module
             tool_path = os.path.join(self.output_dir, 'tools', f'{module_name}.py')
-            with open(tool_path, 'w') as f:
+            with open(tool_path, 'w', encoding='utf-8') as f:
                 f.write(tool_code)
             logger.info(f"Generated tool module at {tool_path}")
         except Exception as e:
             logger.error(f"Error generating tool module for {path}: {str(e)}")
             raise
-            
+
     def _generate_param_assignments(self, parameters: List[Dict[str, Any]]) -> str:
         """Generate parameter assignment code"""
         try:
@@ -423,19 +423,19 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
                 # Skip parameters without a name
                 if 'name' not in param:
                     continue
-                    
+
                 name = param['name']
                 if param.get('in') == 'query':
-                    code.append(f'if {name} is not None:\n    params["{name}"] = {name}')
+                    code.append(f'if {name} is not None:\n        params["{name}"] = {name}')
                 elif param.get('in') == 'path':
-                    code.append(f'if {name} is not None:\n    path = path.replace("{{{name}}}", str({name}))')
+                    code.append(f'if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
                 elif param.get('in') == 'body':
-                    code.append(f'if {name} is not None:\n    data = {name}')
+                    code.append(f'if {name} is not None:\n        data = {name}')
             return '\n'.join(code)
         except Exception as e:
             logger.error(f"Error generating parameter assignments: {str(e)}")
             raise
-            
+
     def generate_server(self):
         """Generate the main server file"""
         try:
@@ -458,7 +458,7 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
             server_code = f'''#!/usr/bin/env python3\n"""\n{self.spec.get('info', {}).get('title', 'Generated')} MCP Server\n\nThis server provides a Model Context Protocol (MCP) interface to the {self.spec.get('info', {}).get('title', 'API')},\nallowing large language models and AI assistants to interact with the service.\n"""\nimport logging\nimport os\nfrom dotenv import load_dotenv\nfrom mcp.server.fastmcp import FastMCP\n\n# Import tools\n'''
             # Add individual tool imports
             for module in tool_modules:
-                server_code += f'from agent_{base_name}.{self.mcp_name}.tools import {module}\n'
+                server_code += f'from mcp_{base_name}.tools import {module}\n'
             server_code += '''\n# Load environment variables\nload_dotenv()\n\n# Configure logging\nlogging.basicConfig(level=logging.DEBUG)\n\n# Create server instance\n'''
             # Use the API title for the server name
             server_code += f'mcp = FastMCP("{self.spec.get("info", {}).get("title", "Generated")} MCP Server")\n\n'
@@ -471,13 +471,13 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
                 server_code += '\n'
             server_code += '''\n# Start server when run directly\nif __name__ == "__main__":\n    mcp.run()\n'''
             server_path = os.path.join(self.output_dir, 'server.py')
-            with open(server_path, 'w') as f:
+            with open(server_path, 'w', encoding='utf-8') as f:
                 f.write(server_code)
             logger.info(f"Generated server at {server_path}")
         except Exception as e:
             logger.error(f"Error generating server: {str(e)}")
             raise
-            
+
     def generate_init_files(self):
         """Generate __init__.py files"""
         try:
@@ -487,7 +487,7 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
 __version__ = "0.1.0"
 '''
             root_init_path = os.path.join(self.output_dir, '__init__.py')
-            with open(root_init_path, 'w') as f:
+            with open(root_init_path, 'w', encoding='utf-8') as f:
                 f.write(root_init)
             logger.debug(f"Generated {root_init_path}")
 
@@ -497,7 +497,7 @@ __version__ = "0.1.0"
 from . import *
 '''
             tools_init_path = os.path.join(self.output_dir, 'tools', '__init__.py')
-            with open(tools_init_path, 'w') as f:
+            with open(tools_init_path, 'w', encoding='utf-8') as f:
                 f.write(tools_init)
             logger.debug(f"Generated {tools_init_path}")
 
@@ -505,7 +505,7 @@ from . import *
             init_content = '''"""Package module."""\n'''
             for dir_name in ['api', 'models', 'utils']:
                 init_path = os.path.join(self.output_dir, dir_name, '__init__.py')
-                with open(init_path, 'w') as f:
+                with open(init_path, 'w', encoding='utf-8') as f:
                     f.write(init_content)
                 logger.debug(f"Generated {init_path}")
 
@@ -513,7 +513,7 @@ from . import *
         except Exception as e:
             logger.error(f"Error generating init files: {str(e)}")
             raise
-            
+
     def generate_pyproject(self):
         """Generate pyproject.toml"""
         try:
@@ -522,7 +522,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "{self.mcp_name}"
+name = "mcp_{self.mcp_name}"
 version = "0.1.0"
 description = "Generated MCP server for {self.spec.get('info', {}).get('title', 'API')}"
 authors = ["Your Name <your.email@example.com>"]
@@ -542,15 +542,15 @@ black = "^23.0"
 isort = "^5.0"
 flake8 = "^6.0"
 '''
-            
+
             pyproject_path = os.path.join(self.output_dir, 'pyproject.toml')
-            with open(pyproject_path, 'w') as f:
+            with open(pyproject_path, 'w', encoding='utf-8') as f:
                 f.write(pyproject)
             logger.info(f"Generated pyproject.toml at {pyproject_path}")
         except Exception as e:
             logger.error(f"Error generating pyproject.toml: {str(e)}")
             raise
-            
+
     def generate(self):
         """Generate the complete MCP server"""
         try:
@@ -559,42 +559,56 @@ flake8 = "^6.0"
             self.create_directory_structure()
             self.generate_models()  # Generate models first
             self.generate_api_client()
-            
+
             # Generate tool modules for each path
             for path, path_item in self.spec.get('paths', {}).items():
                 self.generate_tool_module(path, path_item)
-                
+
             self.generate_server()
             self.generate_init_files()
             self.generate_pyproject()
-            
+
             # Create .env.example
-            env_example = '''MCP_API_URL=https://api.pagerduty.com
+            env_example = '''MCP_API_URL=https://example.com/api/v1
 MCP_API_KEY=your_api_key_here
 '''
             env_path = os.path.join(self.output_dir, '.env.example')
-            with open(env_path, 'w') as f:
+            with open(env_path, 'w', encoding='utf-8') as f:
                 f.write(env_example)
             logger.info(f"Generated .env.example at {env_path}")
-            
+
             # Create README.md
             readme = '''# Generated MCP Server
 
 This is an automatically generated Model Context Protocol (MCP) server based on an OpenAPI specification.
 
+## Prerequisites
+
+- Python 3.8 or higher
+- [Install Poetry](https://python-poetry.org/docs/#installation)
+- Setup a virtual environment
+```
+poetry config virtualenvs.in-project true
+poetry install
+```
+
+
 ## Setup
 
 1. Copy `.env.example` to `.env` and fill in your API credentials:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Install dependencies:
+
 ```bash
 poetry install
 ```
 
 3. Run the server:
+
 ```bash
 poetry run python -m server
 ```
@@ -604,7 +618,7 @@ poetry run python -m server
 The following tools are available through the MCP server:
 
 '''
-            
+
             # Add tool documentation
             for path, path_item in self.spec.get('paths', {}).items():
                 for method, operation in path_item.items():
@@ -615,12 +629,12 @@ The following tools are available through the MCP server:
                         readme += f'{summary}\n\n'
                         if description:
                             readme += f'{description}\n\n'
-            
+
             readme_path = os.path.join(self.output_dir, 'README.md')
-            with open(readme_path, 'w') as f:
+            with open(readme_path, 'w', encoding='utf-8') as f:
                 f.write(readme)
             logger.info(f"Generated README.md at {readme_path}")
-            
+
             logger.info("MCP server generation completed successfully")
         except Exception as e:
             logger.error(f"Error generating MCP server: {str(e)}")
@@ -629,19 +643,19 @@ The following tools are available through the MCP server:
 def main():
     """Main entry point"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description='Generate an MCP server from an OpenAPI specification')
     parser.add_argument('spec_path', help='Path to the OpenAPI specification JSON file')
     parser.add_argument('output_dir', help='Directory to generate the MCP server in')
-    
+
     args = parser.parse_args()
-    
+
     try:
         generator = MCPGenerator(args.spec_path, args.output_dir)
         generator.generate()
     except Exception as e:
         logger.error(f"Failed to generate MCP server: {str(e)}")
         sys.exit(1)
-    
+
 if __name__ == '__main__':
-    main() 
+    main()
