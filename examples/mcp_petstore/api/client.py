@@ -1,6 +1,6 @@
 # AUTO-GENERATED CODE - DO NOT MODIFY
 # Generated on May 16th using openai_mcp_generator package
-# Commit SHA: <commit-sha>
+
 """API client for making requests to the service"""
 
 import logging

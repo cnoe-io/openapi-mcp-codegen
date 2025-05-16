@@ -1,3 +1,6 @@
+# AUTO-GENERATED CODE - DO NOT MODIFY
+# Generated on May 16th using openai_mcp_generator package
+
 #!/usr/bin/env python3
 """
 Petstore MCP Server
@@ -11,15 +14,15 @@ from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 # Import tools
-from tools import pet
-from tools import pet_findByStatus
-from tools import pet_findByTags
-from tools import store_inventory
-from tools import store_order
-from tools import user
-from tools import user_createWithList
-from tools import user_login
-from tools import user_logout
+from mcp_petstore.tools import pet
+from mcp_petstore.tools import pet_findByStatus
+from mcp_petstore.tools import pet_findByTags
+from mcp_petstore.tools import store_inventory
+from mcp_petstore.tools import store_order
+from mcp_petstore.tools import user
+from mcp_petstore.tools import user_createWithList
+from mcp_petstore.tools import user_login
+from mcp_petstore.tools import user_logout
 
 # Load environment variables
 load_dotenv()

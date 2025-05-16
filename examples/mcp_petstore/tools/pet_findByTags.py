@@ -1,9 +1,12 @@
+# AUTO-GENERATED CODE - DO NOT MODIFY
+# Generated on May 16th using openai_mcp_generator package
+
 """Tools for /pet/findByTags operations"""
 
 import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
-from ..api.client import make_api_request
+from mcp_petstore.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
