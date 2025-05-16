@@ -31,6 +31,27 @@ class MCPGenerator:
         self.base_path = None
         self.mcp_name = None
 
+    def get_git_head_short_sha(self) -> str:
+        """Get the current git HEAD short SHA of the package"""
+        try:
+            git_dir = os.path.join(self.output_dir, '.git')
+            head_path = os.path.join(git_dir, 'HEAD')
+            if not os.path.exists(head_path):
+                logger.warning("No git repository found, using default SHA")
+                return ""
+            with open(head_path, 'r') as f:
+                ref = f.read().strip()
+            if ref.startswith('ref:'):
+                ref_path = os.path.join(git_dir, ref.split(' ')[1])
+                with open(ref_path, 'r') as f:
+                    sha = f.read().strip()
+            else:
+                sha = ref
+            return sha[:7]
+        except Exception as e:
+            logger.warning(f"Could not get git SHA: {str(e)}")
+            return ""
+
     def load_spec(self):
         """Load and parse the OpenAPI specification"""
         try:
