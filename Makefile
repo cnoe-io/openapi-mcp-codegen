@@ -24,6 +24,11 @@ setup-venv:
 	. .venv/bin/activate
 
 	@echo "======================================="
+	@echo " Adding pip as a Poetry dependency    "
+	@echo "======================================="
+	. .venv/bin/activate && poetry add pip --dev
+
+	@echo "======================================="
 	@echo " Installing dependencies with Poetry  "
 	@echo "======================================="
 	. .venv/bin/activate && poetry install
@@ -63,7 +68,7 @@ cz-changelog: setup-venv
 	@echo "======================================="
 	@echo " Checking and installing commitizen    "
 	@echo "======================================="
-	. .venv/bin/activate && pip show commitizen >/dev/null 2>&1 || pip install commitizen
+	. .venv/bin/activate && pip show commitizen >/dev/null 2>&1 || . .venv/bin/activate && pip install -U commitizen
 	@echo "======================================="
 	@echo " Generating changelog with cz-changelog"
 	@echo "======================================="
@@ -72,8 +77,12 @@ cz-changelog: setup-venv
 
 help:
 	@echo "Available targets:"
-	@echo "  setup-venv       Create virtual environment in .venv and install dependencies"
-	@echo "  activate-venv    Activate the virtual environment"
-	@echo "  install          Install the package"
-	@echo "  run              Build, install, and run the application"
-	@echo "  help             Show this help message"
+	@echo "  add-copyright-license-headers  Add copyright license headers to source files"
+	@echo "  setup-venv                     Create virtual environment in .venv and install dependencies"
+	@echo "  activate-venv                  Activate the virtual environment"
+	@echo "  install                        Install the package"
+	@echo "  lint                           Run ruff linter on codebase"
+	@echo "  ruff-fix                       Run ruff and fix lint errors"
+	@echo "  generate [ARGS]                Build, install, and run the application with optional arguments"
+	@echo "  cz-changelog                   Generate changelog using commitizen"
+	@echo "  help                           Show this help message"
