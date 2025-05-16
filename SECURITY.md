@@ -1,6 +1,6 @@
 # Security Policies and Procedures
 
-This document outlines security procedures and general policies for the Cisco ETI Agent projects.
+This document outlines security procedures and general policies for the CNOE projects.
 
 - [Security Policies and Procedures](#security-policies-and-procedures)
   - [Disclosing a security issue](#disclosing-a-security-issue)
@@ -10,7 +10,7 @@ This document outlines security procedures and general policies for the Cisco ET
 
 ## Disclosing a security issue
 
-The Cisco ETI Agent maintainers take all security issues in our projects seriously. Thank you for improving the security of our projects. We appreciate your dedication to responsible disclosure and will make every effort to acknowledge your contributions.
+The CNOE maintainers take all security issues in our projects seriously. Thank you for improving the security of our projects. We appreciate your dedication to responsible disclosure and will make every effort to acknowledge your contributions.
 
 Our projects leverage GitHub's private vulnerability reporting system.
 
@@ -27,12 +27,11 @@ Here are some helpful details to include in your report:
 - Any relevant logs or error messages
 - Your contact information for follow-up
 
-A maintainer will acknowledge the report within 24 hours, and
-will send a more detailed response within 48 hours indicating the next steps in handling your report.
+A maintainer will acknowledge the report within 24 hours, and will send a more detailed response within 48 hours indicating the next steps in handling your report. If you do not receive a proper response within this timeframe, you may escalate by sending an email to [cnoe-steering@googlegroups.com](mailto:cnoe-steering@googlegroups.com).
 
 If you've been unable to successfully draft a vulnerability report via GitHub or
 have not received a response during the allotted response window, please reach out to the Maintainers
-directly through the contact information provided in the MAINTAINERS.md file.
+directly through the contact information provided in the [MAINTAINERS.md](MAINTAINERS.md) file.
 
 After the initial reply to your report, the maintainers will endeavor to keep
 you informed of the progress towards a fix and full announcement, and may ask
