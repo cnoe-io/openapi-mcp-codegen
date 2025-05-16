@@ -74,6 +74,31 @@ cz-changelog: setup-venv
 	@echo "======================================="
 	. .venv/bin/activate && cz bump --changelog
 
+# test_Makefile
+
+.PHONY: test test-venv
+
+test-venv:
+	@echo "======================================="
+	@echo " Setting up test virtual environment   "
+	@echo "======================================="
+	@if [ ! -d ".venv" ]; then \
+		python3 -m venv .venv; \
+		echo "Test virtual environment created."; \
+	else \
+		echo "Test virtual environment already exists."; \
+	fi
+	@echo "======================================="
+	@echo " Installing test dependencies         "
+	@echo "======================================="
+	. .venv/bin/activate && pip install -U pip pytest && poetry install
+
+test: test-venv
+	@echo "======================================="
+	@echo " Running pytest on tests directory     "
+	@echo "======================================="
+	. .venv/bin/activate && pytest tests
+
 
 help:
 	@echo "Available targets:"
