@@ -83,12 +83,10 @@ The generated MCP server can be customized by:
 
 [MAINTAINERS.md](MAINTAINERS.md)
 
-- Contributions welcome via PR or issue!
-
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+[CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+[Apache 2.0](LICENSE)
