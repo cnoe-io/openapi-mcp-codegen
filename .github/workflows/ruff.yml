@@ -29,15 +29,10 @@ jobs:
           fetch-depth: 0
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-        env:
-          POETRY_HOME: /opt/poetry
-      - name: Add Poetry to PATH
-        run: echo "/opt/poetry/bin" >> $GITHUB_PATH
       - name: Install ruff
         run: |
           pip install ruff
+      - name: Change directory to openapi-mcp-codegen
+        run: cd openapi-mcp-codegen
       - name: run ruff linter # python linting
         run: make lint
