@@ -1,92 +1,121 @@
-# MCP Generator Tool
+# 🚀 OpenAPI MCP Generator Tool
 
-- This tool automatically generates a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from an OpenAPI specification.
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)](https://www.python.org/)
+[![Poetry](https://img.shields.io/badge/poetry-1.0%2B-blueviolet?logo=python)](https://python-poetry.org/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
-- It follows the same structure as the PagerDuty MCP server, making it easy to create new MCP servers for any API that has an OpenAPI specification.
+---
 
-## Features
+Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
+This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 
-- Automatically generates a complete MCP server structure
-- Supports both JSON and YAML OpenAPI specifications
-- Automatically detects file type (.json, .yaml, or .yml)
-- Creates tool modules for each API endpoint
-- Generates API client code
-- Sets up proper logging and error handling
-- Creates configuration files (pyproject.toml, .env.example)
-- Generates comprehensive documentation
+---
 
-## Requirements
+## ✨ Features
 
-- Python 3.8 or higher
-- Poetry for dependency management
+- ⚡ **Automatic MCP server generation** from OpenAPI specs
+- 📝 Supports **JSON** and **YAML** formats
+- 🔍 **Auto-detects** spec file type (`.json`, `.yaml`, `.yml`)
+- 🛠️ **Tool modules** for each API endpoint
+- 🤖 **API client code** generation
+- 📋 **Logging** & **error handling** setup
+- ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
+- 📚 **Comprehensive documentation** generation
 
-## Installation
+---
 
-1. Clone this repository:
+## 📦 Requirements
 
-```bash
-git clone https://github.com/cnoe-io/openapi-mcp-codegen
-cd agent-utils
-```
+- 🐍 Python **3.8+**
+- 📦 [Poetry](https://python-poetry.org/) for dependency management
 
-2. Install dependencies:
-```bash
-poetry install
-```
+---
 
-## Usage
+## 🚀 Installation
 
-1. Place your OpenAPI specification file (JSON or YAML) in the project directory
+1. **Clone this repository:**
+  ```bash
+  git clone https://github.com/cnoe-io/openapi-mcp-codegen
+  cd openapi-mcp-codegen
+  ```
 
-2. Use the `make generate` target
+2. **Install dependencies:**
+  ```bash
+  poetry install
+  ```
 
-```bash
-make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
-```
+---
 
-    - The generator will code either in new directory called `mcp_<server-name>` or the directory your specified
-    - Follow the setup instructions printed by the generator
+## ⚡ Usage
 
-## Generated MCP Server Structure
+1. Place your OpenAPI specification file (**JSON** or **YAML**) in the project directory.
 
-The generated MCP server follows this structure:
+2. Use the `make generate` target:
+  ```bash
+  make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+  ```
+  - The generator will create code in a new directory called `mcp_<server-name>` or the directory you specify.
+  - Follow the setup instructions printed by the generator.
 
-```
-generated_mcp/
-├── api/
+---
+
+## 🗂️ Generated MCP Server Structure
+
+```text
+mcp_petstore/
+├── mcp_petstore/
 │   ├── __init__.py
-│   └── client.py
-├── models/
-│   └── __init__.py
-├── tools/
-│   ├── __init__.py
-│   └── [endpoint].py
-├── utils/
-│   └── __init__.py
-├── .env.example
-├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   └── client.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── [models].py
+│   ├── server.py
+│   ├── tools/
+│   │   ├── __init__.py
+│   │   └── [tools].py
+│   └── utils/
+│       └── __init__.py
+├── poetry.lock
 ├── pyproject.toml
-├── README.md
-└── server.py
+└── README.md
 ```
 
-## Customization
+---
 
-The generated MCP server can be customized by:
+## 🛠️ Customization
 
-1. Modifying the generated tool modules in the `tools/` directory
-2. Adding custom models in the `models/` directory
-3. Extending the API client in `api/client.py`
-4. Adding utility functions in the `utils/` directory
+- ✏️ Modify generated tool modules in `tools/`
+- 🧩 Add custom models in `models/`
+- 🔌 Extend the API client in `api/client.py`
+- 🛠️ Add utility functions in `utils/`
 
-## Maintainers
+---
 
-[MAINTAINERS.md](MAINTAINERS.md)
+## 👥 Maintainers
 
-## Contributing
+See [MAINTAINERS.md](MAINTAINERS.md)
 
-[CONTRIBUTING.md](CONTRIBUTING.md)
+---
 
-## License
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 📄 License
 
 [Apache 2.0](LICENSE)
+
+---
+## 🔒 Security
+
+If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.md) for responsible disclosure guidelines.
+
+---
+
+## 🧑‍💼 Code of Conduct
+
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
