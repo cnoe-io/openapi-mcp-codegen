@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 # Copyright 2025 CNOE
 # SPDX-License-Identifier: Apache-2.0
 
@@ -132,10 +133,11 @@ from .base import APIResponse, PaginationInfo
 
                 for prop_name, prop in properties.items():
                     prop_type = self._get_python_type(prop)
+                    safe_prop_name = prop_name.replace('.', '_')
                     if prop_name in required:
-                        model_code += f'    {prop_name}: {prop_type}\n'
+                      model_code += f'    {safe_prop_name}: {prop_type}\n'
                     else:
-                        model_code += f'    {prop_name}: Optional[{prop_type}] = None\n'
+                      model_code += f'    {safe_prop_name}: Optional[{prop_type}] = None\n'
 
                     if prop.get('description'):
                         model_code += f'    """{prop["description"]}"""\n'
@@ -340,7 +342,7 @@ async def make_api_request(
         try:
             if '{' in path:
                 return  # Skip endpoints with path parameters
-            module_name = path.strip('/').replace('/', '_')
+            module_name = path.strip('/').replace('/', '_').replace('-', '_')
             tool_code = f'''"""Tools for {path} operations"""
 
 import logging
@@ -369,7 +371,7 @@ logger = logging.getLogger("mcp_tools")
                         if 'name' not in param:
                             logger.warning(f"Skipping parameter without name in {path} {method}")
                             continue
-                        param_name = param['name']
+                        param_name = param['name'].replace('.', '_')
                         param_type = 'str'  # Default type
                         schema = param.get('schema', {})
                         if schema.get('type') == 'integer':
@@ -387,9 +389,7 @@ logger = logging.getLogger("mcp_tools")
 async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
     """
     {summary}
-
     {description}
-
     Returns:
         API response data
     """
@@ -430,21 +430,23 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
                     continue
 
                 name = param['name']
+                # Convert names like id.foo to id_foo
+                safe_name = name.replace('.', '_')
                 if param.get('in') == 'query':
-                    if index > 0:
-                        code.append(f'    if {name} is not None:\n        params["{name}"] = {name}')
-                    else:
-                        code.append(f'if {name} is not None:\n        params["{name}"] = {name}')
+                  if index > 0:
+                    code.append(f'    if {safe_name} is not None:\n        params["{name}"] = {safe_name}')
+                  else:
+                    code.append(f'if {safe_name} is not None:\n        params["{name}"] = {safe_name}')
                 elif param.get('in') == 'path':
-                    if index > 0:
-                        code.append(f'    if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
-                    else:
-                        code.append(f'if {name} is not None:\n        path = path.replace("{{{name}}}", str({name}))')
+                  if index > 0:
+                    code.append(f'    if {safe_name} is not None:\n        path = path.replace("{{{name}}}", str({safe_name}))')
+                  else:
+                    code.append(f'if {safe_name} is not None:\n        path = path.replace("{{{name}}}", str({safe_name}))')
                 elif param.get('in') == 'body':
-                    if index > 0:
-                        code.append(f'    if {name} is not None:\n        data = {name}')
-                    else:
-                        code.append(f'if {name} is not None:\n        data = {name}')
+                  if index > 0:
+                    code.append(f'    if {safe_name} is not None:\n        data = {safe_name}')
+                  else:
+                    code.append(f'if {safe_name} is not None:\n        data = {safe_name}')
                 index += 1
             return '\n'.join(code)
         except Exception as e:
@@ -473,16 +475,18 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
             server_code = f'''#!/usr/bin/env python3\n"""\n{self.spec.get('info', {}).get('title', 'Generated')} MCP Server\n\nThis server provides a Model Context Protocol (MCP) interface to the {self.spec.get('info', {}).get('title', 'API')},\nallowing large language models and AI assistants to interact with the service.\n"""\nimport logging\nimport os\nfrom dotenv import load_dotenv\nfrom mcp.server.fastmcp import FastMCP\n\n# Import tools\n'''
             # Add individual tool imports
             for module in tool_modules:
-                server_code += f'from mcp_{base_name}.tools import {module}\n'
+                safe_module = module.replace('-', '_')
+                server_code += f'from mcp_{base_name}.tools import {safe_module}\n'
             server_code += '''\n# Load environment variables\nload_dotenv()\n\n# Configure logging\nlogging.basicConfig(level=logging.DEBUG)\n\n# Create server instance\n'''
             # Use the API title for the server name
             server_code += f'mcp = FastMCP("{self.spec.get("info", {}).get("title", "Generated")} MCP Server")\n\n'
             server_code += '''# Register tools\n'''
             # Register the actual function names from operationId
             for module, operation_ids in tool_modules.items():
-                server_code += f'# Register {module} tools\n'
+                safe_module = module.replace('-', '_')
+                server_code += f'# Register {safe_module} tools\n'
                 for op_id in operation_ids:
-                    server_code += f'mcp.tool()({module}.{op_id})\n'
+                    server_code += f'mcp.tool()({safe_module}.{op_id})\n'
                 server_code += '\n'
             server_code += '''\n# Start server when run directly\ndef main():\n    mcp.run()\n\nif __name__ == "__main__":\n    main()\n'''
             server_path = os.path.join(self.src_output_dir, 'server.py')
