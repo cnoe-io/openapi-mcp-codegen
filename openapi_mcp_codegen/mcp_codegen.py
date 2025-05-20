@@ -362,16 +362,16 @@ logger = logging.getLogger("mcp_tools")
                 operation_id = operation.get('operationId', f'{method}_{module_name}')
                 summary = operation.get('summary', '')
                 description = operation.get('description', '')
-                # Generate parameters (skip path parameters)
+                # Generate parameters (skip path and header parameters)
                 params = []
                 if 'parameters' in operation:
                     for param in operation['parameters']:
-                        if param.get('in') == 'path':
-                            continue  # Skip path parameters
+                        if param.get('in') in {'path', 'header'}:
+                            continue  # Skip path and header parameters
                         if 'name' not in param:
                             logger.warning(f"Skipping parameter without name in {path} {method}")
                             continue
-                        param_name = param['name'].replace('.', '_')
+                        param_name = param['name'].replace('.', '_').replace('-', '_')
                         param_type = 'str'  # Default type
                         schema = param.get('schema', {})
                         if schema.get('type') == 'integer':
@@ -431,23 +431,13 @@ async def {operation_id}({', '.join(params)}) -> Dict[str, Any]:
 
                 name = param['name']
                 # Convert names like id.foo to id_foo
-                safe_name = name.replace('.', '_')
-                if param.get('in') == 'query':
+                safe_name = name.replace('.', '_').replace('-', '_')
+                if param.get('in') in {'query', 'path', 'body'}:
                   if index > 0:
                     code.append(f'    if {safe_name} is not None:\n        params["{name}"] = {safe_name}')
                   else:
                     code.append(f'if {safe_name} is not None:\n        params["{name}"] = {safe_name}')
-                elif param.get('in') == 'path':
-                  if index > 0:
-                    code.append(f'    if {safe_name} is not None:\n        path = path.replace("{{{name}}}", str({safe_name}))')
-                  else:
-                    code.append(f'if {safe_name} is not None:\n        path = path.replace("{{{name}}}", str({safe_name}))')
-                elif param.get('in') == 'body':
-                  if index > 0:
-                    code.append(f'    if {safe_name} is not None:\n        data = {safe_name}')
-                  else:
-                    code.append(f'if {safe_name} is not None:\n        data = {safe_name}')
-                index += 1
+                  index += 1
             return '\n'.join(code)
         except Exception as e:
             logger.error(f"Error generating parameter assignments: {str(e)}")
