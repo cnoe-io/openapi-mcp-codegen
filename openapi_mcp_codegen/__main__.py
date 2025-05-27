@@ -54,7 +54,13 @@ def get_mcp_name(spec_path):
     show_default=True,
     help="Set logging level.",
   )
-def main(log_level, spec_file, output_dir, dryrun):
+@click.option(
+  "--api-headers",
+  type=str,
+  default=None,
+  help="Optional JSON string of headers to include in API requests.",
+)
+def main(log_level, spec_file, output_dir, dryrun, api_headers):
   # Get the directory of this script
   script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,8 +74,18 @@ def main(log_level, spec_file, output_dir, dryrun):
   if output_dir is None:
     output_dir = os.path.join(script_dir, mcp_name)
 
+  spec_dir = os.path.dirname(spec_path)
+  config_path = os.path.join(spec_dir, 'config.yaml')
+  print(f"Using configuration file: {config_path}")
+  if not os.path.exists(config_path):
+    raise FileNotFoundError(f"Configuration file not found: {config_path}")
   # Create the generator and generate the MCP server
-  generator = MCPGenerator(spec_path, output_dir)
+  generator = MCPGenerator(
+      script_dir,
+      spec_path,
+      output_dir,
+      config_path
+  )
   generator.generate()
 
   print(f"Generated MCP server in {output_dir}")
