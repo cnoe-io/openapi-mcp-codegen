@@ -1,8 +1,17 @@
 # MCP Examples generated with openapi_mcp_codegen
 
-## OpenAPI PetStore Example
+## Petstore OpenAPI to MCP Generator
 
-- [Reference Swagger Spec](https://petstore3.swagger.io/api/v3/openapi.json)
+- [Petstore](https://petstore3.swagger.io/api/v3/openapi.json)
 
-- [How to generate]()
-- [How to run](mcp_)
+```
+make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
+```
+
+## ArgoCD OpenAPI to MCP Generator
+
+- [ArgoCD OpenAPI Spec](./argocd/argocd_openapi.json)
+
+```
+make generate -- --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server
+```

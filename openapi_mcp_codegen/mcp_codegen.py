@@ -88,11 +88,8 @@ class MCPGenerator:
     def generate_model_base(self):
         path = os.path.join(self.src_output_dir, 'models')
         os.makedirs(path, exist_ok=True)
-        kwargs = None
-        kwargs = self.get_file_header_kwargs()
-        kwargs.update({
-        })
-        self.render_template('models/base_model.tpl', os.path.join(path, 'base.py'), **kwargs)
+        file_header_kwargs = self.get_file_header_kwargs()
+        self.render_template('models/base_model.tpl', os.path.join(path, 'base.py'), **file_header_kwargs)
         self.run_ruff_lint(os.path.join(path, 'base.py'))
 
     def generate_models(self):
@@ -132,11 +129,12 @@ class MCPGenerator:
         kwargs.update({
           'api_url': "https://api.example.com",
           'api_token': "your_api_key_here",
-          'API_HEADERS': self.spec.get('headers', {}),
+          'api_headers': self.config.get('headers', {}),
         })
         self.render_template(
             'api/client.tpl',
             os.path.join(api_dir, 'client.py'),
+            mcp_name=self.mcp_name,
             **kwargs
         )
         self.run_ruff_lint(os.path.join(api_dir, 'client.py'))
@@ -144,6 +142,7 @@ class MCPGenerator:
 
     def generate_tool_modules(self):
         tools_dir = os.path.join(self.src_output_dir, 'tools')
+        file_header_kwargs = self.get_file_header_kwargs()
         os.makedirs(tools_dir, exist_ok=True)
         for path, ops in self.spec.get('paths', {}).items():
             if '{' in path:
@@ -181,9 +180,11 @@ class MCPGenerator:
                     import_path=f"mcp_{self.mcp_name}.api.client",
                     mcp_name=self.mcp_name,
                     mcp_server_base_package = mcp_server_base_package,
-                    functions=functions
+                    functions=functions,
+                    **file_header_kwargs
                 )
-        self.render_template("tools/init.tpl", os.path.join(tools_dir, '__init__.py'))
+                self.run_ruff_lint(output_path)
+        self.render_template("tools/init.tpl", os.path.join(tools_dir, '__init__.py'), **file_header_kwargs)
 
     def generate_pyproject(self):
         output_path = os.path.join(self.output_dir, 'pyproject.toml')
@@ -204,13 +205,19 @@ class MCPGenerator:
 
     def generate_readme(self):
         output_path = os.path.join(self.output_dir, 'README.md')
-        self.render_template('readme.tpl', output_path)
+        self.render_template(
+            'readme.tpl',
+            output_path,
+            mcp_name=self.mcp_name,
+            mcp_description=self.config.get('description', 'Generated MCP server'),
+            mcp_version=self.config.get('version', '1.0.0'),
+            mcp_author=self.config.get('author', 'CNOE Contributors'),
+        )
 
     def generate_init_files(self):
         file_headers_copyright = self.config.get('file_headers', {}).get('copyright', '')
         file_headers_license = self.config.get('file_headers', {}).get('license', '')
         file_headers_message = self.config.get('file_headers', {}).get('message', '')
-
 
         self.render_template(
             'init_empty.tpl',

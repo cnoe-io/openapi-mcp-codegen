@@ -1,6 +1,6 @@
-# 🧠 {{ mcp_name | capitalize }} MCP Server
+# 🧠 Petstore MCP Server
 
-This module implements the **MCP protocol bindings** for the `{{ mcp_name | capitalize }}` agent.
+This module implements the **MCP protocol bindings** for the `Petstore` agent.
 
 It provides an OpenAPI-compatible REST API server that allows invoking the agent using MCP compliant tools or data models. The server acts as a wrapper over the agent's async call loop and translates standard input/output formats.
 
@@ -8,9 +8,9 @@ It provides an OpenAPI-compatible REST API server that allows invoking the agent
 
 ## 📄 Overview
 
-- **Description**: {{ mcp_description }}
-- **Version**: {{ mcp_version }}
-- **Author**: {{ mcp_author }}
+- **Description**: PetStore MCP Server
+- **Version**: 0.0.1
+- **Author**: Sri Aradhyula
 
 ---
 
@@ -42,13 +42,13 @@ mcp_server/
 Make sure dependencies are installed and environment variables are configured. Then run:
 
 ```bash
-poetry run mcp_{{ mcp_name }}
+poetry run mcp_petstore
 ```
 
 Or directly with Python:
 
 ```bash
-python -m {{ agent_pkg_name }}.protocol_bindings.mcp_server.main
+python -m .protocol_bindings.mcp_server.main
 ```
 
 ---
@@ -66,7 +66,7 @@ curl -X POST http://localhost:8000/v1/task \
   -H "Content-Type: application/json" \
   -d '{
     "input": "status of ArgoCD app",
-    "agent_id": "{{ agent_id }}",
+    "agent_id": "",
     "tool_config": {}
   }'
 ```
@@ -77,8 +77,8 @@ curl -X POST http://localhost:8000/v1/task \
 
 | Variable             | Description                              |
 |----------------------|------------------------------------------|
-| `{{ agent_env_prefix }}_ID`   | Agent identifier used in API requests |
-| `{{ agent_env_prefix }}_PORT` | Port to run the MCP server (default: 8000) |
+| `_ID`   | Agent identifier used in API requests |
+| `_PORT` | Port to run the MCP server (default: 8000) |
 
 ---
 
@@ -86,40 +86,7 @@ curl -X POST http://localhost:8000/v1/task \
 
 The following tools are exposed by this agent via the MCP protocol. These are defined in the `tools/` directory and registered at runtime.
 
-{% for tool in tools %}
----
 
-### 🔧 `{{ tool.name }}`
-
-- **Description**: {{ tool.description or "No description provided." }}
-- **Tool Name**: `{{ tool.name }}`
-- **Endpoint**: `POST /v1/task`
-
-#### 📥 Input Schema
-
-```json
-{{ tool.input_schema | tojson(indent=2) }}
-```
-
-#### 📤 Output Schema
-
-```json
-{{ tool.output_schema | tojson(indent=2) }}
-```
-
-#### 🧪 Example Request
-
-```bash
-curl -X POST http://localhost:8000/v1/task \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent_id": "{{ agent_id }}",
-    "tool_name": "{{ tool.name }}",
-    "input": {{ tool.sample_input | tojson(indent=2) }}
-  }'
-```
-
-{% endfor %}
 
 ---
 
