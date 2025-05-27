@@ -9,9 +9,11 @@
 [![Super Linter](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/superlinter.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/superlinter.yml)
 [![Unit Tests](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/unittest.yaml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/unittest.yaml)
 [![Dependabot Updates](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates)
+
 ---
 
 Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
+
 This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 
 ---
@@ -32,35 +34,64 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 ## 📦 Requirements
 
 - 🐍 Python **3.8+**
-- 📦 [Poetry](https://python-poetry.org/) for dependency management
+- ⚡ [`uv`](https://github.com/astral-sh/uv) and [`uvx`](https://github.com/astral-sh/uvx) (recommended)
+- 🧪 Optional: [Poetry](https://python-poetry.org/) for local development
 
 ---
 
-## 🚀 Installation
+## ⚡ Quick Start with `uvx` (Recommended)
 
-1. **Clone this repository:**
-  ```bash
-  git clone https://github.com/cnoe-io/openapi-mcp-codegen
-  cd openapi-mcp-codegen
-  ```
+No install required — just run the generator directly from GitHub:
 
-2. **Install dependencies:**
-  ```bash
-  poetry install
-  ```
+```bash
+uvx https://github.com/cnoe-io/openapi-mcp-codegen.git -- generate \
+  --spec-file examples/openapi_petstore.json \
+  --output-dir examples/mcp_petstore
+```
+
+### 📌 Optional: Pin a release tag
+
+```bash
+uvx https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.2.0 -- generate \
+  --spec-file examples/openapi_petstore.json \
+  --output-dir examples/mcp_petstore
+```
 
 ---
 
-## ⚡ Usage
+## 🧑‍💻 Local Development
 
-1. Place your OpenAPI specification file (**JSON** or **YAML**) in the project directory.
+Prefer to run locally or contribute?
 
-2. Use the `make generate` target:
-  ```bash
-  make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
-  ```
-  - The generator will create code in a new directory called `mcp_<server-name>` or the directory you specify.
-  - Follow the setup instructions printed by the generator.
+### 1. **Clone the repo:**
+
+```bash
+git clone https://github.com/cnoe-io/openapi-mcp-codegen
+cd openapi-mcp-codegen
+```
+
+### 2. **Install dependencies with Poetry:**
+
+```bash
+poetry install
+```
+
+### 3. **Run the generator:**
+
+- The generator will create code in a new directory called `mcp_<server-name>` or the directory you specify.
+- Follow the setup instructions printed by the generator.
+
+**Option 1:**
+
+```bash
+make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+```
+
+**Option 2:**
+
+```bash
+poetry run generate --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+```
 
 ---
 
@@ -115,6 +146,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 [Apache 2.0](LICENSE)
 
 ---
+
 ## 🔒 Security
 
 If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.md) for responsible disclosure guidelines.
@@ -123,13 +155,12 @@ If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.
 
 ## 🧑‍💼 Code of Conduct
 
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
 ## 🙏 Acknowledgements
 
-- [MCP on PyPI](https://pypi.org/project/mcp/) — official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) Python package
-- Thanks to the MCP community for their documentation and support.
-- Built with [Poetry](https://python-poetry.org/) and open source tools.
-- Special thanks to all contributors and users for their feedback and improvements.
+- [MCP on PyPI](https://pypi.org/project/mcp/), the official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) Python package
+- Thanks to the MCP community for their support
+- Built with [Poetry](https://python-poetry.org/), [uv](https://github.com/astral-sh/uv), and open source love 💜
