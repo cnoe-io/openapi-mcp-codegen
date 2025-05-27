@@ -57,13 +57,13 @@ class MCPGenerator:
 
     def run_ruff_lint(self, input_file: str):
       logger.info(f"Running ruff lint with --fix and two-space indentation on {input_file}")
-      ruff_config_path = os.path.join(self.output_dir, '.ruff.toml')
-      with open(ruff_config_path, 'w') as f:
-        f.write("line-length = 120\n")
-        f.write("indent-width = 2\n")
-        f.write("[format]\n")
-        f.write("indent-style = 'space'\n")
-      subprocess.run(["ruff", "check", "--fix", input_file], check=True)
+      # ruff_config_path = os.path.join(self.output_dir, '.ruff.toml')
+      # with open(ruff_config_path, 'w') as f:
+      #   f.write("line-length = 120\n")
+      #   f.write("indent-width = 2\n")
+      #   f.write("[format]\n")
+      #   f.write("indent-style = 'space'\n")
+      subprocess.run(["ruff", "check", "--fix", "--ignore", "E402", input_file], check=True)
       logger.info("Ruff linting completed")
 
     def get_file_header_kwargs(self):
@@ -140,7 +140,7 @@ class MCPGenerator:
             **kwargs
         )
         self.run_ruff_lint(os.path.join(api_dir, 'client.py'))
-        self.render_template('api/init.tpl', os.path.join(api_dir, '__init__.py'))
+        self.render_template('init_empty.tpl', os.path.join(api_dir, '__init__.py'))
 
     def generate_tool_modules(self):
         tools_dir = os.path.join(self.src_output_dir, 'tools')
@@ -172,12 +172,16 @@ class MCPGenerator:
                 })
             if functions:
                 output_path = os.path.join(tools_dir, f"{module_name}.py")
+                mcp_server_base_package = ""
+                mcp_server_base_package = self.config.get('mcp_package', {}).get('mcp_server_base_package', '')
                 self.render_template(
                     "tools/tool.tpl",
                     output_path,
                     path=path,
                     import_path=f"mcp_{self.mcp_name}.api.client",
-                    operations=functions
+                    mcp_name=self.mcp_name,
+                    mcp_server_base_package = mcp_server_base_package,
+                    functions=functions
                 )
         self.render_template("tools/init.tpl", os.path.join(tools_dir, '__init__.py'))
 
@@ -203,17 +207,40 @@ class MCPGenerator:
         self.render_template('readme.tpl', output_path)
 
     def generate_init_files(self):
-        self.render_template('init_root.tpl', os.path.join(self.src_output_dir, '__init__.py'))
+        file_headers_copyright = self.config.get('file_headers', {}).get('copyright', '')
+        file_headers_license = self.config.get('file_headers', {}).get('license', '')
+        file_headers_message = self.config.get('file_headers', {}).get('message', '')
+
+
+        self.render_template(
+            'init_empty.tpl',
+            os.path.join(self.src_output_dir, '__init__.py'),
+            file_headers = self.config.get('file_headers', {}),
+            file_headers_copyright = file_headers_copyright,
+            file_headers_license = file_headers_license,
+            file_headers_message = file_headers_message,
+        )
+
+        print(f"\nfile_headers_copyright: {file_headers_copyright}")
+        print(f"\nfile_headers_license: {file_headers_license}")
+        print(f"\nfile_headers_message: {file_headers_message}")
         for subdir in ['models', 'api', 'utils']:
             path = os.path.join(self.src_output_dir, subdir)
             os.makedirs(path, exist_ok=True)
-            self.render_template('init_root.tpl', os.path.join(path, '__init__.py'))
+            self.render_template(
+              'init_empty.tpl',
+              os.path.join(path, '__init__.py'),
+              file_headers = self.config.get('file_headers', {}),
+              file_headers_copyright = file_headers_copyright,
+              file_headers_license = file_headers_license,
+              file_headers_message = file_headers_message,
+            )
 
     def generate(self):
         logger.info("Starting MCP codegen with templates")
+        self.generate_api_client()
         self.generate_model_base()
         self.generate_models()
-        self.generate_api_client()
         self.generate_tool_modules()
         self.generate_init_files()
         self.generate_pyproject()

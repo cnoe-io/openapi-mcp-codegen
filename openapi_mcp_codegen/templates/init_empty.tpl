@@ -1,5 +1,4 @@
-{% if file_headers %}
-"""
+{% if file_headers %}"""
 {{ file_headers_copyright }}
 {{ file_headers_license }}
 

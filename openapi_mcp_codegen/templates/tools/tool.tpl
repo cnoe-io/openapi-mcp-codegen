@@ -11,7 +11,7 @@
 import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
-from mcp_{{ mcp_name }}.api.client import make_api_request
+from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -28,8 +28,11 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
     logger.debug("Making {{ func.method.upper() }} request to {{ path }}")
     params = {}
     data = None
-    {{ func.param_assignments | indent(4) }}
-
+    {% if 'body' in func.params | join(', ') %}
+    # Add parameters to request
+    if body is not None:
+      data = body
+    {% endif %}
     success, response = await make_api_request(
         "{{ path }}",
         method="{{ func.method.upper() }}",
@@ -37,7 +40,7 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
         data=data
     )
     if not success:
-        logger.error(f"Request failed: {{ response.get('error') }}")
+        logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
 
