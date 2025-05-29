@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sessionservice_create(body: str) -> Dict[str, Any]:
-    '''
-    Create a new JWT for authentication and set a cookie if using HTTP.
-
-    Args:
-        body (str): The request payload containing authentication credentials.
-
-    Returns:
-        Dict[str, Any]: The response from the authentication service, including the JWT and any relevant session information.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during the authentication process.
-    '''
+    """
+    Create a new JWT for authentication and set a cookie if using HTTP
+    """
     logger.debug("Making POST request to /api/v1/session")
     params = {}
     data = None
@@ -48,18 +39,9 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
 
 
 async def sessionservice_delete() -> Dict[str, Any]:
-    '''
-    Delete an existing JWT cookie if using HTTP.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: The response from the API after attempting to delete the session. Contains error information if the request fails.
-
-    Raises:
-        Exception: If there is an unexpected error during the API request.
-    '''
+    """
+    Delete an existing JWT cookie if using HTTP
+    """
     logger.debug("Making DELETE request to /api/v1/session")
     params = {}
     data = None
@@ -74,3 +56,4 @@ async def sessionservice_delete() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

@@ -19,19 +19,39 @@ from mcp.server.fastmcp import FastMCP
 from {{ mcp_package }}mcp_{{ mcp_name }}.tools import {{ module }}
 {% endfor %}
 
-load_dotenv()
-logging.basicConfig(level=logging.DEBUG)
+def main():
+    # Load environment variables
+    load_dotenv()
 
-mcp = FastMCP("{{ title }} MCP Server")
+    # Configure logging
+    logging.basicConfig(level=logging.DEBUG)
+
+    # Get MCP configuration from environment variables
+    MCP_MODE = os.getenv("MCP_MODE", "STDIO")
+
+    # Get host and port for server
+    MCP_HOST = os.getenv("MCP_HOST", "localhost")
+    MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+
+    logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
+
+    # Get agent name from environment variables
+    AGENT_NAME = os.getenv("AGENT_NAME", "{{ mcp_name | upper }} Agent")
+    logging.info(f"Agent name: {AGENT_NAME}")
+
+    # Create server instance
+    if MCP_MODE == "SSE":
+      mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+    else:
+      mcp = FastMCP("{{ mcp_name | upper }} MCP Server")
 
 {% for module, ops in registrations.items() %}
-# Register {{ module }} tools
+    # Register {{ module }} tools
 {% for op in ops %}
-mcp.tool()({{ module }}.{{ op }})
-{% endfor %}
-{% endfor %}
+    mcp.tool()({{ module }}.{{ op }})
+{% endfor %}{% endfor %}
 
-def main():
+    # Run the MCP server
     mcp.run()
 
 if __name__ == "__main__":

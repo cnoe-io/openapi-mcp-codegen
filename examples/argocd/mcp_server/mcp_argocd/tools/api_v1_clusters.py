@@ -15,21 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def clusterservice_list(server: str = None, name: str = None, id_type: str = None, id_value: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of clusters from the specified server.
-
-    Args:
-        server (str, optional): The server URL to send the request to. Defaults to None.
-        name (str, optional): The name of the cluster to filter by. Defaults to None.
-        id_type (str, optional): The type of identifier to filter clusters. Defaults to None.
-        id_value (str, optional): The value of the identifier to filter clusters. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of clusters or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    List returns list of clusters
+    """
     logger.debug("Making GET request to /api/v1/clusters")
     params = {}
     data = None
@@ -47,19 +35,9 @@ async def clusterservice_list(server: str = None, name: str = None, id_type: str
 
 
 async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new cluster.
-
-    Args:
-        body (str): The request body containing cluster configuration in JSON format.
-        upsert (str, optional): If provided, determines whether to upsert the cluster if it already exists. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing details of the created cluster or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during the creation process.
-    '''
+    """
+    Create creates a cluster
+    """
     logger.debug("Making POST request to /api/v1/clusters")
     params = {}
     data = None
@@ -78,3 +56,4 @@ async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

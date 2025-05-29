@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def settingsservice_get() -> Dict[str, Any]:
-    '''
-    Retrieves the current Argo CD settings.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the Argo CD settings if the request is successful, or an error message if the request fails.
-
-    Raises:
-        Exception: If there is an unexpected error during the API request.
-    '''
+    """
+    Get returns Argo CD settings
+    """
     logger.debug("Making GET request to /api/v1/settings")
     params = {}
     data = None
@@ -41,3 +32,4 @@ async def settingsservice_get() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

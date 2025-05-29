@@ -15,25 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationservice_list(name: str = None, refresh: str = None, projects: str = None, resourceVersion: str = None, selector: str = None, repo: str = None, appNamespace: str = None, project: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of applications based on the provided filters.
-
-    Args:
-        name (str, optional): Filter applications by name. Defaults to None.
-        refresh (str, optional): If set, refreshes the application list. Defaults to None.
-        projects (str, optional): Filter applications by project names. Defaults to None.
-        resourceVersion (str, optional): Filter by resource version. Defaults to None.
-        selector (str, optional): Label selector to filter applications. Defaults to None.
-        repo (str, optional): Filter applications by repository. Defaults to None.
-        appNamespace (str, optional): Filter applications by namespace. Defaults to None.
-        project (str, optional): Filter applications by project. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of applications or an error message.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
+    """
+    List returns list of applications
+    """
     logger.debug("Making GET request to /api/v1/applications")
     params = {}
     data = None
@@ -51,20 +35,9 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
 
 
 async def applicationservice_create(body: str, upsert: str = None, validate: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new application.
-
-    Args:
-        body (str): The JSON string representing the application to be created.
-        upsert (str, optional): If provided, determines whether to update the application if it already exists. Defaults to None.
-        validate (str, optional): If provided, validates the application data without creating it. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the created application's details or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during the creation process.
-    '''
+    """
+    Create creates an application
+    """
     logger.debug("Making POST request to /api/v1/applications")
     params = {}
     data = None
@@ -83,3 +56,4 @@ async def applicationservice_create(body: str, upsert: str = None, validate: str
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

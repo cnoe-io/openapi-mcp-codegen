@@ -15,20 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of all configured repositories.
-
-    Args:
-        repo (str, optional): The name of the repository to filter the results. Defaults to None.
-        forceRefresh (str, optional): If set, forces a refresh of the repository list. Defaults to None.
-        appProject (str, optional): The application project to filter repositories by. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of repositories or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    ListRepositories gets a list of all configured repositories
+    """
     logger.debug("Making GET request to /api/v1/repositories")
     params = {}
     data = None
@@ -46,20 +35,9 @@ async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str
 
 
 async def repositoryservice_createrepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new repository configuration.
-
-    Args:
-        body (str): The JSON-formatted repository configuration to create.
-        upsert (str, optional): If set, allows updating an existing repository configuration. Defaults to None.
-        credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the repository creation API, including details of the created repository or an error message.
-
-    Raises:
-        Exception: If the API request fails or returns an unexpected error.
-    '''
+    """
+    CreateRepository creates a new repository configuration
+    """
     logger.debug("Making POST request to /api/v1/repositories")
     params = {}
     data = None
@@ -78,3 +56,4 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

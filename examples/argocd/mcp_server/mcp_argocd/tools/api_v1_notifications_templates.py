@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def notificationservice_listtemplates() -> Dict[str, Any]:
-    '''
-    Retrieves a list of notification templates.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of notification templates or an error message.
-
-    Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
-    '''
+    """
+    List returns list of templates
+    """
     logger.debug("Making GET request to /api/v1/notifications/templates")
     params = {}
     data = None
@@ -41,3 +32,4 @@ async def notificationservice_listtemplates() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

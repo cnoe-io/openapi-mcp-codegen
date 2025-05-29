@@ -11,6 +11,7 @@ This server provides a Model Context Protocol (MCP) interface to the ,
 allowing large language models and AI assistants to interact with the service.
 """
 import logging
+import os
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
@@ -62,155 +63,153 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_wr
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_version
 
 
-load_dotenv()
-logging.basicConfig(level=logging.DEBUG)
-
-mcp = FastMCP(" MCP Server")
-
-
-# Register api_v1_account tools
-
-mcp.tool()(api_v1_account.accountservice_listaccounts)
-
-
-# Register api_v1_account_password tools
-
-mcp.tool()(api_v1_account_password.accountservice_updatepassword)
-
-
-# Register api_v1_applications tools
-
-mcp.tool()(api_v1_applications.applicationservice_list)
-
-mcp.tool()(api_v1_applications.applicationservice_create)
-
-
-# Register api_v1_applications_manifestswithfiles tools
-
-mcp.tool()(api_v1_applications_manifestswithfiles.applicationservice_getmanifestswithfiles)
-
-
-# Register api_v1_applicationsets tools
-
-mcp.tool()(api_v1_applicationsets.applicationsetservice_list)
-
-mcp.tool()(api_v1_applicationsets.applicationsetservice_create)
-
-
-# Register api_v1_applicationsets_generate tools
-
-mcp.tool()(api_v1_applicationsets_generate.applicationsetservice_generate)
-
-
-# Register api_v1_certificates tools
-
-mcp.tool()(api_v1_certificates.certificateservice_listcertificates)
-
-mcp.tool()(api_v1_certificates.certificateservice_createcertificate)
-
-mcp.tool()(api_v1_certificates.certificateservice_deletecertificate)
-
-
-# Register api_v1_clusters tools
-
-mcp.tool()(api_v1_clusters.clusterservice_list)
-
-mcp.tool()(api_v1_clusters.clusterservice_create)
-
-
-# Register api_v1_gpgkeys tools
-
-mcp.tool()(api_v1_gpgkeys.gpgkeyservice_list)
-
-mcp.tool()(api_v1_gpgkeys.gpgkeyservice_create)
-
-mcp.tool()(api_v1_gpgkeys.gpgkeyservice_delete)
-
-
-# Register api_v1_notifications_services tools
-
-mcp.tool()(api_v1_notifications_services.notificationservice_listservices)
-
-
-# Register api_v1_notifications_templates tools
-
-mcp.tool()(api_v1_notifications_templates.notificationservice_listtemplates)
-
-
-# Register api_v1_notifications_triggers tools
-
-mcp.tool()(api_v1_notifications_triggers.notificationservice_listtriggers)
-
-
-# Register api_v1_projects tools
-
-mcp.tool()(api_v1_projects.projectservice_list)
-
-mcp.tool()(api_v1_projects.projectservice_create)
-
-
-# Register api_v1_repocreds tools
-
-mcp.tool()(api_v1_repocreds.repocredsservice_listrepositorycredentials)
-
-mcp.tool()(api_v1_repocreds.repocredsservice_createrepositorycredentials)
-
-
-# Register api_v1_repositories tools
-
-mcp.tool()(api_v1_repositories.repositoryservice_listrepositories)
-
-mcp.tool()(api_v1_repositories.repositoryservice_createrepository)
-
-
-# Register api_v1_session tools
-
-mcp.tool()(api_v1_session.sessionservice_create)
-
-mcp.tool()(api_v1_session.sessionservice_delete)
-
-
-# Register api_v1_session_userinfo tools
-
-mcp.tool()(api_v1_session_userinfo.sessionservice_getuserinfo)
-
-
-# Register api_v1_settings tools
-
-mcp.tool()(api_v1_settings.settingsservice_get)
-
-
-# Register api_v1_settings_plugins tools
-
-mcp.tool()(api_v1_settings_plugins.settingsservice_getplugins)
-
-
-# Register api_v1_stream_applications tools
-
-mcp.tool()(api_v1_stream_applications.applicationservice_watch)
-
-
-# Register api_v1_write_repocreds tools
-
-mcp.tool()(api_v1_write_repocreds.repocredsservice_listwriterepositorycredentials)
-
-mcp.tool()(api_v1_write_repocreds.repocredsservice_createwriterepositorycredentials)
-
-
-# Register api_v1_write_repositories tools
-
-mcp.tool()(api_v1_write_repositories.repositoryservice_listwriterepositories)
-
-mcp.tool()(api_v1_write_repositories.repositoryservice_createwriterepository)
-
-
-# Register api_version tools
-
-mcp.tool()(api_version.versionservice_version)
-
-
-
 def main():
+    # Load environment variables
+    load_dotenv()
+
+    # Configure logging
+    logging.basicConfig(level=logging.DEBUG)
+
+    # Get MCP configuration from environment variables
+    MCP_MODE = os.getenv("MCP_MODE", "STDIO")
+
+    # Get host and port for server
+    MCP_HOST = os.getenv("MCP_HOST", "localhost")
+    MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+
+    logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
+
+    # Get agent name from environment variables
+    AGENT_NAME = os.getenv("AGENT_NAME", "ARGOCD Agent")
+    logging.info(f"Agent name: {AGENT_NAME}")
+
+    # Create server instance
+    if MCP_MODE == "SSE":
+      mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+    else:
+      mcp = FastMCP("ARGOCD MCP Server")
+
+
+    # Register api_v1_account tools
+
+    mcp.tool()(api_v1_account.accountservice_listaccounts)
+
+    # Register api_v1_account_password tools
+
+    mcp.tool()(api_v1_account_password.accountservice_updatepassword)
+
+    # Register api_v1_applications tools
+
+    mcp.tool()(api_v1_applications.applicationservice_list)
+
+    mcp.tool()(api_v1_applications.applicationservice_create)
+
+    # Register api_v1_applications_manifestswithfiles tools
+
+    mcp.tool()(api_v1_applications_manifestswithfiles.applicationservice_getmanifestswithfiles)
+
+    # Register api_v1_applicationsets tools
+
+    mcp.tool()(api_v1_applicationsets.applicationsetservice_list)
+
+    mcp.tool()(api_v1_applicationsets.applicationsetservice_create)
+
+    # Register api_v1_applicationsets_generate tools
+
+    mcp.tool()(api_v1_applicationsets_generate.applicationsetservice_generate)
+
+    # Register api_v1_certificates tools
+
+    mcp.tool()(api_v1_certificates.certificateservice_listcertificates)
+
+    mcp.tool()(api_v1_certificates.certificateservice_createcertificate)
+
+    mcp.tool()(api_v1_certificates.certificateservice_deletecertificate)
+
+    # Register api_v1_clusters tools
+
+    mcp.tool()(api_v1_clusters.clusterservice_list)
+
+    mcp.tool()(api_v1_clusters.clusterservice_create)
+
+    # Register api_v1_gpgkeys tools
+
+    mcp.tool()(api_v1_gpgkeys.gpgkeyservice_list)
+
+    mcp.tool()(api_v1_gpgkeys.gpgkeyservice_create)
+
+    mcp.tool()(api_v1_gpgkeys.gpgkeyservice_delete)
+
+    # Register api_v1_notifications_services tools
+
+    mcp.tool()(api_v1_notifications_services.notificationservice_listservices)
+
+    # Register api_v1_notifications_templates tools
+
+    mcp.tool()(api_v1_notifications_templates.notificationservice_listtemplates)
+
+    # Register api_v1_notifications_triggers tools
+
+    mcp.tool()(api_v1_notifications_triggers.notificationservice_listtriggers)
+
+    # Register api_v1_projects tools
+
+    mcp.tool()(api_v1_projects.projectservice_list)
+
+    mcp.tool()(api_v1_projects.projectservice_create)
+
+    # Register api_v1_repocreds tools
+
+    mcp.tool()(api_v1_repocreds.repocredsservice_listrepositorycredentials)
+
+    mcp.tool()(api_v1_repocreds.repocredsservice_createrepositorycredentials)
+
+    # Register api_v1_repositories tools
+
+    mcp.tool()(api_v1_repositories.repositoryservice_listrepositories)
+
+    mcp.tool()(api_v1_repositories.repositoryservice_createrepository)
+
+    # Register api_v1_session tools
+
+    mcp.tool()(api_v1_session.sessionservice_create)
+
+    mcp.tool()(api_v1_session.sessionservice_delete)
+
+    # Register api_v1_session_userinfo tools
+
+    mcp.tool()(api_v1_session_userinfo.sessionservice_getuserinfo)
+
+    # Register api_v1_settings tools
+
+    mcp.tool()(api_v1_settings.settingsservice_get)
+
+    # Register api_v1_settings_plugins tools
+
+    mcp.tool()(api_v1_settings_plugins.settingsservice_getplugins)
+
+    # Register api_v1_stream_applications tools
+
+    mcp.tool()(api_v1_stream_applications.applicationservice_watch)
+
+    # Register api_v1_write_repocreds tools
+
+    mcp.tool()(api_v1_write_repocreds.repocredsservice_listwriterepositorycredentials)
+
+    mcp.tool()(api_v1_write_repocreds.repocredsservice_createwriterepositorycredentials)
+
+    # Register api_v1_write_repositories tools
+
+    mcp.tool()(api_v1_write_repositories.repositoryservice_listwriterepositories)
+
+    mcp.tool()(api_v1_write_repositories.repositoryservice_createwriterepository)
+
+    # Register api_version tools
+
+    mcp.tool()(api_version.versionservice_version)
+
+
+    # Run the MCP server
     mcp.run()
 
 if __name__ == "__main__":

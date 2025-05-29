@@ -35,22 +35,24 @@ async def placeorder() -> Dict[str, Any]:
           - store
         requestBody:
           description: Order placed for purchasing the pet
-          required: true
+          required: false
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
+                type: object
         responses:
           '200':
             description: Successful operation
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/Order'
+                  type: object
           '400':
             description: Invalid Order
-          '500':
-            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  type: object
     '''
     logger.debug("Making POST request to /store/order")
     params = {}

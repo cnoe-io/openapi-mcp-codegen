@@ -499,8 +499,16 @@ class MCPGenerator:
     """
     logger.info("Generating __init__.py files")
     file_header_kwargs = self.get_file_header_kwargs()
-    self.render_template('init_empty.tpl', os.path.join(self.output_dir, '__init__.py'), **file_header_kwargs)
-    self.render_template('init_empty.tpl', os.path.join(self.src_output_dir, '__init__.py'), **file_header_kwargs)
+    self.render_template(
+       'init_empty.tpl',
+       os.path.join(self.output_dir, '__init__.py'),
+
+       **file_header_kwargs)
+    self.render_template(
+       'init_empty.tpl',
+       os.path.join(self.src_output_dir, '__init__.py'),
+       version=self.config.get('version', '0.1.0'),
+       **file_header_kwargs)
     for subdir in ['api', 'models', 'tools']:
       path = os.path.join(self.src_output_dir, subdir)
       os.makedirs(path, exist_ok=True)
