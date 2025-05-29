@@ -4,8 +4,23 @@
 
 - [Petstore](https://petstore3.swagger.io/api/v3/openapi.json)
 
+### Generate without LLM docstring enhancements
+
 ```
 make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
+```
+
+### Generate with LLM docstring enhancements
+
+```
+make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm
+```
+
+### Generate with LLM docstring enhancements with OpenAPI Spec
+
+```
+make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-
+with-llm-openapi
 ```
 
 ## ArgoCD OpenAPI to MCP Generator
@@ -14,4 +29,17 @@ make generate -- --spec-file examples/petstore/openapi_petstore.json --output-di
 
 ```
 make generate -- --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server
+```
+
+### Generate with LLM docstring enhancements
+
+```
+make generate -- --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
+```
+
+### Generate with LLM docstring enhancements with OpenAPI Spec
+
+```
+make generate -- --spec-file examples/petstore/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-
+with-llm-openapi
 ```
