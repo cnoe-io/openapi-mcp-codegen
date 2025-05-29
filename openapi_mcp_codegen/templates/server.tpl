@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 {% for module in modules %}
-from mcp_{{ base_name }}.tools import {{ module }}
+from agent_{{ mcp_name }}.protocol_bindings.mcp_server.mcp_{{ mcp_name }}.tools import {{ module }}
 {% endfor %}
 
 load_dotenv()

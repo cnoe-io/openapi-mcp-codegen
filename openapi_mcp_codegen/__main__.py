@@ -88,13 +88,13 @@ def main(log_level, spec_file, output_dir, dryrun, api_headers):
   )
   generator.generate()
 
-  print(f"Generated MCP server in {output_dir}")
-  print("\nNext steps:")
-  print(f"1. cd {mcp_name}")
-  print("2. cp .env.example .env")
-  print("3. Edit .env with your API credentials")
-  print("4. poetry install")
-  print("5. poetry run python -m server")
+  print(f"🎉 Generated MCP server in {output_dir}")
+  print("\n🚀 Next steps:")
+  print(f"\n1️⃣ Navigate to the generated directory: `cd {mcp_name}`")
+  print("\n2️⃣ Copy the example environment file: `cp .env.example .env`")
+  print("\n3️⃣ ✏️ Edit `.env` with your API credentials")
+  print("\n4️⃣ 📦 Install dependencies: `poetry install`")
+  print("\n5️⃣ ▶️ Start the server: `poetry run python -m server`\n")
 
 if __name__ == '__main__':
     main()
