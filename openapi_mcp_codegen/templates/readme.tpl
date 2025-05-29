@@ -2,7 +2,9 @@
 
 This module implements the **MCP protocol bindings** for the `{{ mcp_name | capitalize }}` agent.
 
-It provides an OpenAPI-compatible REST API server that allows invoking the agent using MCP compliant tools or data models. The server acts as a wrapper over the agent's async call loop and translates standard input/output formats.
+It auto-generates MCP compliant tools or data models and server code.
+
+The server acts as a wrapper over the agent's async call loop and translates standard input/output formats.
 
 ---
 
@@ -118,7 +120,6 @@ curl -X POST http://localhost:8000/v1/task \
     "input": {{ tool.sample_input | tojson(indent=2) }}
   }'
 ```
-
 {% endfor %}
 
 ---

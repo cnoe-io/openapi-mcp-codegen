@@ -7,24 +7,37 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def ApplicationService_Watch(name: str = None, refresh: str = None, projects: str = None, resourceVersion: str = None, selector: str = None, repo: str = None, appNamespace: str = None, project: str = None) -> Dict[str, Any]:
-    """
-    Watch returns stream of application change events
-    
+async def applicationservice_watch(name: str = None, refresh: str = None, projects: str = None, resourceVersion: str = None, selector: str = None, repo: str = None, appNamespace: str = None, project: str = None) -> Dict[str, Any]:
+    '''
+    Watches and returns a stream of application change events.
+
+    Args:
+        name (str, optional): The name of the application to watch. Defaults to None.
+        refresh (str, optional): Indicates whether to refresh the application data. Defaults to None.
+        projects (str, optional): Comma-separated list of project names to filter applications. Defaults to None.
+        resourceVersion (str, optional): Resource version to start watching from. Defaults to None.
+        selector (str, optional): Label selector to filter applications. Defaults to None.
+        repo (str, optional): Repository URL to filter applications. Defaults to None.
+        appNamespace (str, optional): Namespace of the application. Defaults to None.
+        project (str, optional): Project name to filter applications. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the stream of application change events or an error message.
+
+    Raises:
+        Exception: If the API request fails or encounters an unexpected error.
+    '''
     logger.debug("Making GET request to /api/v1/stream/applications")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/stream/applications",
         method="GET",
@@ -35,4 +48,3 @@ async def ApplicationService_Watch(name: str = None, refresh: str = None, projec
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

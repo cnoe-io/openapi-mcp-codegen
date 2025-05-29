@@ -7,28 +7,34 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def ApplicationSetService_Generate(body: str) -> Dict[str, Any]:
-    """
-    Generate generates
-    
+async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
+    '''
+    Generates an application set based on the provided configuration.
+
+    Args:
+        body (str): The request payload containing the application set configuration in JSON or YAML format.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing the generated application set or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs during the request.
+    '''
     logger.debug("Making POST request to /api/v1/applicationsets/generate")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/applicationsets/generate",
         method="POST",
@@ -39,4 +45,3 @@ async def ApplicationSetService_Generate(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

@@ -7,24 +7,33 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def ClusterService_List(server: str = None, name: str = None, id_type: str = None, id_value: str = None) -> Dict[str, Any]:
-    """
-    List returns list of clusters
-    
+async def clusterservice_list(server: str = None, name: str = None, id_type: str = None, id_value: str = None) -> Dict[str, Any]:
+    '''
+    Retrieves a list of clusters from the specified server.
+
+    Args:
+        server (str, optional): The server URL to send the request to. Defaults to None.
+        name (str, optional): The name of the cluster to filter by. Defaults to None.
+        id_type (str, optional): The type of identifier to filter clusters. Defaults to None.
+        id_value (str, optional): The value of the identifier to filter clusters. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of clusters or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+    '''
     logger.debug("Making GET request to /api/v1/clusters")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/clusters",
         method="GET",
@@ -37,21 +46,28 @@ async def ClusterService_List(server: str = None, name: str = None, id_type: str
     return response
 
 
-async def ClusterService_Create(body: str, upsert: str = None) -> Dict[str, Any]:
-    """
-    Create creates a cluster
-    
+async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
+    '''
+    Creates a new cluster.
+
+    Args:
+        body (str): The request body containing cluster configuration in JSON format.
+        upsert (str, optional): If provided, determines whether to upsert the cluster if it already exists. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing details of the created cluster or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs during the creation process.
+    '''
     logger.debug("Making POST request to /api/v1/clusters")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/clusters",
         method="POST",
@@ -62,4 +78,3 @@ async def ClusterService_Create(body: str, upsert: str = None) -> Dict[str, Any]
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

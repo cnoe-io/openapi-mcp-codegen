@@ -58,10 +58,12 @@ async def make_api_request(
         )
 
     try:
+{% if api_headers %}
+        headers_dict = {{ api_headers }}
+        headers = {key: value.format(token=token) for key, value in headers_dict.items()}
+{% else %}
         headers = {}
-        {% if api_headers %}
-        headers = {{ api_headers }}
-        {% endif %}
+{% endif %}
         logger.debug(f"Request headers prepared (Authorization header masked)")
         logger.debug(f"Request parameters: {params}")
         if data:

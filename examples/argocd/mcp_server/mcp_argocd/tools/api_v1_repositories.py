@@ -7,24 +7,32 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def RepositoryService_ListRepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
-    """
-    ListRepositories gets a list of all configured repositories
-    
+async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
+    '''
+    Retrieves a list of all configured repositories.
+
+    Args:
+        repo (str, optional): The name of the repository to filter the results. Defaults to None.
+        forceRefresh (str, optional): If set, forces a refresh of the repository list. Defaults to None.
+        appProject (str, optional): The application project to filter repositories by. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of repositories or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+    '''
     logger.debug("Making GET request to /api/v1/repositories")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/repositories",
         method="GET",
@@ -37,21 +45,29 @@ async def RepositoryService_ListRepositories(repo: str = None, forceRefresh: str
     return response
 
 
-async def RepositoryService_CreateRepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
-    """
-    CreateRepository creates a new repository configuration
-    
+async def repositoryservice_createrepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
+    '''
+    Creates a new repository configuration.
+
+    Args:
+        body (str): The JSON-formatted repository configuration to create.
+        upsert (str, optional): If set, allows updating an existing repository configuration. Defaults to None.
+        credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the repository creation API, including details of the created repository or an error message.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected error.
+    '''
     logger.debug("Making POST request to /api/v1/repositories")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/repositories",
         method="POST",
@@ -62,4 +78,3 @@ async def RepositoryService_CreateRepository(body: str, upsert: str = None, cred
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

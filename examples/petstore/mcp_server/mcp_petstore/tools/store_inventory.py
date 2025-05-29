@@ -14,17 +14,41 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def getInventory() -> Dict[str, Any]:
-    """
-    Returns pet inventories by status.
-    
+async def getinventory() -> Dict[str, Any]:
+    '''
+    Retrieves pet inventories grouped by status.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing pet inventories by status.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      get:
+        summary: Returns pet inventories by status.
+        operationId: getInventory
+        tags:
+          - store
+        responses:
+          '200':
+            description: Successful operation. Returns inventories by status.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  additionalProperties:
+                    type: integer
+          '400':
+            description: Invalid status value
+    '''
     logger.debug("Making GET request to /store/inventory")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/store/inventory",
         method="GET",
@@ -35,4 +59,3 @@ async def getInventory() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

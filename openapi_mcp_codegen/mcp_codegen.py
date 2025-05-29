@@ -87,7 +87,15 @@ class MCPGenerator:
     Once initialized, the `generate()` method can be called to produce all necessary components for the MCP application.
   """
 
-  def __init__(self, script_dir: str, spec_path: str, output_dir: str, config_path: str):
+  def __init__(
+      self,
+      script_dir: str,
+      spec_path: str,
+      output_dir: str,
+      config_path: str,
+      dry_run: bool = False,
+      enhance_docstring_with_llm: bool = False,
+      enhance_docstring_with_llm_openapi: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -101,6 +109,9 @@ class MCPGenerator:
     self.script_dir = script_dir
     self.spec_path = spec_path
     self.output_dir = output_dir
+    self.dry_run = dry_run
+    self.should_enhance_docstring_with_llm = enhance_docstring_with_llm
+    self.should_enhance_docstring_with_llm_openapi = enhance_docstring_with_llm_openapi
     self.env = Environment(loader=FileSystemLoader(os.path.join(script_dir, 'templates')))
     with open(config_path, encoding='utf-8') as f:
       self.config = yaml.safe_load(f)
@@ -140,7 +151,7 @@ class MCPGenerator:
     template = self.env.get_template(template_name)
     logger.debug(f"Template context: {kwargs}")
     rendered = template.render(**kwargs)
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, 'w+', encoding='utf-8') as f:
       f.write(rendered)
     logger.info(f"Generated file: {output_path}")
 
@@ -177,6 +188,103 @@ class MCPGenerator:
     logger.info(f"Running Ruff lint on {input_file}")
     subprocess.run(["ruff", "check", "--fix", "--ignore", "E402", input_file], check=True)
     logger.info("Ruff linting completed")
+
+  def enhance_docstring_with_llm(self, input_path: str, output_path: str, dry_run: bool = False) -> None:
+      """
+      Enhance Python function docstrings using Azure OpenAI LLM in OpenAPI-style format.
+
+      Args:
+        input_path (str): Path to the input Python file.
+        output_path (str): Path where the modified file will be saved.
+        dry_run (bool): If True, only log the changes; do not write to disk.
+      """
+      import ast
+      import re
+      from openapi_mcp_codegen.llm_factory import LLMFactory
+      from langchain_core.messages import SystemMessage, HumanMessage
+
+      logger.info(f"Enhancing docstrings in: {input_path}")
+
+      llm = LLMFactory().get_llm()
+
+      def get_openapi_docstring(func_name, args, original_doc, func_code):
+          if getattr(self, "should_enhance_docstring_with_llm_openapi", False):
+              openapi_prompt = (
+                  "Include an 'OpenAPI Specification:' section in the docstring and provide OpenAPI YAML under it if applicable. "
+              )
+          else:
+              openapi_prompt = ""
+
+          system_msg = SystemMessage(
+              content=(
+                  "You are a senior API engineer. Your task is to generate Python docstrings in Google-style format for async and sync functions used in platform engineering tools. "
+                  "Use this format: \"\"\" Summary line. Args: arg1 (type): Description. arg2 (type, optional): Description. Defaults to None. Returns: ReturnType: Description. Raises: ExceptionType: Description. \"\"\". "
+                  + openapi_prompt +
+                  "Do not include any extra commentary or markdown formatting. Return only the complete docstring, enclosed in triple quotes."
+              )
+          )
+          user_prompt = (
+              f"Function Name: {func_name}\n"
+              f"Arguments: {', '.join(args)}\n"
+              f"Original Docstring:\n{original_doc or 'None'}\n"
+              f"Function Code:\n{func_code}\n\n"
+              f"Rewrite or generate a detailed OpenAPI-style Python docstring. Return only the full docstring including both opening and closing triple quotes (''' or \"\"\")."
+          )
+          response = llm.invoke([system_msg, HumanMessage(content=user_prompt)])
+
+          def clean_docstring(content: str) -> str:
+              # Remove markdown-style code blocks
+              cleaned = re.sub(r"^```(?:python)?\n([\s\S]*?)\n```$", r"\1", content.strip(), flags=re.MULTILINE)
+              # Remove leading/trailing triple quotes of either type, if present
+              cleaned = re.sub(r"^([\"']{3,})", '', cleaned)
+              cleaned = re.sub(r"([\"']{3,})$", '', cleaned)
+              cleaned = cleaned.strip()
+              # Always wrap in triple single quotes for safety
+              return "'''\n" + cleaned + "\n'''"
+          return clean_docstring(response.content)
+
+      if not os.path.exists(input_path):
+          raise FileNotFoundError(f"Input file '{input_path}' not found.")
+
+      with open(input_path, 'r') as f:
+          source_code = f.read()
+      source_lines = source_code.splitlines()
+
+      try:
+          tree = ast.parse(source_code)
+      except SyntaxError as e:
+          raise SyntaxError(f"Input file '{input_path}' contains invalid Python syntax: {e}")
+
+      # Collect changes as tuples: (start_line, end_line, new_docstring_lines)
+      docstring_replacements = []
+
+      for node in ast.walk(tree):
+          if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+              func_name = node.name
+              args = [arg.arg for arg in node.args.args]
+              doc = ast.get_docstring(node, clean=False)
+              if doc is not None and len(node.body) > 0:
+                  doc_node = node.body[0]
+                  if isinstance(doc_node, ast.Expr) and isinstance(doc_node.value, ast.Str):
+                      doc_start = doc_node.lineno - 1
+                      doc_end = doc_start + len(doc.splitlines())
+                      func_source_lines = source_lines[node.lineno - 1:node.end_lineno]
+                      func_source = "\n".join(func_source_lines)
+                      new_doc = get_openapi_docstring(func_name, args, doc, func_source)
+                      indent = re.match(r'^(\s*)', source_lines[doc_start]).group(1)
+                      new_doc_lines = [(indent + l if l.strip() else l) for l in new_doc.splitlines()]
+                      docstring_replacements.append((doc_start, doc_end, new_doc_lines))
+
+      # Apply replacements in reverse order (bottom-up) to avoid messing up line numbers
+      for doc_start, doc_end, new_doc_lines in sorted(docstring_replacements, reverse=True):
+          source_lines[doc_start:doc_end] = new_doc_lines
+
+      if dry_run:
+          logger.info(f"[Dry Run] Enhanced content for: {input_path}\n" + "\n".join(source_lines))
+      else:
+          with open(output_path, 'w') as f:
+              f.write("\n".join(source_lines))
+          logger.info(f"Enhanced file written to: {output_path}")
 
   def get_file_header_kwargs(self) -> Dict[str, Any]:
     """
@@ -230,7 +338,7 @@ class MCPGenerator:
         'description': schema.get('description', ''),
         'fields': fields,
       })
-      self.render_template('models/schema_model.tpl', model_path, model_name=model_name, **kwargs)
+      self.render_template('models/schema_model.tpl', model_path.lower(), model_name=model_name, **kwargs)
       self.run_ruff_lint(model_path)
 
   def generate_api_client(self):
@@ -259,6 +367,7 @@ class MCPGenerator:
     file_header_kwargs = self.get_file_header_kwargs()
     os.makedirs(tools_dir, exist_ok=True)
     for path, ops in self.spec.get('paths', {}).items():
+      path = path.lower()
       if '{' in path:
         continue  # Skip path params for now
       module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
@@ -277,15 +386,16 @@ class MCPGenerator:
           else:
             params.append(f"{pname}: {ptype} = None")
         functions.append({
-          "operation_id": op.get("operationId", f"{method}_{module_name}"),
+          "operation_id": op.get("operationId", f"{method}_{module_name}").lower(),
           "summary": op.get("summary", ""),
+          "description": op.get("description", ""),
           "method": method.upper(),
           "params": params,
           "path": path
         })
       if functions:
-        output_path = os.path.join(tools_dir, f"{module_name}.py")
-        mcp_server_base_package = self.config.get('mcp_package', {}).get('mcp_server_base_package', '')
+        output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
+        mcp_server_base_package = self.config.get('mcp_server_base_package', '')
         self.render_template(
           "tools/tool.tpl",
           output_path,
@@ -305,6 +415,11 @@ class MCPGenerator:
             self.tools_map[stripped_module_name].append(function["operation_id"])
           else:
             self.tools_map[stripped_module_name] = [function["operation_id"]]
+        if self.should_enhance_docstring_with_llm or self.should_enhance_docstring_with_llm_openapi:
+          print("Enhancing docstring with LLM for:", output_path)
+          self.enhance_docstring_with_llm(input_path=output_path, output_path=output_path)
+          print("Enhanced docstring for:", output_path)
+
     self.render_template(
       "tools/init.tpl",
       os.path.join(tools_dir, '__init__.py'),
@@ -317,15 +432,16 @@ class MCPGenerator:
     """
     logger.info("Generating server")
     file_header_kwargs = self.get_file_header_kwargs()
-    pprint(self.tools_map)
+    mcp_package = self.config.get('mcp_server_base_package', '')
     self.render_template(
       'server.tpl',
       os.path.join(self.src_output_dir, 'server.py'),
       mcp_name=self.mcp_name,
+      mcp_package=mcp_package,
       modules=self.tools_map.keys(),
       registrations=self.tools_map,
       **file_header_kwargs)
-    # self.run_ruff_lint(os.path.join(self.src_output_dir, 'server.py'))
+    self.run_ruff_lint(os.path.join(self.src_output_dir, 'server.py'))
 
   def generate_pyproject(self):
     """
@@ -333,15 +449,25 @@ class MCPGenerator:
     """
     logger.info("Generating pyproject.toml")
     output_path = os.path.join(self.output_dir, 'pyproject.toml')
+    python_dependencies = """
+      python = ">=3.13,<4.0"
+      httpx = ">=0.24.0"
+      python-dotenv = ">=1.0.0"
+      pydantic = ">=2.0.0"
+      mcp = ">=1.9.0"
+    """
     self.render_template(
       'pyproject.tpl',
       output_path,
       name=f"mcp_{self.mcp_name}",
-      description=f"Generated MCP server for {self.spec.get('info', {}).get('title', 'API')} from OpenAPI specification",
-      author=self.config['author'],
-      python_version=self.config['defaults']['python_version'],
-      pydantic_version=self.config['defaults']['pydantic_version'],
-      mcp_dependency_version=self.config['defaults']['mcp_dependency_version']
+      description=self.config.get('description', f'Generated {self.mcp_name} MCP server'),
+      version=self.config.get('version', '0.1.0'),
+      license=self.config.get('license', 'Apache-2.0'),
+      author=self.config.get('author', 'Unspecified'),
+      email=self.config.get('email','auto@example.com'),
+      python_version=self.config.get('python_version', '3.13.2'),
+      mcp_name=self.mcp_name,
+      poetry_dependencies=self.config.get('poetry_dependencies', python_dependencies),
     )
 
   def generate_env(self):

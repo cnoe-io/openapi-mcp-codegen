@@ -14,17 +14,50 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def updatePet() -> Dict[str, Any]:
-    """
+async def updatepet() -> Dict[str, Any]:
+    '''
     Update an existing pet.
-    
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing the updated pet information or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or invalid responses.
+
+    OpenAPI Specification:
+      put:
+        summary: Update an existing pet
+        operationId: updatepet
+        tags:
+          - pet
+        requestBody:
+          description: Pet object that needs to be updated
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+          '400':
+            description: Invalid ID supplied
+          '404':
+            description: Pet not found
+          '405':
+            description: Validation exception
+    '''
     logger.debug("Making PUT request to /pet")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/pet",
         method="PUT",
@@ -37,17 +70,50 @@ async def updatePet() -> Dict[str, Any]:
     return response
 
 
-async def addPet() -> Dict[str, Any]:
-    """
+async def addpet() -> Dict[str, Any]:
+    '''
     Add a new pet to the store.
-    
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing the details of the added pet or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or server errors.
+
+    OpenAPI Specification:
+      post:
+        summary: Add a new pet to the store
+        operationId: addPet
+        tags:
+          - pet
+        requestBody:
+          description: Pet object that needs to be added to the store
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Pet'
+          '400':
+            description: Invalid input
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+    '''
     logger.debug("Making POST request to /pet")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/pet",
         method="POST",
@@ -58,4 +124,3 @@ async def addPet() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

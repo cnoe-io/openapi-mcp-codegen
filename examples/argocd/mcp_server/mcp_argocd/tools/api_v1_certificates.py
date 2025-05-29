@@ -7,24 +7,32 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def CertificateService_ListCertificates(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
-    """
-    List all available repository certificates
-    
+async def certificateservice_listcertificates(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
+    '''
+    List all available repository certificates.
+
+    Args:
+        hostNamePattern (str, optional): Pattern to filter certificates by host name. Defaults to None.
+        certType (str, optional): Type of certificate to filter by. Defaults to None.
+        certSubType (str, optional): Subtype of certificate to filter by. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of certificates or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+    '''
     logger.debug("Making GET request to /api/v1/certificates")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/certificates",
         method="GET",
@@ -37,21 +45,28 @@ async def CertificateService_ListCertificates(hostNamePattern: str = None, certT
     return response
 
 
-async def CertificateService_CreateCertificate(body: str, upsert: str = None) -> Dict[str, Any]:
-    """
-    Creates repository certificates on the server
-    
+async def certificateservice_createcertificate(body: str, upsert: str = None) -> Dict[str, Any]:
+    '''
+    Creates repository certificates on the server.
+
+    Args:
+        body (str): The certificate data to be created on the server.
+        upsert (str, optional): If provided, determines whether to update an existing certificate if it exists. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the server, including certificate details or error information.
+
+    Raises:
+        Exception: If the API request fails due to network issues or server errors.
+    '''
     logger.debug("Making POST request to /api/v1/certificates")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/certificates",
         method="POST",
@@ -64,17 +79,25 @@ async def CertificateService_CreateCertificate(body: str, upsert: str = None) ->
     return response
 
 
-async def CertificateService_DeleteCertificate(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
-    """
-    Delete the certificates that match the RepositoryCertificateQuery
-    
+async def certificateservice_deletecertificate(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
+    '''
+    Delete certificates matching the specified query parameters.
+
+    Args:
+        hostNamePattern (str, optional): Pattern to match the host name of certificates to delete. Defaults to None.
+        certType (str, optional): Type of the certificate to delete. Defaults to None.
+        certSubType (str, optional): Subtype of the certificate to delete. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: Response from the API indicating the result of the delete operation.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+    '''
     logger.debug("Making DELETE request to /api/v1/certificates")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/certificates",
         method="DELETE",
@@ -85,4 +108,3 @@ async def CertificateService_DeleteCertificate(hostNamePattern: str = None, cert
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

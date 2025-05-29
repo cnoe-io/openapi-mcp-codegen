@@ -14,17 +14,61 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def logoutUser() -> Dict[str, Any]:
-    """
-    Logs out current logged in user session.
-    
+async def logoutuser() -> Dict[str, Any]:
+    '''
+    Logs out the currently logged-in user session.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the logout operation. Contains success message or error details.
+
+    Raises:
+        Exception: If the API request fails due to network issues or unexpected errors.
+
+    OpenAPI Specification:
+      get:
+        summary: Logs out current logged in user session.
+        operationId: logoutuser
+        tags:
+          - user
+        responses:
+          '200':
+            description: Successful logout.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      description: Success message.
+          '401':
+            description: Unauthorized. User is not logged in.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
+          '500':
+            description: Server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
+    '''
     logger.debug("Making GET request to /user/logout")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/user/logout",
         method="GET",
@@ -35,4 +79,3 @@ async def logoutUser() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

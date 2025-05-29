@@ -2,14 +2,16 @@
 
 This module implements the **MCP protocol bindings** for the `Argocd` agent.
 
-It provides an OpenAPI-compatible REST API server that allows invoking the agent using MCP compliant tools or data models. The server acts as a wrapper over the agent's async call loop and translates standard input/output formats.
+It auto-generates MCP compliant tools or data models and server code.
+
+The server acts as a wrapper over the agent's async call loop and translates standard input/output formats.
 
 ---
 
 ## 📄 Overview
 
 - **Description**: ArgoCD MCP Server
-- **Version**: 0.0.1
+- **Version**: 0.1.0
 - **Author**: Sri Aradhyula
 
 ---

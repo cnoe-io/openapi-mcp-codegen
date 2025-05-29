@@ -14,17 +14,77 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def loginUser(username: str = None, password: str = None) -> Dict[str, Any]:
-    """
-    Logs user into the system.
-    
+async def loginuser(username: str = None, password: str = None) -> Dict[str, Any]:
+    '''
+    Logs a user into the system using the provided username and password.
+
+    Args:
+        username (str, optional): The username of the user attempting to log in. Defaults to None.
+        password (str, optional): The password of the user attempting to log in. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
+
+    Raises:
+        Exception: If the API request fails due to network issues or unexpected errors.
+
+    OpenAPI Specification:
+      summary: Logs user into the system.
+      operationId: loginUser
+      tags:
+        - user
+      parameters:
+        - name: username
+          in: query
+          description: The username of the user attempting to log in.
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password of the user attempting to log in.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful login response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Authentication token for the user.
+                  user:
+                    type: object
+                    description: User information.
+        '400':
+          description: Invalid username or password.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+    '''
     logger.debug("Making GET request to /user/login")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/user/login",
         method="GET",
@@ -35,4 +95,3 @@ async def loginUser(username: str = None, password: str = None) -> Dict[str, Any
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

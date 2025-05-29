@@ -14,17 +14,48 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def placeOrder() -> Dict[str, Any]:
-    """
+async def placeorder() -> Dict[str, Any]:
+    '''
     Place an order for a pet.
-    
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing order details or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or unexpected errors.
+
+    OpenAPI Specification:
+      post:
+        summary: Place an order for a pet
+        operationId: placeOrder
+        tags:
+          - store
+        requestBody:
+          description: Order placed for purchasing the pet
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Order'
+          '400':
+            description: Invalid Order
+          '500':
+            description: Internal Server Error
+    '''
     logger.debug("Making POST request to /store/order")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/store/order",
         method="POST",
@@ -35,4 +66,3 @@ async def placeOrder() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

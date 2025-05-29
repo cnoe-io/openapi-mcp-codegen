@@ -9,13 +9,16 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from .base import APIResponse, PaginationInfo
 
+
 class Category(BaseModel):
     """Category model"""
-    
+
+
 
 class CategoryResponse(APIResponse):
     """Response model for Category"""
     data: Optional[Category] = None
+
 
 class CategoryListResponse(APIResponse):
     """List response model for Category"""

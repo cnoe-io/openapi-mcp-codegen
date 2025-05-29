@@ -14,17 +14,72 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def createUser() -> Dict[str, Any]:
-    """
-    Create user.
-    
+async def createuser() -> Dict[str, Any]:
+    '''
+    Creates a new user in the system.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing user details if successful, or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or unexpected errors.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new user
+        description: Creates a new user in the system.
+        operationId: createUser
+        tags:
+          - User
+        requestBody:
+          description: User creation payload (if required)
+          required: false
+          content:
+            application/json:
+              schema:
+                type: object
+        responses:
+          '200':
+            description: User created successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: The unique identifier for the user
+                    username:
+                      type: string
+                      description: The username of the created user
+          '400':
+            description: Invalid request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message
+          '500':
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message
+    '''
     logger.debug("Making POST request to /user")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/user",
         method="POST",
@@ -35,4 +90,3 @@ async def createUser() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

@@ -18,18 +18,15 @@ logger = logging.getLogger("mcp_tools")
 async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, Any]:
     """
     {{ func.summary }}
-    {{ func.description }}
-    Returns:
-        API response data
     """
     logger.debug("Making {{ func.method.upper() }} request to {{ path }}")
     params = {}
     data = None
-    {% if 'body' in func.params | join(', ') %}
+{% if 'body' in func.params | join(', ') %}
     # Add parameters to request
     if body is not None:
-      data = body
-    {% endif %}
+        data = body
+{% endif %}
     success, response = await make_api_request(
         "{{ path }}",
         method="{{ func.method.upper() }}",

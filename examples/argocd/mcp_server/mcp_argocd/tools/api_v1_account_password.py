@@ -7,28 +7,34 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def AccountService_UpdatePassword(body: str) -> Dict[str, Any]:
-    """
-    UpdatePassword updates an account's password to a new value
-    
+async def accountservice_updatepassword(body: str) -> Dict[str, Any]:
+    '''
+    Updates an account's password to a new value.
+
+    Args:
+        body (str): The new password or password update payload to be set for the account.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API, containing the result of the password update operation or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs during the password update process.
+    '''
     logger.debug("Making PUT request to /api/v1/account/password")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/account/password",
         method="PUT",
@@ -39,4 +45,3 @@ async def AccountService_UpdatePassword(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

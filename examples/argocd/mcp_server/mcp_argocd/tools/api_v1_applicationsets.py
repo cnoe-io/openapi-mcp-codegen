@@ -7,24 +7,32 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def ApplicationSetService_List(projects: str = None, selector: str = None, appsetNamespace: str = None) -> Dict[str, Any]:
-    """
-    List returns list of applicationset
-    
+async def applicationsetservice_list(projects: str = None, selector: str = None, appsetNamespace: str = None) -> Dict[str, Any]:
+    '''
+    Retrieve a list of ApplicationSets based on provided filters.
+
+    Args:
+        projects (str, optional): Comma-separated list of project names to filter ApplicationSets. Defaults to None.
+        selector (str, optional): Label selector to filter ApplicationSets. Defaults to None.
+        appsetNamespace (str, optional): Namespace to scope the ApplicationSets query. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of ApplicationSets or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs during the request.
+    '''
     logger.debug("Making GET request to /api/v1/applicationsets")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/applicationsets",
         method="GET",
@@ -37,21 +45,29 @@ async def ApplicationSetService_List(projects: str = None, selector: str = None,
     return response
 
 
-async def ApplicationSetService_Create(body: str, upsert: str = None, dryRun: str = None) -> Dict[str, Any]:
-    """
-    Create creates an applicationset
-    
+async def applicationsetservice_create(body: str, upsert: str = None, dryRun: str = None) -> Dict[str, Any]:
+    '''
+    Creates a new ApplicationSet resource.
+
+    Args:
+        body (str): The JSON-encoded ApplicationSet specification to create.
+        upsert (str, optional): If set, allows upserting the ApplicationSet. Defaults to None.
+        dryRun (str, optional): If set, only validates the request without persisting it. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API containing the created ApplicationSet or error details.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected error.
+    '''
     logger.debug("Making POST request to /api/v1/applicationsets")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/applicationsets",
         method="POST",
@@ -62,4 +78,3 @@ async def ApplicationSetService_Create(body: str, upsert: str = None, dryRun: st
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-
