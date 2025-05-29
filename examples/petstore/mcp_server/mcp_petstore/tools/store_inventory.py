@@ -16,10 +16,13 @@ logger = logging.getLogger("mcp_tools")
 
 async def getinventory() -> Dict[str, Any]:
     '''
-    Retrieves pet inventories grouped by status.
+    Retrieves pet inventories categorized by status.
+
+    Args:
+        None
 
     Returns:
-        Dict[str, Any]: A dictionary containing pet inventories categorized by their status.
+        Dict[str, Any]: A dictionary containing pet inventory counts by status.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -32,15 +35,13 @@ async def getinventory() -> Dict[str, Any]:
           - store
         responses:
           '200':
-            description: Successful operation. Returns inventories by status.
+            description: Successful operation. Returns inventory by status.
             content:
               application/json:
                 schema:
                   type: object
                   additionalProperties:
                     type: integer
-          '400':
-            description: Invalid request.
           '500':
             description: Internal server error.
     '''

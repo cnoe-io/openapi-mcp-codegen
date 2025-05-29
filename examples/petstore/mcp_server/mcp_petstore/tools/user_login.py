@@ -23,15 +23,17 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
         password (str, optional): The password of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the authentication result or error details.
+        Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
 
     Raises:
         Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
-      get:
+      post:
         summary: Logs user into the system.
-        operationId: loginuser
+        operationId: loginUser
+        tags:
+          - user
         parameters:
           - name: username
             in: query
@@ -47,7 +49,7 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
             description: The password of the user.
         responses:
           '200':
-            description: Successful login.
+            description: Successful login
             content:
               application/json:
                 schema:
@@ -55,12 +57,12 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     token:
                       type: string
-                      description: Authentication token.
+                      description: Authentication token
                     user:
                       type: object
-                      description: User details.
+                      description: User information
           '400':
-            description: Invalid credentials or missing parameters.
+            description: Invalid credentials or missing parameters
             content:
               application/json:
                 schema:
@@ -68,9 +70,9 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
           '500':
-            description: Internal server error.
+            description: Internal server error
             content:
               application/json:
                 schema:
@@ -78,7 +80,7 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
     '''
     logger.debug("Making GET request to /user/login")
     params = {}

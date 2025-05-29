@@ -25,7 +25,7 @@ async def placeorder() -> Dict[str, Any]:
         Dict[str, Any]: The response from the API containing order details or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       post:

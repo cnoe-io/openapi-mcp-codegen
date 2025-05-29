@@ -30,11 +30,11 @@ async def updatepet() -> Dict[str, Any]:
     OpenAPI Specification:
       put:
         summary: Update an existing pet
-        operationId: updatepet
+        operationId: updatePet
         tags:
           - pet
         requestBody:
-          description: Pet object that needs to be updated
+          description: Pet object that needs to be updated in the store
           required: true
           content:
             application/json:

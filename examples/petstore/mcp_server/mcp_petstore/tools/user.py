@@ -25,7 +25,7 @@ async def createuser() -> Dict[str, Any]:
         Dict[str, Any]: The response from the API containing user details if successful, or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       post:
@@ -51,10 +51,10 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     id:
                       type: string
-                      description: Unique identifier for the user
+                      description: The unique identifier for the user.
                     username:
                       type: string
-                      description: Username of the created user
+                      description: The username of the created user.
           '400':
             description: Invalid request
             content:
@@ -64,9 +64,9 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message
+                      description: Error message.
           '500':
-            description: Internal server error
+            description: Server error
             content:
               application/json:
                 schema:
@@ -74,7 +74,7 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message
+                      description: Error message.
     '''
     logger.debug("Making POST request to /user")
     params = {}

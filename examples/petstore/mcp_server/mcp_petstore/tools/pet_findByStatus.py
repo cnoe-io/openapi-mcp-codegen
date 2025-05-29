@@ -31,7 +31,7 @@ async def findpetsbystatus(status: str = None) -> Dict[str, Any]:
       get:
         summary: Finds Pets by status
         description: Returns a list of pets filtered by their status.
-        operationId: findpetsbystatus
+        operationId: findPetsByStatus
         parameters:
           - name: status
             in: query

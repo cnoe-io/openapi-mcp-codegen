@@ -22,7 +22,7 @@ async def logoutuser() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the result of the logout operation. On success, returns a confirmation message. On failure, returns an error message.
+        Dict[str, Any]: The response from the logout operation. Typically contains a success message or error details.
 
     Raises:
         Exception: If the API request fails due to network issues or unexpected server errors.
@@ -43,7 +43,7 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     message:
                       type: string
-                      example: "Successfully logged out."
+                      description: Success message.
           '401':
             description: Unauthorized. User is not logged in.
             content:
@@ -53,7 +53,7 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: "User not logged in."
+                      description: Error message.
           '500':
             description: Server error.
             content:
@@ -63,7 +63,7 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: "Internal server error."
+                      description: Error message.
     '''
     logger.debug("Making GET request to /user/logout")
     params = {}
