@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
-    '''
-    Generates an application set based on the provided configuration.
-
-    Args:
-        body (str): The request payload containing the application set configuration in JSON or YAML format.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the generated application set or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during the request.
-    '''
+    """
+    Generate generates
+    """
     logger.debug("Making POST request to /api/v1/applicationsets/generate")
     params = {}
     data = None
@@ -45,3 +36,4 @@ async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

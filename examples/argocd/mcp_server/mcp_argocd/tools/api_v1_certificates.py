@@ -15,20 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def certificateservice_listcertificates(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
-    '''
-    List all available repository certificates.
-
-    Args:
-        hostNamePattern (str, optional): Pattern to filter certificates by host name. Defaults to None.
-        certType (str, optional): Type of certificate to filter by. Defaults to None.
-        certSubType (str, optional): Subtype of certificate to filter by. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of certificates or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    List all available repository certificates
+    """
     logger.debug("Making GET request to /api/v1/certificates")
     params = {}
     data = None
@@ -46,19 +35,9 @@ async def certificateservice_listcertificates(hostNamePattern: str = None, certT
 
 
 async def certificateservice_createcertificate(body: str, upsert: str = None) -> Dict[str, Any]:
-    '''
-    Creates repository certificates on the server.
-
-    Args:
-        body (str): The certificate data to be created on the server.
-        upsert (str, optional): If provided, determines whether to update an existing certificate if it exists. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the server, including certificate details or error information.
-
-    Raises:
-        Exception: If the API request fails due to network issues or server errors.
-    '''
+    """
+    Creates repository certificates on the server
+    """
     logger.debug("Making POST request to /api/v1/certificates")
     params = {}
     data = None
@@ -80,20 +59,9 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
 
 
 async def certificateservice_deletecertificate(hostNamePattern: str = None, certType: str = None, certSubType: str = None) -> Dict[str, Any]:
-    '''
-    Delete certificates matching the specified query parameters.
-
-    Args:
-        hostNamePattern (str, optional): Pattern to match the host name of certificates to delete. Defaults to None.
-        certType (str, optional): Type of the certificate to delete. Defaults to None.
-        certSubType (str, optional): Subtype of the certificate to delete. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: Response from the API indicating the result of the delete operation.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    Delete the certificates that match the RepositoryCertificateQuery
+    """
     logger.debug("Making DELETE request to /api/v1/certificates")
     params = {}
     data = None
@@ -108,3 +76,4 @@ async def certificateservice_deletecertificate(hostNamePattern: str = None, cert
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

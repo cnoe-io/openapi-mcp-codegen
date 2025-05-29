@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of all configured repository credential sets with write access.
-
-    Args:
-        url (str, optional): The base URL of the API endpoint. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message if the request fails.
-
-    Raises:
-        Exception: If the API request encounters an unexpected error.
-    '''
+    """
+    ListWriteRepositoryCredentials gets a list of all configured repository credential sets that have write access
+    """
     logger.debug("Making GET request to /api/v1/write-repocreds")
     params = {}
     data = None
@@ -44,19 +35,9 @@ async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Di
 
 
 async def repocredsservice_createwriterepositorycredentials(body: str, upsert: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new repository credential set with write access.
-
-    Args:
-        body (str): The request payload containing repository credential details in JSON format.
-        upsert (str, optional): If provided, indicates whether to upsert the credentials if they already exist. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the result of the credential creation operation.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
+    """
+    CreateWriteRepositoryCredentials creates a new repository credential set with write access
+    """
     logger.debug("Making POST request to /api/v1/write-repocreds")
     params = {}
     data = None
@@ -75,3 +56,4 @@ async def repocredsservice_createwriterepositorycredentials(body: str, upsert: s
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

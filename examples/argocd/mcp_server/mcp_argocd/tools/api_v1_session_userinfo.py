@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sessionservice_getuserinfo() -> Dict[str, Any]:
-    '''
-    Retrieve the current user's information.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the current user's information. If the request fails, returns a dictionary with an 'error' key describing the failure.
-
-    Raises:
-        Exception: If there is an unexpected error during the API request.
-    '''
+    """
+    Get the current user's info
+    """
     logger.debug("Making GET request to /api/v1/session/userinfo")
     params = {}
     data = None
@@ -41,3 +32,4 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
     '''
-    Finds pets by their tags.
+    Finds pets by their associated tags.
 
     Args:
         tags (List[str], optional): List of tags to filter pets by. Defaults to None.
@@ -41,7 +41,6 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
               type: array
               items:
                 type: string
-              collectionFormat: multi
         responses:
           '200':
             description: A list of pets matching the tags

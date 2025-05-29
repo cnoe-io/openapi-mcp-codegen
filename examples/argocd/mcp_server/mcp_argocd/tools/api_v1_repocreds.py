@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repocredsservice_listrepositorycredentials(url: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of all configured repository credential sets.
-
-    Args:
-        url (str, optional): The base URL of the API endpoint. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of repository credential sets or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    ListRepositoryCredentials gets a list of all configured repository credential sets
+    """
     logger.debug("Making GET request to /api/v1/repocreds")
     params = {}
     data = None
@@ -44,19 +35,9 @@ async def repocredsservice_listrepositorycredentials(url: str = None) -> Dict[st
 
 
 async def repocredsservice_createrepositorycredentials(body: str, upsert: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new repository credential set.
-
-    Args:
-        body (str): The JSON-formatted string containing repository credential details.
-        upsert (str, optional): If provided, indicates whether to upsert the credentials. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the result of the credential creation operation.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
+    """
+    CreateRepositoryCredentials creates a new repository credential set
+    """
     logger.debug("Making POST request to /api/v1/repocreds")
     params = {}
     data = None
@@ -75,3 +56,4 @@ async def repocredsservice_createrepositorycredentials(body: str, upsert: str = 
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

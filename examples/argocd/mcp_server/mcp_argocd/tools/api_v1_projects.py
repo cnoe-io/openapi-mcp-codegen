@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def projectservice_list(name: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of projects, optionally filtered by name.
-
-    Args:
-        name (str, optional): The name of the project to filter the results. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of projects or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    List returns list of projects
+    """
     logger.debug("Making GET request to /api/v1/projects")
     params = {}
     data = None
@@ -44,18 +35,9 @@ async def projectservice_list(name: str = None) -> Dict[str, Any]:
 
 
 async def projectservice_create(body: str) -> Dict[str, Any]:
-    '''
-    Creates a new project.
-
-    Args:
-        body (str): The JSON-formatted string containing the project details to be created.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the created project details or an error message.
-
-    Raises:
-        Exception: If the API request fails due to network issues or invalid input.
-    '''
+    """
+    Create a new project
+    """
     logger.debug("Making POST request to /api/v1/projects")
     params = {}
     data = None
@@ -74,3 +56,4 @@ async def projectservice_create(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

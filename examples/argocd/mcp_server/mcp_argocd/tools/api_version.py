@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def versionservice_version() -> Dict[str, Any]:
-    '''
-    Retrieves version information of the API server.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing version information of the API server. If the request fails, returns a dictionary with an 'error' key describing the failure.
-
-    Raises:
-        Exception: If an unexpected error occurs during the API request.
-    '''
+    """
+    Version returns version information of the API server
+    """
     logger.debug("Making GET request to /api/version")
     params = {}
     data = None
@@ -41,3 +32,4 @@ async def versionservice_version() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

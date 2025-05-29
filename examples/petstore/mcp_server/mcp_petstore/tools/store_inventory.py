@@ -18,11 +18,8 @@ async def getinventory() -> Dict[str, Any]:
     '''
     Retrieves pet inventories grouped by status.
 
-    Args:
-        None
-
     Returns:
-        Dict[str, Any]: A dictionary containing pet inventories by status.
+        Dict[str, Any]: A dictionary containing pet inventories categorized by their status.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -43,7 +40,9 @@ async def getinventory() -> Dict[str, Any]:
                   additionalProperties:
                     type: integer
           '400':
-            description: Invalid status value
+            description: Invalid request.
+          '500':
+            description: Internal server error.
     '''
     logger.debug("Making GET request to /store/inventory")
     params = {}

@@ -15,20 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationsetservice_list(projects: str = None, selector: str = None, appsetNamespace: str = None) -> Dict[str, Any]:
-    '''
-    Retrieve a list of ApplicationSets based on provided filters.
-
-    Args:
-        projects (str, optional): Comma-separated list of project names to filter ApplicationSets. Defaults to None.
-        selector (str, optional): Label selector to filter ApplicationSets. Defaults to None.
-        appsetNamespace (str, optional): Namespace to scope the ApplicationSets query. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of ApplicationSets or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during the request.
-    '''
+    """
+    List returns list of applicationset
+    """
     logger.debug("Making GET request to /api/v1/applicationsets")
     params = {}
     data = None
@@ -46,20 +35,9 @@ async def applicationsetservice_list(projects: str = None, selector: str = None,
 
 
 async def applicationsetservice_create(body: str, upsert: str = None, dryRun: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new ApplicationSet resource.
-
-    Args:
-        body (str): The JSON-encoded ApplicationSet specification to create.
-        upsert (str, optional): If set, allows upserting the ApplicationSet. Defaults to None.
-        dryRun (str, optional): If set, only validates the request without persisting it. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the created ApplicationSet or error details.
-
-    Raises:
-        Exception: If the API request fails or returns an unexpected error.
-    '''
+    """
+    Create creates an applicationset
+    """
     logger.debug("Making POST request to /api/v1/applicationsets")
     params = {}
     data = None
@@ -78,3 +56,4 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
-    '''
-    Retrieve application manifests generated from provided files.
-
-    Args:
-        body (str): The request payload containing file data used to generate application manifests.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the generated application manifests or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs during processing.
-    '''
+    """
+    GetManifestsWithFiles returns application manifests using provided files to generate them
+    """
     logger.debug("Making POST request to /api/v1/applications/manifestswithfiles")
     params = {}
     data = None
@@ -45,3 +36,4 @@ async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

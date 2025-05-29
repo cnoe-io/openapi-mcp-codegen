@@ -11,6 +11,7 @@ This server provides a Model Context Protocol (MCP) interface to the ,
 allowing large language models and AI assistants to interact with the service.
 """
 import logging
+import os
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
@@ -34,61 +35,73 @@ from mcp_petstore.tools import user_login
 from mcp_petstore.tools import user_logout
 
 
-load_dotenv()
-logging.basicConfig(level=logging.DEBUG)
-
-mcp = FastMCP(" MCP Server")
-
-
-# Register pet tools
-
-mcp.tool()(pet.updatepet)
-
-mcp.tool()(pet.addpet)
-
-
-# Register pet_findbystatus tools
-
-mcp.tool()(pet_findbystatus.findpetsbystatus)
-
-
-# Register pet_findbytags tools
-
-mcp.tool()(pet_findbytags.findpetsbytags)
-
-
-# Register store_inventory tools
-
-mcp.tool()(store_inventory.getinventory)
-
-
-# Register store_order tools
-
-mcp.tool()(store_order.placeorder)
-
-
-# Register user tools
-
-mcp.tool()(user.createuser)
-
-
-# Register user_createwithlist tools
-
-mcp.tool()(user_createwithlist.createuserswithlistinput)
-
-
-# Register user_login tools
-
-mcp.tool()(user_login.loginuser)
-
-
-# Register user_logout tools
-
-mcp.tool()(user_logout.logoutuser)
-
-
-
 def main():
+    # Load environment variables
+    load_dotenv()
+
+    # Configure logging
+    logging.basicConfig(level=logging.DEBUG)
+
+    # Get MCP configuration from environment variables
+    MCP_MODE = os.getenv("MCP_MODE", "STDIO")
+
+    # Get host and port for server
+    MCP_HOST = os.getenv("MCP_HOST", "localhost")
+    MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+
+    logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
+
+    # Get agent name from environment variables
+    AGENT_NAME = os.getenv("AGENT_NAME", "PETSTORE Agent")
+    logging.info(f"Agent name: {AGENT_NAME}")
+
+    # Create server instance
+    if MCP_MODE == "SSE":
+      mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+    else:
+      mcp = FastMCP("PETSTORE MCP Server")
+
+
+    # Register pet tools
+
+    mcp.tool()(pet.updatepet)
+
+    mcp.tool()(pet.addpet)
+
+    # Register pet_findbystatus tools
+
+    mcp.tool()(pet_findbystatus.findpetsbystatus)
+
+    # Register pet_findbytags tools
+
+    mcp.tool()(pet_findbytags.findpetsbytags)
+
+    # Register store_inventory tools
+
+    mcp.tool()(store_inventory.getinventory)
+
+    # Register store_order tools
+
+    mcp.tool()(store_order.placeorder)
+
+    # Register user tools
+
+    mcp.tool()(user.createuser)
+
+    # Register user_createwithlist tools
+
+    mcp.tool()(user_createwithlist.createuserswithlistinput)
+
+    # Register user_login tools
+
+    mcp.tool()(user_login.loginuser)
+
+    # Register user_logout tools
+
+    mcp.tool()(user_logout.logoutuser)
+
+
+    # Run the MCP server
     mcp.run()
 
 if __name__ == "__main__":

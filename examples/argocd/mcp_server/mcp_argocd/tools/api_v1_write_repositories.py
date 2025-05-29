@@ -15,20 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repositoryservice_listwriterepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of all configured write repositories.
-
-    Args:
-        repo (str, optional): The name of the repository to filter results. Defaults to None.
-        forceRefresh (str, optional): If set, forces a refresh of the repository list. Defaults to None.
-        appProject (str, optional): The application project to filter repositories by. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of write repositories or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    ListWriteRepositories gets a list of all configured write repositories
+    """
     logger.debug("Making GET request to /api/v1/write-repositories")
     params = {}
     data = None
@@ -46,20 +35,9 @@ async def repositoryservice_listwriterepositories(repo: str = None, forceRefresh
 
 
 async def repositoryservice_createwriterepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new write repository configuration.
-
-    Args:
-        body (str): The JSON-encoded body containing the write repository configuration details.
-        upsert (str, optional): If provided, indicates whether to upsert the repository configuration. Defaults to None.
-        credsOnly (str, optional): If provided, specifies whether to return only credentials. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API containing the created repository configuration or error details.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-    '''
+    """
+    CreateWriteRepository creates a new write repository configuration
+    """
     logger.debug("Making POST request to /api/v1/write-repositories")
     params = {}
     data = None
@@ -78,3 +56,4 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

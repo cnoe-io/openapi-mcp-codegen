@@ -15,18 +15,9 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def accountservice_listaccounts() -> Dict[str, Any]:
-    '''
-    Retrieves the list of accounts.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of accounts if the request is successful, or an error message if the request fails.
-
-    Raises:
-        Exception: If there is an unexpected error during the API request.
-    '''
+    """
+    ListAccounts returns the list of accounts
+    """
     logger.debug("Making GET request to /api/v1/account")
     params = {}
     data = None
@@ -41,3 +32,4 @@ async def accountservice_listaccounts() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

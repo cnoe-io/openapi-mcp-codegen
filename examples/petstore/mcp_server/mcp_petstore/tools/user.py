@@ -51,10 +51,10 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     id:
                       type: string
-                      description: The unique identifier for the user
+                      description: Unique identifier for the user
                     username:
                       type: string
-                      description: The username of the created user
+                      description: Username of the created user
           '400':
             description: Invalid request
             content:

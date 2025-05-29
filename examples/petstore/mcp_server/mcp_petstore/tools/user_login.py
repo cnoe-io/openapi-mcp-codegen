@@ -16,70 +16,69 @@ logger = logging.getLogger("mcp_tools")
 
 async def loginuser(username: str = None, password: str = None) -> Dict[str, Any]:
     '''
-    Logs a user into the system using the provided username and password.
+    Logs a user into the system using provided credentials.
 
     Args:
-        username (str, optional): The username of the user attempting to log in. Defaults to None.
-        password (str, optional): The password of the user attempting to log in. Defaults to None.
+        username (str, optional): The username of the user. Defaults to None.
+        password (str, optional): The password of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
+        Dict[str, Any]: A dictionary containing the authentication result or error details.
 
     Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
-      summary: Logs user into the system.
-      operationId: loginUser
-      tags:
-        - user
-      parameters:
-        - name: username
-          in: query
-          description: The username of the user attempting to log in.
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password of the user attempting to log in.
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful login response.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: Authentication token for the user.
-                  user:
-                    type: object
-                    description: User information.
-        '400':
-          description: Invalid username or password.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Error message.
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Error message.
+      get:
+        summary: Logs user into the system.
+        operationId: loginuser
+        parameters:
+          - name: username
+            in: query
+            required: false
+            schema:
+              type: string
+            description: The username of the user.
+          - name: password
+            in: query
+            required: false
+            schema:
+              type: string
+            description: The password of the user.
+        responses:
+          '200':
+            description: Successful login.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    token:
+                      type: string
+                      description: Authentication token.
+                    user:
+                      type: object
+                      description: User details.
+          '400':
+            description: Invalid credentials or missing parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
     '''
     logger.debug("Making GET request to /user/login")
     params = {}
