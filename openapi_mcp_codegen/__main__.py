@@ -42,12 +42,6 @@ def get_mcp_name(spec_path):
   help="Directory to output the generated MCP server (default: <script_dir>/<mcp_name>).",
 )
 @click.option(
-  "--dryrun",
-  is_flag=True,
-  default=False,
-  help="Show what would be generated without writing files.",
-)
-@click.option(
     "--log-level",
     type=click.Choice(["critical", "error", "warning", "info", "debug"], case_sensitive=False),
     default="info",
@@ -55,12 +49,29 @@ def get_mcp_name(spec_path):
     help="Set logging level.",
   )
 @click.option(
-  "--api-headers",
-  type=str,
-  default=None,
-  help="Optional JSON string of headers to include in API requests.",
+  "--dry-run",
+  is_flag=True,
+  default=False,
+  help="Run the generator in dry-run mode without writing files.",
 )
-def main(log_level, spec_file, output_dir, dryrun, api_headers):
+@click.option(
+  "--enhance-docstring-with-llm",
+  is_flag=True,
+  default=False,
+  help="Enhance generated docstrings using an LLM.",
+)
+@click.option(
+  "--enhance-docstring-with-llm-openapi",
+  is_flag=True,
+  default=False,
+  help="Enhance generated docstrings using an LLM and add OpenAPI spec to docstring.",
+)
+def main(
+   log_level,
+   spec_file,
+   output_dir,dry_run,
+   enhance_docstring_with_llm,
+   enhance_docstring_with_llm_openapi):
   # Get the directory of this script
   script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -81,10 +92,13 @@ def main(log_level, spec_file, output_dir, dryrun, api_headers):
     raise FileNotFoundError(f"Configuration file not found: {config_path}")
   # Create the generator and generate the MCP server
   generator = MCPGenerator(
-      script_dir,
-      spec_path,
-      output_dir,
-      config_path
+      script_dir=script_dir,
+      spec_path=spec_path,
+      output_dir=output_dir,
+      config_path=config_path,
+      dry_run=dry_run,
+      enhance_docstring_with_llm=enhance_docstring_with_llm,
+      enhance_docstring_with_llm_openapi=enhance_docstring_with_llm_openapi,
   )
   generator.generate()
 

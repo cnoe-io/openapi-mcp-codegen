@@ -11,7 +11,6 @@ This server provides a Model Context Protocol (MCP) interface to the ,
 allowing large language models and AI assistants to interact with the service.
 """
 import logging
-import os
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
@@ -22,7 +21,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_ac
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_manifestsWithFiles
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_manifestswithfiles
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applicationsets
 
@@ -71,143 +70,143 @@ mcp = FastMCP(" MCP Server")
 
 # Register api_v1_account tools
 
-mcp.tool()(api_v1_account.AccountService_ListAccounts)
+mcp.tool()(api_v1_account.accountservice_listaccounts)
 
 
 # Register api_v1_account_password tools
 
-mcp.tool()(api_v1_account_password.AccountService_UpdatePassword)
+mcp.tool()(api_v1_account_password.accountservice_updatepassword)
 
 
 # Register api_v1_applications tools
 
-mcp.tool()(api_v1_applications.ApplicationService_List)
+mcp.tool()(api_v1_applications.applicationservice_list)
 
-mcp.tool()(api_v1_applications.ApplicationService_Create)
+mcp.tool()(api_v1_applications.applicationservice_create)
 
 
-# Register api_v1_applications_manifestsWithFiles tools
+# Register api_v1_applications_manifestswithfiles tools
 
-mcp.tool()(api_v1_applications_manifestsWithFiles.ApplicationService_GetManifestsWithFiles)
+mcp.tool()(api_v1_applications_manifestswithfiles.applicationservice_getmanifestswithfiles)
 
 
 # Register api_v1_applicationsets tools
 
-mcp.tool()(api_v1_applicationsets.ApplicationSetService_List)
+mcp.tool()(api_v1_applicationsets.applicationsetservice_list)
 
-mcp.tool()(api_v1_applicationsets.ApplicationSetService_Create)
+mcp.tool()(api_v1_applicationsets.applicationsetservice_create)
 
 
 # Register api_v1_applicationsets_generate tools
 
-mcp.tool()(api_v1_applicationsets_generate.ApplicationSetService_Generate)
+mcp.tool()(api_v1_applicationsets_generate.applicationsetservice_generate)
 
 
 # Register api_v1_certificates tools
 
-mcp.tool()(api_v1_certificates.CertificateService_ListCertificates)
+mcp.tool()(api_v1_certificates.certificateservice_listcertificates)
 
-mcp.tool()(api_v1_certificates.CertificateService_CreateCertificate)
+mcp.tool()(api_v1_certificates.certificateservice_createcertificate)
 
-mcp.tool()(api_v1_certificates.CertificateService_DeleteCertificate)
+mcp.tool()(api_v1_certificates.certificateservice_deletecertificate)
 
 
 # Register api_v1_clusters tools
 
-mcp.tool()(api_v1_clusters.ClusterService_List)
+mcp.tool()(api_v1_clusters.clusterservice_list)
 
-mcp.tool()(api_v1_clusters.ClusterService_Create)
+mcp.tool()(api_v1_clusters.clusterservice_create)
 
 
 # Register api_v1_gpgkeys tools
 
-mcp.tool()(api_v1_gpgkeys.GPGKeyService_List)
+mcp.tool()(api_v1_gpgkeys.gpgkeyservice_list)
 
-mcp.tool()(api_v1_gpgkeys.GPGKeyService_Create)
+mcp.tool()(api_v1_gpgkeys.gpgkeyservice_create)
 
-mcp.tool()(api_v1_gpgkeys.GPGKeyService_Delete)
+mcp.tool()(api_v1_gpgkeys.gpgkeyservice_delete)
 
 
 # Register api_v1_notifications_services tools
 
-mcp.tool()(api_v1_notifications_services.NotificationService_ListServices)
+mcp.tool()(api_v1_notifications_services.notificationservice_listservices)
 
 
 # Register api_v1_notifications_templates tools
 
-mcp.tool()(api_v1_notifications_templates.NotificationService_ListTemplates)
+mcp.tool()(api_v1_notifications_templates.notificationservice_listtemplates)
 
 
 # Register api_v1_notifications_triggers tools
 
-mcp.tool()(api_v1_notifications_triggers.NotificationService_ListTriggers)
+mcp.tool()(api_v1_notifications_triggers.notificationservice_listtriggers)
 
 
 # Register api_v1_projects tools
 
-mcp.tool()(api_v1_projects.ProjectService_List)
+mcp.tool()(api_v1_projects.projectservice_list)
 
-mcp.tool()(api_v1_projects.ProjectService_Create)
+mcp.tool()(api_v1_projects.projectservice_create)
 
 
 # Register api_v1_repocreds tools
 
-mcp.tool()(api_v1_repocreds.RepoCredsService_ListRepositoryCredentials)
+mcp.tool()(api_v1_repocreds.repocredsservice_listrepositorycredentials)
 
-mcp.tool()(api_v1_repocreds.RepoCredsService_CreateRepositoryCredentials)
+mcp.tool()(api_v1_repocreds.repocredsservice_createrepositorycredentials)
 
 
 # Register api_v1_repositories tools
 
-mcp.tool()(api_v1_repositories.RepositoryService_ListRepositories)
+mcp.tool()(api_v1_repositories.repositoryservice_listrepositories)
 
-mcp.tool()(api_v1_repositories.RepositoryService_CreateRepository)
+mcp.tool()(api_v1_repositories.repositoryservice_createrepository)
 
 
 # Register api_v1_session tools
 
-mcp.tool()(api_v1_session.SessionService_Create)
+mcp.tool()(api_v1_session.sessionservice_create)
 
-mcp.tool()(api_v1_session.SessionService_Delete)
+mcp.tool()(api_v1_session.sessionservice_delete)
 
 
 # Register api_v1_session_userinfo tools
 
-mcp.tool()(api_v1_session_userinfo.SessionService_GetUserInfo)
+mcp.tool()(api_v1_session_userinfo.sessionservice_getuserinfo)
 
 
 # Register api_v1_settings tools
 
-mcp.tool()(api_v1_settings.SettingsService_Get)
+mcp.tool()(api_v1_settings.settingsservice_get)
 
 
 # Register api_v1_settings_plugins tools
 
-mcp.tool()(api_v1_settings_plugins.SettingsService_GetPlugins)
+mcp.tool()(api_v1_settings_plugins.settingsservice_getplugins)
 
 
 # Register api_v1_stream_applications tools
 
-mcp.tool()(api_v1_stream_applications.ApplicationService_Watch)
+mcp.tool()(api_v1_stream_applications.applicationservice_watch)
 
 
 # Register api_v1_write_repocreds tools
 
-mcp.tool()(api_v1_write_repocreds.RepoCredsService_ListWriteRepositoryCredentials)
+mcp.tool()(api_v1_write_repocreds.repocredsservice_listwriterepositorycredentials)
 
-mcp.tool()(api_v1_write_repocreds.RepoCredsService_CreateWriteRepositoryCredentials)
+mcp.tool()(api_v1_write_repocreds.repocredsservice_createwriterepositorycredentials)
 
 
 # Register api_v1_write_repositories tools
 
-mcp.tool()(api_v1_write_repositories.RepositoryService_ListWriteRepositories)
+mcp.tool()(api_v1_write_repositories.repositoryservice_listwriterepositories)
 
-mcp.tool()(api_v1_write_repositories.RepositoryService_CreateWriteRepository)
+mcp.tool()(api_v1_write_repositories.repositoryservice_createwriterepository)
 
 
 # Register api_version tools
 
-mcp.tool()(api_version.VersionService_Version)
+mcp.tool()(api_version.versionservice_version)
 
 
 

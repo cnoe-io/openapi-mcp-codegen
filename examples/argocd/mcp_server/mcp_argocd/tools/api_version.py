@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def VersionService_Version() -> Dict[str, Any]:
-    """
-    Version returns version information of the API server
-    
+async def versionservice_version() -> Dict[str, Any]:
+    '''
+    Retrieves version information of the API server.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing version information of the API server. If the request fails, returns a dictionary with an 'error' key describing the failure.
+
+    Raises:
+        Exception: If an unexpected error occurs during the API request.
+    '''
     logger.debug("Making GET request to /api/version")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/version",
         method="GET",
@@ -35,4 +41,3 @@ async def VersionService_Version() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

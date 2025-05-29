@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def AccountService_ListAccounts() -> Dict[str, Any]:
-    """
-    ListAccounts returns the list of accounts
-    
+async def accountservice_listaccounts() -> Dict[str, Any]:
+    '''
+    Retrieves the list of accounts.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of accounts if the request is successful, or an error message if the request fails.
+
+    Raises:
+        Exception: If there is an unexpected error during the API request.
+    '''
     logger.debug("Making GET request to /api/v1/account")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/account",
         method="GET",
@@ -35,4 +41,3 @@ async def AccountService_ListAccounts() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

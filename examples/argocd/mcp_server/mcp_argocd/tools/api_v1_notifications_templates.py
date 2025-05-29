@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def NotificationService_ListTemplates() -> Dict[str, Any]:
-    """
-    List returns list of templates
-    
+async def notificationservice_listtemplates() -> Dict[str, Any]:
+    '''
+    Retrieves a list of notification templates.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of notification templates or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or unexpected errors.
+    '''
     logger.debug("Making GET request to /api/v1/notifications/templates")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/notifications/templates",
         method="GET",
@@ -35,4 +41,3 @@ async def NotificationService_ListTemplates() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

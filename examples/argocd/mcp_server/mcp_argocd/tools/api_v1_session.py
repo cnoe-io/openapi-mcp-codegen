@@ -7,28 +7,34 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def SessionService_Create(body: str) -> Dict[str, Any]:
-    """
-    Create a new JWT for authentication and set a cookie if using HTTP
-    
+async def sessionservice_create(body: str) -> Dict[str, Any]:
+    '''
+    Create a new JWT for authentication and set a cookie if using HTTP.
+
+    Args:
+        body (str): The request payload containing authentication credentials.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the authentication service, including the JWT and any relevant session information.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs during the authentication process.
+    '''
     logger.debug("Making POST request to /api/v1/session")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/session",
         method="POST",
@@ -41,17 +47,23 @@ async def SessionService_Create(body: str) -> Dict[str, Any]:
     return response
 
 
-async def SessionService_Delete() -> Dict[str, Any]:
-    """
-    Delete an existing JWT cookie if using HTTP
-    
+async def sessionservice_delete() -> Dict[str, Any]:
+    '''
+    Delete an existing JWT cookie if using HTTP.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the API after attempting to delete the session. Contains error information if the request fails.
+
+    Raises:
+        Exception: If there is an unexpected error during the API request.
+    '''
     logger.debug("Making DELETE request to /api/v1/session")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/session",
         method="DELETE",
@@ -62,4 +74,3 @@ async def SessionService_Delete() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

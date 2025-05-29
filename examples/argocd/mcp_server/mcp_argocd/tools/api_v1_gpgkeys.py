@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def GPGKeyService_List(keyID: str = None) -> Dict[str, Any]:
-    """
-    List all available repository certificates
-    
+async def gpgkeyservice_list(keyID: str = None) -> Dict[str, Any]:
+    '''
+    List all available repository certificates.
+
+    Args:
+        keyID (str, optional): The ID of the GPG key to filter the results. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the list of available repository certificates or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+    '''
     logger.debug("Making GET request to /api/v1/gpgkeys")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/gpgkeys",
         method="GET",
@@ -37,21 +43,28 @@ async def GPGKeyService_List(keyID: str = None) -> Dict[str, Any]:
     return response
 
 
-async def GPGKeyService_Create(body: str, upsert: str = None) -> Dict[str, Any]:
-    """
-    Create one or more GPG public keys in the server's configuration
-    
+async def gpgkeyservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
+    '''
+    Create one or more GPG public keys in the server's configuration.
+
+    Args:
+        body (str): The GPG public key(s) to be added, provided as a string.
+        upsert (str, optional): If specified, determines whether to update existing keys or insert new ones. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the server, including details of the created or updated GPG keys.
+
+    Raises:
+        Exception: If the API request fails or the server returns an error.
+    '''
     logger.debug("Making POST request to /api/v1/gpgkeys")
     params = {}
     data = None
-    
+
     # Add parameters to request
     if body is not None:
-      data = body
-    
+        data = body
+
     success, response = await make_api_request(
         "/api/v1/gpgkeys",
         method="POST",
@@ -64,17 +77,23 @@ async def GPGKeyService_Create(body: str, upsert: str = None) -> Dict[str, Any]:
     return response
 
 
-async def GPGKeyService_Delete(keyID: str = None) -> Dict[str, Any]:
-    """
-    Delete specified GPG public key from the server's configuration
-    
+async def gpgkeyservice_delete(keyID: str = None) -> Dict[str, Any]:
+    '''
+    Delete the specified GPG public key from the server's configuration.
+
+    Args:
+        keyID (str, optional): The unique identifier of the GPG public key to delete. Defaults to None.
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: The response from the server indicating the result of the delete operation. Contains an 'error' key if the request fails.
+
+    Raises:
+        Exception: If the API request encounters an unexpected error.
+    '''
     logger.debug("Making DELETE request to /api/v1/gpgkeys")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/gpgkeys",
         method="DELETE",
@@ -85,4 +104,3 @@ async def GPGKeyService_Delete(keyID: str = None) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

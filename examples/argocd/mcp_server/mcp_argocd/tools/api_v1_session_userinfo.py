@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def SessionService_GetUserInfo() -> Dict[str, Any]:
-    """
-    Get the current user's info
-    
+async def sessionservice_getuserinfo() -> Dict[str, Any]:
+    '''
+    Retrieve the current user's information.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the current user's information. If the request fails, returns a dictionary with an 'error' key describing the failure.
+
+    Raises:
+        Exception: If there is an unexpected error during the API request.
+    '''
     logger.debug("Making GET request to /api/v1/session/userinfo")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/session/userinfo",
         method="GET",
@@ -35,4 +41,3 @@ async def SessionService_GetUserInfo() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

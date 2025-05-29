@@ -7,24 +7,30 @@
 
 import logging
 from typing import Dict, Any
-from mcp_argocd.api.client import make_api_request
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def SettingsService_Get() -> Dict[str, Any]:
-    """
-    Get returns Argo CD settings
-    
+async def settingsservice_get() -> Dict[str, Any]:
+    '''
+    Retrieves the current Argo CD settings.
+
+    Args:
+        None
+
     Returns:
-        API response data
-    """
+        Dict[str, Any]: A dictionary containing the Argo CD settings if the request is successful, or an error message if the request fails.
+
+    Raises:
+        Exception: If there is an unexpected error during the API request.
+    '''
     logger.debug("Making GET request to /api/v1/settings")
     params = {}
     data = None
-    
+
     success, response = await make_api_request(
         "/api/v1/settings",
         method="GET",
@@ -35,4 +41,3 @@ async def SettingsService_Get() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-
