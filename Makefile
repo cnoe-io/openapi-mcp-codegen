@@ -58,7 +58,21 @@ ruff-fix: setup-venv
 
 generate: setup-venv install
 	@echo "Running the application with arguments: $(filter-out $@,$(MAKECMDGOALS))"
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true
 	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
+
+
+generate-petstore: setup-venv install
+	@echo "Generating code for Petstore example..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true
+	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm-openapi
+
+generate-argocd: setup-venv install
+	@echo "Generating code for ArgoCD example..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm-openapi
 
 # This rule allows passing arguments to the run target
 %:

@@ -15,9 +15,68 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def clusterservice_list(server: str = None, name: str = None, id_type: str = None, id_value: str = None) -> Dict[str, Any]:
-    """
-    List returns list of clusters
-    """
+    '''
+    Retrieves a list of clusters from the cluster service.
+
+    Args:
+        server (str, optional): The server URL to send the request to. Defaults to None.
+        name (str, optional): The name of the cluster to filter by. Defaults to None.
+        id_type (str, optional): The type of identifier to filter clusters. Defaults to None.
+        id_value (str, optional): The value of the identifier to filter clusters. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of clusters or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+
+    OpenAPI Specification:
+      get:
+        summary: Retrieve a list of clusters.
+        description: Returns a list of clusters from the cluster service, optionally filtered by name or identifier.
+        operationId: clusterservice_list
+        parameters:
+          - in: query
+            name: server
+            schema:
+              type: string
+            required: false
+            description: The server URL to send the request to.
+          - in: query
+            name: name
+            schema:
+              type: string
+            required: false
+            description: The name of the cluster to filter by.
+          - in: query
+            name: id_type
+            schema:
+              type: string
+            required: false
+            description: The type of identifier to filter clusters.
+          - in: query
+            name: id_value
+            schema:
+              type: string
+            required: false
+            description: The value of the identifier to filter clusters.
+        responses:
+          '200':
+            description: A list of clusters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    clusters:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Invalid request parameters.
+          '500':
+            description: Internal server error.
+    '''
     logger.debug("Making GET request to /api/v1/clusters")
     params = {}
     data = None
@@ -35,9 +94,67 @@ async def clusterservice_list(server: str = None, name: str = None, id_type: str
 
 
 async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
-    """
-    Create creates a cluster
-    """
+    '''
+    Creates a new cluster.
+
+    Args:
+        body (str): The JSON-formatted request body containing cluster configuration.
+        upsert (str, optional): If set, allows upserting an existing cluster. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The response from the cluster creation API, including cluster details or error information.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new cluster
+        description: Creates a new cluster with the provided configuration.
+        operationId: clusterservice_create
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Cluster configuration parameters.
+        parameters:
+          - in: query
+            name: upsert
+            schema:
+              type: string
+            required: false
+            description: If set, allows upserting an existing cluster.
+        responses:
+          '200':
+            description: Cluster created successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  description: Details of the created cluster.
+          '400':
+            description: Invalid request or parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message.
+    '''
     logger.debug("Making POST request to /api/v1/clusters")
     params = {}
     data = None
@@ -56,4 +173,3 @@ async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

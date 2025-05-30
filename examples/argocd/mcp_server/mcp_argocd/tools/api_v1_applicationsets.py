@@ -15,9 +15,75 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationsetservice_list(projects: str = None, selector: str = None, appsetNamespace: str = None) -> Dict[str, Any]:
-    """
-    List returns list of applicationset
-    """
+    '''
+    Retrieves a list of ApplicationSets based on the provided filters.
+
+    Args:
+        projects (str, optional): Comma-separated list of project names to filter ApplicationSets. Defaults to None.
+        selector (str, optional): Label selector to filter ApplicationSets. Defaults to None.
+        appsetNamespace (str, optional): Namespace to scope the ApplicationSets query. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of ApplicationSets or an error message.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected response.
+
+    OpenAPI Specification:
+      get:
+        summary: List ApplicationSets
+        description: Retrieve a list of ApplicationSets filtered by project, label selector, and namespace.
+        operationId: applicationsetservice_list
+        parameters:
+          - in: query
+            name: projects
+            schema:
+              type: string
+            required: false
+            description: Comma-separated list of project names to filter ApplicationSets.
+          - in: query
+            name: selector
+            schema:
+              type: string
+            required: false
+            description: Label selector to filter ApplicationSets.
+          - in: query
+            name: appsetNamespace
+            schema:
+              type: string
+            required: false
+            description: Namespace to scope the ApplicationSets query.
+        responses:
+          '200':
+            description: A list of ApplicationSets.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    items:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Invalid request parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+    '''
     logger.debug("Making GET request to /api/v1/applicationsets")
     params = {}
     data = None
@@ -35,9 +101,65 @@ async def applicationsetservice_list(projects: str = None, selector: str = None,
 
 
 async def applicationsetservice_create(body: str, upsert: str = None, dryRun: str = None) -> Dict[str, Any]:
-    """
-    Create creates an applicationset
-    """
+    '''
+    Creates a new ApplicationSet resource.
+
+    Args:
+        body (str): The JSON-encoded ApplicationSet manifest to create.
+        upsert (str, optional): If set, allows upserting the ApplicationSet. Defaults to None.
+        dryRun (str, optional): If set, only validates the request without persisting. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The response from the API, containing the created ApplicationSet or error details.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      post:
+        summary: Create an ApplicationSet
+        description: Creates a new ApplicationSet resource.
+        operationId: applicationsetservice_create
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: string
+              example: '{"apiVersion": "argoproj.io/v1alpha1", "kind": "ApplicationSet", ...}'
+        parameters:
+          - name: upsert
+            in: query
+            required: false
+            schema:
+              type: string
+            description: If set, allows upserting the ApplicationSet.
+          - name: dryRun
+            in: query
+            required: false
+            schema:
+              type: string
+            description: If set, only validates the request without persisting.
+        responses:
+          '200':
+            description: ApplicationSet created successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '400':
+            description: Invalid request or validation error.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+    '''
     logger.debug("Making POST request to /api/v1/applicationsets")
     params = {}
     data = None
@@ -56,4 +178,3 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

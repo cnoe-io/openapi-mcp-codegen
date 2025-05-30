@@ -9,7 +9,6 @@ import logging
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, Any
 import subprocess
-from pprint import pprint
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -246,7 +245,7 @@ class MCPGenerator:
       if not os.path.exists(input_path):
           raise FileNotFoundError(f"Input file '{input_path}' not found.")
 
-      with open(input_path, 'r') as f:
+      with open(input_path, 'r', encoding='utf-8') as f:
           source_code = f.read()
       source_lines = source_code.splitlines()
 
@@ -272,7 +271,7 @@ class MCPGenerator:
                       func_source = "\n".join(func_source_lines)
                       new_doc = get_openapi_docstring(func_name, args, doc, func_source)
                       indent = re.match(r'^(\s*)', source_lines[doc_start]).group(1)
-                      new_doc_lines = [(indent + l if l.strip() else l) for l in new_doc.splitlines()]
+                      new_doc_lines = [(indent + line if line.strip() else line) for line in new_doc.splitlines()]
                       docstring_replacements.append((doc_start, doc_end, new_doc_lines))
 
       # Apply replacements in reverse order (bottom-up) to avoid messing up line numbers
@@ -282,7 +281,7 @@ class MCPGenerator:
       if dry_run:
           logger.info(f"[Dry Run] Enhanced content for: {input_path}\n" + "\n".join(source_lines))
       else:
-          with open(output_path, 'w') as f:
+          with open(output_path, 'w', encoding='utf-8') as f:
               f.write("\n".join(source_lines))
           logger.info(f"Enhanced file written to: {output_path}")
 

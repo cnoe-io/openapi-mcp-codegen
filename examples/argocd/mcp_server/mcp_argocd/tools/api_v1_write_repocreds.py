@@ -15,9 +15,63 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Dict[str, Any]:
-    """
-    ListWriteRepositoryCredentials gets a list of all configured repository credential sets that have write access
-    """
+    '''
+    Retrieves a list of all configured repository credential sets that have write access.
+
+    Args:
+        url (str, optional): The base URL of the API endpoint. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+
+    OpenAPI Specification:
+      get:
+        summary: List Write Repository Credentials
+        description: Retrieves all configured repository credential sets that have write access.
+        operationId: listWriteRepositoryCredentials
+        tags:
+          - RepositoryCredentials
+        parameters:
+          - in: query
+            name: url
+            schema:
+              type: string
+            required: false
+            description: The base URL of the API endpoint.
+        responses:
+          '200':
+            description: A list of repository credential sets with write access.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    credentials:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Bad request.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+    '''
     logger.debug("Making GET request to /api/v1/write-repocreds")
     params = {}
     data = None
@@ -35,9 +89,57 @@ async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Di
 
 
 async def repocredsservice_createwriterepositorycredentials(body: str, upsert: str = None) -> Dict[str, Any]:
-    """
-    CreateWriteRepositoryCredentials creates a new repository credential set with write access
-    """
+    '''
+    Creates a new repository credential set with write access.
+
+    Args:
+        body (str): The JSON-encoded request body containing repository credential details.
+        upsert (str, optional): If set, allows updating existing credentials. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The response from the API, including details of the created or updated credentials.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new repository credential set with write access.
+        operationId: repocredsservice_createwriterepositorycredentials
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Repository credential details.
+        parameters:
+          - in: query
+            name: upsert
+            schema:
+              type: string
+            required: false
+            description: If set, allows updating existing credentials.
+        responses:
+          '200':
+            description: Successfully created or updated repository credentials.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '400':
+            description: Invalid request or missing required fields.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+    '''
     logger.debug("Making POST request to /api/v1/write-repocreds")
     params = {}
     data = None
@@ -56,4 +158,3 @@ async def repocredsservice_createwriterepositorycredentials(body: str, upsert: s
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

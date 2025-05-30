@@ -15,9 +15,60 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repositoryservice_listwriterepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
-    """
-    ListWriteRepositories gets a list of all configured write repositories
-    """
+    '''
+    Retrieves a list of all configured write repositories.
+
+    Args:
+        repo (str, optional): The name of the repository to filter results. Defaults to None.
+        forceRefresh (str, optional): If set, forces a refresh of the repository list. Defaults to None.
+        appProject (str, optional): The application project to filter repositories by. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of write repositories or an error message.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected response.
+
+    OpenAPI Specification:
+      get:
+        summary: List all configured write repositories.
+        operationId: repositoryservice_listwriterepositories
+        parameters:
+          - in: query
+            name: repo
+            schema:
+              type: string
+            required: false
+            description: The name of the repository to filter results.
+          - in: query
+            name: forceRefresh
+            schema:
+              type: string
+            required: false
+            description: If set, forces a refresh of the repository list.
+          - in: query
+            name: appProject
+            schema:
+              type: string
+            required: false
+            description: The application project to filter repositories by.
+        responses:
+          '200':
+            description: A list of configured write repositories.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    repositories:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Invalid request parameters.
+          '500':
+            description: Internal server error.
+    '''
     logger.debug("Making GET request to /api/v1/write-repositories")
     params = {}
     data = None
@@ -35,9 +86,64 @@ async def repositoryservice_listwriterepositories(repo: str = None, forceRefresh
 
 
 async def repositoryservice_createwriterepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
-    """
-    CreateWriteRepository creates a new write repository configuration
-    """
+    '''
+    Creates a new write repository configuration.
+
+    Args:
+        body (str): The JSON-encoded repository configuration to create.
+        upsert (str, optional): If set, allows upserting an existing repository configuration. Defaults to None.
+        credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The response from the API containing the created repository configuration or error details.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new write repository configuration.
+        operationId: repositoryservice_createwriterepository
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Repository configuration object.
+        parameters:
+          - in: query
+            name: upsert
+            schema:
+              type: string
+            required: false
+            description: If set, allows upserting an existing repository configuration.
+          - in: query
+            name: credsOnly
+            schema:
+              type: string
+            required: false
+            description: If set, only credentials will be updated.
+        responses:
+          '200':
+            description: Successfully created the write repository configuration.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '400':
+            description: Invalid request or parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+    '''
     logger.debug("Making POST request to /api/v1/write-repositories")
     params = {}
     data = None
@@ -56,4 +162,3 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-
