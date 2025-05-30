@@ -3,8 +3,6 @@ import os
 import shutil
 import tempfile
 import pytest
-import yaml
-import json
 from openapi_mcp_codegen.mcp_codegen import MCPGenerator
 
 @pytest.fixture(scope="module")
