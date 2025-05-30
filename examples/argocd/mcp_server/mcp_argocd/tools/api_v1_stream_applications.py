@@ -15,9 +15,90 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationservice_watch(name: str = None, refresh: str = None, projects: str = None, resourceVersion: str = None, selector: str = None, repo: str = None, appNamespace: str = None, project: str = None) -> Dict[str, Any]:
-    """
-    Watch returns stream of application change events
-    """
+    '''
+    Watches and returns a stream of application change events.
+
+    Args:
+        name (str, optional): Name of the application to filter events. Defaults to None.
+        refresh (str, optional): Refresh strategy for the watch operation. Defaults to None.
+        projects (str, optional): Comma-separated list of project names to filter applications. Defaults to None.
+        resourceVersion (str, optional): Resource version to start watching from. Defaults to None.
+        selector (str, optional): Label selector to filter applications. Defaults to None.
+        repo (str, optional): Repository URL to filter applications. Defaults to None.
+        appNamespace (str, optional): Namespace of the application to filter events. Defaults to None.
+        project (str, optional): Project name to filter applications. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the stream of application change events or an error message.
+
+    Raises:
+        Exception: If the API request fails or encounters an unexpected error.
+
+    OpenAPI Specification:
+      get:
+        summary: Watch stream of application change events.
+        operationId: applicationservice_watch
+        parameters:
+          - in: query
+            name: name
+            schema:
+              type: string
+            required: false
+            description: Name of the application to filter events.
+          - in: query
+            name: refresh
+            schema:
+              type: string
+            required: false
+            description: Refresh strategy for the watch operation.
+          - in: query
+            name: projects
+            schema:
+              type: string
+            required: false
+            description: Comma-separated list of project names to filter applications.
+          - in: query
+            name: resourceVersion
+            schema:
+              type: string
+            required: false
+            description: Resource version to start watching from.
+          - in: query
+            name: selector
+            schema:
+              type: string
+            required: false
+            description: Label selector to filter applications.
+          - in: query
+            name: repo
+            schema:
+              type: string
+            required: false
+            description: Repository URL to filter applications.
+          - in: query
+            name: appNamespace
+            schema:
+              type: string
+            required: false
+            description: Namespace of the application to filter events.
+          - in: query
+            name: project
+            schema:
+              type: string
+            required: false
+            description: Project name to filter applications.
+        responses:
+          '200':
+            description: Stream of application change events.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '400':
+            description: Invalid request parameters.
+          '500':
+            description: Internal server error.
+    '''
     logger.debug("Making GET request to /api/v1/stream/applications")
     params = {}
     data = None
@@ -32,4 +113,3 @@ async def applicationservice_watch(name: str = None, refresh: str = None, projec
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

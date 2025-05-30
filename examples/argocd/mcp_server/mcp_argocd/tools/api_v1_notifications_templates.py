@@ -15,9 +15,44 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def notificationservice_listtemplates() -> Dict[str, Any]:
-    """
-    List returns list of templates
-    """
+    '''
+    Retrieves a list of notification templates.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of notification templates or an error message.
+
+    Raises:
+        Exception: If the API request fails or an unexpected error occurs.
+
+    OpenAPI Specification:
+      get:
+        summary: List notification templates
+        description: Retrieves a list of all available notification templates.
+        operationId: notificationservice_listtemplates
+        tags:
+          - NotificationService
+        responses:
+          '200':
+            description: A list of notification templates.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    templates:
+                      type: array
+                      items:
+                        type: object
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+    '''
     logger.debug("Making GET request to /api/v1/notifications/templates")
     params = {}
     data = None
@@ -32,4 +67,3 @@ async def notificationservice_listtemplates() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

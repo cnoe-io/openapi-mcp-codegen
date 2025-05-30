@@ -10,6 +10,7 @@ import os
 import json
 import yaml
 import click
+import dotenv
 from openapi_mcp_codegen.mcp_codegen import MCPGenerator
 
 def load_spec(spec_path):
@@ -72,6 +73,10 @@ def main(
    output_dir,dry_run,
    enhance_docstring_with_llm,
    enhance_docstring_with_llm_openapi):
+  # Load environment variables from .env file if present
+  env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+  if os.path.exists(env_path):
+    dotenv.load_dotenv(env_path)
   # Get the directory of this script
   script_dir = os.path.dirname(os.path.abspath(__file__))
 

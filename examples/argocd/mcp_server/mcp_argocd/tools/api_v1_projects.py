@@ -15,9 +15,61 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def projectservice_list(name: str = None) -> Dict[str, Any]:
-    """
-    List returns list of projects
-    """
+    '''
+    Retrieves a list of projects, optionally filtered by project name.
+
+    Args:
+        name (str, optional): The name of the project to filter the results. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of projects or an error message.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected response.
+
+    OpenAPI Specification:
+      get:
+        summary: List Projects
+        description: Retrieves a list of projects, optionally filtered by project name.
+        operationId: projectservice_list
+        parameters:
+          - in: query
+            name: name
+            schema:
+              type: string
+            required: false
+            description: The name of the project to filter the results.
+        responses:
+          '200':
+            description: A list of projects.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    projects:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Invalid request parameters.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+    '''
     logger.debug("Making GET request to /api/v1/projects")
     params = {}
     data = None
@@ -35,9 +87,66 @@ async def projectservice_list(name: str = None) -> Dict[str, Any]:
 
 
 async def projectservice_create(body: str) -> Dict[str, Any]:
-    """
-    Create a new project
-    """
+    '''
+    Creates a new project.
+
+    Args:
+        body (str): The JSON-formatted string containing the project details.
+
+    Returns:
+        Dict[str, Any]: The response from the API containing the created project details or an error message.
+
+    Raises:
+        Exception: If the API request fails due to network issues or invalid input.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new project
+        description: Creates a new project with the provided details.
+        operationId: projectservice_create
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Project creation payload
+        responses:
+          '201':
+            description: Project created successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Unique identifier for the project
+                    name:
+                      type: string
+                      description: Name of the project
+                    # Additional project fields as needed
+          '400':
+            description: Invalid request payload
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message
+          '500':
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      description: Error message
+    '''
     logger.debug("Making POST request to /api/v1/projects")
     params = {}
     data = None
@@ -56,4 +165,3 @@ async def projectservice_create(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-

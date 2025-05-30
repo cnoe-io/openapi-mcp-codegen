@@ -6,6 +6,7 @@ from __future__ import annotations
 import logging
 import os
 from typing import Any, Iterable
+import dotenv
 
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain_anthropic import ChatAnthropic
@@ -28,6 +29,7 @@ class LLMFactory:
   # ------------------------------------------------------------------ #
 
   def __init__(self, provider: str | None = None) -> None:
+    dotenv.load_dotenv()
     if provider is None:
       provider = os.getenv("LLM_PROVIDER")
       if provider is None:

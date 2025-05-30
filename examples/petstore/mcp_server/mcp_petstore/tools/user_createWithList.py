@@ -34,7 +34,7 @@ async def createuserswithlistinput() -> Dict[str, Any]:
         tags:
           - user
         requestBody:
-          description: List of user objects to be created.
+          description: List of user objects that need to be created
           required: true
           content:
             application/json:
@@ -48,11 +48,13 @@ async def createuserswithlistinput() -> Dict[str, Any]:
             content:
               application/json:
                 schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/User'
+                  type: object
           '400':
             description: Invalid input
+            content:
+              application/json:
+                schema:
+                  type: object
     '''
     logger.debug("Making POST request to /user/createwithlist")
     params = {}

@@ -48,7 +48,7 @@ async def placeorder() -> Dict[str, Any]:
                 schema:
                   type: object
           '400':
-            description: Invalid Order
+            description: Invalid order
             content:
               application/json:
                 schema:

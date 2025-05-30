@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
     '''
-    Finds pets by their tags.
+    Finds pets by tags.
 
     Args:
         tags (List[str], optional): List of tags to filter pets by. Defaults to None.
@@ -25,7 +25,7 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of pets matching the provided tags or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected response.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       get:
@@ -41,6 +41,7 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
               type: array
               items:
                 type: string
+              collectionFormat: multi
         responses:
           '200':
             description: A list of pets matching the tags

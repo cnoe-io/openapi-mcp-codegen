@@ -15,9 +15,60 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str = None, appProject: str = None) -> Dict[str, Any]:
-    """
-    ListRepositories gets a list of all configured repositories
-    """
+    '''
+    Retrieves a list of all configured repositories.
+
+    Args:
+        repo (str, optional): The name or identifier of a specific repository to filter the results. Defaults to None.
+        forceRefresh (str, optional): If set, forces a refresh of the repository list from the source. Defaults to None.
+        appProject (str, optional): The application project to filter repositories by. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the list of repositories or an error message.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+
+    OpenAPI Specification:
+      get:
+        summary: List all configured repositories
+        operationId: repositoryservice_listrepositories
+        parameters:
+          - in: query
+            name: repo
+            schema:
+              type: string
+            required: false
+            description: The name or identifier of a specific repository to filter the results.
+          - in: query
+            name: forceRefresh
+            schema:
+              type: string
+            required: false
+            description: If set, forces a refresh of the repository list from the source.
+          - in: query
+            name: appProject
+            schema:
+              type: string
+            required: false
+            description: The application project to filter repositories by.
+        responses:
+          '200':
+            description: A list of configured repositories.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    repositories:
+                      type: array
+                      items:
+                        type: object
+          '400':
+            description: Bad request.
+          '500':
+            description: Internal server error.
+    '''
     logger.debug("Making GET request to /api/v1/repositories")
     params = {}
     data = None
@@ -35,9 +86,64 @@ async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str
 
 
 async def repositoryservice_createrepository(body: str, upsert: str = None, credsOnly: str = None) -> Dict[str, Any]:
-    """
-    CreateRepository creates a new repository configuration
-    """
+    '''
+    Creates a new repository configuration.
+
+    Args:
+        body (str): The JSON-encoded repository configuration to create.
+        upsert (str, optional): If set, allows updating an existing repository configuration. Defaults to None.
+        credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The response from the repository creation API, including repository details or error information.
+
+    Raises:
+        Exception: If the API request fails or returns an unexpected error.
+
+    OpenAPI Specification:
+      post:
+        summary: Create a new repository configuration.
+        operationId: repositoryservice_createrepository
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Repository configuration object.
+        parameters:
+          - in: query
+            name: upsert
+            schema:
+              type: string
+            required: false
+            description: If set, allows updating an existing repository configuration.
+          - in: query
+            name: credsOnly
+            schema:
+              type: string
+            required: false
+            description: If set, only credentials will be updated.
+        responses:
+          '200':
+            description: Repository created successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '400':
+            description: Invalid request or repository configuration.
+            content:
+              application/json:
+                schema:
+                  type: object
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+    '''
     logger.debug("Making POST request to /api/v1/repositories")
     params = {}
     data = None
@@ -56,4 +162,3 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
-
