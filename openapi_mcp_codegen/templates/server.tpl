@@ -48,7 +48,7 @@ def main():
 {% for module, ops in registrations.items() %}
     # Register {{ module }} tools
 {% for op in ops %}
-    mcp.tool()({{ module }}.{{ op }})
+    mcp.tool()({{ module }}.{{ op | replace('{', '') | replace('}', '') }})
 {% endfor %}{% endfor %}
 
     # Run the MCP server

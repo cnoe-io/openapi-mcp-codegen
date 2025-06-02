@@ -46,7 +46,7 @@ No install required — just run the generator directly from GitHub:
 ```bash
 uvx https://github.com/cnoe-io/openapi-mcp-codegen.git -- generate \
   --spec-file examples/openapi_petstore.json \
-  --output-dir examples/mcp_petstore
+  --output-dir examples/mcp_petstore \
   --enhance-docstring-with-llm-openapi
 ```
 

@@ -181,3 +181,4 @@ generated/
 
 # MacOS
 .DS_Store
+.aider*
