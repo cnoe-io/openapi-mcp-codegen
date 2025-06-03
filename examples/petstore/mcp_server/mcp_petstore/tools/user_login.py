@@ -26,7 +26,7 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
         Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
 
     Raises:
-        Exception: If the API request fails or an unexpected error occurs.
+        Exception: If the API request fails due to network issues or invalid credentials.
 
     OpenAPI Specification:
       post:
@@ -34,25 +34,22 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
         operationId: loginuser
         tags:
           - user
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  username:
-                    type: string
-                    description: The username of the user.
-                  password:
-                    type: string
-                    description: The password of the user.
-                required:
-                  - username
-                  - password
+        parameters:
+          - name: username
+            in: query
+            required: false
+            schema:
+              type: string
+            description: The username of the user.
+          - name: password
+            in: query
+            required: false
+            schema:
+              type: string
+            description: The password of the user.
         responses:
           '200':
-            description: Successful login
+            description: Successful login.
             content:
               application/json:
                 schema:
@@ -60,12 +57,12 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     token:
                       type: string
-                      description: Authentication token for the user.
-                    userId:
-                      type: string
-                      description: The unique identifier of the user.
-          '401':
-            description: Invalid username or password
+                      description: Authentication token.
+                    user:
+                      type: object
+                      description: User information.
+          '400':
+            description: Invalid credentials or missing parameters.
             content:
               application/json:
                 schema:
@@ -73,9 +70,9 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message indicating authentication failure.
+                      description: Error message.
           '500':
-            description: Server error
+            description: Internal server error.
             content:
               application/json:
                 schema:
@@ -83,7 +80,7 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message indicating server failure.
+                      description: Error message.
     '''
     logger.debug("Making GET request to /user/login")
     params = {}

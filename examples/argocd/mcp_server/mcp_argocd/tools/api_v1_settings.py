@@ -18,6 +18,9 @@ async def settingsservice_get() -> Dict[str, Any]:
     '''
     Retrieves the current Argo CD settings.
 
+    Args:
+        None
+
     Returns:
         Dict[str, Any]: A dictionary containing the Argo CD settings if the request is successful, or an error message if the request fails.
 
@@ -27,7 +30,7 @@ async def settingsservice_get() -> Dict[str, Any]:
     OpenAPI Specification:
       get:
         summary: Get Argo CD settings
-        description: Retrieve the current configuration and settings for the Argo CD instance.
+        description: Retrieve the current configuration settings for the Argo CD instance.
         operationId: settingsservice_get
         tags:
           - Settings

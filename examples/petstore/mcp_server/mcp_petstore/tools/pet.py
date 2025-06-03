@@ -30,8 +30,9 @@ async def updatepet() -> Dict[str, Any]:
     OpenAPI Specification:
         put:
           summary: Update an existing pet
-          description: Update the details of an existing pet in the store.
-          operationId: updatePet
+          operationId: updatepet
+          tags:
+            - pet
           requestBody:
             description: Pet object that needs to be updated in the store
             required: true
@@ -52,8 +53,6 @@ async def updatepet() -> Dict[str, Any]:
               description: Pet not found
             '405':
               description: Validation exception
-          tags:
-            - pet
     '''
     logger.debug("Making PUT request to /pet")
     params = {}
@@ -82,7 +81,7 @@ async def addpet() -> Dict[str, Any]:
         Dict[str, Any]: The response from the API containing the details of the added pet or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or invalid response.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       post:
@@ -106,6 +105,15 @@ async def addpet() -> Dict[str, Any]:
                   $ref: '#/components/schemas/Pet'
           '400':
             description: Invalid input
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error
             content:
               application/json:
                 schema:

@@ -103,7 +103,7 @@ async def gpgkeyservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
     OpenAPI Specification:
       post:
         summary: Create one or more GPG public keys
-        description: Add one or more GPG public keys to the server's configuration. Optionally update existing keys if 'upsert' is specified.
+        description: Add one or more GPG public keys to the server's configuration. Optionally, update existing keys if 'upsert' is specified.
         operationId: gpgkeyservice_create
         requestBody:
           required: true
@@ -198,34 +198,24 @@ async def gpgkeyservice_delete(keyID: str = None) -> Dict[str, Any]:
               application/json:
                 schema:
                   type: object
-                  additionalProperties: true
           '400':
             description: Invalid request or missing keyID.
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
           '404':
             description: GPG public key not found.
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
           '500':
             description: Server error.
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
     '''
     logger.debug("Making DELETE request to /api/v1/gpgkeys")
     params = {}

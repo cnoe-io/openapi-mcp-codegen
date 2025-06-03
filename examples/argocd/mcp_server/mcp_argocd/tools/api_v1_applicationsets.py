@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def applicationsetservice_list(projects: str = None, selector: str = None, appsetNamespace: str = None) -> Dict[str, Any]:
     '''
-    Retrieves a list of ApplicationSets based on the provided filters.
+    Retrieves a list of ApplicationSets based on provided filters.
 
     Args:
         projects (str, optional): Comma-separated list of project names to filter ApplicationSets. Defaults to None.
@@ -27,7 +27,7 @@ async def applicationsetservice_list(projects: str = None, selector: str = None,
         Dict[str, Any]: A dictionary containing the list of ApplicationSets or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected error.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       get:
@@ -106,19 +106,19 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
 
     Args:
         body (str): The JSON-encoded ApplicationSet manifest to create.
-        upsert (str, optional): If set, allows updating an existing ApplicationSet if it already exists. Defaults to None.
-        dryRun (str, optional): If set, only validates the request without persisting the resource. Defaults to None.
+        upsert (str, optional): If set, allows upserting the ApplicationSet. Defaults to None.
+        dryRun (str, optional): If set, only validates the request without persisting it. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the API, containing the created ApplicationSet or error details.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected error.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       post:
         summary: Create an ApplicationSet
-        description: Creates a new ApplicationSet resource in the system.
+        description: Creates a new ApplicationSet resource.
         operationId: applicationsetservice_create
         requestBody:
           required: true
@@ -126,35 +126,35 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
             application/json:
               schema:
                 type: string
-                description: JSON-encoded ApplicationSet manifest
+              example: '{"apiVersion": "argoproj.io/v1alpha1", "kind": "ApplicationSet", ...}'
         parameters:
-          - name: upsert
-            in: query
-            required: false
+          - in: query
+            name: upsert
             schema:
               type: string
-            description: If set, allows updating an existing ApplicationSet if it already exists.
-          - name: dryRun
-            in: query
             required: false
+            description: If set, allows upserting the ApplicationSet.
+          - in: query
+            name: dryRun
             schema:
               type: string
-            description: If set, only validates the request without persisting the resource.
+            required: false
+            description: If set, only validates the request without persisting it.
         responses:
           '200':
-            description: ApplicationSet created successfully
+            description: ApplicationSet created successfully.
             content:
               application/json:
                 schema:
                   type: object
           '400':
-            description: Invalid request or validation error
+            description: Invalid request or validation error.
             content:
               application/json:
                 schema:
                   type: object
           '500':
-            description: Internal server error
+            description: Internal server error.
             content:
               application/json:
                 schema:

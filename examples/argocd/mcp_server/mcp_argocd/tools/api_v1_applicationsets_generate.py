@@ -16,20 +16,20 @@ logger = logging.getLogger("mcp_tools")
 
 async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
     '''
-    Generates an ApplicationSet based on the provided configuration.
+    Generates an ApplicationSet resource based on the provided input.
 
     Args:
-        body (str): The JSON or YAML string representing the ApplicationSet configuration.
+        body (str): The request payload containing the ApplicationSet configuration in JSON or YAML format.
 
     Returns:
-        Dict[str, Any]: The generated ApplicationSet or an error message if the request fails.
+        Dict[str, Any]: The generated ApplicationSet resource or an error message.
 
     Raises:
-        Exception: If the API request encounters an unexpected error.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
       post:
-        summary: Generate an ApplicationSet
+        summary: Generate an ApplicationSet resource.
         description: Generates an ApplicationSet resource based on the provided configuration.
         operationId: applicationsetservice_generate
         requestBody:
@@ -38,24 +38,45 @@ async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
             application/json:
               schema:
                 type: string
+              example: |
+                {
+                  "apiVersion": "argoproj.io/v1alpha1",
+                  "kind": "ApplicationSet",
+                  "metadata": {
+                    "name": "example-applicationset"
+                  },
+                  "spec": {
+                    ...
+                  }
+                }
             application/yaml:
               schema:
                 type: string
         responses:
           '200':
-            description: Successfully generated ApplicationSet.
+            description: Successfully generated ApplicationSet resource.
             content:
               application/json:
                 schema:
                   type: object
           '400':
-            description: Invalid input or failed to generate ApplicationSet.
+            description: Invalid input provided.
             content:
               application/json:
                 schema:
                   type: object
-        tags:
-          - ApplicationSetService
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
     '''
     logger.debug("Making POST request to /api/v1/applicationsets/generate")
     params = {}

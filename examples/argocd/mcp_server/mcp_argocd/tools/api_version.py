@@ -19,14 +19,15 @@ async def versionservice_version() -> Dict[str, Any]:
     Retrieves version information of the API server.
 
     Returns:
-        Dict[str, Any]: A dictionary containing version information of the API server. If the request fails, returns a dictionary with an 'error' key describing the failure.
+        Dict[str, Any]: A dictionary containing version information of the API server.
 
     Raises:
-        Exception: If an unexpected error occurs during the API request.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
       get:
-        summary: Retrieve API server version information
+        summary: Get API server version information
+        description: Returns version information of the API server.
         operationId: versionservice_version
         tags:
           - Version
@@ -48,7 +49,7 @@ async def versionservice_version() -> Dict[str, Any]:
                       type: string
                       description: The commit hash of the API server.
           '500':
-            description: Server error or failed request.
+            description: Server error.
             content:
               application/json:
                 schema:
@@ -56,7 +57,7 @@ async def versionservice_version() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message describing the failure.
+                      description: Error message.
     '''
     logger.debug("Making GET request to /api/version")
     params = {}

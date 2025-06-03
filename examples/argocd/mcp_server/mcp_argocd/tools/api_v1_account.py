@@ -25,7 +25,7 @@ async def accountservice_listaccounts() -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of accounts or an error message.
 
     Raises:
-        Exception: If the API request fails or an unexpected error occurs.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       get:

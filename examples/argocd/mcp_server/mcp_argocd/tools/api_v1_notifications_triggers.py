@@ -18,9 +18,6 @@ async def notificationservice_listtriggers() -> Dict[str, Any]:
     '''
     Retrieves a list of notification triggers.
 
-    Args:
-        None
-
     Returns:
         Dict[str, Any]: A dictionary containing the list of notification triggers or an error message.
 
@@ -30,10 +27,10 @@ async def notificationservice_listtriggers() -> Dict[str, Any]:
     OpenAPI Specification:
       get:
         summary: List notification triggers
-        description: Retrieves a list of all notification triggers configured in the system.
+        description: Retrieve a list of all notification triggers configured in the system.
         operationId: notificationservice_listtriggers
         tags:
-          - NotificationService
+          - Notifications
         responses:
           '200':
             description: A list of notification triggers.

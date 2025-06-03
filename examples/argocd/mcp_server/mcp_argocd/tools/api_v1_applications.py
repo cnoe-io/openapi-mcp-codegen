@@ -20,7 +20,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
 
     Args:
         name (str, optional): Filter applications by name. Defaults to None.
-        refresh (str, optional): If set, refreshes the application cache. Defaults to None.
+        refresh (str, optional): If set, refreshes the application list cache. Defaults to None.
         projects (str, optional): Comma-separated list of project names to filter applications. Defaults to None.
         resourceVersion (str, optional): Filter by resource version. Defaults to None.
         selector (str, optional): Label selector to filter applications. Defaults to None.
@@ -37,7 +37,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
     OpenAPI Specification:
       get:
         summary: List applications
-        description: Retrieve a list of applications with optional filters.
+        description: Retrieve a list of applications, optionally filtered by name, project, repository, namespace, or other parameters.
         operationId: applicationservice_list
         parameters:
           - in: query
@@ -49,7 +49,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
             name: refresh
             schema:
               type: string
-            description: If set, refreshes the application cache.
+            description: If set, refreshes the application list cache.
           - in: query
             name: projects
             schema:
@@ -138,7 +138,6 @@ async def applicationservice_create(body: str, upsert: str = None, validate: str
             application/json:
               schema:
                 type: object
-                description: Application object to create
         parameters:
           - in: query
             name: upsert

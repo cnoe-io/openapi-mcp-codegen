@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def sessionservice_getuserinfo() -> Dict[str, Any]:
     '''
-    Get the current user's information.
+    Retrieve the current user's information.
 
     Args:
         None
@@ -25,17 +25,17 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the current user's information. If the request fails, returns a dictionary with an 'error' key describing the failure.
 
     Raises:
-        Exception: If an unexpected error occurs during the API request.
+        Exception: If there is an unexpected error during the API request.
 
     OpenAPI Specification:
       get:
-        summary: Get current user information
+        summary: Retrieve current user information
         operationId: sessionservice_getuserinfo
         tags:
           - Session
         responses:
           '200':
-            description: Successful response with user information.
+            description: Successful retrieval of user information.
             content:
               application/json:
                 schema:
@@ -43,20 +43,20 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
                   properties:
                     id:
                       type: string
-                      description: The user's unique identifier.
+                      description: Unique identifier for the user.
                     username:
                       type: string
-                      description: The user's username.
+                      description: Username of the user.
                     email:
                       type: string
-                      description: The user's email address.
+                      description: Email address of the user.
                     roles:
                       type: array
                       items:
                         type: string
                       description: List of roles assigned to the user.
           '401':
-            description: Unauthorized. The user is not authenticated.
+            description: Unauthorized access. User is not authenticated.
             content:
               application/json:
                 schema:

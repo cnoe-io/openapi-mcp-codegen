@@ -27,7 +27,7 @@ async def notificationservice_listtemplates() -> Dict[str, Any]:
     OpenAPI Specification:
       get:
         summary: List notification templates
-        description: Retrieves a list of all available notification templates.
+        description: Retrieve a list of all available notification templates.
         operationId: notificationservice_listtemplates
         tags:
           - NotificationService

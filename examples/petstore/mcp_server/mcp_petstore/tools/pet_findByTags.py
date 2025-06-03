@@ -29,18 +29,19 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
 
     OpenAPI Specification:
       get:
-        summary: Finds Pets by tags
+        summary: Finds pets by tags
         description: Returns a list of pets that match the provided tags.
-        operationId: findpetsbytags
+        operationId: findPetsByTags
         parameters:
           - name: tags
             in: query
-            description: Tags to filter pets by
+            description: Tags to filter by
             required: false
             schema:
               type: array
               items:
                 type: string
+              collectionFormat: multi
         responses:
           '200':
             description: A list of pets matching the tags
@@ -52,8 +53,6 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
                     $ref: '#/components/schemas/Pet'
           '400':
             description: Invalid tag value
-          '500':
-            description: Internal server error
     '''
     logger.debug("Making GET request to /pet/findbytags")
     params = {}

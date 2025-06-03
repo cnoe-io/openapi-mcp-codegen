@@ -51,6 +51,8 @@ async def createuserswithlistinput() -> Dict[str, Any]:
                   type: object
           '400':
             description: Invalid input
+          '500':
+            description: Server error
     '''
     logger.debug("Making POST request to /user/createwithlist")
     params = {}

@@ -22,10 +22,10 @@ async def logoutuser() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: The response from the logout operation. Typically contains a success message or error details.
+        Dict[str, Any]: The response from the logout endpoint. Typically contains a success message or error details.
 
     Raises:
-        Exception: If the API request fails due to network issues or unexpected server errors.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       get:
@@ -35,7 +35,7 @@ async def logoutuser() -> Dict[str, Any]:
           - user
         responses:
           '200':
-            description: Successful logout.
+            description: Successful logout
             content:
               application/json:
                 schema:
@@ -43,9 +43,9 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     message:
                       type: string
-                      description: Success message.
+                      description: Success message
           '401':
-            description: Unauthorized. User is not logged in.
+            description: Unauthorized - user not logged in
             content:
               application/json:
                 schema:
@@ -53,9 +53,9 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
           '500':
-            description: Server error.
+            description: Server error
             content:
               application/json:
                 schema:
@@ -63,7 +63,7 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
     '''
     logger.debug("Making GET request to /user/logout")
     params = {}

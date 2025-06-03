@@ -90,7 +90,7 @@ async def repocredsservice_createrepositorycredentials(body: str, upsert: str = 
         upsert (str, optional): If set, allows updating existing credentials. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the API, including the created credential set or error information.
+        Dict[str, Any]: The response from the API, including the created credential set or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

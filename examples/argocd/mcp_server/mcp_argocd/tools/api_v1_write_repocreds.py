@@ -22,14 +22,14 @@ async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Di
         url (str, optional): The base URL of the API endpoint. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message if the request fails.
+        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message.
 
     Raises:
-        Exception: If the API request encounters an unexpected error.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
       get:
-        summary: List all repository credential sets with write access
+        summary: List repository credentials with write access
         description: Retrieves all configured repository credential sets that have write access.
         operationId: listWriteRepositoryCredentials
         tags:
@@ -91,7 +91,7 @@ async def repocredsservice_createwriterepositorycredentials(body: str, upsert: s
         upsert (str, optional): If set, allows updating existing credentials. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the API, including details of the created or updated credentials.
+        Dict[str, Any]: The API response containing the created or updated repository credentials.
 
     Raises:
         Exception: If the API request fails or returns an error.

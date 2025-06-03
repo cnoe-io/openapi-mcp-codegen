@@ -90,9 +90,9 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
     Creates a new repository configuration.
 
     Args:
-        body (str): The JSON-encoded repository configuration to create.
+        body (str): The JSON string representing the repository configuration to create.
         upsert (str, optional): If set, allows updating an existing repository if it already exists. Defaults to None.
-        credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
+        credsOnly (str, optional): If set, only credentials will be updated for the repository. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the repository creation API, including repository details or error information.
@@ -123,7 +123,7 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
             schema:
               type: string
             required: false
-            description: If set, only credentials will be updated.
+            description: If set, only credentials will be updated for the repository.
         responses:
           '200':
             description: Repository created successfully.

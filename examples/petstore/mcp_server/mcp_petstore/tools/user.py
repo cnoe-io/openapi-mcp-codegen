@@ -30,7 +30,6 @@ async def createuser() -> Dict[str, Any]:
     OpenAPI Specification:
       post:
         summary: Create a new user
-        description: Creates a new user in the system.
         operationId: createUser
         tags:
           - User
@@ -51,10 +50,10 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     id:
                       type: string
-                      description: The unique identifier for the user.
+                      description: Unique identifier for the user
                     username:
                       type: string
-                      description: The username of the created user.
+                      description: Username of the created user
           '400':
             description: Invalid request
             content:
@@ -64,7 +63,7 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
           '500':
             description: Internal server error
             content:
@@ -74,7 +73,7 @@ async def createuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message
     '''
     logger.debug("Making POST request to /user")
     params = {}

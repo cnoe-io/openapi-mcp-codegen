@@ -32,6 +32,7 @@ async def certificateservice_listcertificates(hostNamePattern: str = None, certT
     OpenAPI Specification:
       get:
         summary: List all available repository certificates
+        description: Retrieve a list of repository certificates, optionally filtered by host name pattern, certificate type, or certificate subtype.
         operationId: certificateservice_listcertificates
         parameters:
           - in: query
@@ -54,7 +55,7 @@ async def certificateservice_listcertificates(hostNamePattern: str = None, certT
             description: Subtype of certificate to filter by.
         responses:
           '200':
-            description: A list of available repository certificates.
+            description: A list of repository certificates.
             content:
               application/json:
                 schema:
@@ -104,14 +105,14 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
     Creates repository certificates on the server.
 
     Args:
-        body (str): The certificate data to be created on the server.
-        upsert (str, optional): If provided, determines whether to update the certificate if it already exists. Defaults to None.
+        body (str): The certificate data to be created, typically in JSON or PEM format.
+        upsert (str, optional): If provided, indicates whether to update the certificate if it already exists. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the server, including certificate details or error information.
+        Dict[str, Any]: The response from the server, containing details of the created certificate or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected error.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
       post:
@@ -123,13 +124,17 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
             application/json:
               schema:
                 type: string
+              example: |
+                {
+                  "certificate": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----"
+                }
         parameters:
           - in: query
             name: upsert
             schema:
               type: string
             required: false
-            description: If provided, determines whether to update the certificate if it already exists.
+            description: If provided, updates the certificate if it already exists.
         responses:
           '200':
             description: Certificate created successfully.
@@ -138,7 +143,7 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
                 schema:
                   type: object
           '400':
-            description: Invalid request or missing required fields.
+            description: Invalid request or certificate data.
             content:
               application/json:
                 schema:

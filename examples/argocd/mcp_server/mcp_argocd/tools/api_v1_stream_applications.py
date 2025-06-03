@@ -19,14 +19,14 @@ async def applicationservice_watch(name: str = None, refresh: str = None, projec
     Watches and returns a stream of application change events.
 
     Args:
-        name (str, optional): Name of the application to filter events. Defaults to None.
-        refresh (str, optional): Refresh policy for the watch operation. Defaults to None.
-        projects (str, optional): Comma-separated list of project names to filter events. Defaults to None.
+        name (str, optional): Name of the application to watch. Defaults to None.
+        refresh (str, optional): Refresh strategy for the watch operation. Defaults to None.
+        projects (str, optional): Comma-separated list of project names to filter applications. Defaults to None.
         resourceVersion (str, optional): Resource version to start watching from. Defaults to None.
         selector (str, optional): Label selector to filter applications. Defaults to None.
         repo (str, optional): Repository URL to filter applications. Defaults to None.
-        appNamespace (str, optional): Namespace of the application to filter events. Defaults to None.
-        project (str, optional): Project name to filter events. Defaults to None.
+        appNamespace (str, optional): Namespace of the application. Defaults to None.
+        project (str, optional): Project name to filter applications. Defaults to None.
 
     Returns:
         Dict[str, Any]: A dictionary containing the stream of application change events or an error message.
@@ -43,42 +43,50 @@ async def applicationservice_watch(name: str = None, refresh: str = None, projec
             name: name
             schema:
               type: string
-            description: Name of the application to filter events.
+            required: false
+            description: Name of the application to watch.
           - in: query
             name: refresh
             schema:
               type: string
-            description: Refresh policy for the watch operation.
+            required: false
+            description: Refresh strategy for the watch operation.
           - in: query
             name: projects
             schema:
               type: string
-            description: Comma-separated list of project names to filter events.
+            required: false
+            description: Comma-separated list of project names to filter applications.
           - in: query
             name: resourceVersion
             schema:
               type: string
+            required: false
             description: Resource version to start watching from.
           - in: query
             name: selector
             schema:
               type: string
+            required: false
             description: Label selector to filter applications.
           - in: query
             name: repo
             schema:
               type: string
+            required: false
             description: Repository URL to filter applications.
           - in: query
             name: appNamespace
             schema:
               type: string
-            description: Namespace of the application to filter events.
+            required: false
+            description: Namespace of the application.
           - in: query
             name: project
             schema:
               type: string
-            description: Project name to filter events.
+            required: false
+            description: Project name to filter applications.
         responses:
           '200':
             description: Stream of application change events.

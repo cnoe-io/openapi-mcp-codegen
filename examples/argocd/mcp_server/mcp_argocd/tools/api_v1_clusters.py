@@ -32,8 +32,8 @@ async def clusterservice_list(server: str = None, name: str = None, id_type: str
 
     OpenAPI Specification:
       get:
-        summary: Retrieve a list of clusters.
-        description: Returns a list of clusters from the cluster service, optionally filtered by name or identifier.
+        summary: List clusters
+        description: Retrieve a list of clusters, optionally filtered by name or identifier.
         operationId: clusterservice_list
         parameters:
           - in: query
@@ -112,19 +112,19 @@ async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]
     Creates a new cluster.
 
     Args:
-        body (str): The JSON-formatted string containing cluster configuration details.
-        upsert (str, optional): If set, allows updating an existing cluster if it already exists. Defaults to None.
+        body (str): The JSON-formatted request body containing cluster configuration.
+        upsert (str, optional): If set, allows upserting an existing cluster. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the cluster creation API, including cluster details or error information.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected error.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       post:
         summary: Create a new cluster
-        description: Creates a new cluster with the provided configuration. Optionally upserts if the cluster exists.
+        description: Creates a new cluster with the provided configuration.
         operationId: clusterservice_create
         requestBody:
           required: true
@@ -132,14 +132,13 @@ async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]
             application/json:
               schema:
                 type: object
-                description: Cluster configuration details
         parameters:
           - in: query
             name: upsert
             schema:
               type: string
             required: false
-            description: If set, updates the cluster if it already exists.
+            description: If set, allows upserting an existing cluster.
         responses:
           '200':
             description: Cluster created successfully
@@ -147,27 +146,18 @@ async def clusterservice_create(body: str, upsert: str = None) -> Dict[str, Any]
               application/json:
                 schema:
                   type: object
-                  description: Details of the created cluster
           '400':
             description: Invalid request or parameters
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message
           '500':
             description: Internal server error
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message
     '''
     logger.debug("Making POST request to /api/v1/clusters")
     params = {}

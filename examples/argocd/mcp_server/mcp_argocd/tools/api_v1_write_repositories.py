@@ -110,7 +110,7 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
             application/json:
               schema:
                 type: object
-                description: Repository configuration payload.
+                description: Repository configuration object.
         parameters:
           - in: query
             name: upsert
@@ -132,7 +132,7 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
                 schema:
                   type: object
           '400':
-            description: Invalid request or payload.
+            description: Invalid request or parameters.
             content:
               application/json:
                 schema:
