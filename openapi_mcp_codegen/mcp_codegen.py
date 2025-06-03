@@ -199,7 +199,7 @@ class MCPGenerator:
       """
       import ast
       import re
-      from openapi_mcp_codegen.llm_factory import LLMFactory
+      from cnoe_agent_utils import LLMFactory
       from langchain_core.messages import SystemMessage, HumanMessage
 
       logger.info(f"Enhancing docstrings in: {input_path}")

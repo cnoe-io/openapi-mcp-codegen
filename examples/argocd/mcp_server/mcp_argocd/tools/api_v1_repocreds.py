@@ -42,7 +42,7 @@ async def repocredsservice_listrepositorycredentials(url: str = None) -> Dict[st
                 schema:
                   type: object
                   properties:
-                    credentials:
+                    items:
                       type: array
                       items:
                         type: object
@@ -90,7 +90,7 @@ async def repocredsservice_createrepositorycredentials(body: str, upsert: str = 
         upsert (str, optional): If set, allows updating existing credentials. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the API, including the created credential set or error details.
+        Dict[str, Any]: The response from the API, including the created credential set or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -121,17 +121,9 @@ async def repocredsservice_createrepositorycredentials(body: str, upsert: str = 
                 schema:
                   type: object
           '400':
-            description: Invalid request or payload
-            content:
-              application/json:
-                schema:
-                  type: object
+            description: Invalid request payload
           '500':
             description: Internal server error
-            content:
-              application/json:
-                schema:
-                  type: object
     '''
     logger.debug("Making POST request to /api/v1/repocreds")
     params = {}

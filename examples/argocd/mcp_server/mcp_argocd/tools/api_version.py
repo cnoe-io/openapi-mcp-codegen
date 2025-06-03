@@ -18,9 +18,6 @@ async def versionservice_version() -> Dict[str, Any]:
     '''
     Retrieves version information of the API server.
 
-    Args:
-        None
-
     Returns:
         Dict[str, Any]: A dictionary containing version information of the API server. If the request fails, returns a dictionary with an 'error' key describing the failure.
 

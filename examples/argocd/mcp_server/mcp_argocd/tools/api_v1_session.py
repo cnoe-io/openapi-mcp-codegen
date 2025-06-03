@@ -29,7 +29,9 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
 
     OpenAPI Specification:
       post:
-        summary: Create a new JWT for authentication and set a cookie if using HTTP.
+        summary: Create a new session and issue a JWT.
+        description: |
+          Authenticates a user and creates a new session. Returns a JWT for authentication and sets a cookie if using HTTP.
         operationId: sessionservice_create
         requestBody:
           required: true
@@ -37,9 +39,10 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
             application/json:
               schema:
                 type: string
+              example: '{"username": "user", "password": "pass"}'
         responses:
           '200':
-            description: Successful authentication and JWT creation.
+            description: Successful authentication and session creation.
             content:
               application/json:
                 schema:
@@ -47,7 +50,7 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
                   properties:
                     token:
                       type: string
-                      description: The generated JWT token.
+                      description: The issued JWT.
                     expires_in:
                       type: integer
                       description: Expiration time in seconds.
@@ -55,7 +58,7 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
                       type: object
                       description: Authenticated user information.
           '400':
-            description: Invalid request payload.
+            description: Invalid request or authentication failed.
             content:
               application/json:
                 schema:
@@ -63,15 +66,7 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-          '401':
-            description: Authentication failed.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
+                      description: Error message.
     '''
     logger.debug("Making POST request to /api/v1/session")
     params = {}
@@ -133,7 +128,7 @@ async def sessionservice_delete() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: "No active session."
+                      example: "Unauthorized"
           '500':
             description: Server error.
             content:
@@ -143,7 +138,7 @@ async def sessionservice_delete() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: "Internal server error."
+                      example: "Internal server error"
     '''
     logger.debug("Making DELETE request to /api/v1/session")
     params = {}

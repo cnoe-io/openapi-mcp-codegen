@@ -32,7 +32,7 @@ async def repositoryservice_listwriterepositories(repo: str = None, forceRefresh
     OpenAPI Specification:
       get:
         summary: List all configured write repositories.
-        operationId: repositoryservice_listwriterepositories
+        operationId: listWriteRepositories
         parameters:
           - in: query
             name: repo
@@ -110,7 +110,7 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
             application/json:
               schema:
                 type: object
-                description: Repository configuration object.
+                description: Repository configuration payload.
         parameters:
           - in: query
             name: upsert
@@ -132,7 +132,7 @@ async def repositoryservice_createwriterepository(body: str, upsert: str = None,
                 schema:
                   type: object
           '400':
-            description: Invalid request or parameters.
+            description: Invalid request or payload.
             content:
               application/json:
                 schema:

@@ -16,38 +16,43 @@ logger = logging.getLogger("mcp_tools")
 
 async def loginuser(username: str = None, password: str = None) -> Dict[str, Any]:
     '''
-    Logs a user into the system.
+    Logs a user into the system using provided credentials.
 
     Args:
-        username (str, optional): The username of the user to log in. Defaults to None.
-        password (str, optional): The password of the user to log in. Defaults to None.
+        username (str, optional): The username of the user. Defaults to None.
+        password (str, optional): The password of the user. Defaults to None.
 
     Returns:
         Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
 
     Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
-      get:
+      post:
         summary: Logs user into the system.
-        operationId: loginUser
-        parameters:
-          - name: username
-            in: query
-            description: The username of the user to log in.
-            required: false
-            schema:
-              type: string
-          - name: password
-            in: query
-            description: The password of the user to log in.
-            required: false
-            schema:
-              type: string
+        operationId: loginuser
+        tags:
+          - user
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: The username of the user.
+                  password:
+                    type: string
+                    description: The password of the user.
+                required:
+                  - username
+                  - password
         responses:
           '200':
-            description: Successful login response.
+            description: Successful login
             content:
               application/json:
                 schema:
@@ -56,11 +61,11 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                     token:
                       type: string
                       description: Authentication token for the user.
-                    user:
-                      type: object
-                      description: User information.
-          '400':
-            description: Invalid username or password.
+                    userId:
+                      type: string
+                      description: The unique identifier of the user.
+          '401':
+            description: Invalid username or password
             content:
               application/json:
                 schema:
@@ -68,9 +73,9 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message indicating authentication failure.
           '500':
-            description: Internal server error.
+            description: Server error
             content:
               application/json:
                 schema:
@@ -78,7 +83,7 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     error:
                       type: string
-                      description: Error message.
+                      description: Error message indicating server failure.
     '''
     logger.debug("Making GET request to /user/login")
     params = {}

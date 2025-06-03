@@ -20,7 +20,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
 
     Args:
         name (str, optional): Filter applications by name. Defaults to None.
-        refresh (str, optional): If set, refreshes application data before listing. Defaults to None.
+        refresh (str, optional): If set, refreshes the application cache. Defaults to None.
         projects (str, optional): Comma-separated list of project names to filter applications. Defaults to None.
         resourceVersion (str, optional): Filter by resource version. Defaults to None.
         selector (str, optional): Label selector to filter applications. Defaults to None.
@@ -37,7 +37,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
     OpenAPI Specification:
       get:
         summary: List applications
-        description: Retrieve a list of applications with optional filtering parameters.
+        description: Retrieve a list of applications with optional filters.
         operationId: applicationservice_list
         parameters:
           - in: query
@@ -49,7 +49,7 @@ async def applicationservice_list(name: str = None, refresh: str = None, project
             name: refresh
             schema:
               type: string
-            description: If set, refreshes application data before listing.
+            description: If set, refreshes the application cache.
           - in: query
             name: projects
             schema:
@@ -118,12 +118,12 @@ async def applicationservice_create(body: str, upsert: str = None, validate: str
     Creates a new application.
 
     Args:
-        body (str): The JSON string representing the application to create.
+        body (str): The JSON string representing the application to be created.
         upsert (str, optional): If set, allows upserting the application. Defaults to None.
-        validate (str, optional): If set, validates the application without persisting. Defaults to None.
+        validate (str, optional): If set, validates the application without creating it. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the API, including the created application details or an error message.
+        Dict[str, Any]: The response from the API containing the created application's details or an error message.
 
     Raises:
         Exception: If the API request fails or returns an unexpected error.
@@ -137,7 +137,8 @@ async def applicationservice_create(body: str, upsert: str = None, validate: str
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                description: Application object to create
         parameters:
           - in: query
             name: upsert
@@ -150,7 +151,7 @@ async def applicationservice_create(body: str, upsert: str = None, validate: str
             schema:
               type: string
             required: false
-            description: If set, validates the application without persisting.
+            description: If set, validates the application without creating it.
         responses:
           '200':
             description: Application created successfully

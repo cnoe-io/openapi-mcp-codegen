@@ -22,7 +22,7 @@ async def notificationservice_listservices() -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of notification services or an error message.
 
     Raises:
-        Exception: If the API request fails or an unexpected error occurs.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       get:
@@ -42,9 +42,9 @@ async def notificationservice_listservices() -> Dict[str, Any]:
                     services:
                       type: array
                       items:
-                        type: string
+                        type: object
           '500':
-            description: Internal server error.
+            description: Server error.
             content:
               application/json:
                 schema:

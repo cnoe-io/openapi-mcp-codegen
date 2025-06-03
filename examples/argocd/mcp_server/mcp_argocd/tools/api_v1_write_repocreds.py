@@ -16,31 +16,25 @@ logger = logging.getLogger("mcp_tools")
 
 async def repocredsservice_listwriterepositorycredentials(url: str = None) -> Dict[str, Any]:
     '''
-    Retrieves a list of all configured repository credential sets that have write access.
+    Retrieves a list of all configured repository credential sets with write access.
 
     Args:
         url (str, optional): The base URL of the API endpoint. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message.
+        Dict[str, Any]: A dictionary containing the list of repository credential sets with write access, or an error message if the request fails.
 
     Raises:
-        Exception: If the API request fails or an unexpected error occurs.
+        Exception: If the API request encounters an unexpected error.
 
     OpenAPI Specification:
       get:
-        summary: List Write Repository Credentials
+        summary: List all repository credential sets with write access
         description: Retrieves all configured repository credential sets that have write access.
         operationId: listWriteRepositoryCredentials
         tags:
           - RepositoryCredentials
-        parameters:
-          - in: query
-            name: url
-            schema:
-              type: string
-            required: false
-            description: The base URL of the API endpoint.
+        parameters: []
         responses:
           '200':
             description: A list of repository credential sets with write access.
@@ -129,16 +123,8 @@ async def repocredsservice_createwriterepositorycredentials(body: str, upsert: s
                   type: object
           '400':
             description: Invalid request or missing required fields.
-            content:
-              application/json:
-                schema:
-                  type: object
           '500':
             description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
     '''
     logger.debug("Making POST request to /api/v1/write-repocreds")
     params = {}

@@ -25,11 +25,11 @@ async def projectservice_list(name: str = None) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of projects or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected response.
+        Exception: If the API request fails or an unexpected error occurs.
 
     OpenAPI Specification:
       get:
-        summary: List Projects
+        summary: List projects
         description: Retrieves a list of projects, optionally filtered by project name.
         operationId: projectservice_list
         parameters:
@@ -88,10 +88,10 @@ async def projectservice_list(name: str = None) -> Dict[str, Any]:
 
 async def projectservice_create(body: str) -> Dict[str, Any]:
     '''
-    Creates a new project.
+    Create a new project.
 
     Args:
-        body (str): The JSON-formatted string containing the project details.
+        body (str): The JSON-formatted string containing the project details to create.
 
     Returns:
         Dict[str, Any]: The response from the API containing the created project details or an error message.
@@ -118,14 +118,7 @@ async def projectservice_create(body: str) -> Dict[str, Any]:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    id:
-                      type: string
-                      description: Unique identifier for the project
-                    name:
-                      type: string
-                      description: Name of the project
-                    # Additional project fields as needed
+                  description: Created project details
           '400':
             description: Invalid request payload
             content:

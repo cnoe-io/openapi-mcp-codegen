@@ -65,7 +65,7 @@ async def repositoryservice_listrepositories(repo: str = None, forceRefresh: str
                       items:
                         type: object
           '400':
-            description: Bad request.
+            description: Invalid request parameters.
           '500':
             description: Internal server error.
     '''
@@ -91,14 +91,14 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
 
     Args:
         body (str): The JSON-encoded repository configuration to create.
-        upsert (str, optional): If set, allows updating an existing repository configuration. Defaults to None.
+        upsert (str, optional): If set, allows updating an existing repository if it already exists. Defaults to None.
         credsOnly (str, optional): If set, only credentials will be updated. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the repository creation API, including repository details or error information.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected error.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       post:
@@ -117,7 +117,7 @@ async def repositoryservice_createrepository(body: str, upsert: str = None, cred
             schema:
               type: string
             required: false
-            description: If set, allows updating an existing repository configuration.
+            description: If set, allows updating an existing repository if it already exists.
           - in: query
             name: credsOnly
             schema:

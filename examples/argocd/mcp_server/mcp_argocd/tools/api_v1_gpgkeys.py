@@ -91,19 +91,19 @@ async def gpgkeyservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
     Create one or more GPG public keys in the server's configuration.
 
     Args:
-        body (str): The GPG public key(s) to add, in ASCII-armored format.
+        body (str): The GPG public key(s) to be added, in ASCII-armored format.
         upsert (str, optional): If set, allows updating existing keys. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The response from the server, including details of the created or updated keys.
+        Dict[str, Any]: The response from the server, including details of the created or updated GPG keys.
 
     Raises:
-        ValueError: If the request body is invalid or missing required fields.
-        RuntimeError: If the server returns an error or the request fails.
+        Exception: If the API request fails or returns an error.
 
     OpenAPI Specification:
       post:
-        summary: Create one or more GPG public keys in the server's configuration.
+        summary: Create one or more GPG public keys
+        description: Add one or more GPG public keys to the server's configuration. Optionally update existing keys if 'upsert' is specified.
         operationId: gpgkeyservice_create
         requestBody:
           required: true
@@ -111,7 +111,7 @@ async def gpgkeyservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
             text/plain:
               schema:
                 type: string
-                description: The GPG public key(s) in ASCII-armored format.
+                description: GPG public key(s) in ASCII-armored format.
         parameters:
           - in: query
             name: upsert
@@ -121,16 +121,30 @@ async def gpgkeyservice_create(body: str, upsert: str = None) -> Dict[str, Any]:
             description: If set, allows updating existing keys.
         responses:
           '200':
-            description: Keys created or updated successfully.
+            description: GPG key(s) created or updated successfully.
             content:
               application/json:
                 schema:
                   type: object
                   additionalProperties: true
           '400':
-            description: Invalid request body or parameters.
+            description: Invalid request or malformed GPG key(s).
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
           '500':
             description: Server error.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
     '''
     logger.debug("Making POST request to /api/v1/gpgkeys")
     params = {}

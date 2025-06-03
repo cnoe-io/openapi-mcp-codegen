@@ -22,7 +22,7 @@ async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
         body (str): The request body containing file data used to generate application manifests.
 
     Returns:
-        Dict[str, Any]: The generated application manifests or an error message.
+        Dict[str, Any]: A dictionary containing the generated application manifests or an error message.
 
     Raises:
         Exception: If the API request fails or returns an unexpected response.
@@ -37,7 +37,13 @@ async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
             application/json:
               schema:
                 type: string
-                description: The file data used to generate application manifests.
+              example: |
+                {
+                  "files": [
+                    {"name": "deployment.yaml", "content": "<YAML content>"},
+                    {"name": "service.yaml", "content": "<YAML content>"}
+                  ]
+                }
         responses:
           '200':
             description: Successfully generated application manifests.
@@ -45,7 +51,11 @@ async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
               application/json:
                 schema:
                   type: object
-                  additionalProperties: true
+                  properties:
+                    manifests:
+                      type: array
+                      items:
+                        type: string
           '400':
             description: Invalid request or file data.
             content:

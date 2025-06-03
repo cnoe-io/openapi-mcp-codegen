@@ -25,7 +25,7 @@ async def placeorder() -> Dict[str, Any]:
         Dict[str, Any]: The response from the API containing order details or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or server errors.
+        Exception: If the API request fails due to network issues or unexpected errors.
 
     OpenAPI Specification:
       post:
@@ -35,24 +35,20 @@ async def placeorder() -> Dict[str, Any]:
           - store
         requestBody:
           description: Order placed for purchasing the pet
-          required: false
+          required: true
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/Order'
         responses:
           '200':
             description: Successful operation
             content:
               application/json:
                 schema:
-                  type: object
+                  $ref: '#/components/schemas/Order'
           '400':
-            description: Invalid order
-            content:
-              application/json:
-                schema:
-                  type: object
+            description: Invalid Order
     '''
     logger.debug("Making POST request to /store/order")
     params = {}

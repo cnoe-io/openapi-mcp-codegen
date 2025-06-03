@@ -30,7 +30,7 @@ async def notificationservice_listtriggers() -> Dict[str, Any]:
     OpenAPI Specification:
       get:
         summary: List notification triggers
-        description: Retrieves a list of all configured notification triggers.
+        description: Retrieves a list of all notification triggers configured in the system.
         operationId: notificationservice_listtriggers
         tags:
           - NotificationService

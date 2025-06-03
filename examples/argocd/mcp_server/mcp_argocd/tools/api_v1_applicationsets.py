@@ -27,7 +27,7 @@ async def applicationsetservice_list(projects: str = None, selector: str = None,
         Dict[str, Any]: A dictionary containing the list of ApplicationSets or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an unexpected response.
+        Exception: If the API request fails or returns an unexpected error.
 
     OpenAPI Specification:
       get:
@@ -106,19 +106,19 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
 
     Args:
         body (str): The JSON-encoded ApplicationSet manifest to create.
-        upsert (str, optional): If set, allows upserting the ApplicationSet. Defaults to None.
-        dryRun (str, optional): If set, only validates the request without persisting. Defaults to None.
+        upsert (str, optional): If set, allows updating an existing ApplicationSet if it already exists. Defaults to None.
+        dryRun (str, optional): If set, only validates the request without persisting the resource. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the API, containing the created ApplicationSet or error details.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an unexpected error.
 
     OpenAPI Specification:
       post:
         summary: Create an ApplicationSet
-        description: Creates a new ApplicationSet resource.
+        description: Creates a new ApplicationSet resource in the system.
         operationId: applicationsetservice_create
         requestBody:
           required: true
@@ -126,35 +126,35 @@ async def applicationsetservice_create(body: str, upsert: str = None, dryRun: st
             application/json:
               schema:
                 type: string
-              example: '{"apiVersion": "argoproj.io/v1alpha1", "kind": "ApplicationSet", ...}'
+                description: JSON-encoded ApplicationSet manifest
         parameters:
           - name: upsert
             in: query
             required: false
             schema:
               type: string
-            description: If set, allows upserting the ApplicationSet.
+            description: If set, allows updating an existing ApplicationSet if it already exists.
           - name: dryRun
             in: query
             required: false
             schema:
               type: string
-            description: If set, only validates the request without persisting.
+            description: If set, only validates the request without persisting the resource.
         responses:
           '200':
-            description: ApplicationSet created successfully.
+            description: ApplicationSet created successfully
             content:
               application/json:
                 schema:
                   type: object
           '400':
-            description: Invalid request or validation error.
+            description: Invalid request or validation error
             content:
               application/json:
                 schema:
                   type: object
           '500':
-            description: Internal server error.
+            description: Internal server error
             content:
               application/json:
                 schema:

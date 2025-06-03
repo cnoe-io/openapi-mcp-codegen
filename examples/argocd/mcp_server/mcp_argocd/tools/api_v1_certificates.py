@@ -27,7 +27,7 @@ async def certificateservice_listcertificates(hostNamePattern: str = None, certT
         Dict[str, Any]: A dictionary containing the list of certificates or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or invalid responses.
+        Exception: If the API request fails or returns an unexpected response.
 
     OpenAPI Specification:
       get:
@@ -104,8 +104,8 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
     Creates repository certificates on the server.
 
     Args:
-        body (str): The certificate data to be created, typically in JSON or PEM format.
-        upsert (str, optional): If provided, indicates whether to update the certificate if it already exists. Defaults to None.
+        body (str): The certificate data to be created on the server.
+        upsert (str, optional): If provided, determines whether to update the certificate if it already exists. Defaults to None.
 
     Returns:
         Dict[str, Any]: The response from the server, including certificate details or error information.
@@ -123,17 +123,13 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
             application/json:
               schema:
                 type: string
-              example: |
-                {
-                  "certificate": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----"
-                }
         parameters:
           - in: query
             name: upsert
             schema:
               type: string
             required: false
-            description: If provided, updates the certificate if it already exists.
+            description: If provided, determines whether to update the certificate if it already exists.
         responses:
           '200':
             description: Certificate created successfully.
@@ -141,33 +137,18 @@ async def certificateservice_createcertificate(body: str, upsert: str = None) ->
               application/json:
                 schema:
                   type: object
-                  properties:
-                    certificateId:
-                      type: string
-                      description: The unique identifier of the created certificate.
-                    status:
-                      type: string
-                      description: Status of the operation.
           '400':
-            description: Invalid request or certificate data.
+            description: Invalid request or missing required fields.
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message.
           '500':
             description: Server error.
             content:
               application/json:
                 schema:
                   type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message.
     '''
     logger.debug("Making POST request to /api/v1/certificates")
     params = {}
@@ -246,8 +227,6 @@ async def certificateservice_deletecertificate(hostNamePattern: str = None, cert
               application/json:
                 schema:
                   type: object
-        tags:
-          - Certificates
     '''
     logger.debug("Making DELETE request to /api/v1/certificates")
     params = {}

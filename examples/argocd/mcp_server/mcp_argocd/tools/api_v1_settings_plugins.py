@@ -25,12 +25,12 @@ async def settingsservice_getplugins() -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of Argo CD plugins or an error message.
 
     Raises:
-        Exception: If the API request fails or an unexpected error occurs.
+        Exception: If the API request fails due to network issues or server errors.
 
     OpenAPI Specification:
       get:
         summary: Retrieve Argo CD plugins
-        description: Returns a list of available Argo CD plugins.
+        description: Returns a list of available Argo CD plugins configured in the system.
         operationId: settingsservice_getplugins
         tags:
           - Settings
@@ -47,7 +47,7 @@ async def settingsservice_getplugins() -> Dict[str, Any]:
                       items:
                         type: object
           '500':
-            description: Internal server error.
+            description: Server error or failed request.
             content:
               application/json:
                 schema:

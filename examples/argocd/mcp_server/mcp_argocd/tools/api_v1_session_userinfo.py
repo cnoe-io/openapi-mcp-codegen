@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def sessionservice_getuserinfo() -> Dict[str, Any]:
     '''
-    Retrieve information about the current authenticated user.
+    Get the current user's information.
 
     Args:
         None
@@ -25,12 +25,11 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the current user's information. If the request fails, returns a dictionary with an 'error' key describing the failure.
 
     Raises:
-        Exception: If there is an unexpected error during the API request.
+        Exception: If an unexpected error occurs during the API request.
 
     OpenAPI Specification:
       get:
         summary: Get current user information
-        description: Retrieve information about the currently authenticated user session.
         operationId: sessionservice_getuserinfo
         tags:
           - Session
@@ -44,20 +43,20 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
                   properties:
                     id:
                       type: string
-                      description: Unique identifier for the user.
+                      description: The user's unique identifier.
                     username:
                       type: string
-                      description: Username of the user.
+                      description: The user's username.
                     email:
                       type: string
-                      description: Email address of the user.
+                      description: The user's email address.
                     roles:
                       type: array
                       items:
                         type: string
                       description: List of roles assigned to the user.
           '401':
-            description: Unauthorized. Authentication credentials were missing or invalid.
+            description: Unauthorized. The user is not authenticated.
             content:
               application/json:
                 schema:

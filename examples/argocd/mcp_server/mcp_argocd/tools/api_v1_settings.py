@@ -26,8 +26,8 @@ async def settingsservice_get() -> Dict[str, Any]:
 
     OpenAPI Specification:
       get:
-        summary: Retrieve Argo CD settings
-        description: Returns the current configuration settings for Argo CD.
+        summary: Get Argo CD settings
+        description: Retrieve the current configuration and settings for the Argo CD instance.
         operationId: settingsservice_get
         tags:
           - Settings
@@ -40,7 +40,7 @@ async def settingsservice_get() -> Dict[str, Any]:
                   type: object
                   additionalProperties: true
           '500':
-            description: Failed to retrieve Argo CD settings.
+            description: Internal server error.
             content:
               application/json:
                 schema:
@@ -48,7 +48,6 @@ async def settingsservice_get() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message
     '''
     logger.debug("Making GET request to /api/v1/settings")
     params = {}
