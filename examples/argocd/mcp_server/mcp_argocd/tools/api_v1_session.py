@@ -15,63 +15,15 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sessionservice_create(body: str) -> Dict[str, Any]:
-    '''
-    Create a new JWT for authentication and set a cookie if using HTTP.
-
-    Args:
-        body (str): The request payload containing authentication credentials.
-
-    Returns:
-        Dict[str, Any]: The response from the authentication service, including the JWT and any relevant metadata.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      post:
-        summary: Create a new JWT for authentication and set a cookie if using HTTP.
-        operationId: sessionservice_create
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: string
-        responses:
-          '200':
-            description: Successful authentication with JWT issued.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    token:
-                      type: string
-                      description: The issued JWT token.
-                    expires_in:
-                      type: integer
-                      description: Token expiration time in seconds.
-          '400':
-            description: Invalid request payload.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '401':
-            description: Authentication failed.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    Create a new JWT for authentication and set a cookie if using HTTP
+    """
     logger.debug("Making POST request to /api/v1/session")
     params = {}
+    
+    if body is not None:
+      params["body"] = body
+    
     data = None
 
     # Add parameters to request
@@ -91,68 +43,12 @@ async def sessionservice_create(body: str) -> Dict[str, Any]:
 
 
 async def sessionservice_delete() -> Dict[str, Any]:
-    '''
-    Delete an existing JWT cookie if using HTTP.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: The response from the API. Contains success message or error details.
-
-    Raises:
-        Exception: If the API request fails due to network issues or unexpected errors.
-
-    OpenAPI Specification:
-      delete:
-        summary: Delete an existing JWT cookie if using HTTP.
-        operationId: sessionservice_delete
-        tags:
-          - Session
-        responses:
-          '200':
-            description: JWT cookie deleted successfully.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Session deleted successfully."
-          '400':
-            description: Bad request.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      example: "Invalid request."
-          '401':
-            description: Unauthorized. No valid session found.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      example: "Unauthorized."
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      example: "Internal server error."
-    '''
+    """
+    Delete an existing JWT cookie if using HTTP
+    """
     logger.debug("Making DELETE request to /api/v1/session")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -165,3 +61,4 @@ async def sessionservice_delete() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

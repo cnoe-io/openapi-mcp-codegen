@@ -15,52 +15,12 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def versionservice_version() -> Dict[str, Any]:
-    '''
-    Retrieves version information of the API server.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing version information of the API server.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-
-    OpenAPI Specification:
-      get:
-        summary: Get API server version information
-        description: Returns version information of the API server.
-        operationId: versionservice_version
-        tags:
-          - Version
-        responses:
-          '200':
-            description: Successful response with version information.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    version:
-                      type: string
-                      description: The version of the API server.
-                    build:
-                      type: string
-                      description: The build identifier of the API server.
-                    commit:
-                      type: string
-                      description: The commit hash of the API server.
-          '500':
-            description: Server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message.
-    '''
+    """
+    Version returns version information of the API server
+    """
     logger.debug("Making GET request to /api/version")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -73,3 +33,4 @@ async def versionservice_version() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

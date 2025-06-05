@@ -34,7 +34,7 @@ async def updatepet() -> Dict[str, Any]:
           tags:
             - pet
           requestBody:
-            description: Pet object that needs to be updated in the store
+            description: Pet object that needs to be updated
             required: true
             content:
               application/json:
@@ -56,6 +56,7 @@ async def updatepet() -> Dict[str, Any]:
     '''
     logger.debug("Making PUT request to /pet")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -124,6 +125,7 @@ async def addpet() -> Dict[str, Any]:
     '''
     logger.debug("Making POST request to /pet")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

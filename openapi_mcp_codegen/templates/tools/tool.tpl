@@ -21,6 +21,10 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
     """
     logger.debug("Making {{ func.method.upper() }} request to {{ path }}")
     params = {}
+    {% for param in func.params if param != "body" %}
+    if {{ param.split(':')[0].strip() }} is not None:
+      params["{{ param.split(':')[0].strip() }}"] = {{ param.split(':')[0].strip() }}
+    {% endfor %}
     data = None
 {% if 'body' in func.params | join(', ') %}
     # Add parameters to request

@@ -15,58 +15,15 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repocredsservice_listrepositorycredentials(url: str = None) -> Dict[str, Any]:
-    '''
-    Retrieves a list of all configured repository credential sets.
-
-    Args:
-        url (str, optional): The base URL of the API endpoint. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of repository credential sets or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-
-    OpenAPI Specification:
-      get:
-        summary: List all configured repository credential sets
-        operationId: listRepositoryCredentials
-        tags:
-          - RepositoryCredentials
-        parameters: []
-        responses:
-          '200':
-            description: A list of repository credential sets.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    items:
-                      type: array
-                      items:
-                        type: object
-          '400':
-            description: Bad request.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    ListRepositoryCredentials gets a list of all configured repository credential sets
+    """
     logger.debug("Making GET request to /api/v1/repocreds")
     params = {}
+    
+    if url is not None:
+      params["url"] = url
+    
     data = None
 
     success, response = await make_api_request(
@@ -82,51 +39,18 @@ async def repocredsservice_listrepositorycredentials(url: str = None) -> Dict[st
 
 
 async def repocredsservice_createrepositorycredentials(body: str, upsert: str = None) -> Dict[str, Any]:
-    '''
-    Creates a new repository credential set.
-
-    Args:
-        body (str): The JSON-encoded repository credentials to create.
-        upsert (str, optional): If set, allows updating existing credentials. Defaults to None.
-
-    Returns:
-        Dict[str, Any]: The response from the API, including the created credential set or an error message.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      post:
-        summary: Create a new repository credential set
-        operationId: repocredsservice_createrepositorycredentials
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                description: Repository credentials payload
-        parameters:
-          - in: query
-            name: upsert
-            schema:
-              type: string
-            required: false
-            description: If set, allows updating existing credentials
-        responses:
-          '200':
-            description: Repository credentials created successfully
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Invalid request payload
-          '500':
-            description: Internal server error
-    '''
+    """
+    CreateRepositoryCredentials creates a new repository credential set
+    """
     logger.debug("Making POST request to /api/v1/repocreds")
     params = {}
+    
+    if body is not None:
+      params["body"] = body
+    
+    if upsert is not None:
+      params["upsert"] = upsert
+    
     data = None
 
     # Add parameters to request
@@ -143,3 +67,4 @@ async def repocredsservice_createrepositorycredentials(body: str, upsert: str = 
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

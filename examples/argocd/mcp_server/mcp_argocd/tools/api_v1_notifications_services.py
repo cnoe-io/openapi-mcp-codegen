@@ -15,46 +15,12 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def notificationservice_listservices() -> Dict[str, Any]:
-    '''
-    Retrieves a list of available notification services.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of notification services or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-
-    OpenAPI Specification:
-      get:
-        summary: List notification services
-        description: Retrieve a list of all available notification services.
-        operationId: notificationservice_listservices
-        tags:
-          - NotificationService
-        responses:
-          '200':
-            description: A list of notification services.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    services:
-                      type: array
-                      items:
-                        type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    List returns list of services
+    """
     logger.debug("Making GET request to /api/v1/notifications/services")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -67,3 +33,4 @@ async def notificationservice_listservices() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

@@ -22,20 +22,20 @@ async def logoutuser() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: The response from the logout endpoint. Typically contains a success message or error details.
+        Dict[str, Any]: A dictionary containing the result of the logout operation. On success, returns a confirmation message. On failure, returns an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or server errors.
+        Exception: If the API request fails due to network issues or unexpected server errors.
 
     OpenAPI Specification:
       get:
-        summary: Logs out current logged in user session.
-        operationId: logoutuser
+        summary: Logs out the current logged-in user session.
+        operationId: logoutUser
         tags:
           - user
         responses:
           '200':
-            description: Successful logout
+            description: Successfully logged out the user.
             content:
               application/json:
                 schema:
@@ -43,9 +43,9 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     message:
                       type: string
-                      description: Success message
+                      example: "Successfully logged out."
           '401':
-            description: Unauthorized - user not logged in
+            description: Unauthorized. User is not logged in.
             content:
               application/json:
                 schema:
@@ -53,9 +53,9 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message
+                      example: "User not logged in."
           '500':
-            description: Server error
+            description: Internal server error.
             content:
               application/json:
                 schema:
@@ -63,10 +63,11 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      description: Error message
+                      example: "Request failed"
     '''
     logger.debug("Making GET request to /user/logout")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

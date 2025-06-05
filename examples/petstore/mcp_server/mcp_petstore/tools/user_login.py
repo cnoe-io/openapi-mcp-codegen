@@ -26,30 +26,28 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
         Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
 
     Raises:
-        Exception: If the API request fails due to network issues or invalid credentials.
+        Exception: If the API request fails due to network issues or unexpected errors.
 
     OpenAPI Specification:
-      post:
+      get:
         summary: Logs user into the system.
         operationId: loginuser
-        tags:
-          - user
         parameters:
           - name: username
             in: query
+            description: The username of the user.
             required: false
             schema:
               type: string
-            description: The username of the user.
           - name: password
             in: query
+            description: The password of the user.
             required: false
             schema:
               type: string
-            description: The password of the user.
         responses:
           '200':
-            description: Successful login.
+            description: Successful login response.
             content:
               application/json:
                 schema:
@@ -84,6 +82,13 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
     '''
     logger.debug("Making GET request to /user/login")
     params = {}
+    
+    if username is not None:
+      params["username"] = username
+    
+    if password is not None:
+      params["password"] = password
+    
     data = None
 
     success, response = await make_api_request(

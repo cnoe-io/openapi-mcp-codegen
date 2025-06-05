@@ -15,71 +15,15 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
-    '''
-    Generates an ApplicationSet resource based on the provided input.
-
-    Args:
-        body (str): The request payload containing the ApplicationSet configuration in JSON or YAML format.
-
-    Returns:
-        Dict[str, Any]: The generated ApplicationSet resource or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-
-    OpenAPI Specification:
-      post:
-        summary: Generate an ApplicationSet resource.
-        description: Generates an ApplicationSet resource based on the provided configuration.
-        operationId: applicationsetservice_generate
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: string
-              example: |
-                {
-                  "apiVersion": "argoproj.io/v1alpha1",
-                  "kind": "ApplicationSet",
-                  "metadata": {
-                    "name": "example-applicationset"
-                  },
-                  "spec": {
-                    ...
-                  }
-                }
-            application/yaml:
-              schema:
-                type: string
-        responses:
-          '200':
-            description: Successfully generated ApplicationSet resource.
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Invalid input provided.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    Generate generates
+    """
     logger.debug("Making POST request to /api/v1/applicationsets/generate")
     params = {}
+    
+    if body is not None:
+      params["body"] = body
+    
     data = None
 
     # Add parameters to request
@@ -96,3 +40,4 @@ async def applicationsetservice_generate(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

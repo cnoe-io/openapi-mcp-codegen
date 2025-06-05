@@ -10,8 +10,8 @@ from typing import Optional, Dict, Tuple, Any
 import httpx
 
 # Load environment variables
-API_URL = os.getenv("API_URL")
-API_TOKEN = os.getenv("API_TOKEN")
+API_URL = os.getenv("{{ mcp_name | upper }}_API_URL")
+API_TOKEN = os.getenv("{{ mcp_name | upper }}_TOKEN")
 
 if not API_URL:
     raise ValueError("API_URL environment variable is not set.")
@@ -70,7 +70,7 @@ async def make_api_request(
             logger.debug(f"Request data: {data}")
 
         async with httpx.AsyncClient(timeout=timeout) as client:
-            url = f"{API_URL}/{path}"
+            url = f"{API_URL}{path}"
             logger.debug(f"Full request URL: {url}")
 
             method_map = {

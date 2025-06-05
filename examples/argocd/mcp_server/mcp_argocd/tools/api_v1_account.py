@@ -15,58 +15,12 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def accountservice_listaccounts() -> Dict[str, Any]:
-    '''
-    Retrieves the list of accounts.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of accounts or an error message.
-
-    Raises:
-        Exception: If the API request fails due to network issues or server errors.
-
-    OpenAPI Specification:
-      get:
-        summary: List all accounts
-        description: Retrieves a list of all accounts available to the user.
-        operationId: accountservice_listaccounts
-        tags:
-          - Accounts
-        responses:
-          '200':
-            description: A list of accounts.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    accounts:
-                      type: array
-                      items:
-                        type: object
-          '400':
-            description: Bad request.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    ListAccounts returns the list of accounts
+    """
     logger.debug("Making GET request to /api/v1/account")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -79,3 +33,4 @@ async def accountservice_listaccounts() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+
