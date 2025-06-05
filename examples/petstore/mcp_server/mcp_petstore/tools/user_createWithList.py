@@ -30,11 +30,11 @@ async def createuserswithlistinput() -> Dict[str, Any]:
     OpenAPI Specification:
       post:
         summary: Creates list of users with given input array.
-        operationId: createuserswithlistinput
+        operationId: createUsersWithListInput
         tags:
           - user
         requestBody:
-          description: List of user objects that need to be created
+          description: List of user objects to be created.
           required: true
           content:
             application/json:
@@ -48,16 +48,15 @@ async def createuserswithlistinput() -> Dict[str, Any]:
             content:
               application/json:
                 schema:
-                  type: object
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
           '400':
             description: Invalid input
-            content:
-              application/json:
-                schema:
-                  type: object
     '''
     logger.debug("Making POST request to /user/createwithlist")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

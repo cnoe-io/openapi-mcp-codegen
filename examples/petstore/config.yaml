@@ -6,7 +6,7 @@ version: 0.1.0
 license: Apache-2.0
 python_version: 3.13.2
 headers:
-  Authorization: Api-Key {{ token }}
+  Authorization: Api-Key f{token}
   Accept: application/json
 poetry_dependencies: |
   python = ">=3.13,<4.0"

@@ -55,6 +55,10 @@ async def findpetsbystatus(status: str = None) -> Dict[str, Any]:
     '''
     logger.debug("Making GET request to /pet/findbystatus")
     params = {}
+    
+    if status is not None:
+      params["status"] = status
+    
     data = None
 
     success, response = await make_api_request(

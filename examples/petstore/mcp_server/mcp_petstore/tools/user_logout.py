@@ -30,12 +30,12 @@ async def logoutuser() -> Dict[str, Any]:
     OpenAPI Specification:
       get:
         summary: Logs out the current logged-in user session.
-        operationId: logoutuser
+        operationId: logoutUser
         tags:
           - user
         responses:
           '200':
-            description: Successfully logged out.
+            description: Successfully logged out the user.
             content:
               application/json:
                 schema:
@@ -43,7 +43,7 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     message:
                       type: string
-                      example: Successfully logged out.
+                      example: "Successfully logged out."
           '401':
             description: Unauthorized. User is not logged in.
             content:
@@ -53,9 +53,9 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: User not logged in.
+                      example: "User not logged in."
           '500':
-            description: Server error.
+            description: Internal server error.
             content:
               application/json:
                 schema:
@@ -63,10 +63,11 @@ async def logoutuser() -> Dict[str, Any]:
                   properties:
                     error:
                       type: string
-                      example: Internal server error.
+                      example: "Request failed"
     '''
     logger.debug("Making GET request to /user/logout")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

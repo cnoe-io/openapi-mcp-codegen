@@ -25,37 +25,38 @@ async def updatepet() -> Dict[str, Any]:
         Dict[str, Any]: The response from the API containing the updated pet information or an error message.
 
     Raises:
-        Exception: If the API request fails due to network issues or invalid responses.
+        Exception: If the API request fails due to network issues or invalid response.
 
     OpenAPI Specification:
-      put:
-        summary: Update an existing pet
-        operationId: updatepet
-        tags:
-          - pet
-        requestBody:
-          description: Pet object that needs to be updated
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        responses:
-          '200':
-            description: Successful operation
+        put:
+          summary: Update an existing pet
+          operationId: updatepet
+          tags:
+            - pet
+          requestBody:
+            description: Pet object that needs to be updated
+            required: true
             content:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Pet'
-          '400':
-            description: Invalid ID supplied
-          '404':
-            description: Pet not found
-          '405':
-            description: Validation exception
+          responses:
+            '200':
+              description: Successful operation
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Pet'
+            '400':
+              description: Invalid ID supplied
+            '404':
+              description: Pet not found
+            '405':
+              description: Validation exception
     '''
     logger.debug("Making PUT request to /pet")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -108,10 +109,23 @@ async def addpet() -> Dict[str, Any]:
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/Error'
+                  type: object
+                  properties:
+                    error:
+                      type: string
+          '500':
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
     '''
     logger.debug("Making POST request to /pet")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

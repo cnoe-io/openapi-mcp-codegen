@@ -16,11 +16,11 @@ logger = logging.getLogger("mcp_tools")
 
 async def loginuser(username: str = None, password: str = None) -> Dict[str, Any]:
     '''
-    Logs a user into the system.
+    Logs a user into the system using provided credentials.
 
     Args:
-        username (str, optional): The username of the user to log in. Defaults to None.
-        password (str, optional): The password of the user to log in. Defaults to None.
+        username (str, optional): The username of the user. Defaults to None.
+        password (str, optional): The password of the user. Defaults to None.
 
     Returns:
         Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
@@ -31,17 +31,17 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
     OpenAPI Specification:
       get:
         summary: Logs user into the system.
-        operationId: loginUser
+        operationId: loginuser
         parameters:
           - name: username
             in: query
-            description: The username of the user to log in.
+            description: The username of the user.
             required: false
             schema:
               type: string
           - name: password
             in: query
-            description: The password of the user to log in.
+            description: The password of the user.
             required: false
             schema:
               type: string
@@ -55,12 +55,12 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                   properties:
                     token:
                       type: string
-                      description: Authentication token for the user.
+                      description: Authentication token.
                     user:
                       type: object
                       description: User information.
           '400':
-            description: Invalid username or password.
+            description: Invalid credentials or missing parameters.
             content:
               application/json:
                 schema:
@@ -82,6 +82,13 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
     '''
     logger.debug("Making GET request to /user/login")
     params = {}
+    
+    if username is not None:
+      params["username"] = username
+    
+    if password is not None:
+      params["password"] = password
+    
     data = None
 
     success, response = await make_api_request(

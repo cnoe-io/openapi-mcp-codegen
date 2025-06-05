@@ -15,70 +15,12 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sessionservice_getuserinfo() -> Dict[str, Any]:
-    '''
-    Retrieve information about the current authenticated user.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the current user's information. If the request fails, returns a dictionary with an 'error' key describing the failure.
-
-    Raises:
-        Exception: If there is an unexpected error during the API request.
-
-    OpenAPI Specification:
-      get:
-        summary: Get current user information
-        description: Retrieve information about the currently authenticated user session.
-        operationId: sessionservice_getuserinfo
-        tags:
-          - Session
-        responses:
-          '200':
-            description: Successful response with user information.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: Unique identifier for the user.
-                    username:
-                      type: string
-                      description: Username of the user.
-                    email:
-                      type: string
-                      description: Email address of the user.
-                    roles:
-                      type: array
-                      items:
-                        type: string
-                      description: List of roles assigned to the user.
-          '401':
-            description: Unauthorized. Authentication credentials were missing or invalid.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message.
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-                      description: Error message.
-    '''
+    """
+    Get the current user's info
+    """
     logger.debug("Making GET request to /api/v1/session/userinfo")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -91,3 +33,4 @@ async def sessionservice_getuserinfo() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

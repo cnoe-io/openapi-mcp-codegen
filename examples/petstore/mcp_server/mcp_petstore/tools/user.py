@@ -78,6 +78,7 @@ async def createuser() -> Dict[str, Any]:
     '''
     logger.debug("Making POST request to /user")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(

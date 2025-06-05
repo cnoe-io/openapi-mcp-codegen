@@ -15,49 +15,12 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def settingsservice_getplugins() -> Dict[str, Any]:
-    '''
-    Retrieves the list of Argo CD plugins.
-
-    Args:
-        None
-
-    Returns:
-        Dict[str, Any]: A dictionary containing the list of Argo CD plugins or an error message.
-
-    Raises:
-        Exception: If the API request fails or an unexpected error occurs.
-
-    OpenAPI Specification:
-      get:
-        summary: Retrieve Argo CD plugins
-        description: Returns a list of available Argo CD plugins.
-        operationId: settingsservice_getplugins
-        tags:
-          - Settings
-        responses:
-          '200':
-            description: A list of Argo CD plugins.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    plugins:
-                      type: array
-                      items:
-                        type: object
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    Get returns Argo CD plugins
+    """
     logger.debug("Making GET request to /api/v1/settings/plugins")
     params = {}
+    
     data = None
 
     success, response = await make_api_request(
@@ -70,3 +33,4 @@ async def settingsservice_getplugins() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

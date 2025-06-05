@@ -15,58 +15,15 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
-    '''
-    Generate application manifests using provided files.
-
-    Args:
-        body (str): The request body containing file data used to generate application manifests.
-
-    Returns:
-        Dict[str, Any]: The generated application manifests or an error message.
-
-    Raises:
-        Exception: If the API request fails or returns an unexpected response.
-
-    OpenAPI Specification:
-      post:
-        summary: Generate application manifests using provided files.
-        operationId: applicationservice_getmanifestswithfiles
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: string
-                description: The file data used to generate application manifests.
-        responses:
-          '200':
-            description: Successfully generated application manifests.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  additionalProperties: true
-          '400':
-            description: Invalid request or file data.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
+    GetManifestsWithFiles returns application manifests using provided files to generate them
+    """
     logger.debug("Making POST request to /api/v1/applications/manifestswithfiles")
     params = {}
+    
+    if body is not None:
+      params["body"] = body
+    
     data = None
 
     # Add parameters to request
@@ -83,3 +40,4 @@ async def applicationservice_getmanifestswithfiles(body: str) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

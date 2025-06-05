@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
     '''
-    Finds pets by tags.
+    Finds Pets by tags.
 
     Args:
         tags (List[str], optional): List of tags to filter pets by. Defaults to None.
@@ -25,11 +25,11 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the list of pets matching the provided tags or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an unexpected response.
 
     OpenAPI Specification:
       get:
-        summary: Finds pets by tags
+        summary: Finds Pets by tags
         description: Returns a list of pets that match the provided tags.
         operationId: findPetsByTags
         parameters:
@@ -41,7 +41,8 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
               type: array
               items:
                 type: string
-              collectionFormat: multi
+            style: form
+            explode: true
         responses:
           '200':
             description: A list of pets matching the tags
@@ -53,9 +54,15 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
                     $ref: '#/components/schemas/Pet'
           '400':
             description: Invalid tag value
+          '500':
+            description: Internal server error
     '''
     logger.debug("Making GET request to /pet/findbytags")
     params = {}
+    
+    if tags is not None:
+      params["tags"] = tags
+    
     data = None
 
     success, response = await make_api_request(
