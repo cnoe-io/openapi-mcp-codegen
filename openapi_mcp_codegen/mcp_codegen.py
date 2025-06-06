@@ -13,8 +13,9 @@ from typing import Dict, Any
 import subprocess
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
+
 
 class MCPGenerator:
   """
@@ -369,22 +370,29 @@ class MCPGenerator:
     os.makedirs(tools_dir, exist_ok=True)
     enhancement_futures = []
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    logger.debug(f"Tools directory set to: {tools_dir}")
     for path, ops in self.spec.get('paths', {}).items():
-      # path = path.lower()
+      logger.debug(f"Processing path: {path} with operations: {list(ops.keys())}")
       module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
+      logger.debug(f"Module name resolved to: {module_name}")
       functions = []
       for method, op in ops.items():
+        logger.debug(f"Processing method: {method} for path: {path}")
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
+          logger.debug(f"Skipping unsupported HTTP method: {method}")
           continue
         params = []
         for p in op.get("parameters", []):
           # Resolve parameter reference if the parameter itself is a $ref
+          logger.debug(f"Processing parameter: {p}")
           if "$ref" in p:
+              logger.debug(f"Resolving parameter $ref: {p['$ref']}")
               p = self._resolve_ref(p["$ref"])
 
           # Skip header parameters; process path and query separately
           if p.get("in") == "header":
+              logger.debug(f"Skipping header parameter: {p.get('name', '')}")
               continue
 
           if p.get("in") == "path":
@@ -392,48 +400,60 @@ class MCPGenerator:
               pname = "path_" + p.get("name", "param").replace('.', '_')
               schema = p.get("schema", {})
               if "$ref" in schema:
+                  logger.debug(f"Resolving schema $ref in path parameter: {schema['$ref']}")
                   schema = self._resolve_ref(schema["$ref"])
               ptype = self._get_python_type(schema)
               # For path parameters, assume they are required
+              logger.debug(f"Adding path parameter: {pname}: {ptype}")
               params.append(f"{pname}: {ptype}")
           elif p.get("in") == "query":
               pname = "param_" + p.get("name", "param").replace('.', '_')
               schema = p.get("schema", {})
               if "$ref" in schema:
+                  logger.debug(f"Resolving schema $ref in query parameter: {schema['$ref']}")
                   schema = self._resolve_ref(schema["$ref"])
               ptype = self._get_python_type(schema)
               if p.get("required"):
+                # For path parameters, assume they are required
+                logger.debug(f"Adding required query parameter: {pname}: {ptype}")
                 params.append(f"{pname}: {ptype}")
               else:
+                logger.debug(f"Adding optional query parameter: {pname}: {ptype} = None")
                 params.append(f"{pname}: {ptype} = None")
         if "requestBody" in op:
+            logger.debug(f"Processing requestBody for method {method} at path {path}")
             request_body = op["requestBody"]
             content = request_body.get("content", {})
             if "application/json" in content:
                 schema = content["application/json"].get("schema", {})
+                logger.debug(f"Extracting body params from schema: {schema}")
                 body_params = self._extract_body_params(schema, prefix="body")
+                logger.debug(f"Extracted body params: {body_params}")
                 params.extend(body_params)
         # Reorder parameters: all non-default parameters first, then default parameters
         non_default_params = [p for p in params if "=" not in p]
         default_params = [p for p in params if "=" in p]
         params = non_default_params + default_params
+        logger.debug(f"Final parameter list for function: {params}")
 
         # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
         formatted_path = path
         for p in op.get("parameters", []):
-            print(p)
             # Resolve the parameter if it uses a $ref
+            logger.debug(f"Formatting path placeholder for parameter: {p}")
             if "$ref" in p:
+                logger.debug(f"Resolving parameter $ref for formatted path: {p['$ref']}")
                 p = self._resolve_ref(p["$ref"])
             if p.get("in") == "path":
                 orig_name = p.get("name", "param")
                 # Replace placeholder {orig_name} with {path_orig_name}
-                print(orig_name, formatted_path)
+                logger.debug(f"Replacing path placeholder {{{orig_name}}} with {{path_{orig_name}}} in {formatted_path}")
                 formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
 
         operation_id = op.get("operationId", f"{method}_{module_name}").lower()
         # Remove any curly braces from the operation id
         operation_id = operation_id.replace("{", "").replace("}", "")
+        logger.debug(f"Operation ID resolved to: {operation_id}")
 
         functions.append({
           "operation_id": operation_id,
@@ -446,6 +466,7 @@ class MCPGenerator:
         })
       if functions:
         output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
+        logger.debug(f"Rendering tool module to: {output_path} with functions: {[f['operation_id'] for f in functions]}")
         mcp_server_base_package = self.config.get('mcp_server_base_package', '')
         self.render_template(
           "tools/tool.tpl",
@@ -462,15 +483,17 @@ class MCPGenerator:
           # Get the module name without .py
           stripped_module_name = output_path.split("/")[-1].split(".py")[0]
           # Map the operation_id to the output path
+          logger.debug(f"Mapping operation_id {function['operation_id']} to module {stripped_module_name}")
           if stripped_module_name in self.tools_map:
             self.tools_map[stripped_module_name].append(function["operation_id"])
           else:
             self.tools_map[stripped_module_name] = [function["operation_id"]]
         if self.should_enhance_docstring_with_llm or self.should_enhance_docstring_with_llm_openapi:
-          print("Submitting docstring enhancement for:", output_path)
+          logger.info(f"Submitting docstring enhancement for: {output_path}")
           future = executor.submit(self.enhance_docstring_with_llm, input_path=output_path, output_path=output_path)
           enhancement_futures.append(future)
 
+    logger.debug("Rendering __init__.py for tools package")
     self.render_template(
       "tools/init.tpl",
       os.path.join(tools_dir, '__init__.py'),
@@ -478,8 +501,10 @@ class MCPGenerator:
       )
 
     if enhancement_futures:
+        logger.info("Waiting for docstring enhancement futures to complete")
         concurrent.futures.wait(enhancement_futures)
         executor.shutdown(wait=True)
+        logger.info("All docstring enhancements completed")
 
   def generate_server(self):
     """
