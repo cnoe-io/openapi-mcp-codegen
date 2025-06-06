@@ -3,9 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import re
 import json
 import yaml
 import logging
+import concurrent.futures
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, Any
 import subprocess
@@ -320,7 +322,7 @@ class MCPGenerator:
     logger.info("Generating models")
     schemas = self.spec.get('components', {}).get('schemas', {})
     for schema_name, schema in schemas.items():
-      model_name = ''.join(word.capitalize() for word in schema_name.split('_'))
+      model_name = ''.join(word.capitalize() for word in re.split(r'[_\-]+', schema_name))
       fields = []
       required_fields = schema.get('required', [])
       for prop_name, prop in schema.get('properties', {}).items():
@@ -365,32 +367,82 @@ class MCPGenerator:
     tools_dir = os.path.join(self.src_output_dir, 'tools')
     file_header_kwargs = self.get_file_header_kwargs()
     os.makedirs(tools_dir, exist_ok=True)
+    enhancement_futures = []
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
     for path, ops in self.spec.get('paths', {}).items():
-      path = path.lower()
-      if '{' in path:
-        continue  # Skip path params for now
+      # path = path.lower()
       module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
+      module_name = module_name.replace("{", "").replace("}", "")
       functions = []
       for method, op in ops.items():
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
           continue
         params = []
         for p in op.get("parameters", []):
-          if p.get("in") in ["path", "header"]:
-            continue
-          pname = p.get("name", "param").replace('.', '_')
-          ptype = self._get_python_type(p.get("schema", {}))
-          if p.get("required"):
-            params.append(f"{pname}: {ptype}")
-          else:
-            params.append(f"{pname}: {ptype} = None")
+          # Resolve parameter reference if the parameter itself is a $ref
+          if "$ref" in p:
+              p = self._resolve_ref(p["$ref"])
+
+          # Skip header parameters; process path and query separately
+          if p.get("in") == "header":
+              continue
+
+          if p.get("in") == "path":
+              # Prepend "path_" to the parameter name
+              pname = "path_" + p.get("name", "param").replace('.', '_')
+              schema = p.get("schema", {})
+              if "$ref" in schema:
+                  schema = self._resolve_ref(schema["$ref"])
+              ptype = self._get_python_type(schema)
+              # For path parameters, assume they are required
+              params.append(f"{pname}: {ptype}")
+          elif p.get("in") == "query":
+              pname = "param_" + p.get("name", "param").replace('.', '_')
+              schema = p.get("schema", {})
+              if "$ref" in schema:
+                  schema = self._resolve_ref(schema["$ref"])
+              ptype = self._get_python_type(schema)
+              if p.get("required"):
+                params.append(f"{pname}: {ptype}")
+              else:
+                params.append(f"{pname}: {ptype} = None")
+        if "requestBody" in op:
+            request_body = op["requestBody"]
+            content = request_body.get("content", {})
+            if "application/json" in content:
+                schema = content["application/json"].get("schema", {})
+                body_params = self._extract_body_params(schema, prefix="body")
+                params.extend(body_params)
+        # Reorder parameters: all non-default parameters first, then default parameters
+        non_default_params = [p for p in params if "=" not in p]
+        default_params = [p for p in params if "=" in p]
+        params = non_default_params + default_params
+
+        # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
+        formatted_path = path
+        for p in op.get("parameters", []):
+            print(p)
+            # Resolve the parameter if it uses a $ref
+            if "$ref" in p:
+                p = self._resolve_ref(p["$ref"])
+            if p.get("in") == "path":
+                orig_name = p.get("name", "param")
+                # Replace placeholder {orig_name} with {path_orig_name}
+                print(orig_name, formatted_path)
+                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
+
+        operation_id = op.get("operationId", f"{method}_{module_name}").lower()
+        # Remove any curly braces from the operation id
+        operation_id = operation_id.replace("{", "").replace("}", "")
+
         functions.append({
-          "operation_id": op.get("operationId", f"{method}_{module_name}").lower(),
+          "operation_id": operation_id,
           "summary": op.get("summary", ""),
           "description": op.get("description", ""),
           "method": method.upper(),
           "params": params,
-          "path": path
+          "path": path,  # original path (optional, for reference)
+          "formatted_path": formatted_path
         })
       if functions:
         output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
@@ -415,15 +467,19 @@ class MCPGenerator:
           else:
             self.tools_map[stripped_module_name] = [function["operation_id"]]
         if self.should_enhance_docstring_with_llm or self.should_enhance_docstring_with_llm_openapi:
-          print("Enhancing docstring with LLM for:", output_path)
-          self.enhance_docstring_with_llm(input_path=output_path, output_path=output_path)
-          print("Enhanced docstring for:", output_path)
+          print("Submitting docstring enhancement for:", output_path)
+          future = executor.submit(self.enhance_docstring_with_llm, input_path=output_path, output_path=output_path)
+          enhancement_futures.append(future)
 
     self.render_template(
       "tools/init.tpl",
       os.path.join(tools_dir, '__init__.py'),
       **file_header_kwargs
       )
+
+    if enhancement_futures:
+        concurrent.futures.wait(enhancement_futures)
+        executor.shutdown(wait=True)
 
   def generate_server(self):
     """
@@ -512,6 +568,51 @@ class MCPGenerator:
       path = os.path.join(self.src_output_dir, subdir)
       os.makedirs(path, exist_ok=True)
       self.render_template('init_empty.tpl', os.path.join(path, '__init__.py'), **file_header_kwargs)
+
+  def _resolve_ref(self, ref: str) -> Dict[str, Any]:
+      """
+      Resolve a JSON reference from the OpenAPI spec.
+      Assumes refs are of the form "#/components/schemas/ModelName".
+      """
+      parts = ref.lstrip("#/").split("/")
+      resolved = self.spec
+      for part in parts:
+          resolved = resolved.get(part)
+          if resolved is None:
+              break
+      return resolved if resolved is not None else {}
+
+  def _extract_body_params(self, schema: Dict[str, Any], prefix: str = "body") -> list:
+      """
+      Recursively extract parameters from a request body schema.
+      Each parameter name is prefixed (default "body") so that nested properties are flattened.
+      Returns a list of strings for use in the function signature.
+      """
+      if "$ref" in schema:
+          schema = self._resolve_ref(schema["$ref"])
+      params = []
+      if schema.get("type") == "object" and "properties" in schema:
+          required_fields = schema.get("required", [])
+          for prop_name, prop in schema["properties"].items():
+              # Compute a parameter name by appending with underscore
+              param_name = f"{prefix}_{prop_name}"
+              if prop.get("type") == "object" and "properties" in prop:
+                  params.extend(self._extract_body_params(prop, prefix=param_name))
+              else:
+                  if "$ref" in prop:
+                      prop = self._resolve_ref(prop["$ref"])
+                  py_type = self._get_python_type(prop)
+                  if prop_name in required_fields:
+                      params.append(f"{param_name}: {py_type}")
+                  else:
+                      params.append(f"{param_name}: {py_type} = None")
+      else:
+          # Handle non-object schema as a single parameter
+          if "$ref" in schema:
+              schema = self._resolve_ref(schema["$ref"])
+          py_type = self._get_python_type(schema)
+          params.append(f"{prefix}: {py_type}")
+      return params
 
   def generate(self):
     """

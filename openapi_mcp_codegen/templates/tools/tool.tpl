@@ -18,6 +18,22 @@ logger = logging.getLogger("mcp_tools")
 async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, Any]:
     """
     {{ func.summary }}
+
+    OpenAPI Description:
+        {{ func.description }}
+
+    Args:
+{%- for param in func.params %}
+        {%- set pname = param.split(':')[0].strip() -%}
+        {%- set ptype = (param.split(':')[1].strip() if ':' in param else "str") -%}
+        {{ pname }} ({{ ptype }}): OpenAPI parameter corresponding to '{{ pname }}'.
+{%- endfor %}
+
+    Returns:
+        Dict[str, Any]: The JSON response from the API call.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
     """
     logger.debug("Making {{ func.method.upper() }} request to {{ path }}")
     params = {}
@@ -26,13 +42,26 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
       params["{{ param.split(':')[0].strip() }}"] = {{ param.split(':')[0].strip() }}
     {% endfor %}
     data = None
-{% if 'body' in func.params | join(', ') %}
-    # Add parameters to request
-    if body is not None:
-        data = body
-{% endif %}
+    {# Build outbound query parameters from param_ prefixed parameters #}
+{% for param in func.params %}
+    {%- set param_name = param.split(':')[0] | trim %}
+    {% if param_name.startswith("param_") %}
+    params["{{ param_name[6:] }}"] = {{ param_name }}
+    {% endif %}
+{% endfor %}
+
+    {# Build outbound request body data from body_ prefixed parameters #}
+    data = {}
+{% for param in func.params %}
+    {%- set param_name = param.split(':')[0] | trim %}
+    {% if param_name.startswith("body_") %}
+    data["{{ param_name[5:] }}"] = {{ param_name }}
+    {% endif %}
+{% endfor %}
+    if not data:
+        data = None
     success, response = await make_api_request(
-        "{{ path }}",
+        f"{{ func.formatted_path }}",
         method="{{ func.method.upper() }}",
         params=params,
         data=data
