@@ -16,6 +16,12 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
 
+def camel_to_snake(name):
+    if name.isupper():
+        return "_".join(name).lower()
+    s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
 class MCPGenerator:
   """
   MCPGenerator is a class responsible for generating Python code based on OpenAPI specifications.
@@ -186,8 +192,31 @@ class MCPGenerator:
     Args:
       input_file (str): Path to the file to lint.
     """
+    logger.info(f"Running Ruff format on {input_file}")
+    subprocess.run(
+      [
+      "ruff",
+      "format",
+      "--line-length",
+      "120",
+      input_file
+      ],
+      check=True,
+    )
     logger.info(f"Running Ruff lint on {input_file}")
-    subprocess.run(["ruff", "check", "--fix", "--ignore", "E402", input_file], check=True)
+    subprocess.run(
+      [
+      "ruff",
+      "check",
+      "--fix",
+      "--ignore",
+      "E402",
+      "--line-length",
+      "120",
+      input_file
+      ],
+      check=True,
+    )
     logger.info("Ruff linting completed")
 
   def enhance_docstring_with_llm(self, input_path: str, output_path: str, dry_run: bool = False) -> None:
@@ -333,7 +362,7 @@ class MCPGenerator:
           'description': prop.get('description', ''),
           'required': prop_name in required_fields
         })
-      model_path = os.path.join(self.src_output_dir, 'models', f'{schema_name}.py')
+      model_path = os.path.join(self.src_output_dir, 'models', f'{camel_to_snake(schema_name)}.py')
       kwargs = self.get_file_header_kwargs()
       kwargs.update({
         'description': schema.get('description', ''),
@@ -370,8 +399,9 @@ class MCPGenerator:
     enhancement_futures = []
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
     for path, ops in self.spec.get('paths', {}).items():
+      logger.debug(f"Ops: {ops}")
       # path = path.lower()
-      module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
+      module_name = path.strip('/').replace('/', '_').replace('-', '_').replace('.', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
       functions = []
       for method, op in ops.items():
@@ -421,17 +451,18 @@ class MCPGenerator:
         # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
         formatted_path = path
         for p in op.get("parameters", []):
-            print(p)
             # Resolve the parameter if it uses a $ref
             if "$ref" in p:
                 p = self._resolve_ref(p["$ref"])
             if p.get("in") == "path":
                 orig_name = p.get("name", "param")
-                # Replace placeholder {orig_name} with {path_orig_name}
-                print(orig_name, formatted_path)
-                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
+                fixed_name = "path_" + orig_name.replace(".", "_")
+                # Replace placeholder {orig_name} with {fixed_name}
+                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + fixed_name + "}")
 
-        operation_id = op.get("operationId", f"{method}_{module_name}").lower()
+        operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}"))
+        logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
+
         # Remove any curly braces from the operation id
         operation_id = operation_id.replace("{", "").replace("}", "")
 
@@ -445,7 +476,7 @@ class MCPGenerator:
           "formatted_path": formatted_path
         })
       if functions:
-        output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
+        output_path = os.path.join(tools_dir, f"{camel_to_snake(module_name)}.py").lower()
         mcp_server_base_package = self.config.get('mcp_server_base_package', '')
         self.render_template(
           "tools/tool.tpl",
@@ -520,7 +551,7 @@ class MCPGenerator:
       license=self.config.get('license', 'Apache-2.0'),
       author=self.config.get('author', 'Unspecified'),
       email=self.config.get('email','auto@example.com'),
-      python_version=self.config.get('python_version', '3.13.2'),
+      python_version=self.config.get('python_version', '3.13'),
       mcp_name=self.mcp_name,
       poetry_dependencies=self.config.get('poetry_dependencies', python_dependencies),
     )
@@ -595,7 +626,14 @@ class MCPGenerator:
           required_fields = schema.get("required", [])
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
-              param_name = f"{prefix}_{prop_name}"
+              param_name = f"{prefix}_{camel_to_snake(prop_name)}"
+              if "$ref" in prop:
+                  resolved_prop = self._resolve_ref(prop["$ref"])
+                  if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
+                      params.extend(self._extract_body_params(resolved_prop, prefix=param_name))
+                      continue
+                  else:
+                      prop = resolved_prop
               if prop.get("type") == "object" and "properties" in prop:
                   params.extend(self._extract_body_params(prop, prefix=param_name))
               else:
