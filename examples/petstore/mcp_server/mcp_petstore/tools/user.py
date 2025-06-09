@@ -23,27 +23,29 @@ async def create_user(
     body_phone: str = None,
     body_user_status: int = None,
 ) -> Dict[str, Any]:
-    '''
-    Creates a new user in the system.
+    """
+    Create user.
 
-    This operation can only be performed by a logged-in user. The function sends a POST request to the '/user' endpoint with the provided user details.
+    OpenAPI Description:
+        This can only be done by the logged in user.
 
     Args:
-        body_id (int, optional): Unique identifier for the user. Defaults to None.
-        body_username (str, optional): Username for the new user. Defaults to None.
-        body_first_name (str, optional): First name of the user. Defaults to None.
-        body_last_name (str, optional): Last name of the user. Defaults to None.
-        body_email (str, optional): Email address of the user. Defaults to None.
-        body_password (str, optional): Password for the user account. Defaults to None.
-        body_phone (str, optional): Phone number of the user. Defaults to None.
-        body_user_status (int, optional): Status code representing the user's status. Defaults to None.
+    body_id (int = None): OpenAPI parameter corresponding to 'body_id'.
+    body_username (str = None): OpenAPI parameter corresponding to 'body_username'.
+    body_first_name (str = None): OpenAPI parameter corresponding to 'body_first_name'.
+    body_last_name (str = None): OpenAPI parameter corresponding to 'body_last_name'.
+    body_email (str = None): OpenAPI parameter corresponding to 'body_email'.
+    body_password (str = None): OpenAPI parameter corresponding to 'body_password'.
+    body_phone (str = None): OpenAPI parameter corresponding to 'body_phone'.
+    body_user_status (int = None): OpenAPI parameter corresponding to 'body_user_status'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing user creation details or error information.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making POST request to /user")
 
     params = {}

@@ -14,64 +14,23 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def account_service__delete_token(path_name: str, path_id: str) -> Dict[str, Any]:
-    '''
-    Deletes a token associated with a specific account.
+    """
+    DeleteToken deletes a token
+
+    OpenAPI Description:
+
 
     Args:
-        path_name (str): The name of the account for which the token will be deleted.
-        path_id (str): The unique identifier of the token to delete.
+    path_name (str): OpenAPI parameter corresponding to 'path_name'.
+    path_id (str): OpenAPI parameter corresponding to 'path_id'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      delete:
-        summary: Delete a token for an account
-        operationId: account_service__delete_token
-        tags:
-          - Account
-        parameters:
-          - name: path_name
-            in: path
-            required: true
-            schema:
-              type: string
-            description: The name of the account.
-          - name: path_id
-            in: path
-            required: true
-            schema:
-              type: string
-            description: The unique identifier of the token to delete.
-        responses:
-          '200':
-            description: Token deleted successfully.
-            content:
-              application/json:
-                schema:
-                  type: object
-          '404':
-            description: Token or account not found.
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Invalid request parameters.
-            content:
-              application/json:
-                schema:
-                  type: object
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-    '''
+    """
     logger.debug("Making DELETE request to /api/v1/account/{name}/token/{id}")
 
     params = {}

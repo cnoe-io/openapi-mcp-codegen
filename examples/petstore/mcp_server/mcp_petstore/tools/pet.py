@@ -17,27 +17,33 @@ async def update_pet(
     body_name: str,
     body_photo_urls: List[str],
     body_id: int = None,
-    body_category: Dict[str, Any] = None,
+    body_category_id: int = None,
+    body_category_name: str = None,
     body_tags: List[str] = None,
     body_status: str = None,
 ) -> Dict[str, Any]:
-    '''
-    Update an existing pet by Id.
+    """
+    Update an existing pet.
+
+    OpenAPI Description:
+        Update an existing pet by Id.
 
     Args:
-        body_name (str): The name of the pet to update.
-        body_photo_urls (List[str]): A list of photo URLs associated with the pet.
-        body_id (int, optional): The unique identifier of the pet. Defaults to None.
-        body_category (Dict[str, Any], optional): The category information for the pet. Defaults to None.
-        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
-        body_status (str, optional): The status of the pet (e.g., 'available', 'pending', 'sold'). Defaults to None.
+    body_name (str): OpenAPI parameter corresponding to 'body_name'.
+    body_photo_urls (List[str]): OpenAPI parameter corresponding to 'body_photo_urls'.
+    body_id (int = None): OpenAPI parameter corresponding to 'body_id'.
+    body_category_id (int = None): OpenAPI parameter corresponding to 'body_category_id'.
+    body_category_name (str = None): OpenAPI parameter corresponding to 'body_category_name'.
+    body_tags (List[str] = None): OpenAPI parameter corresponding to 'body_tags'.
+    body_status (str = None): OpenAPI parameter corresponding to 'body_status'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the updated pet information or an error message.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making PUT request to /pet")
 
     params = {}
@@ -49,8 +55,10 @@ async def update_pet(
         data["photo_urls"] = body_photo_urls
     if body_id:
         data["id"] = body_id
-    if body_category:
-        data["category"] = body_category
+    if body_category_id:
+        data["category_id"] = body_category_id
+    if body_category_name:
+        data["category_name"] = body_category_name
     if body_tags:
         data["tags"] = body_tags
     if body_status:
@@ -68,27 +76,33 @@ async def add_pet(
     body_name: str,
     body_photo_urls: List[str],
     body_id: int = None,
-    body_category: Dict[str, Any] = None,
+    body_category_id: int = None,
+    body_category_name: str = None,
     body_tags: List[str] = None,
     body_status: str = None,
 ) -> Dict[str, Any]:
-    '''
+    """
     Add a new pet to the store.
 
+    OpenAPI Description:
+        Add a new pet to the store.
+
     Args:
-        body_name (str): The name of the pet to add.
-        body_photo_urls (List[str]): A list of photo URLs associated with the pet.
-        body_id (int, optional): The unique identifier for the pet. Defaults to None.
-        body_category (Dict[str, Any], optional): The category information for the pet. Defaults to None.
-        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
-        body_status (str, optional): The status of the pet in the store (e.g., 'available', 'pending', 'sold'). Defaults to None.
+    body_name (str): OpenAPI parameter corresponding to 'body_name'.
+    body_photo_urls (List[str]): OpenAPI parameter corresponding to 'body_photo_urls'.
+    body_id (int = None): OpenAPI parameter corresponding to 'body_id'.
+    body_category_id (int = None): OpenAPI parameter corresponding to 'body_category_id'.
+    body_category_name (str = None): OpenAPI parameter corresponding to 'body_category_name'.
+    body_tags (List[str] = None): OpenAPI parameter corresponding to 'body_tags'.
+    body_status (str = None): OpenAPI parameter corresponding to 'body_status'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the details of the added pet or an error message.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making POST request to /pet")
 
     params = {}
@@ -100,8 +114,10 @@ async def add_pet(
         data["photo_urls"] = body_photo_urls
     if body_id:
         data["id"] = body_id
-    if body_category:
-        data["category"] = body_category
+    if body_category_id:
+        data["category_id"] = body_category_id
+    if body_category_name:
+        data["category_name"] = body_category_name
     if body_tags:
         data["tags"] = body_tags
     if body_status:

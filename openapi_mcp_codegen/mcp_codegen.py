@@ -359,7 +359,7 @@ class MCPGenerator:
           'description': prop.get('description', ''),
           'required': prop_name in required_fields
         })
-      model_path = os.path.join(self.src_output_dir, 'models', f'{schema_name}.py')
+      model_path = os.path.join(self.src_output_dir, 'models', f'{camel_to_snake(schema_name)}.py')
       kwargs = self.get_file_header_kwargs()
       kwargs.update({
         'description': schema.get('description', ''),
@@ -398,7 +398,7 @@ class MCPGenerator:
     for path, ops in self.spec.get('paths', {}).items():
       logger.debug(f"Ops: {ops}")
       # path = path.lower()
-      module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
+      module_name = path.strip('/').replace('/', '_').replace('-', '_').replace('.', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
       functions = []
       for method, op in ops.items():
@@ -448,15 +448,14 @@ class MCPGenerator:
         # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
         formatted_path = path
         for p in op.get("parameters", []):
-            print(p)
             # Resolve the parameter if it uses a $ref
             if "$ref" in p:
                 p = self._resolve_ref(p["$ref"])
             if p.get("in") == "path":
                 orig_name = p.get("name", "param")
-                # Replace placeholder {orig_name} with {path_orig_name}
-                print(orig_name, formatted_path)
-                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
+                fixed_name = "path_" + orig_name.replace(".", "_")
+                # Replace placeholder {orig_name} with {fixed_name}
+                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + fixed_name + "}")
 
         operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}"))
         logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
@@ -549,7 +548,7 @@ class MCPGenerator:
       license=self.config.get('license', 'Apache-2.0'),
       author=self.config.get('author', 'Unspecified'),
       email=self.config.get('email','auto@example.com'),
-      python_version=self.config.get('python_version', '3.13.2'),
+      python_version=self.config.get('python_version', '3.13'),
       mcp_name=self.mcp_name,
       poetry_dependencies=self.config.get('poetry_dependencies', python_dependencies),
     )
@@ -625,6 +624,13 @@ class MCPGenerator:
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
               param_name = f"{prefix}_{camel_to_snake(prop_name)}"
+              if "$ref" in prop:
+                  resolved_prop = self._resolve_ref(prop["$ref"])
+                  if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
+                      params.extend(self._extract_body_params(resolved_prop, prefix=param_name))
+                      continue
+                  else:
+                      prop = resolved_prop
               if prop.get("type") == "object" and "properties" in prop:
                   params.extend(self._extract_body_params(prop, prefix=param_name))
               else:

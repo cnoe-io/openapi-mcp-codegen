@@ -14,72 +14,22 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def account_service__create_token(path_name: str) -> Dict[str, Any]:
-    '''
-    Creates a new authentication token for the specified account.
+    """
+    CreateToken creates a token
+
+    OpenAPI Description:
+
 
     Args:
-        path_name (str): The name or identifier of the account for which to create the token.
+    path_name (str): OpenAPI parameter corresponding to 'path_name'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the created token details or error information.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      post:
-        summary: Create a new authentication token for an account.
-        operationId: account_service__create_token
-        parameters:
-          - name: path_name
-            in: path
-            required: true
-            description: The name or identifier of the account.
-            schema:
-              type: string
-        responses:
-          '200':
-            description: Token created successfully.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    token:
-                      type: string
-                      description: The newly created authentication token.
-                    expires_at:
-                      type: string
-                      format: date-time
-                      description: Expiration time of the token.
-          '400':
-            description: Invalid request parameters.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '404':
-            description: Account not found.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
     logger.debug("Making POST request to /api/v1/account/{name}/token")
 
     params = {}

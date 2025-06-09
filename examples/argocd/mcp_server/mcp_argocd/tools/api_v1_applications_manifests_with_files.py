@@ -14,64 +14,21 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def application_service__get_manifests_with_files() -> Dict[str, Any]:
-    '''
-    Retrieves application manifests generated from provided files.
+    """
+    GetManifestsWithFiles returns application manifests using provided files to generate them
+
+    OpenAPI Description:
+
 
     Args:
-        None
+
 
     Returns:
-        Dict[str, Any]: The JSON response containing the generated application manifests.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      post:
-        summary: Retrieve application manifests using provided files.
-        description: |
-          Generates and returns application manifests by processing the files supplied in the request.
-        operationId: application_service__get_manifests_with_files
-        requestBody:
-          required: true
-          content:
-            multipart/form-data:
-              schema:
-                type: object
-                properties:
-                  files:
-                    type: array
-                    items:
-                      type: string
-                      format: binary
-                    description: List of files to generate manifests from.
-        responses:
-          '200':
-            description: Successfully generated application manifests.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  additionalProperties: true
-          '400':
-            description: Invalid input or missing files.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-          '500':
-            description: Internal server error.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    error:
-                      type: string
-    '''
+    """
     logger.debug("Making POST request to /api/v1/applications/manifestsWithFiles")
 
     params = {}

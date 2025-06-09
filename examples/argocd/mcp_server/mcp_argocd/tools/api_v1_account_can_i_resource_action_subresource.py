@@ -14,64 +14,24 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def account_service__can_i(path_resource: str, path_action: str, path_subresource: str) -> Dict[str, Any]:
-    '''
-    Checks if the current account has permission to perform a specified action on a resource.
+    """
+    CanI checks if the current account has permission to perform an action
+
+    OpenAPI Description:
+
 
     Args:
-        path_resource (str): The resource to check permissions for.
-        path_action (str): The action to check permission for (e.g., 'get', 'update', 'delete').
-        path_subresource (str): The subresource to check permissions for.
+    path_resource (str): OpenAPI parameter corresponding to 'path_resource'.
+    path_action (str): OpenAPI parameter corresponding to 'path_action'.
+    path_subresource (str): OpenAPI parameter corresponding to 'path_subresource'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response indicating whether the action is permitted. Typically contains a boolean field such as 'allowed'.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      get:
-        summary: Check if the current account can perform an action on a resource.
-        operationId: account_service__can_i
-        parameters:
-          - name: path_resource
-            in: path
-            required: true
-            schema:
-              type: string
-            description: The resource to check permissions for.
-          - name: path_action
-            in: path
-            required: true
-            schema:
-              type: string
-            description: The action to check permission for (e.g., 'get', 'update', 'delete').
-          - name: path_subresource
-            in: path
-            required: true
-            schema:
-              type: string
-            description: The subresource to check permissions for.
-        responses:
-          '200':
-            description: Permission check result.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    allowed:
-                      type: boolean
-                      description: Whether the action is permitted.
-                    reason:
-                      type: string
-                      description: Reason for the permission decision.
-          '400':
-            description: Invalid request parameters.
-          '401':
-            description: Authentication required.
-          '403':
-            description: Permission denied.
-    '''
+    """
     logger.debug("Making GET request to /api/v1/account/can-i/{resource}/{action}/{subresource}")
 
     params = {}

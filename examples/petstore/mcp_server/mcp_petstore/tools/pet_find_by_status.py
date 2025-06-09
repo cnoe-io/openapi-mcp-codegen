@@ -14,18 +14,22 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def find_pets_by_status(param_status: str = None) -> Dict[str, Any]:
-    '''
-    Finds pets by their status.
+    """
+    Finds Pets by status.
+
+    OpenAPI Description:
+        Multiple status values can be provided with comma separated strings.
 
     Args:
-        param_status (str, optional): Status values to filter pets by. Multiple status values can be provided as a comma-separated string (e.g., "available,pending,sold"). Defaults to None.
+    param_status (str = None): OpenAPI parameter corresponding to 'param_status'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of pets matching the specified status.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making GET request to /pet/findByStatus")
 
     params = {}

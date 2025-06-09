@@ -3,7 +3,7 @@
 # {{ file_headers_license }}
 # {{ file_headers_message }}
 {% endif %}
-"""Model for {{ schema_name }}"""
+"""Model for {{ model_name }}"""
 
 from typing import Dict, List, Optional
 from datetime import datetime

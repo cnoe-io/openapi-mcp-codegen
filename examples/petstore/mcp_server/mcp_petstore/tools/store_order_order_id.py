@@ -14,18 +14,22 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def get_order_by_id(path_orderId: int) -> Dict[str, Any]:
-    '''
-    Find a purchase order by its ID.
+    """
+    Find purchase order by ID.
+
+    OpenAPI Description:
+        For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
 
     Args:
-        path_orderId (int): The ID of the purchase order to retrieve. For a valid response, use integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+    path_orderId (int): OpenAPI parameter corresponding to 'path_orderId'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response containing the purchase order details if found, or an error message.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making GET request to /store/order/{orderId}")
 
     params = {}
@@ -40,18 +44,22 @@ async def get_order_by_id(path_orderId: int) -> Dict[str, Any]:
 
 
 async def delete_order(path_orderId: int) -> Dict[str, Any]:
-    '''
-    Delete a purchase order by its identifier.
+    """
+    Delete purchase order by identifier.
+
+    OpenAPI Description:
+        For valid response try integer IDs with value < 1000. Anything above 1000 or non-integers will generate API errors.
 
     Args:
-        path_orderId (int): The unique identifier of the purchase order to delete. For a valid response, use integer IDs with values less than 1000. IDs greater than or equal to 1000 or non-integer values will result in API errors.
+    path_orderId (int): OpenAPI parameter corresponding to 'path_orderId'.
+
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which may include confirmation of deletion or error details.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    '''
+    """
     logger.debug("Making DELETE request to /store/order/{orderId}")
 
     params = {}
