@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def get_user_by_name(path_username: str) -> Dict[str, Any]:
-    """
-    Get user by user name.
-
-    OpenAPI Description:
-        Get user detail based on username.
+    '''
+    Get user details based on the username.
 
     Args:
-    path_username (str): OpenAPI parameter corresponding to 'path_username'.
-
+        path_username (str): The username of the user to retrieve details for.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the user's details as returned by the API.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /user/{username}")
 
     params = {}
@@ -54,30 +50,28 @@ async def update_user(
     body_phone: str = None,
     body_user_status: int = None,
 ) -> Dict[str, Any]:
-    """
+    '''
     Update user resource.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This function updates the user information for the specified username. It can only be executed by the logged-in user.
 
     Args:
-    path_username (str): OpenAPI parameter corresponding to 'path_username'.
-    body_id (int = None): OpenAPI parameter corresponding to 'body_id'.
-    body_username (str = None): OpenAPI parameter corresponding to 'body_username'.
-    body_first_name (str = None): OpenAPI parameter corresponding to 'body_first_name'.
-    body_last_name (str = None): OpenAPI parameter corresponding to 'body_last_name'.
-    body_email (str = None): OpenAPI parameter corresponding to 'body_email'.
-    body_password (str = None): OpenAPI parameter corresponding to 'body_password'.
-    body_phone (str = None): OpenAPI parameter corresponding to 'body_phone'.
-    body_user_status (int = None): OpenAPI parameter corresponding to 'body_user_status'.
-
+        path_username (str): The username of the user to be updated.
+        body_id (int, optional): The ID of the user. Defaults to None.
+        body_username (str, optional): The new username for the user. Defaults to None.
+        body_first_name (str, optional): The first name of the user. Defaults to None.
+        body_last_name (str, optional): The last name of the user. Defaults to None.
+        body_email (str, optional): The email address of the user. Defaults to None.
+        body_password (str, optional): The password for the user. Defaults to None.
+        body_phone (str, optional): The phone number of the user. Defaults to None.
+        body_user_status (int, optional): The status of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated user information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making PUT request to /user/{username}")
 
     params = {}
@@ -109,22 +103,20 @@ async def update_user(
 
 
 async def delete_user(path_username: str) -> Dict[str, Any]:
-    """
-    Delete user resource.
+    '''
+    Delete a user resource.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This operation can only be performed by the logged-in user. It sends a DELETE request to the API to remove the specified user.
 
     Args:
-    path_username (str): OpenAPI parameter corresponding to 'path_username'.
-
+        path_username (str): The username of the user to be deleted. This corresponds to the 'path_username' parameter in the API endpoint.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call. If successful, it will contain details of the deletion. If unsuccessful, it will contain an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: Raised if the API request fails or returns an error. This could be due to network issues, invalid parameters, or server-side errors.
+    '''
     logger.debug("Making DELETE request to /user/{username}")
 
     params = {}

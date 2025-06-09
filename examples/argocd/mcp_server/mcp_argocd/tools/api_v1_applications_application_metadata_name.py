@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def application_service__update(
     path_application_metadata_name: str, param_validate: str = None, param_project: str = None
 ) -> Dict[str, Any]:
-    """
-    Update updates an application
-
-    OpenAPI Description:
-
+    '''
+    Update an application.
 
     Args:
-    path_application_metadata_name (str): OpenAPI parameter corresponding to 'path_application_metadata_name'.
-    param_validate (str = None): OpenAPI parameter corresponding to 'param_validate'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_application_metadata_name (str): The name of the application metadata to update.
+        param_validate (str, optional): Validation parameter for the update process. Defaults to None.
+        param_project (str, optional): Project parameter for the update process. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated application details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making PUT request to /api/v1/applications/{application.metadata.name}")
 
     params = {}

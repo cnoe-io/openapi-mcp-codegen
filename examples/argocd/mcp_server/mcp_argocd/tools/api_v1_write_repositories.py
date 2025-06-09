@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def repository_service__list_write_repositories(
     param_repo: str = None, param_forceRefresh: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
-    """
-    ListWriteRepositories gets a list of all configured write repositories
-
-    OpenAPI Description:
-
+    '''
+    ListWriteRepositories gets a list of all configured write repositories.
 
     Args:
-    param_repo (str = None): OpenAPI parameter corresponding to 'param_repo'.
-    param_forceRefresh (str = None): OpenAPI parameter corresponding to 'param_forceRefresh'.
-    param_appProject (str = None): OpenAPI parameter corresponding to 'param_appProject'.
-
+        param_repo (str, optional): The repository identifier to filter the list. Defaults to None.
+        param_forceRefresh (str, optional): A flag to force refresh the repository list. Defaults to None.
+        param_appProject (str, optional): The application project identifier to filter the repositories. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of write repositories.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/write-repositories")
 
     params = {}
@@ -54,23 +50,27 @@ async def repository_service__list_write_repositories(
 async def repository_service__create_write_repository(
     param_upsert: str = None, param_credsOnly: str = None
 ) -> Dict[str, Any]:
-    """
-    CreateWriteRepository creates a new write repository configuration
+    '''
+    Create a new write repository configuration.
 
-    OpenAPI Description:
-
+    This function sends a POST request to the /api/v1/write-repositories endpoint
+    to create a new write repository configuration. It allows for optional parameters
+    to be included in the request.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-    param_credsOnly (str = None): OpenAPI parameter corresponding to 'param_credsOnly'.
-
+        param_upsert (str, optional): A parameter to specify if the repository should be upserted.
+            Defaults to None.
+        param_credsOnly (str, optional): A parameter to specify if only credentials should be returned.
+            Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, which includes details of the created
+        repository configuration or an error message if the request fails.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the
+        error details.
+    '''
     logger.debug("Making POST request to /api/v1/write-repositories")
 
     params = {}

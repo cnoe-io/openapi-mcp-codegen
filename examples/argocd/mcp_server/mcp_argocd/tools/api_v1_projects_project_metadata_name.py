@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__update(path_project_metadata_name: str) -> Dict[str, Any]:
-    """
-    Update updates a project
-
-    OpenAPI Description:
-
+    '''
+    Update a project using the specified project metadata name.
 
     Args:
-    path_project_metadata_name (str): OpenAPI parameter corresponding to 'path_project_metadata_name'.
-
+        path_project_metadata_name (str): The name of the project metadata used to identify the project to be updated.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated project details or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making PUT request to /api/v1/projects/{project.metadata.name}")
 
     params = {}

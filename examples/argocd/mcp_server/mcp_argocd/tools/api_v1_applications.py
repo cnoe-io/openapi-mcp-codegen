@@ -23,29 +23,25 @@ async def application_service__list(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    List returns list of applications
-
-    OpenAPI Description:
-
+    '''
+    List returns a list of applications.
 
     Args:
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-    param_refresh (str = None): OpenAPI parameter corresponding to 'param_refresh'.
-    param_projects (str = None): OpenAPI parameter corresponding to 'param_projects'.
-    param_resourceVersion (str = None): OpenAPI parameter corresponding to 'param_resourceVersion'.
-    param_selector (str = None): OpenAPI parameter corresponding to 'param_selector'.
-    param_repo (str = None): OpenAPI parameter corresponding to 'param_repo'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        param_name (str, optional): The name of the application to filter by. Defaults to None.
+        param_refresh (str, optional): Indicates whether to refresh the application data. Defaults to None.
+        param_projects (str, optional): A comma-separated list of project names to filter applications by. Defaults to None.
+        param_resourceVersion (str, optional): The resource version to filter applications by. Defaults to None.
+        param_selector (str, optional): A label selector to filter applications by. Defaults to None.
+        param_repo (str, optional): The repository URL to filter applications by. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application to filter by. Defaults to None.
+        param_project (str, optional): The project name to filter applications by. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of applications.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications")
 
     params = {}
@@ -69,23 +65,19 @@ async def application_service__list(
 
 
 async def application_service__create(param_upsert: str = None, param_validate: str = None) -> Dict[str, Any]:
-    """
-    Create creates an application
-
-    OpenAPI Description:
-
+    '''
+    Create an application.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-    param_validate (str = None): OpenAPI parameter corresponding to 'param_validate'.
-
+        param_upsert (str, optional): OpenAPI parameter corresponding to 'param_upsert'. Defaults to None.
+        param_validate (str, optional): OpenAPI parameter corresponding to 'param_validate'. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/applications")
 
     params = {}

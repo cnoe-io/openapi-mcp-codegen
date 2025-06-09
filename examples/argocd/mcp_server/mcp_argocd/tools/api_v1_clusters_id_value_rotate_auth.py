@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def cluster_service__rotate_auth(path_id_value: str) -> Dict[str, Any]:
-    """
-    RotateAuth rotates the bearer token used for a cluster
-
-    OpenAPI Description:
-
+    '''
+    Rotate the bearer token used for a cluster.
 
     Args:
-    path_id_value (str): OpenAPI parameter corresponding to 'path_id_value'.
-
+        path_id_value (str): The identifier for the cluster whose bearer token is to be rotated.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the status of the token rotation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /api/v1/clusters/{id.value}/rotate-auth")
 
     params = {}

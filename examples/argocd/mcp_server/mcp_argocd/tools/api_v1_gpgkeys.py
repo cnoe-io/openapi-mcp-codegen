@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
-    """
-    List all available repository certificates
-
-    OpenAPI Description:
-
+    '''
+    List all available repository certificates.
 
     Args:
-    param_keyID (str = None): OpenAPI parameter corresponding to 'param_keyID'.
-
+        param_keyID (str, optional): The key ID to filter the repository certificates. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of repository certificates.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/gpgkeys")
 
     params = {}
@@ -46,22 +42,18 @@ async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
 
 
 async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
-    """
-    Create one or more GPG public keys in the server's configuration
-
-    OpenAPI Description:
-
+    '''
+    Create one or more GPG public keys in the server's configuration.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-
+        param_upsert (str, optional): A parameter to specify whether to upsert the GPG keys. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the status and details of the created GPG keys.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /api/v1/gpgkeys")
 
     params = {}
@@ -78,22 +70,18 @@ async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
 
 
 async def gpg_key_service__delete(param_keyID: str = None) -> Dict[str, Any]:
-    """
-    Delete specified GPG public key from the server's configuration
-
-    OpenAPI Description:
-
+    '''
+    Delete specified GPG public key from the server's configuration.
 
     Args:
-    param_keyID (str = None): OpenAPI parameter corresponding to 'param_keyID'.
-
+        param_keyID (str, optional): The ID of the GPG key to be deleted. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the deletion operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/gpgkeys")
 
     params = {}

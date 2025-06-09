@@ -16,25 +16,21 @@ logger = logging.getLogger("mcp_tools")
 async def project_service__delete_token(
     path_project: str, path_role: str, path_iat: str, param_id: str = None
 ) -> Dict[str, Any]:
-    """
-    Delete a new project token
-
-    OpenAPI Description:
-
+    '''
+    Delete a project token.
 
     Args:
-    path_project (str): OpenAPI parameter corresponding to 'path_project'.
-    path_role (str): OpenAPI parameter corresponding to 'path_role'.
-    path_iat (str): OpenAPI parameter corresponding to 'path_iat'.
-    param_id (str = None): OpenAPI parameter corresponding to 'param_id'.
-
+        path_project (str): The project identifier in the API path.
+        path_role (str): The role identifier in the API path.
+        path_iat (str): The issued-at timestamp identifier in the API path.
+        param_id (str, optional): An optional parameter ID for the API request. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making DELETE request to /api/v1/projects/{project}/roles/{role}/token/{iat}")
 
     params = {}

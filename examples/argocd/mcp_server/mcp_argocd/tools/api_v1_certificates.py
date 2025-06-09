@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def certificate_service__list_certificates(
     param_hostNamePattern: str = None, param_certType: str = None, param_certSubType: str = None
 ) -> Dict[str, Any]:
-    """
-    List all available repository certificates
-
-    OpenAPI Description:
-
+    '''
+    List all available repository certificates.
 
     Args:
-    param_hostNamePattern (str = None): OpenAPI parameter corresponding to 'param_hostNamePattern'.
-    param_certType (str = None): OpenAPI parameter corresponding to 'param_certType'.
-    param_certSubType (str = None): OpenAPI parameter corresponding to 'param_certSubType'.
-
+        param_hostNamePattern (str, optional): A pattern to match host names. Defaults to None.
+        param_certType (str, optional): The type of certificate to filter by. Defaults to None.
+        param_certSubType (str, optional): The subtype of certificate to filter by. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing certificate details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/certificates")
 
     params = {}
@@ -52,22 +48,18 @@ async def certificate_service__list_certificates(
 
 
 async def certificate_service__create_certificate(param_upsert: str = None) -> Dict[str, Any]:
-    """
-    Creates repository certificates on the server
-
-    OpenAPI Description:
-
+    '''
+    Creates repository certificates on the server.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-
+        param_upsert (str, optional): OpenAPI parameter corresponding to 'param_upsert'. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the details of the created certificate.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/certificates")
 
     params = {}
@@ -86,24 +78,20 @@ async def certificate_service__create_certificate(param_upsert: str = None) -> D
 async def certificate_service__delete_certificate(
     param_hostNamePattern: str = None, param_certType: str = None, param_certSubType: str = None
 ) -> Dict[str, Any]:
-    """
-    Delete the certificates that match the RepositoryCertificateQuery
-
-    OpenAPI Description:
-
+    '''
+    Delete the certificates that match the RepositoryCertificateQuery.
 
     Args:
-    param_hostNamePattern (str = None): OpenAPI parameter corresponding to 'param_hostNamePattern'.
-    param_certType (str = None): OpenAPI parameter corresponding to 'param_certType'.
-    param_certSubType (str = None): OpenAPI parameter corresponding to 'param_certSubType'.
-
+        param_hostNamePattern (str, optional): The pattern to match host names of the certificates to be deleted. Defaults to None.
+        param_certType (str, optional): The type of certificates to be deleted. Defaults to None.
+        param_certSubType (str, optional): The subtype of certificates to be deleted. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/certificates")
 
     params = {}

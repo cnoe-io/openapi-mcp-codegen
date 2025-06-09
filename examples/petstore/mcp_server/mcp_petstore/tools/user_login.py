@@ -14,23 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def login_user(param_username: str = None, param_password: str = None) -> Dict[str, Any]:
-    """
+    '''
     Logs user into the system.
 
-    OpenAPI Description:
-        Log into the system.
-
     Args:
-    param_username (str = None): OpenAPI parameter corresponding to 'param_username'.
-    param_password (str = None): OpenAPI parameter corresponding to 'param_password'.
-
+        param_username (str, optional): The username for login. Defaults to None.
+        param_password (str, optional): The password for login. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing user session details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /user/login")
 
     params = {}

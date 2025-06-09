@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def application_service__terminate_operation(
     path_name: str, param_appNamespace: str = None, param_project: str = None
 ) -> Dict[str, Any]:
-    """
-    TerminateOperation terminates the currently running operation
-
-    OpenAPI Description:
-
+    '''
+    TerminateOperation terminates the currently running operation.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the path for which the operation is to be terminated.
+        param_appNamespace (str, optional): The application namespace parameter. Defaults to None.
+        param_project (str, optional): The project parameter. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the termination request.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/applications/{name}/operation")
 
     params = {}

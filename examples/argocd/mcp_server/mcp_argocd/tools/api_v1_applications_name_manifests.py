@@ -21,27 +21,23 @@ async def application_service__get_manifests(
     param_sourcePositions: str = None,
     param_revisions: str = None,
 ) -> Dict[str, Any]:
-    """
-    GetManifests returns application manifests
-
-    OpenAPI Description:
-
+    '''
+    GetManifests returns application manifests.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_revision (str = None): OpenAPI parameter corresponding to 'param_revision'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-    param_sourcePositions (str = None): OpenAPI parameter corresponding to 'param_sourcePositions'.
-    param_revisions (str = None): OpenAPI parameter corresponding to 'param_revisions'.
-
+        path_name (str): The name of the application path for which manifests are requested.
+        param_revision (str, optional): The specific revision of the application to retrieve manifests for. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
+        param_sourcePositions (str, optional): The source positions parameter for the application. Defaults to None.
+        param_revisions (str, optional): Additional revisions parameter for the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the application manifests.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/manifests")
 
     params = {}

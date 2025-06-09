@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__list(param_name: str = None) -> Dict[str, Any]:
-    """
-    List returns list of projects
-
-    OpenAPI Description:
-
+    '''
+    List returns a list of projects.
 
     Args:
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-
+        param_name (str, optional): The name of the project to filter the list. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of projects.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/projects")
 
     params = {}
@@ -46,21 +42,18 @@ async def project_service__list(param_name: str = None) -> Dict[str, Any]:
 
 
 async def project_service__create() -> Dict[str, Any]:
-    """
-    Create a new project
-
-    OpenAPI Description:
-
+    '''
+    Create a new project.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing project details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/projects")
 
     params = {}

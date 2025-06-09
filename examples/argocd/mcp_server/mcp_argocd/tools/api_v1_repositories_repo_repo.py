@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repository_service__update_repository(path_repo_repo: str) -> Dict[str, Any]:
-    """
-    UpdateRepository updates a repository configuration
-
-    OpenAPI Description:
-
+    '''
+    Update a repository configuration.
 
     Args:
-    path_repo_repo (str): OpenAPI parameter corresponding to 'path_repo_repo'.
-
+        path_repo_repo (str): The path to the repository to be updated, specified as a string.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the updated repository configuration details.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with details of the failure.
+    '''
     logger.debug("Making PUT request to /api/v1/repositories/{repo.repo}")
 
     params = {}

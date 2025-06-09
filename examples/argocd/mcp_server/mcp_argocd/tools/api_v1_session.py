@@ -14,21 +14,25 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def session_service__create() -> Dict[str, Any]:
-    """
-    Create a new JWT for authentication and set a cookie if using HTTP
+    '''
+    Create a new JWT for authentication and set a cookie if using HTTP.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous POST request to the /api/v1/session endpoint
+    to create a new session. It returns the JSON response from the API call, which
+    includes the JWT token for authentication purposes. If the request fails, it
+    raises an exception with the error details.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the JWT token
+        and any additional session information.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised
+        with the error message.
+    '''
     logger.debug("Making POST request to /api/v1/session")
 
     params = {}
@@ -43,21 +47,22 @@ async def session_service__create() -> Dict[str, Any]:
 
 
 async def session_service__delete() -> Dict[str, Any]:
-    """
-    Delete an existing JWT cookie if using HTTP
+    '''
+    Delete an existing JWT cookie if using HTTP.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous DELETE request to the session endpoint
+    to remove an existing JWT cookie. It is typically used in scenarios where
+    a user logs out or needs to invalidate their session.
 
     Args:
 
-
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, which may include
+        an error message if the request was unsuccessful.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/session")
 
     params = {}

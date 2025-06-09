@@ -14,23 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def upload_file(path_petId: int, param_additionalMetadata: str = None) -> Dict[str, Any]:
-    """
-    Uploads an image.
-
-    OpenAPI Description:
-        Upload image of the pet.
+    '''
+    Uploads an image of the pet.
 
     Args:
-    path_petId (int): OpenAPI parameter corresponding to 'path_petId'.
-    param_additionalMetadata (str = None): OpenAPI parameter corresponding to 'param_additionalMetadata'.
-
+        path_petId (int): The ID of the pet for which the image is being uploaded.
+        param_additionalMetadata (str, optional): Additional metadata to be associated with the image. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing details of the upload operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /pet/{petId}/uploadImage")
 
     params = {}

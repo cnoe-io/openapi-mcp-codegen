@@ -33,39 +33,35 @@ async def application_service__pod_logs(
     param_project: str = None,
     param_matchCase: str = None,
 ) -> Dict[str, Any]:
-    """
-    PodLogs returns stream of log entries for the specified pod. Pod
-
-    OpenAPI Description:
-
+    '''
+    PodLogs returns a stream of log entries for the specified pod.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    path_podName (str): OpenAPI parameter corresponding to 'path_podName'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_container (str = None): OpenAPI parameter corresponding to 'param_container'.
-    param_sinceSeconds (str = None): OpenAPI parameter corresponding to 'param_sinceSeconds'.
-    param_sinceTime_seconds (str = None): OpenAPI parameter corresponding to 'param_sinceTime_seconds'.
-    param_sinceTime_nanos (str = None): OpenAPI parameter corresponding to 'param_sinceTime_nanos'.
-    param_tailLines (str = None): OpenAPI parameter corresponding to 'param_tailLines'.
-    param_follow (str = None): OpenAPI parameter corresponding to 'param_follow'.
-    param_untilTime (str = None): OpenAPI parameter corresponding to 'param_untilTime'.
-    param_filter (str = None): OpenAPI parameter corresponding to 'param_filter'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_previous (str = None): OpenAPI parameter corresponding to 'param_previous'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-    param_matchCase (str = None): OpenAPI parameter corresponding to 'param_matchCase'.
-
+        path_name (str): The name of the application.
+        path_podName (str): The name of the pod.
+        param_namespace (str, optional): The namespace of the pod. Defaults to None.
+        param_container (str, optional): The container within the pod. Defaults to None.
+        param_sinceSeconds (str, optional): The time in seconds since the logs should be fetched. Defaults to None.
+        param_sinceTime_seconds (str, optional): The seconds part of the timestamp since when logs should be fetched. Defaults to None.
+        param_sinceTime_nanos (str, optional): The nanoseconds part of the timestamp since when logs should be fetched. Defaults to None.
+        param_tailLines (str, optional): The number of lines from the end of the logs to fetch. Defaults to None.
+        param_follow (str, optional): Whether to follow the logs stream. Defaults to None.
+        param_untilTime (str, optional): The timestamp until when logs should be fetched. Defaults to None.
+        param_filter (str, optional): Filter criteria for the logs. Defaults to None.
+        param_kind (str, optional): The kind of resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_previous (str, optional): Whether to fetch logs from the previous instance of the pod. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
+        param_matchCase (str, optional): Whether to match case in the filter criteria. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the logs.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/pods/{podName}/logs")
 
     params = {}

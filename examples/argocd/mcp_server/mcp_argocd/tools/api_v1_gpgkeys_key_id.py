@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def gpg_key_service__get(path_keyID: str) -> Dict[str, Any]:
-    """
-    Get information about specified GPG public key from the server
-
-    OpenAPI Description:
-
+    '''
+    Get information about a specified GPG public key from the server.
 
     Args:
-    path_keyID (str): OpenAPI parameter corresponding to 'path_keyID'.
-
+        path_keyID (str): The unique identifier of the GPG public key to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes details about the specified GPG public key.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/gpgkeys/{keyID}")
 
     params = {}

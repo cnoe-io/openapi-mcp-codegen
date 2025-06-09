@@ -21,27 +21,23 @@ async def application_service__list_resource_events(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    ListResourceEvents returns a list of event resources
-
-    OpenAPI Description:
-
+    '''
+    ListResourceEvents returns a list of event resources.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_resourceNamespace (str = None): OpenAPI parameter corresponding to 'param_resourceNamespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_resourceUID (str = None): OpenAPI parameter corresponding to 'param_resourceUID'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path for which events are being requested.
+        param_resourceNamespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_resourceUID (str, optional): The unique identifier of the resource. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of event resources.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/events")
 
     params = {}

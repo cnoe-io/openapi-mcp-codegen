@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def get_pet_by_id(path_petId: int) -> Dict[str, Any]:
-    """
+    '''
     Find pet by ID.
 
-    OpenAPI Description:
-        Returns a single pet.
-
     Args:
-    path_petId (int): OpenAPI parameter corresponding to 'path_petId'.
-
+        path_petId (int): The ID of the pet to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the pet's details if found, or an error message if the request fails.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /pet/{petId}")
 
     params = {}
@@ -44,24 +40,20 @@ async def get_pet_by_id(path_petId: int) -> Dict[str, Any]:
 
 
 async def update_pet_with_form(path_petId: int, param_name: str = None, param_status: str = None) -> Dict[str, Any]:
-    """
+    '''
     Updates a pet in the store with form data.
 
-    OpenAPI Description:
-        Updates a pet resource based on the form data.
-
     Args:
-    path_petId (int): OpenAPI parameter corresponding to 'path_petId'.
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-    param_status (str = None): OpenAPI parameter corresponding to 'param_status'.
-
+        path_petId (int): The ID of the pet to be updated.
+        param_name (str, optional): The new name for the pet. Defaults to None.
+        param_status (str, optional): The new status for the pet. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated pet information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /pet/{petId}")
 
     params = {}
@@ -79,22 +71,18 @@ async def update_pet_with_form(path_petId: int, param_name: str = None, param_st
 
 
 async def delete_pet(path_petId: int) -> Dict[str, Any]:
-    """
+    '''
     Deletes a pet.
 
-    OpenAPI Description:
-        Delete a pet.
-
     Args:
-    path_petId (int): OpenAPI parameter corresponding to 'path_petId'.
-
+        path_petId (int): The ID of the pet to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making DELETE request to /pet/{petId}")
 
     params = {}

@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def find_pets_by_tags(param_tags: List[str] = None) -> Dict[str, Any]:
-    """
-    Finds Pets by tags.
-
-    OpenAPI Description:
-        Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+    '''
+    Finds pets by tags.
 
     Args:
-    param_tags (List[str] = None): OpenAPI parameter corresponding to 'param_tags'.
-
+        param_tags (List[str], optional): A list of tags to filter pets. Multiple tags can be provided as comma-separated strings. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of pets matching the provided tags.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /pet/findByTags")
 
     params = {}

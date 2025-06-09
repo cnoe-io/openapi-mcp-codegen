@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def account_service__get_account(path_name: str) -> Dict[str, Any]:
-    """
-    GetAccount returns an account
-
-    OpenAPI Description:
-
+    '''
+    GetAccount returns an account.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The path parameter specifying the account name to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing account details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/account/{name}")
 
     params = {}

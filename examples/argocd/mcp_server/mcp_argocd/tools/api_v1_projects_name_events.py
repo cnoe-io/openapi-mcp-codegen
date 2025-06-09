@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__list_events(path_name: str) -> Dict[str, Any]:
-    """
-    ListEvents returns a list of project events
-
-    OpenAPI Description:
-
+    '''
+    ListEvents returns a list of project events.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The name of the project path for which events are to be listed.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of project events.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/projects/{name}/events")
 
     params = {}

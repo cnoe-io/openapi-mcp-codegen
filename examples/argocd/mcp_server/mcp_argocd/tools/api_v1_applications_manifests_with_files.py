@@ -14,21 +14,20 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def application_service__get_manifests_with_files() -> Dict[str, Any]:
-    """
-    GetManifestsWithFiles returns application manifests using provided files to generate them
+    '''
+    Get application manifests using provided files to generate them.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous POST request to the '/api/v1/applications/manifestsWithFiles' endpoint to retrieve application manifests. The manifests are generated using the files provided in the request.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the application manifests. If the request fails, returns a dictionary with an 'error' key describing the failure.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /api/v1/applications/manifestsWithFiles")
 
     params = {}

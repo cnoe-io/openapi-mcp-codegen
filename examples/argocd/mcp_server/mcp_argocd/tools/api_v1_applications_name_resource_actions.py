@@ -23,29 +23,25 @@ async def application_service__list_resource_actions(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    ListResourceActions returns list of resource actions
-
-    OpenAPI Description:
-
+    '''
+    ListResourceActions returns a list of resource actions.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path for which resource actions are being listed.
+        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of resource actions.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/resource/actions")
 
     params = {}
@@ -70,22 +66,18 @@ async def application_service__list_resource_actions(
 
 
 async def application_service__run_resource_action(path_name: str) -> Dict[str, Any]:
-    """
-    RunResourceAction run resource action
-
-    OpenAPI Description:
-
+    '''
+    Run a resource action for a specified application.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The name of the application path for which the resource action is to be executed.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the resource action.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /api/v1/applications/{name}/resource/actions")
 
     params = {}

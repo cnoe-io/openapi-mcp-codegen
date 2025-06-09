@@ -16,25 +16,21 @@ logger = logging.getLogger("mcp_tools")
 async def repository_service__list_apps(
     path_repo: str, param_revision: str = None, param_appName: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
-    """
-    ListApps returns list of apps in the repo
-
-    OpenAPI Description:
-
+    '''
+    ListApps returns a list of apps in the repository.
 
     Args:
-    path_repo (str): OpenAPI parameter corresponding to 'path_repo'.
-    param_revision (str = None): OpenAPI parameter corresponding to 'param_revision'.
-    param_appName (str = None): OpenAPI parameter corresponding to 'param_appName'.
-    param_appProject (str = None): OpenAPI parameter corresponding to 'param_appProject'.
-
+        path_repo (str): The path to the repository.
+        param_revision (str, optional): The specific revision of the repository to query. Defaults to None.
+        param_appName (str, optional): The name of the application to filter by. Defaults to None.
+        param_appProject (str, optional): The project of the application to filter by. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of applications.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/repositories/{repo}/apps")
 
     params = {}

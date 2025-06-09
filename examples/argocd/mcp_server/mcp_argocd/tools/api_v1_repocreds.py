@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repo_creds_service__list_repository_credentials(param_url: str = None) -> Dict[str, Any]:
-    """
-    ListRepositoryCredentials gets a list of all configured repository credential sets
-
-    OpenAPI Description:
-
+    '''
+    List all configured repository credential sets.
 
     Args:
-    param_url (str = None): OpenAPI parameter corresponding to 'param_url'.
-
+        param_url (str, optional): The URL parameter for the API request. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/repocreds")
 
     params = {}
@@ -46,22 +42,18 @@ async def repo_creds_service__list_repository_credentials(param_url: str = None)
 
 
 async def repo_creds_service__create_repository_credentials(param_upsert: str = None) -> Dict[str, Any]:
-    """
-    CreateRepositoryCredentials creates a new repository credential set
-
-    OpenAPI Description:
-
+    '''
+    Create a new repository credential set.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-
+        param_upsert (str, optional): The parameter to specify whether to upsert the repository credentials. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the details of the created repository credentials.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/repocreds")
 
     params = {}

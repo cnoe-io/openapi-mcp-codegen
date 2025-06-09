@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__get_global_projects(path_name: str) -> Dict[str, Any]:
-    """
-    Get returns a virtual project by name
-
-    OpenAPI Description:
-
+    '''
+    Get a virtual project by name.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The name of the virtual project to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the project details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/projects/{name}/globalprojects")
 
     params = {}

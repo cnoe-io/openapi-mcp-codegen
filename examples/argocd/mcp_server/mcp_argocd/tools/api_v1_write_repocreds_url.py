@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repo_creds_service__delete_write_repository_credentials(path_url: str) -> Dict[str, Any]:
-    """
-    DeleteWriteRepositoryCredentials deletes a repository credential set with write access from the configuration
-
-    OpenAPI Description:
-
+    '''
+    Delete a repository credential set with write access from the configuration.
 
     Args:
-    path_url (str): OpenAPI parameter corresponding to 'path_url'.
-
+        path_url (str): The URL path parameter specifying the repository credentials to delete.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the deletion operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making DELETE request to /api/v1/write-repocreds/{url}")
 
     params = {}

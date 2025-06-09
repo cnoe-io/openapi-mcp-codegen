@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def application_service__get_application_sync_windows(
     path_name: str, param_appNamespace: str = None, param_project: str = None
 ) -> Dict[str, Any]:
-    """
-    Get returns sync windows of the application
-
-    OpenAPI Description:
-
+    '''
+    Get the synchronization windows of the application.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path for which sync windows are requested.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the sync windows information.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/syncwindows")
 
     params = {}

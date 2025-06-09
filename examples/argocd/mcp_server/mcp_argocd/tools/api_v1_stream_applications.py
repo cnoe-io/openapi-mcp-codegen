@@ -23,29 +23,25 @@ async def application_service__watch(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    Watch returns stream of application change events
-
-    OpenAPI Description:
-
+    '''
+    Watch returns a stream of application change events.
 
     Args:
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-    param_refresh (str = None): OpenAPI parameter corresponding to 'param_refresh'.
-    param_projects (str = None): OpenAPI parameter corresponding to 'param_projects'.
-    param_resourceVersion (str = None): OpenAPI parameter corresponding to 'param_resourceVersion'.
-    param_selector (str = None): OpenAPI parameter corresponding to 'param_selector'.
-    param_repo (str = None): OpenAPI parameter corresponding to 'param_repo'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        param_name (str, optional): OpenAPI parameter corresponding to 'param_name'. Defaults to None.
+        param_refresh (str, optional): OpenAPI parameter corresponding to 'param_refresh'. Defaults to None.
+        param_projects (str, optional): OpenAPI parameter corresponding to 'param_projects'. Defaults to None.
+        param_resourceVersion (str, optional): OpenAPI parameter corresponding to 'param_resourceVersion'. Defaults to None.
+        param_selector (str, optional): OpenAPI parameter corresponding to 'param_selector'. Defaults to None.
+        param_repo (str, optional): OpenAPI parameter corresponding to 'param_repo'. Defaults to None.
+        param_appNamespace (str, optional): OpenAPI parameter corresponding to 'param_appNamespace'. Defaults to None.
+        param_project (str, optional): OpenAPI parameter corresponding to 'param_project'. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/stream/applications")
 
     params = {}

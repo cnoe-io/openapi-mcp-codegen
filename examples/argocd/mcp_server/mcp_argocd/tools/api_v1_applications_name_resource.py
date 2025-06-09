@@ -23,29 +23,25 @@ async def application_service__get_resource(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    GetResource returns single application resource
-
-    OpenAPI Description:
-
+    '''
+    Get a single application resource.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path.
+        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the resource details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/resource")
 
     params = {}
@@ -80,30 +76,26 @@ async def application_service__patch_resource(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    PatchResource patch single application resource
-
-    OpenAPI Description:
-
+    '''
+    Patch a single application resource.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_patchType (str = None): OpenAPI parameter corresponding to 'param_patchType'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path.
+        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_patchType (str, optional): The type of patch to apply. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/applications/{name}/resource")
 
     params = {}
@@ -140,31 +132,27 @@ async def application_service__delete_resource(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    DeleteResource deletes a single application resource
-
-    OpenAPI Description:
-
+    '''
+    Deletes a single application resource.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_force (str = None): OpenAPI parameter corresponding to 'param_force'.
-    param_orphan (str = None): OpenAPI parameter corresponding to 'param_orphan'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path.
+        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource to delete. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_force (str, optional): Whether to force delete the resource. Defaults to None.
+        param_orphan (str, optional): Whether to orphan the resource upon deletion. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/applications/{name}/resource")
 
     params = {}

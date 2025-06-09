@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def application_service__rollback(path_name: str) -> Dict[str, Any]:
-    """
-    Rollback syncs an application to its target state
-
-    OpenAPI Description:
-
+    '''
+    Rollback syncs an application to its target state.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The name of the application path to rollback.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the rollback operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/applications/{name}/rollback")
 
     params = {}

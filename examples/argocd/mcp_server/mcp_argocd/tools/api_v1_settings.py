@@ -14,21 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def settings_service__get() -> Dict[str, Any]:
-    """
-    Get returns Argo CD settings
+    '''
+    Get Argo CD settings.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous GET request to the Argo CD API to retrieve the current settings.
 
     Args:
 
-
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the Argo CD settings.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/settings")
 
     params = {}

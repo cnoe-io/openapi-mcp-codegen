@@ -14,21 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def notification_service__list_templates() -> Dict[str, Any]:
-    """
-    List returns list of templates
-
-    OpenAPI Description:
-
+    '''
+    List all notification templates available in the service.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes a list of notification templates.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/notifications/templates")
 
     params = {}

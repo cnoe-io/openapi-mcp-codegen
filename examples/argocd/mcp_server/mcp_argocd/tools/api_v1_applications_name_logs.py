@@ -33,39 +33,35 @@ async def application_service__pod_logs2(
     param_project: str = None,
     param_matchCase: str = None,
 ) -> Dict[str, Any]:
-    """
-    PodLogs returns stream of log entries for the specified pod. Pod
-
-    OpenAPI Description:
-
+    '''
+    PodLogs returns a stream of log entries for the specified pod.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_podName (str = None): OpenAPI parameter corresponding to 'param_podName'.
-    param_container (str = None): OpenAPI parameter corresponding to 'param_container'.
-    param_sinceSeconds (str = None): OpenAPI parameter corresponding to 'param_sinceSeconds'.
-    param_sinceTime_seconds (str = None): OpenAPI parameter corresponding to 'param_sinceTime_seconds'.
-    param_sinceTime_nanos (str = None): OpenAPI parameter corresponding to 'param_sinceTime_nanos'.
-    param_tailLines (str = None): OpenAPI parameter corresponding to 'param_tailLines'.
-    param_follow (str = None): OpenAPI parameter corresponding to 'param_follow'.
-    param_untilTime (str = None): OpenAPI parameter corresponding to 'param_untilTime'.
-    param_filter (str = None): OpenAPI parameter corresponding to 'param_filter'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_previous (str = None): OpenAPI parameter corresponding to 'param_previous'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-    param_matchCase (str = None): OpenAPI parameter corresponding to 'param_matchCase'.
-
+        path_name (str): The name of the application path for which logs are requested.
+        param_namespace (str, optional): The namespace of the pod. Defaults to None.
+        param_podName (str, optional): The name of the pod. Defaults to None.
+        param_container (str, optional): The name of the container within the pod. Defaults to None.
+        param_sinceSeconds (str, optional): A relative time in seconds before the current time from which to show logs. Defaults to None.
+        param_sinceTime_seconds (str, optional): The seconds part of an absolute time from which to show logs. Defaults to None.
+        param_sinceTime_nanos (str, optional): The nanoseconds part of an absolute time from which to show logs. Defaults to None.
+        param_tailLines (str, optional): The number of lines from the end of the logs to show. Defaults to None.
+        param_follow (str, optional): If 'true', follow the log stream. Defaults to None.
+        param_untilTime (str, optional): The time until which to show logs. Defaults to None.
+        param_filter (str, optional): A filter to apply to the logs. Defaults to None.
+        param_kind (str, optional): The kind of resource. Defaults to None.
+        param_group (str, optional): The API group of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_previous (str, optional): If 'true', show logs for the previous instance of the container. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project to which the application belongs. Defaults to None.
+        param_matchCase (str, optional): If 'true', perform a case-sensitive match. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the log entries.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/logs")
 
     params = {}

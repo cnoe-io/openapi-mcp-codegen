@@ -14,23 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def application_set_service__resource_tree(path_name: str, param_appsetNamespace: str = None) -> Dict[str, Any]:
-    """
-    ResourceTree returns resource tree
-
-    OpenAPI Description:
-
+    '''
+    ResourceTree returns resource tree.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_appsetNamespace (str = None): OpenAPI parameter corresponding to 'param_appsetNamespace'.
-
+        path_name (str): The name of the application set for which the resource tree is requested.
+        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the resource tree.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applicationsets/{name}/resource-tree")
 
     params = {}

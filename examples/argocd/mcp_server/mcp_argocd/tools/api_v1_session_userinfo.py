@@ -14,21 +14,24 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def session_service__get_user_info() -> Dict[str, Any]:
-    """
-    Get the current user's info
+    '''
+    Get the current user's information.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous GET request to the '/api/v1/session/userinfo' endpoint
+    to retrieve information about the current user session.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes
+        user information. If the request fails, the dictionary will contain an 'error' key with
+        the error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with
+        the error details.
+    '''
     logger.debug("Making GET request to /api/v1/session/userinfo")
 
     params = {}

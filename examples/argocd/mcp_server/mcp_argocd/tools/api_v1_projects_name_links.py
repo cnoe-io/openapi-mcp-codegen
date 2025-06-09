@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__list_links(path_name: str) -> Dict[str, Any]:
-    """
-    ListLinks returns all deep links for the particular project
-
-    OpenAPI Description:
-
+    '''
+    ListLinks returns all deep links for the particular project.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-
+        path_name (str): The name of the project path for which deep links are to be retrieved.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes all deep links associated with the specified project.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/projects/{name}/links")
 
     params = {}

@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def get_order_by_id(path_orderId: int) -> Dict[str, Any]:
-    """
+    '''
     Find purchase order by ID.
 
-    OpenAPI Description:
-        For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-
     Args:
-    path_orderId (int): OpenAPI parameter corresponding to 'path_orderId'.
-
+        path_orderId (int): The ID of the purchase order to retrieve. For valid response, use integer IDs with value <= 5 or > 10. Other values will generate exceptions.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the purchase order details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /store/order/{orderId}")
 
     params = {}
@@ -44,22 +40,18 @@ async def get_order_by_id(path_orderId: int) -> Dict[str, Any]:
 
 
 async def delete_order(path_orderId: int) -> Dict[str, Any]:
-    """
-    Delete purchase order by identifier.
-
-    OpenAPI Description:
-        For valid response try integer IDs with value < 1000. Anything above 1000 or non-integers will generate API errors.
+    '''
+    Delete a purchase order by its identifier.
 
     Args:
-    path_orderId (int): OpenAPI parameter corresponding to 'path_orderId'.
-
+        path_orderId (int): The identifier of the purchase order to be deleted. For a valid response, use integer IDs with a value less than 1000. IDs above 1000 or non-integers will generate API errors.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, which may include confirmation of deletion or error details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /store/order/{orderId}")
 
     params = {}

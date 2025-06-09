@@ -14,22 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def repository_service__get_app_details(path_source_repoURL: str) -> Dict[str, Any]:
-    """
-    GetAppDetails returns application details by given path
-
-    OpenAPI Description:
-
+    '''
+    Get application details by the given repository path.
 
     Args:
-    path_source_repoURL (str): OpenAPI parameter corresponding to 'path_source_repoURL'.
-
+        path_source_repoURL (str): The URL path of the source repository for which application details are requested.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes application details.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /api/v1/repositories/{source.repoURL}/appdetails")
 
     params = {}

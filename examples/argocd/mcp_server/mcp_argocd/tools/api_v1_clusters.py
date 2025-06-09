@@ -16,25 +16,21 @@ logger = logging.getLogger("mcp_tools")
 async def cluster_service__list(
     param_server: str = None, param_name: str = None, param_id_type: str = None, param_id_value: str = None
 ) -> Dict[str, Any]:
-    """
-    List returns list of clusters
-
-    OpenAPI Description:
-
+    '''
+    List returns a list of clusters.
 
     Args:
-    param_server (str = None): OpenAPI parameter corresponding to 'param_server'.
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-    param_id_type (str = None): OpenAPI parameter corresponding to 'param_id_type'.
-    param_id_value (str = None): OpenAPI parameter corresponding to 'param_id_value'.
-
+        param_server (str, optional): The server parameter for the API request. Defaults to None.
+        param_name (str, optional): The name parameter for the API request. Defaults to None.
+        param_id_type (str, optional): The ID type parameter for the API request. Defaults to None.
+        param_id_value (str, optional): The ID value parameter for the API request. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of clusters.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/clusters")
 
     params = {}
@@ -54,22 +50,18 @@ async def cluster_service__list(
 
 
 async def cluster_service__create(param_upsert: str = None) -> Dict[str, Any]:
-    """
-    Create creates a cluster
-
-    OpenAPI Description:
-
+    '''
+    Create a new cluster.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-
+        param_upsert (str, optional): OpenAPI parameter corresponding to 'param_upsert'. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/clusters")
 
     params = {}

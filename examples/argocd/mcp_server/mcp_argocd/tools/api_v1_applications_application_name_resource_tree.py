@@ -23,29 +23,25 @@ async def application_service__resource_tree(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    ResourceTree returns resource tree
-
-    OpenAPI Description:
-
+    '''
+    ResourceTree returns the resource tree for a specified application.
 
     Args:
-    path_applicationName (str): OpenAPI parameter corresponding to 'path_applicationName'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_name (str = None): OpenAPI parameter corresponding to 'param_name'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_applicationName (str): The name of the application for which the resource tree is requested.
+        param_namespace (str, optional): The namespace of the resources. Defaults to None.
+        param_name (str, optional): The name of the resource. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, representing the resource tree.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/applications/{applicationName}/resource-tree")
 
     params = {}

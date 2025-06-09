@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def repository_service__list_refs(
     path_repo: str, param_forceRefresh: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
-    """
-
-
-    OpenAPI Description:
-
+    '''
+    List references for a given repository.
 
     Args:
-    path_repo (str): OpenAPI parameter corresponding to 'path_repo'.
-    param_forceRefresh (str = None): OpenAPI parameter corresponding to 'param_forceRefresh'.
-    param_appProject (str = None): OpenAPI parameter corresponding to 'param_appProject'.
-
+        path_repo (str): The path to the repository for which to list references.
+        param_forceRefresh (str, optional): A parameter to force refresh the data. Defaults to None.
+        param_appProject (str, optional): The application project parameter. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of references.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/repositories/{repo}/refs")
 
     params = {}

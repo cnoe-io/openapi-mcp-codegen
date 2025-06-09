@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def application_set_service__list(
     param_projects: str = None, param_selector: str = None, param_appsetNamespace: str = None
 ) -> Dict[str, Any]:
-    """
-    List returns list of applicationset
-
-    OpenAPI Description:
-
+    '''
+    List returns a list of applicationset.
 
     Args:
-    param_projects (str = None): OpenAPI parameter corresponding to 'param_projects'.
-    param_selector (str = None): OpenAPI parameter corresponding to 'param_selector'.
-    param_appsetNamespace (str = None): OpenAPI parameter corresponding to 'param_appsetNamespace'.
-
+        param_projects (str, optional): OpenAPI parameter corresponding to 'param_projects'. Defaults to None.
+        param_selector (str, optional): OpenAPI parameter corresponding to 'param_selector'. Defaults to None.
+        param_appsetNamespace (str, optional): OpenAPI parameter corresponding to 'param_appsetNamespace'. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of applicationset.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applicationsets")
 
     params = {}
@@ -52,23 +48,19 @@ async def application_set_service__list(
 
 
 async def application_set_service__create(param_upsert: str = None, param_dryRun: str = None) -> Dict[str, Any]:
-    """
-    Create creates an applicationset
-
-    OpenAPI Description:
-
+    '''
+    Create an applicationset.
 
     Args:
-    param_upsert (str = None): OpenAPI parameter corresponding to 'param_upsert'.
-    param_dryRun (str = None): OpenAPI parameter corresponding to 'param_dryRun'.
-
+        param_upsert (str, optional): Specifies whether to upsert the application set. Defaults to None.
+        param_dryRun (str, optional): Indicates if the operation should be a dry run. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the applicationset creation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/applicationsets")
 
     params = {}

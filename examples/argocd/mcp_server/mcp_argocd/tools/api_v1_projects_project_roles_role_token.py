@@ -14,23 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def project_service__create_token(path_project: str, path_role: str) -> Dict[str, Any]:
-    """
-    Create a new project token
-
-    OpenAPI Description:
-
+    '''
+    Create a new project token.
 
     Args:
-    path_project (str): OpenAPI parameter corresponding to 'path_project'.
-    path_role (str): OpenAPI parameter corresponding to 'path_role'.
-
+        path_project (str): The project path for which the token is to be created.
+        path_role (str): The role path within the project for which the token is to be created.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the token details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /api/v1/projects/{project}/roles/{role}/token")
 
     params = {}

@@ -23,29 +23,25 @@ async def application_service__list_resource_links(
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
-    """
-    ListResourceLinks returns the list of all resource deep links
-
-    OpenAPI Description:
-
+    '''
+    ListResourceLinks returns the list of all resource deep links.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_resourceName (str = None): OpenAPI parameter corresponding to 'param_resourceName'.
-    param_version (str = None): OpenAPI parameter corresponding to 'param_version'.
-    param_group (str = None): OpenAPI parameter corresponding to 'param_group'.
-    param_kind (str = None): OpenAPI parameter corresponding to 'param_kind'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the application path for which resource links are requested.
+        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_version (str, optional): The version of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
+        param_kind (str, optional): The kind of the resource. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of resource deep links.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/resource/links")
 
     params = {}

@@ -14,23 +14,19 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def application_set_service__get(path_name: str, param_appsetNamespace: str = None) -> Dict[str, Any]:
-    """
-    Get returns an applicationset by name
-
-    OpenAPI Description:
-
+    '''
+    Get an applicationset by name.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_appsetNamespace (str = None): OpenAPI parameter corresponding to 'param_appsetNamespace'.
-
+        path_name (str): The name of the applicationset to retrieve.
+        param_appsetNamespace (str, optional): The namespace of the applicationset. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the applicationset details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applicationsets/{name}")
 
     params = {}
@@ -49,23 +45,19 @@ async def application_set_service__get(path_name: str, param_appsetNamespace: st
 
 
 async def application_set_service__delete(path_name: str, param_appsetNamespace: str = None) -> Dict[str, Any]:
-    """
-    Delete deletes an application set
-
-    OpenAPI Description:
-
+    '''
+    Deletes an application set.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_appsetNamespace (str = None): OpenAPI parameter corresponding to 'param_appsetNamespace'.
-
+        path_name (str): The name of the application set to delete.
+        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /api/v1/applicationsets/{name}")
 
     params = {}

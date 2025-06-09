@@ -16,24 +16,20 @@ logger = logging.getLogger("mcp_tools")
 async def application_service__list_links(
     path_name: str, param_namespace: str = None, param_project: str = None
 ) -> Dict[str, Any]:
-    """
-    ListLinks returns the list of all application deep links
-
-    OpenAPI Description:
-
+    '''
+    ListLinks returns the list of all application deep links.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    param_namespace (str = None): OpenAPI parameter corresponding to 'param_namespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-
+        path_name (str): The name of the path for which to retrieve deep links.
+        param_namespace (str, optional): The namespace parameter for filtering links. Defaults to None.
+        param_project (str, optional): The project parameter for filtering links. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of application deep links.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/links")
 
     params = {}

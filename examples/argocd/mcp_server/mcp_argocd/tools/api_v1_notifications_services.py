@@ -14,21 +14,22 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def notification_service__list_services() -> Dict[str, Any]:
-    """
-    List returns list of services
+    '''
+    List available notification services.
 
-    OpenAPI Description:
-
+    This function makes an asynchronous GET request to the notification service API
+    to retrieve a list of available services.
 
     Args:
 
-
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call,
+        which includes the list of notification services.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised
+        with the error details.
+    '''
     logger.debug("Making GET request to /api/v1/notifications/services")
 
     params = {}

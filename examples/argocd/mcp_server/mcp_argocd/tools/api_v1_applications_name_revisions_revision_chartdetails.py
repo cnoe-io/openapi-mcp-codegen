@@ -21,27 +21,23 @@ async def application_service__revision_chart_details(
     param_sourceIndex: str = None,
     param_versionId: str = None,
 ) -> Dict[str, Any]:
-    """
-    Get the chart metadata (description, maintainers, home) for a specific revision of the application
-
-    OpenAPI Description:
-
+    '''
+    Get the chart metadata (description, maintainers, home) for a specific revision of the application.
 
     Args:
-    path_name (str): OpenAPI parameter corresponding to 'path_name'.
-    path_revision (str): OpenAPI parameter corresponding to 'path_revision'.
-    param_appNamespace (str = None): OpenAPI parameter corresponding to 'param_appNamespace'.
-    param_project (str = None): OpenAPI parameter corresponding to 'param_project'.
-    param_sourceIndex (str = None): OpenAPI parameter corresponding to 'param_sourceIndex'.
-    param_versionId (str = None): OpenAPI parameter corresponding to 'param_versionId'.
-
+        path_name (str): The name of the application for which the chart details are requested.
+        path_revision (str): The specific revision of the application for which the chart details are requested.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
+        param_sourceIndex (str, optional): The source index of the application. Defaults to None.
+        param_versionId (str, optional): The version ID of the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the chart metadata.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /api/v1/applications/{name}/revisions/{revision}/chartdetails")
 
     params = {}
