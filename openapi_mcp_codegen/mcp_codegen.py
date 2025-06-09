@@ -16,6 +16,9 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
 
+def camel_to_snake(name):
+  return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+
 class MCPGenerator:
   """
   MCPGenerator is a class responsible for generating Python code based on OpenAPI specifications.
@@ -186,8 +189,31 @@ class MCPGenerator:
     Args:
       input_file (str): Path to the file to lint.
     """
+    logger.info(f"Running Ruff format on {input_file}")
+    subprocess.run(
+      [
+      "ruff",
+      "format",
+      "--line-length",
+      "120",
+      input_file
+      ],
+      check=True,
+    )
     logger.info(f"Running Ruff lint on {input_file}")
-    subprocess.run(["ruff", "check", "--fix", "--ignore", "E402", input_file], check=True)
+    subprocess.run(
+      [
+      "ruff",
+      "check",
+      "--fix",
+      "--ignore",
+      "E402",
+      "--line-length",
+      "120",
+      input_file
+      ],
+      check=True,
+    )
     logger.info("Ruff linting completed")
 
   def enhance_docstring_with_llm(self, input_path: str, output_path: str, dry_run: bool = False) -> None:
@@ -370,6 +396,7 @@ class MCPGenerator:
     enhancement_futures = []
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
     for path, ops in self.spec.get('paths', {}).items():
+      logger.debug(f"Ops: {ops}")
       # path = path.lower()
       module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
@@ -431,7 +458,9 @@ class MCPGenerator:
                 print(orig_name, formatted_path)
                 formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
 
-        operation_id = op.get("operationId", f"{method}_{module_name}").lower()
+        operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}"))
+        logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
+
         # Remove any curly braces from the operation id
         operation_id = operation_id.replace("{", "").replace("}", "")
 
@@ -445,7 +474,7 @@ class MCPGenerator:
           "formatted_path": formatted_path
         })
       if functions:
-        output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
+        output_path = os.path.join(tools_dir, f"{camel_to_snake(module_name)}.py").lower()
         mcp_server_base_package = self.config.get('mcp_server_base_package', '')
         self.render_template(
           "tools/tool.tpl",
@@ -595,7 +624,7 @@ class MCPGenerator:
           required_fields = schema.get("required", [])
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
-              param_name = f"{prefix}_{prop_name}"
+              param_name = f"{prefix}_{camel_to_snake(prop_name)}"
               if prop.get("type") == "object" and "properties" in prop:
                   params.extend(self._extract_body_params(prop, prefix=param_name))
               else:
