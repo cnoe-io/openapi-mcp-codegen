@@ -15,55 +15,17 @@ logger = logging.getLogger("mcp_tools")
 
 async def upload_file(path_petId: int, param_additionalMetadata: str = None) -> Dict[str, Any]:
     '''
-    Uploads an image for a specific pet.
+    Uploads an image for a specified pet.
 
     Args:
-        path_petId (int): The ID of the pet to which the image will be uploaded.
-        param_additionalMetadata (str, optional): Additional data to pass to the server. Defaults to None.
+        path_petId (int): The unique identifier of the pet for which the image is being uploaded.
+        param_additionalMetadata (str, optional): Additional metadata to associate with the uploaded image. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing upload status and details.
+        Dict[str, Any]: The JSON response from the API call containing the result of the upload operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        ---
-        post:
-          summary: Uploads an image for a pet
-          description: Upload image of the pet.
-          operationId: uploadFile
-          parameters:
-            - name: petId
-              in: path
-              required: true
-              description: ID of pet to update
-              schema:
-                type: integer
-            - name: additionalMetadata
-              in: query
-              required: false
-              description: Additional data to pass to server
-              schema:
-                type: string
-          requestBody:
-            content:
-              multipart/form-data:
-                schema:
-                  type: object
-                  properties:
-                    file:
-                      type: string
-                      format: binary
-          responses:
-            '200':
-              description: successful operation
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid input
     '''
     logger.debug("Making POST request to /pet/{petId}/uploadImage")
 

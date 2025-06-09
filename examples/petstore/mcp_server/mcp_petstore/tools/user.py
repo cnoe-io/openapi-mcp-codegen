@@ -26,9 +26,11 @@ async def create_user(
     '''
     Creates a new user in the system.
 
+    This operation can only be performed by a logged-in user. The function sends a POST request to the '/user' endpoint with the provided user details.
+
     Args:
         body_id (int, optional): Unique identifier for the user. Defaults to None.
-        body_username (str, optional): Username for the user. Defaults to None.
+        body_username (str, optional): Username for the new user. Defaults to None.
         body_first_name (str, optional): First name of the user. Defaults to None.
         body_last_name (str, optional): Last name of the user. Defaults to None.
         body_email (str, optional): Email address of the user. Defaults to None.
@@ -37,63 +39,10 @@ async def create_user(
         body_user_status (int, optional): Status code representing the user's status. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing user creation result or error details.
+        Dict[str, Any]: The JSON response from the API call, containing user creation details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        ---
-        post:
-          summary: Create user
-          description: This can only be done by the logged in user.
-          operationId: createUser
-          tags:
-            - user
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: Unique identifier for the user.
-                    username:
-                      type: string
-                      description: Username for the user.
-                    first_name:
-                      type: string
-                      description: First name of the user.
-                    last_name:
-                      type: string
-                      description: Last name of the user.
-                    email:
-                      type: string
-                      description: Email address of the user.
-                    password:
-                      type: string
-                      description: Password for the user account.
-                    phone:
-                      type: string
-                      description: Phone number of the user.
-                    user_status:
-                      type: integer
-                      description: Status code representing the user's status.
-          responses:
-            '200':
-              description: User created successfully.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid input or request error.
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making POST request to /user")
 

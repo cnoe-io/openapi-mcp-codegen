@@ -25,44 +25,6 @@ async def logout_user() -> Dict[str, Any]:
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      summary: Log out current user
-      description: Log the currently authenticated user out of the system and invalidate their session.
-      operationId: logoutUser
-      tags:
-        - user
-      responses:
-        '200':
-          description: Successful logout
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Successfully logged out.
-        '401':
-          description: Unauthorized - user is not logged in
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Not authenticated.
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Internal server error.
     '''
     logger.debug("Making GET request to /user/logout")
 

@@ -25,71 +25,18 @@ async def update_pet(
     Update an existing pet by Id.
 
     Args:
-        body_name (str): The name of the pet.
-        body_photo_urls (List[str]): List of photo URLs for the pet.
+        body_name (str): The name of the pet to update.
+        body_photo_urls (List[str]): A list of photo URLs associated with the pet.
         body_id (int, optional): The unique identifier of the pet. Defaults to None.
-        body_category (Dict[str, Any], optional): The category of the pet. Defaults to None.
-        body_tags (List[str], optional): List of tags associated with the pet. Defaults to None.
-        body_status (str, optional): The status of the pet in the store. Defaults to None.
+        body_category (Dict[str, Any], optional): The category information for the pet. Defaults to None.
+        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
+        body_status (str, optional): The status of the pet (e.g., 'available', 'pending', 'sold'). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the updated pet information.
+        Dict[str, Any]: The JSON response from the API call containing the updated pet information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        put:
-          summary: Update an existing pet
-          description: Update an existing pet by Id.
-          operationId: updatePet
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier of the pet.
-                    name:
-                      type: string
-                      description: The name of the pet.
-                    category:
-                      type: object
-                      description: The category of the pet.
-                      properties:
-                        id:
-                          type: integer
-                        name:
-                          type: string
-                    photo_urls:
-                      type: array
-                      items:
-                        type: string
-                      description: List of photo URLs for the pet.
-                    tags:
-                      type: array
-                      items:
-                        type: string
-                      description: List of tags associated with the pet.
-                    status:
-                      type: string
-                      description: The status of the pet in the store.
-          responses:
-            '200':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid ID supplied
-            '404':
-              description: Pet not found
-            '405':
-              description: Validation exception
     '''
     logger.debug("Making PUT request to /pet")
 
@@ -129,75 +76,18 @@ async def add_pet(
     Add a new pet to the store.
 
     Args:
-        body_name (str): Name of the pet.
-        body_photo_urls (List[str]): List of photo URLs for the pet.
-        body_id (int, optional): Unique identifier for the pet. Defaults to None.
-        body_category (Dict[str, Any], optional): Category object for the pet. Defaults to None.
-        body_tags (List[str], optional): List of tags associated with the pet. Defaults to None.
-        body_status (str, optional): Pet status in the store (e.g., 'available', 'pending', 'sold'). Defaults to None.
+        body_name (str): The name of the pet to add.
+        body_photo_urls (List[str]): A list of photo URLs associated with the pet.
+        body_id (int, optional): The unique identifier for the pet. Defaults to None.
+        body_category (Dict[str, Any], optional): The category information for the pet. Defaults to None.
+        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
+        body_status (str, optional): The status of the pet in the store (e.g., 'available', 'pending', 'sold'). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the created pet object or error details.
+        Dict[str, Any]: The JSON response from the API call containing the details of the added pet or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        ---
-        post:
-          summary: Add a new pet to the store
-          operationId: addPet
-          tags:
-            - pet
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      format: int64
-                      description: Unique identifier for the pet
-                    name:
-                      type: string
-                      description: Name of the pet
-                    category:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          format: int64
-                        name:
-                          type: string
-                      description: Category object for the pet
-                    photo_urls:
-                      type: array
-                      items:
-                        type: string
-                      description: List of photo URLs
-                    tags:
-                      type: array
-                      items:
-                        type: string
-                      description: List of tags
-                    status:
-                      type: string
-                      description: Pet status in the store
-                      enum: [available, pending, sold]
-                  required:
-                    - name
-                    - photo_urls
-          responses:
-            '200':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid input
     '''
     logger.debug("Making POST request to /pet")
 

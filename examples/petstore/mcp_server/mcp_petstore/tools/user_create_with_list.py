@@ -18,41 +18,13 @@ async def create_users_with_list_input(body: List[str]) -> Dict[str, Any]:
     Creates a list of users with the given input array.
 
     Args:
-        body (List[str]): A list of user data to be created.
+        body (List[str]): A list of user data strings to be used for creating users.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the result of the user creation operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      post:
-        summary: Creates list of users with given input array.
-        operationId: createUsersWithListInput
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Invalid input
-            content:
-              application/json:
-                schema:
-                  type: object
-        tags:
-          - user
     '''
     logger.debug("Making POST request to /user/createWithList")
 

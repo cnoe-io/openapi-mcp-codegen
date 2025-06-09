@@ -18,43 +18,13 @@ async def find_pets_by_status(param_status: str = None) -> Dict[str, Any]:
     Finds pets by their status.
 
     Args:
-        param_status (str, optional): Status values to filter pets by. Multiple values can be provided as a comma-separated string (e.g., "available,pending,sold"). Defaults to None.
+        param_status (str, optional): Status values to filter pets by. Multiple status values can be provided as a comma-separated string (e.g., "available,pending,sold"). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing a list of pets matching the specified status.
+        Dict[str, Any]: The JSON response from the API call containing the list of pets matching the specified status.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      get:
-        summary: Finds Pets by status
-        description: Multiple status values can be provided with comma separated strings.
-        operationId: findPetsByStatus
-        parameters:
-          - name: status
-            in: query
-            description: Status values that need to be considered for filter
-            required: false
-            schema:
-              type: string
-              enum:
-                - available
-                - pending
-                - sold
-            style: form
-            explode: false
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Pet'
-          '400':
-            description: Invalid status value
     '''
     logger.debug("Making GET request to /pet/findByStatus")
 

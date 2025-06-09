@@ -21,35 +21,10 @@ async def get_pet_by_id(path_petId: int) -> Dict[str, Any]:
         path_petId (int): The unique identifier of the pet to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the pet details if found, or an error message.
+        Dict[str, Any]: The JSON response containing the pet details if found.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Find pet by ID
-          description: Returns a single pet.
-          operationId: getPetById
-          parameters:
-            - name: petId
-              in: path
-              required: true
-              description: ID of pet to return
-              schema:
-                type: integer
-                format: int64
-          responses:
-            '200':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Pet'
-            '400':
-              description: Invalid ID supplied
-            '404':
-              description: Pet not found
     '''
     logger.debug("Making GET request to /pet/{petId}")
 
@@ -69,59 +44,15 @@ async def update_pet_with_form(path_petId: int, param_name: str = None, param_st
     Updates a pet in the store with form data.
 
     Args:
-        path_petId (int): The ID of the pet to update.
+        path_petId (int): The unique identifier of the pet to update.
         param_name (str, optional): The new name for the pet. Defaults to None.
-        param_status (str, optional): The new status for the pet. Defaults to None.
+        param_status (str, optional): The new status for the pet (e.g., 'available', 'pending', 'sold'). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the updated pet information or error details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        put:
-          summary: Updates a pet in the store with form data.
-          description: Updates a pet resource based on the form data.
-          operationId: updatePetWithForm
-          parameters:
-            - name: petId
-              in: path
-              required: true
-              description: ID of pet that needs to be updated
-              schema:
-                type: integer
-            - name: name
-              in: query
-              required: false
-              description: New name of the pet
-              schema:
-                type: string
-            - name: status
-              in: query
-              required: false
-              description: New status of the pet
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Pet updated successfully
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid input
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '404':
-              description: Pet not found
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making POST request to /pet/{petId}")
 
@@ -144,46 +75,13 @@ async def delete_pet(path_petId: int) -> Dict[str, Any]:
     Deletes a pet by its unique identifier.
 
     Args:
-        path_petId (int): The unique identifier of the pet to delete.
+        path_petId (int): The unique identifier of the pet to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, typically indicating success or failure.
+        Dict[str, Any]: The JSON response from the API call, which may include confirmation of deletion or error details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        delete:
-          summary: Delete a pet
-          description: Deletes a pet by its unique identifier.
-          operationId: deletePet
-          parameters:
-            - name: petId
-              in: path
-              required: true
-              description: The unique identifier of the pet to delete.
-              schema:
-                type: integer
-                format: int64
-          responses:
-            '200':
-              description: Pet deleted successfully.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid pet ID supplied.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '404':
-              description: Pet not found.
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making DELETE request to /pet/{petId}")
 

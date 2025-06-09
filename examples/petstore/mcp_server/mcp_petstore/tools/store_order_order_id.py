@@ -18,40 +18,13 @@ async def get_order_by_id(path_orderId: int) -> Dict[str, Any]:
     Find a purchase order by its ID.
 
     Args:
-        path_orderId (int): The ID of the purchase order to retrieve.
+        path_orderId (int): The ID of the purchase order to retrieve. For a valid response, use integer IDs with value <= 5 or > 10. Other values will generate exceptions.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the purchase order details if found.
+        Dict[str, Any]: The JSON response containing the purchase order details if found, or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Find purchase order by ID
-          description: |
-            For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-          operationId: getOrderById
-          parameters:
-            - name: orderId
-              in: path
-              description: ID of the order to fetch
-              required: true
-              schema:
-                type: integer
-          responses:
-            '200':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    $ref: '#/components/schemas/Order'
-            '400':
-              description: Invalid ID supplied
-            '404':
-              description: Order not found
-            '500':
-              description: Internal server error
     '''
     logger.debug("Making GET request to /store/order/{orderId}")
 
@@ -71,47 +44,13 @@ async def delete_order(path_orderId: int) -> Dict[str, Any]:
     Delete a purchase order by its identifier.
 
     Args:
-        path_orderId (int): The unique identifier of the purchase order to delete.
+        path_orderId (int): The unique identifier of the purchase order to delete. For a valid response, use integer IDs with values less than 1000. IDs greater than or equal to 1000 or non-integer values will result in API errors.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, indicating success or error details.
+        Dict[str, Any]: The JSON response from the API call, which may include confirmation of deletion or error details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      delete:
-        summary: Delete purchase order by identifier
-        description: |
-          For valid response try integer IDs with value < 1000. Anything above 1000 or non-integers will generate API errors.
-        operationId: deleteOrder
-        parameters:
-          - name: orderId
-            in: path
-            description: ID of the order that needs to be deleted
-            required: true
-            schema:
-              type: integer
-              format: int64
-        responses:
-          '200':
-            description: Order deleted successfully
-            content:
-              application/json:
-                schema:
-                  type: object
-          '400':
-            description: Invalid ID supplied
-            content:
-              application/json:
-                schema:
-                  type: object
-          '404':
-            description: Order not found
-            content:
-              application/json:
-                schema:
-                  type: object
     '''
     logger.debug("Making DELETE request to /store/order/{orderId}")
 

@@ -15,44 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def find_pets_by_tags(param_tags: List[str] = None) -> Dict[str, Any]:
     '''
-    Finds pets by tags.
+    Finds pets by specified tags.
 
     Args:
-        param_tags (List[str], optional): List of tags to filter pets by. Multiple tags can be provided as a list of strings. Defaults to None.
+        param_tags (List[str], optional): A list of tag strings to filter pets by. Multiple tags can be provided as a list (e.g., ['tag1', 'tag2', 'tag3']). Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of pets matching the provided tags.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      get:
-        summary: Finds Pets by tags
-        description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-        operationId: findPetsByTags
-        parameters:
-          - name: tags
-            in: query
-            description: Tags to filter by
-            required: false
-            style: form
-            explode: true
-            schema:
-              type: array
-              items:
-                type: string
-        responses:
-          '200':
-            description: Successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Pet'
-          '400':
-            description: Invalid tag value
     '''
     logger.debug("Making GET request to /pet/findByTags")
 

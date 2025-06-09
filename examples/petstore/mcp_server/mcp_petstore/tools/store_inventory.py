@@ -15,37 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def get_inventory() -> Dict[str, Any]:
     '''
-    Retrieves the current inventory of pets grouped by their status.
+    Retrieves the current pet inventories grouped by status.
 
     Args:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary mapping status codes (e.g., "available", "pending", "sold") to their respective quantities.
+        Dict[str, Any]: A dictionary mapping status codes (e.g., 'available', 'pending', 'sold') to their respective quantities.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      get:
-        summary: Returns pet inventories by status.
-        description: Returns a map of status codes to quantities.
-        operationId: getInventory
-        tags:
-          - store
-        responses:
-          '200':
-            description: Successful operation. Returns a map of status codes to quantities.
-            content:
-              application/json:
-                schema:
-                  type: object
-                  additionalProperties:
-                    type: integer
-          '400':
-            description: Invalid request.
-          '500':
-            description: Internal server error.
     '''
     logger.debug("Making GET request to /store/inventory")
 

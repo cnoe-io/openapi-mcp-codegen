@@ -15,48 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def get_user_by_name(path_username: str) -> Dict[str, Any]:
     '''
-    Retrieve user details by username.
+    Retrieves user details based on the provided username.
 
     Args:
-        path_username (str): The username of the user to retrieve.
+        path_username (str): The username of the user whose details are to be retrieved.
 
     Returns:
-        Dict[str, Any]: The JSON response containing user details.
+        Dict[str, Any]: A dictionary containing the user's details as returned by the API. If the request fails, returns a dictionary with an 'error' key describing the failure.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        get:
-          summary: Get user by user name
-          description: Retrieve user detail based on username.
-          operationId: getUserByName
-          parameters:
-            - name: username
-              in: path
-              required: true
-              description: The username of the user to retrieve.
-              schema:
-                type: string
-          responses:
-            '200':
-              description: Successful response with user details.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '404':
-              description: User not found.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '500':
-              description: Server error.
-              content:
-                application/json:
-                  schema:
-                    type: object
     '''
     logger.debug("Making GET request to /user/{username}")
 
@@ -85,9 +53,11 @@ async def update_user(
     '''
     Update an existing user resource.
 
+    This operation updates the details of a user identified by the provided username. Only the currently authenticated user is permitted to perform this action. Fields that are not provided will remain unchanged.
+
     Args:
         path_username (str): The username of the user to update.
-        body_id (int, optional): The unique ID of the user. Defaults to None.
+        body_id (int, optional): The unique identifier of the user. Defaults to None.
         body_username (str, optional): The new username for the user. Defaults to None.
         body_first_name (str, optional): The new first name of the user. Defaults to None.
         body_last_name (str, optional): The new last name of the user. Defaults to None.
@@ -101,61 +71,6 @@ async def update_user(
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        put:
-          summary: Update an existing user
-          description: This can only be done by the logged in user.
-          operationId: updateUser
-          parameters:
-            - name: username
-              in: path
-              required: true
-              description: The username of the user to update.
-              schema:
-                type: string
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique ID of the user.
-                    username:
-                      type: string
-                      description: The new username for the user.
-                    first_name:
-                      type: string
-                      description: The new first name of the user.
-                    last_name:
-                      type: string
-                      description: The new last name of the user.
-                    email:
-                      type: string
-                      description: The new email address of the user.
-                    password:
-                      type: string
-                      description: The new password for the user.
-                    phone:
-                      type: string
-                      description: The new phone number of the user.
-                    user_status:
-                      type: integer
-                      description: The new status code for the user.
-          responses:
-            '200':
-              description: User updated successfully.
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid user supplied.
-            '404':
-              description: User not found.
     '''
     logger.debug("Making PUT request to /user/{username}")
 
@@ -189,44 +104,18 @@ async def update_user(
 
 async def delete_user(path_username: str) -> Dict[str, Any]:
     '''
-    Deletes a user resource by username.
+    Deletes a user resource identified by the given username.
+
+    This operation can only be performed by the currently logged-in user.
 
     Args:
         path_username (str): The username of the user to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call indicating the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        delete:
-          summary: Delete user resource
-          description: This can only be done by the logged in user.
-          operationId: deleteUser
-          parameters:
-            - name: username
-              in: path
-              description: The name of the user to delete
-              required: true
-              schema:
-                type: string
-          responses:
-            '200':
-              description: User deleted successfully
-              content:
-                application/json:
-                  schema:
-                    type: object
-            '400':
-              description: Invalid username supplied
-            '404':
-              description: User not found
-            '401':
-              description: Unauthorized
-          security:
-            - api_key: []
     '''
     logger.debug("Making DELETE request to /user/{username}")
 

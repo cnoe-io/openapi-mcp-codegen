@@ -15,69 +15,17 @@ logger = logging.getLogger("mcp_tools")
 
 async def login_user(param_username: str = None, param_password: str = None) -> Dict[str, Any]:
     '''
-    Logs a user into the system.
+    Logs a user into the system using the provided username and password.
 
     Args:
         param_username (str, optional): The username of the user to log in. Defaults to None.
         param_password (str, optional): The password of the user to log in. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, typically containing authentication details or error information.
+        Dict[str, Any]: The JSON response from the API call, containing authentication details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-      summary: Log into the system.
-      operationId: loginUser
-      description: Logs a user into the system using their username and password.
-      parameters:
-        - name: username
-          in: query
-          description: The username of the user to log in.
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password of the user to log in.
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful login
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    description: Authentication token
-                  user:
-                    type: object
-                    description: User details
-        '400':
-          description: Invalid username or password
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Error message
-        '500':
-          description: Server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    description: Error message
     '''
     logger.debug("Making GET request to /user/login")
 

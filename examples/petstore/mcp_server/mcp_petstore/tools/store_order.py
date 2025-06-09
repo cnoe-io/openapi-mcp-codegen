@@ -26,80 +26,17 @@ async def place_order(
 
     Args:
         body_id (int, optional): The unique identifier for the order. Defaults to None.
-        body_pet_id (int, optional): The ID of the pet being ordered. Defaults to None.
+        body_pet_id (int, optional): The unique identifier of the pet being ordered. Defaults to None.
         body_quantity (int, optional): The quantity of the pet to order. Defaults to None.
         body_ship_date (str, optional): The shipping date for the order in ISO 8601 format. Defaults to None.
         body_status (str, optional): The status of the order (e.g., 'placed', 'approved', 'delivered'). Defaults to None.
-        body_complete (bool, optional): Whether the order is complete. Defaults to None.
+        body_complete (bool, optional): Indicates if the order is complete. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing order details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-
-    OpenAPI Specification:
-        ---
-        post:
-          summary: Place an order for a pet
-          description: Place a new order in the store.
-          operationId: placeOrder
-          requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      description: The unique identifier for the order.
-                    pet_id:
-                      type: integer
-                      description: The ID of the pet being ordered.
-                    quantity:
-                      type: integer
-                      description: The quantity of the pet to order.
-                    ship_date:
-                      type: string
-                      format: date-time
-                      description: The shipping date for the order in ISO 8601 format.
-                    status:
-                      type: string
-                      description: The status of the order (e.g., 'placed', 'approved', 'delivered').
-                    complete:
-                      type: boolean
-                      description: Whether the order is complete.
-          responses:
-            '200':
-              description: Successful operation
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      pet_id:
-                        type: integer
-                      quantity:
-                        type: integer
-                      ship_date:
-                        type: string
-                        format: date-time
-                      status:
-                        type: string
-                      complete:
-                        type: boolean
-            '400':
-              description: Invalid input
-              content:
-                application/json:
-                  schema:
-                    type: object
-                    properties:
-                      error:
-                        type: string
     '''
     logger.debug("Making POST request to /store/order")
 
