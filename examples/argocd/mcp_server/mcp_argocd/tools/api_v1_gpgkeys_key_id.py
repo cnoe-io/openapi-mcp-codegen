@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def g_p_g_key_service__get(path_keyID: str) -> Dict[str, Any]:
+async def gpg_key_service__get(path_keyID: str) -> Dict[str, Any]:
     """
     Get information about specified GPG public key from the server
 

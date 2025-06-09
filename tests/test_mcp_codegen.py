@@ -50,6 +50,102 @@ def test_generator_init(setup_env):
     assert "info" in gen.spec
     assert gen.config["author"]
 
+def test_camel_to_snake():
+    from openapi_mcp_codegen.mcp_codegen import camel_to_snake
+    assert camel_to_snake("CamelCase") == "camel_case"
+    assert camel_to_snake("HTTPResponseCode") == "http_response_code"
+    assert camel_to_snake("XYZ") == "x_y_z"
+
+def test_resolve_ref(setup_env):
+    gen = MCPGenerator(**setup_env)
+    # Create a minimal dummy spec with a components/schemas section.
+    gen.spec = {
+        "components": {
+            "schemas": {
+                "TestModel": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "integer"}
+                    }
+                }
+            }
+        }
+    }
+    ref = "#/components/schemas/TestModel"
+    resolved = gen._resolve_ref(ref)
+    assert resolved.get("type") == "object"
+    assert "properties" in resolved
+
+def test_extract_body_params_simple(setup_env):
+    gen = MCPGenerator(**setup_env)
+    schema = {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "Name field"},
+            "age": {"type": "integer"}
+        },
+        "required": ["name"]
+    }
+    params = gen._extract_body_params(schema, prefix="body")
+    # Expect a required parameter for "name" and an optional one for "age"
+    assert any("body_name: str" in p for p in params)
+    assert any("body_age: int = None" in p for p in params)
+
+def test_render_template_creates_file(setup_env):
+    gen = MCPGenerator(**setup_env)
+    # Create a temporary template in a new directory.
+    import os
+    from jinja2 import Environment, FileSystemLoader
+    temp_template_dir = os.path.join(setup_env["output_dir"], "temp_templates")
+    os.makedirs(temp_template_dir, exist_ok=True)
+    template_file = os.path.join(temp_template_dir, "test.tpl")
+    with open(template_file, "w", encoding="utf-8") as f:
+        f.write("Hello, {{ name }}!")
+    # Reset the Jinja2 environment to use our temporary template directory.
+    gen.env = Environment(loader=FileSystemLoader(temp_template_dir))
+    output_path = os.path.join(setup_env["output_dir"], "output.txt")
+    gen.render_template("test.tpl", output_path, name="World")
+    with open(output_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    assert content == "Hello, World!"
+
+def test_enhance_docstring_with_llm_dummy(setup_env, monkeypatch):
+    gen = MCPGenerator(**setup_env, enhance_docstring_with_llm=True)
+    # Create a dummy Python file with a simple async function.
+    dummy_file = os.path.join(setup_env["output_dir"], "dummy.py")
+    dummy_content = '''
+async def tester(arg1: int):
+    """Old docstring"""
+    pass
+'''
+    with open(dummy_file, "w", encoding="utf-8") as f:
+        f.write(dummy_content)
+    # Monkey-patch LLMFactory so that get_llm().invoke returns a static docstring.
+    class DummyLLM:
+        def invoke(self, messages):
+            class DummyResponse:
+                content = '"""Enhanced docstring for tester"""'
+            return DummyResponse()
+    monkeypatch.setattr("cnoe_agent_utils.LLMFactory", lambda: type("Dummy", (), {"get_llm": lambda self: DummyLLM()})())
+    output_dummy_file = os.path.join(setup_env["output_dir"], "dummy_enhanced.py")
+    gen.enhance_docstring_with_llm(dummy_file, output_dummy_file, dry_run=False)
+    with open(output_dummy_file, "r", encoding="utf-8") as f:
+        enhanced_content = f.read()
+    assert "Enhanced docstring for tester" in enhanced_content
+
+def test_run_ruff_lint(monkeypatch, setup_env):
+    gen = MCPGenerator(**setup_env)
+    dummy_file = os.path.join(setup_env["output_dir"], "dummy.txt")
+    with open(dummy_file, "w", encoding="utf-8") as f:
+        f.write("print('Hello')")
+    calls = []
+    def fake_run(args, check):
+        calls.append(args)
+    monkeypatch.setattr("subprocess.run", fake_run)
+    gen.run_ruff_lint(dummy_file)
+    # Verify that at least one call to "ruff" was made.
+    assert any("ruff" in arg for call in calls for arg in call)
+
 def test_get_python_type(setup_env):
     gen = MCPGenerator(**setup_env)
     assert gen._get_python_type({"type": "integer"}) == "int"

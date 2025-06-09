@@ -17,7 +17,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger("mcp_codegen")
 
 def camel_to_snake(name):
-  return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    if name.isupper():
+        return "_".join(name).lower()
+    s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 class MCPGenerator:
   """

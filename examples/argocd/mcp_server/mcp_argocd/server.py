@@ -98,7 +98,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_cl
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys_key_i_d
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys_key_id
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_notifications_services
 
@@ -146,7 +146,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_re
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_repo_validate
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_source_repo_u_r_l_appdetails
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_source_repo_url_appdetails
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_session
 
@@ -375,15 +375,15 @@ def main():
 
     # Register api_v1_gpgkeys tools
 
-    mcp.tool()(api_v1_gpgkeys.g_p_g_key_service__list)
+    mcp.tool()(api_v1_gpgkeys.gpg_key_service__list)
 
-    mcp.tool()(api_v1_gpgkeys.g_p_g_key_service__create)
+    mcp.tool()(api_v1_gpgkeys.gpg_key_service__create)
 
-    mcp.tool()(api_v1_gpgkeys.g_p_g_key_service__delete)
+    mcp.tool()(api_v1_gpgkeys.gpg_key_service__delete)
 
-    # Register api_v1_gpgkeys_key_i_d tools
+    # Register api_v1_gpgkeys_key_id tools
 
-    mcp.tool()(api_v1_gpgkeys_key_i_d.g_p_g_key_service__get)
+    mcp.tool()(api_v1_gpgkeys_key_id.gpg_key_service__get)
 
     # Register api_v1_notifications_services tools
 
@@ -487,9 +487,9 @@ def main():
 
     mcp.tool()(api_v1_repositories_repo_validate.repository_service__validate_access)
 
-    # Register api_v1_repositories_source_repo_u_r_l_appdetails tools
+    # Register api_v1_repositories_source_repo_url_appdetails tools
 
-    mcp.tool()(api_v1_repositories_source_repo_u_r_l_appdetails.repository_service__get_app_details)
+    mcp.tool()(api_v1_repositories_source_repo_url_appdetails.repository_service__get_app_details)
 
     # Register api_v1_session tools
 

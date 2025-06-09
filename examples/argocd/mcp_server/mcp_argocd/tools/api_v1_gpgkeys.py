@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def g_p_g_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
+async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
     """
     List all available repository certificates
 
@@ -45,7 +45,7 @@ async def g_p_g_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
     return response
 
 
-async def g_p_g_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
+async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
     """
     Create one or more GPG public keys in the server's configuration
 
@@ -77,7 +77,7 @@ async def g_p_g_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
     return response
 
 
-async def g_p_g_key_service__delete(param_keyID: str = None) -> Dict[str, Any]:
+async def gpg_key_service__delete(param_keyID: str = None) -> Dict[str, Any]:
     """
     Delete specified GPG public key from the server's configuration
 
