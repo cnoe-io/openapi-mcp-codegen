@@ -59,7 +59,7 @@ async def make_api_request(
 
     try:
 
-        headers_dict = {'Authorization': f'Api-Key {token}', 'Accept': 'application/json'}
+        headers_dict = {'Authorization': 'Api-Key f{token}', 'Accept': 'application/json'}
         headers = {key: value.format(token=token) for key, value in headers_dict.items()}
 
         logger.debug("Request headers prepared (Authorization header masked)")

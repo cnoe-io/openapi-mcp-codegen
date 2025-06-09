@@ -22,9 +22,15 @@ from mcp_petstore.tools import pet_findbystatus
 
 from mcp_petstore.tools import pet_findbytags
 
+from mcp_petstore.tools import pet_petid
+
+from mcp_petstore.tools import pet_petid_uploadimage
+
 from mcp_petstore.tools import store_inventory
 
 from mcp_petstore.tools import store_order
+
+from mcp_petstore.tools import store_order_orderid
 
 from mcp_petstore.tools import user
 
@@ -33,6 +39,8 @@ from mcp_petstore.tools import user_createwithlist
 from mcp_petstore.tools import user_login
 
 from mcp_petstore.tools import user_logout
+
+from mcp_petstore.tools import user_username
 
 
 def main():
@@ -76,6 +84,18 @@ def main():
 
     mcp.tool()(pet_findbytags.findpetsbytags)
 
+    # Register pet_petid tools
+
+    mcp.tool()(pet_petid.getpetbyid)
+
+    mcp.tool()(pet_petid.updatepetwithform)
+
+    mcp.tool()(pet_petid.deletepet)
+
+    # Register pet_petid_uploadimage tools
+
+    mcp.tool()(pet_petid_uploadimage.uploadfile)
+
     # Register store_inventory tools
 
     mcp.tool()(store_inventory.getinventory)
@@ -83,6 +103,12 @@ def main():
     # Register store_order tools
 
     mcp.tool()(store_order.placeorder)
+
+    # Register store_order_orderid tools
+
+    mcp.tool()(store_order_orderid.getorderbyid)
+
+    mcp.tool()(store_order_orderid.deleteorder)
 
     # Register user tools
 
@@ -99,6 +125,14 @@ def main():
     # Register user_logout tools
 
     mcp.tool()(user_logout.logoutuser)
+
+    # Register user_username tools
+
+    mcp.tool()(user_username.getuserbyname)
+
+    mcp.tool()(user_username.updateuser)
+
+    mcp.tool()(user_username.deleteuser)
 
 
     # Run the MCP server
