@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
     '''
     Finds Pets by tags.
@@ -57,6 +58,20 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
           '500':
             description: Internal server error
     '''
+=======
+async def findpetsbytags(param_tags: List[str] = None) -> Dict[str, Any]:
+    """
+    Finds Pets by tags. Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+    Args:
+        param_tags (List[str]): Tags to filter by
+
+    Returns:
+        Dict[str, Any]: The JSON response from the API call.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+    """
+>>>>>>> Stashed changes
     logger.debug("Making GET request to /pet/findbytags")
     params = {}
     
@@ -75,3 +90,4 @@ async def findpetsbytags(tags: List[str] = None) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

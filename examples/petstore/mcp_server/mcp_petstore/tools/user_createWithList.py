@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def createuserswithlistinput() -> Dict[str, Any]:
     '''
     Creates a list of users with the given input array.
@@ -54,6 +55,20 @@ async def createuserswithlistinput() -> Dict[str, Any]:
           '400':
             description: Invalid input
     '''
+=======
+async def createuserswithlistinput(body: List[str]) -> Dict[str, Any]:
+    """
+    Creates list of users with given input array.
+    Args:
+        body (List[str]): Array body parameter 'body'
+
+    Returns:
+        Dict[str, Any]: The JSON response from the API call.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+    """
+>>>>>>> Stashed changes
     logger.debug("Making POST request to /user/createwithlist")
     params = {}
     
@@ -69,3 +84,4 @@ async def createuserswithlistinput() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

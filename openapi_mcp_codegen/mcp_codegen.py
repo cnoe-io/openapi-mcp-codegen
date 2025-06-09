@@ -370,8 +370,8 @@ class MCPGenerator:
     enhancement_futures = []
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
     for path, ops in self.spec.get('paths', {}).items():
-      # path = path.lower()
-      module_name = path.strip('/').replace('/', '_').replace('-', '_') or "root"
+      path = path.lower()
+      module_name = path.strip('/').replace('/', '_').replace('-', '_').replace('.', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
       functions = []
       for method, op in ops.items():
@@ -390,6 +390,7 @@ class MCPGenerator:
           if p.get("in") == "path":
               # Prepend "path_" to the parameter name
               pname = "path_" + p.get("name", "param").replace('.', '_')
+              pname = pname.lower()
               schema = p.get("schema", {})
               if "$ref" in schema:
                   schema = self._resolve_ref(schema["$ref"])
@@ -398,6 +399,7 @@ class MCPGenerator:
               params.append(f"{pname}: {ptype}")
           elif p.get("in") == "query":
               pname = "param_" + p.get("name", "param").replace('.', '_')
+              pname = pname.lower()
               schema = p.get("schema", {})
               if "$ref" in schema:
                   schema = self._resolve_ref(schema["$ref"])
@@ -426,10 +428,10 @@ class MCPGenerator:
             if "$ref" in p:
                 p = self._resolve_ref(p["$ref"])
             if p.get("in") == "path":
-                orig_name = p.get("name", "param")
-                # Replace placeholder {orig_name} with {path_orig_name}
-                print(orig_name, formatted_path)
-                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + "path_" + orig_name + "}")
+                orig_name = p.get("name", "param").lower()
+                fixed_name = "path_" + orig_name.replace(".", "_")
+                # Replace placeholder {orig_name} with {fixed_name}
+                formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + fixed_name + "}")
 
         operation_id = op.get("operationId", f"{method}_{module_name}").lower()
         # Remove any curly braces from the operation id
@@ -445,8 +447,9 @@ class MCPGenerator:
           "formatted_path": formatted_path
         })
       if functions:
-        output_path = os.path.join(tools_dir, f"{module_name}.py").lower()
+        output_path = os.path.join(tools_dir, f"{module_name.lower()}.py")
         mcp_server_base_package = self.config.get('mcp_server_base_package', '')
+        print(output_path)
         self.render_template(
           "tools/tool.tpl",
           output_path,
@@ -596,6 +599,14 @@ class MCPGenerator:
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
               param_name = f"{prefix}_{prop_name}"
+              param_name = param_name.lower()
+              if "$ref" in prop:
+                  resolved_prop = self._resolve_ref(prop["$ref"])
+                  if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
+                      params.extend(self._extract_body_params(resolved_prop, prefix=param_name))
+                      continue
+                  else:
+                      prop = resolved_prop
               if prop.get("type") == "object" and "properties" in prop:
                   params.extend(self._extract_body_params(prop, prefix=param_name))
               else:

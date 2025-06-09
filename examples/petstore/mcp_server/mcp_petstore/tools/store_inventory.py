@@ -15,14 +15,20 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def getinventory() -> Dict[str, Any]:
+<<<<<<< Updated upstream
     '''
     Retrieves pet inventories categorized by status.
+=======
+    """
+    Returns pet inventories by status. Returns a map of status codes to quantities.
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: A dictionary containing pet inventories grouped by their status.
 
     Raises:
         Exception: If the API request fails or returns an error.
+<<<<<<< Updated upstream
 
     OpenAPI Specification:
       get:
@@ -42,6 +48,9 @@ async def getinventory() -> Dict[str, Any]:
           '400':
             description: Invalid status value
     '''
+=======
+    """
+>>>>>>> Stashed changes
     logger.debug("Making GET request to /store/inventory")
     params = {}
     
@@ -57,3 +66,4 @@ async def getinventory() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

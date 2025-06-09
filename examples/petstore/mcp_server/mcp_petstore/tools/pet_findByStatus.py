@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def findpetsbystatus(status: str = None) -> Dict[str, Any]:
     '''
     Finds pets by their status.
@@ -53,6 +54,20 @@ async def findpetsbystatus(status: str = None) -> Dict[str, Any]:
           '500':
             description: Internal server error.
     '''
+=======
+async def findpetsbystatus(param_status: str = None) -> Dict[str, Any]:
+    """
+    Finds Pets by status. Multiple status values can be provided with comma separated strings.
+    Args:
+        param_status (str): Status values that need to be considered for filter
+
+    Returns:
+        Dict[str, Any]: The JSON response from the API call.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+    """
+>>>>>>> Stashed changes
     logger.debug("Making GET request to /pet/findbystatus")
     params = {}
     
@@ -71,3 +86,4 @@ async def findpetsbystatus(status: str = None) -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

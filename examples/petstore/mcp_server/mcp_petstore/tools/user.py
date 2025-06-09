@@ -14,17 +14,33 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def createuser() -> Dict[str, Any]:
     '''
     Creates a new user in the system.
 
     Args:
         None
+=======
+async def createuser(body_id: int = None, body_username: str = None, body_firstname: str = None, body_lastname: str = None, body_email: str = None, body_password: str = None, body_phone: str = None, body_userstatus: int = None) -> Dict[str, Any]:
+    """
+    Create user. This can only be done by the logged in user.
+    Args:
+        body_id (int): Optional body parameter 'id'
+        body_username (str): Optional body parameter 'username'
+        body_firstname (str): Optional body parameter 'firstName'
+        body_lastname (str): Optional body parameter 'lastName'
+        body_email (str): Optional body parameter 'email'
+        body_password (str): Optional body parameter 'password'
+        body_phone (str): Optional body parameter 'phone'
+        body_userstatus (int): User Status
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: The response from the API containing user details if successful, or an error message.
 
     Raises:
+<<<<<<< Updated upstream
         Exception: If the API request fails due to network issues or unexpected errors.
 
     OpenAPI Specification:
@@ -81,6 +97,23 @@ async def createuser() -> Dict[str, Any]:
     
     data = None
 
+=======
+        Exception: If the API request fails or returns an error.
+    """
+    logger.debug("Making POST request to /user")
+    params = {}
+    data = {}
+    data["id"] = body_id
+    data["username"] = body_username
+    data["firstname"] = body_firstname
+    data["lastname"] = body_lastname
+    data["email"] = body_email
+    data["password"] = body_password
+    data["phone"] = body_phone
+    data["userstatus"] = body_userstatus
+    if not data:
+        data = None
+>>>>>>> Stashed changes
     success, response = await make_api_request(
         "/user",
         method="POST",
@@ -91,3 +124,4 @@ async def createuser() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

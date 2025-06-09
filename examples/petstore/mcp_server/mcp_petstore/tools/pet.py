@@ -14,17 +14,32 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def updatepet() -> Dict[str, Any]:
     '''
     Update an existing pet.
 
     Args:
         None
+=======
+async def updatepet(body_name: str, body_photourls: List[str], body_id: int = None, body_category_id: int = None, body_category_name: str = None, body_tags: List[str] = None, body_status: str = None) -> Dict[str, Any]:
+    """
+    Update an existing pet. Update an existing pet by Id.
+    Args:
+        body_name (str): Body parameter 'name'
+        body_photourls (List[str]): Body parameter 'photoUrls'
+        body_id (int): Optional body parameter 'id'
+        body_category_id (int): Optional body parameter 'id'
+        body_category_name (str): Optional body parameter 'name'
+        body_tags (List[str]): Optional body parameter 'tags'
+        body_status (str): pet status in the store
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: The response from the API containing the updated pet information or an error message.
 
     Raises:
+<<<<<<< Updated upstream
         Exception: If the API request fails due to network issues or invalid response.
 
     OpenAPI Specification:
@@ -59,6 +74,22 @@ async def updatepet() -> Dict[str, Any]:
     
     data = None
 
+=======
+        Exception: If the API request fails or returns an error.
+    """
+    logger.debug("Making PUT request to /pet")
+    params = {}
+    data = {}
+    data["name"] = body_name
+    data["photourls"] = body_photourls
+    data["id"] = body_id
+    data["category_id"] = body_category_id
+    data["category_name"] = body_category_name
+    data["tags"] = body_tags
+    data["status"] = body_status
+    if not data:
+        data = None
+>>>>>>> Stashed changes
     success, response = await make_api_request(
         "/pet",
         method="PUT",
@@ -71,11 +102,16 @@ async def updatepet() -> Dict[str, Any]:
     return response
 
 
+<<<<<<< Updated upstream
 async def addpet() -> Dict[str, Any]:
     '''
+=======
+async def addpet(body_name: str, body_photourls: List[str], body_id: int = None, body_category_id: int = None, body_category_name: str = None, body_tags: List[str] = None, body_status: str = None) -> Dict[str, Any]:
+    """
+>>>>>>> Stashed changes
     Add a new pet to the store.
-
     Args:
+<<<<<<< Updated upstream
         None
 
     Returns:
@@ -128,6 +164,34 @@ async def addpet() -> Dict[str, Any]:
     
     data = None
 
+=======
+        body_name (str): Body parameter 'name'
+        body_photourls (List[str]): Body parameter 'photoUrls'
+        body_id (int): Optional body parameter 'id'
+        body_category_id (int): Optional body parameter 'id'
+        body_category_name (str): Optional body parameter 'name'
+        body_tags (List[str]): Optional body parameter 'tags'
+        body_status (str): pet status in the store
+
+    Returns:
+        Dict[str, Any]: The JSON response from the API call.
+
+    Raises:
+        Exception: If the API request fails or returns an error.
+    """
+    logger.debug("Making POST request to /pet")
+    params = {}
+    data = {}
+    data["name"] = body_name
+    data["photourls"] = body_photourls
+    data["id"] = body_id
+    data["category_id"] = body_category_id
+    data["category_name"] = body_category_name
+    data["tags"] = body_tags
+    data["status"] = body_status
+    if not data:
+        data = None
+>>>>>>> Stashed changes
     success, response = await make_api_request(
         "/pet",
         method="POST",
@@ -138,3 +202,4 @@ async def addpet() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

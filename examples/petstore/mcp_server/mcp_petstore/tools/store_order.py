@@ -14,17 +14,31 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def placeorder() -> Dict[str, Any]:
     '''
     Place an order for a pet.
 
     Args:
         None
+=======
+async def placeorder(body_id: int = None, body_petid: int = None, body_quantity: int = None, body_shipdate: str = None, body_status: str = None, body_complete: bool = None) -> Dict[str, Any]:
+    """
+    Place an order for a pet. Place a new order in the store.
+    Args:
+        body_id (int): Optional body parameter 'id'
+        body_petid (int): Optional body parameter 'petId'
+        body_quantity (int): Optional body parameter 'quantity'
+        body_shipdate (str): Optional body parameter 'shipDate'
+        body_status (str): Order Status
+        body_complete (bool): Optional body parameter 'complete'
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: The response from the API containing order details or an error message.
 
     Raises:
+<<<<<<< Updated upstream
         Exception: If the API request fails due to network issues or unexpected errors.
 
     OpenAPI Specification:
@@ -55,6 +69,21 @@ async def placeorder() -> Dict[str, Any]:
     
     data = None
 
+=======
+        Exception: If the API request fails or returns an error.
+    """
+    logger.debug("Making POST request to /store/order")
+    params = {}
+    data = {}
+    data["id"] = body_id
+    data["petid"] = body_petid
+    data["quantity"] = body_quantity
+    data["shipdate"] = body_shipdate
+    data["status"] = body_status
+    data["complete"] = body_complete
+    if not data:
+        data = None
+>>>>>>> Stashed changes
     success, response = await make_api_request(
         "/store/order",
         method="POST",
@@ -65,3 +94,4 @@ async def placeorder() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

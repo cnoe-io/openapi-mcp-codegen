@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
+<<<<<<< Updated upstream
 async def loginuser(username: str = None, password: str = None) -> Dict[str, Any]:
     '''
     Logs a user into the system using provided credentials.
@@ -21,11 +22,20 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
     Args:
         username (str, optional): The username of the user. Defaults to None.
         password (str, optional): The password of the user. Defaults to None.
+=======
+async def loginuser(param_username: str = None, param_password: str = None) -> Dict[str, Any]:
+    """
+    Logs user into the system. Log into the system.
+    Args:
+        param_username (str): The user name for login
+        param_password (str): The password for login in clear text
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: A dictionary containing the login response, which may include authentication tokens or error messages.
 
     Raises:
+<<<<<<< Updated upstream
         Exception: If the API request fails due to network issues or unexpected errors.
 
     OpenAPI Specification:
@@ -80,6 +90,10 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
                       type: string
                       description: Error message.
     '''
+=======
+        Exception: If the API request fails or returns an error.
+    """
+>>>>>>> Stashed changes
     logger.debug("Making GET request to /user/login")
     params = {}
     
@@ -101,3 +115,4 @@ async def loginuser(username: str = None, password: str = None) -> Dict[str, Any
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+

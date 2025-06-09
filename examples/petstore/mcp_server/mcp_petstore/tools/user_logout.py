@@ -15,16 +15,22 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def logoutuser() -> Dict[str, Any]:
+<<<<<<< Updated upstream
     '''
     Logs out the currently logged-in user session.
 
     Args:
         None
+=======
+    """
+    Logs out current logged in user session. Log user out of the system.
+>>>>>>> Stashed changes
 
     Returns:
         Dict[str, Any]: A dictionary containing the result of the logout operation. On success, returns a confirmation message. On failure, returns an error message.
 
     Raises:
+<<<<<<< Updated upstream
         Exception: If the API request fails due to network issues or unexpected server errors.
 
     OpenAPI Specification:
@@ -65,6 +71,10 @@ async def logoutuser() -> Dict[str, Any]:
                       type: string
                       example: "Request failed"
     '''
+=======
+        Exception: If the API request fails or returns an error.
+    """
+>>>>>>> Stashed changes
     logger.debug("Making GET request to /user/logout")
     params = {}
     
@@ -80,3 +90,4 @@ async def logoutuser() -> Dict[str, Any]:
         logger.error(f"Request failed: {response.get('error')}")
         return {"error": response.get('error', 'Request failed')}
     return response
+
