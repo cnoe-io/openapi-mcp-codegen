@@ -401,7 +401,7 @@ class MCPGenerator:
     file_header_kwargs = self.get_file_header_kwargs()
     os.makedirs(tools_dir, exist_ok=True)
     enhancement_futures = []
-    executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     for path, ops in self.spec.get('paths', {}).items():
       logger.debug(f"Ops: {ops}")
       # path = path.lower()

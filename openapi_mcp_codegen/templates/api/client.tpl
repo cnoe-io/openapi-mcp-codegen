@@ -14,9 +14,9 @@ API_URL = os.getenv("{{ mcp_name | upper }}_API_URL")
 API_TOKEN = os.getenv("{{ mcp_name | upper }}_TOKEN")
 
 if not API_URL:
-    raise ValueError("API_URL environment variable is not set.")
+    raise ValueError("{{ mcp_name | upper }}_API_URL environment variable is not set.")
 if not API_TOKEN:
-    raise ValueError("API_TOKEN environment variable is not set.")
+    raise ValueError("{{ mcp_name | upper }}_API_TOKEN environment variable is not set.")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
