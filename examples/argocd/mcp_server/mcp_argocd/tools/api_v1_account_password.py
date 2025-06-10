@@ -18,13 +18,16 @@ async def account_service__update_password() -> Dict[str, Any]:
     Update an account's password to a new value.
 
     Args:
-        None
+        new_password (str): The new password to set for the account.
+        account_id (str): The unique identifier of the account whose password is being updated.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the password update operation.
+        Dict[str, Any]: The JSON response from the API call, containing the status of the password update.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        ConnectionError: If the API request fails due to network issues.
+        ValueError: If the response contains an error indicating invalid input.
+        Exception: If the API request fails or returns an unspecified error.
     '''
     logger.debug("Making PUT request to /api/v1/account/password")
 

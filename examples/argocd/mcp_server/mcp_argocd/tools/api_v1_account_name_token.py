@@ -15,16 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def account_service__create_token(path_name: str) -> Dict[str, Any]:
     '''
-    Create a token for the specified account.
+    CreateToken creates a token for the specified account.
 
     Args:
         path_name (str): The name of the account for which the token is to be created.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the token details.
+        Dict[str, Any]: The JSON response from the API call, containing the token details if successful.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/account/{name}/token")
 

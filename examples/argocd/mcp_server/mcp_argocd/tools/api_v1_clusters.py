@@ -20,10 +20,10 @@ async def cluster_service__list(
     List returns a list of clusters.
 
     Args:
-        param_server (str, optional): The server parameter for the API request. Defaults to None.
-        param_name (str, optional): The name parameter for the API request. Defaults to None.
-        param_id_type (str, optional): The ID type parameter for the API request. Defaults to None.
-        param_id_value (str, optional): The ID value parameter for the API request. Defaults to None.
+        param_server (str, optional): OpenAPI parameter corresponding to 'param_server'. Defaults to None.
+        param_name (str, optional): OpenAPI parameter corresponding to 'param_name'. Defaults to None.
+        param_id_type (str, optional): Type of the specified cluster identifier ("server" - default, "name"). Defaults to None.
+        param_id_value (str, optional): Value holds the cluster server URL or cluster name. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of clusters.
@@ -51,13 +51,13 @@ async def cluster_service__list(
 
 async def cluster_service__create(param_upsert: str = None) -> Dict[str, Any]:
     '''
-    Create a new cluster.
+    Creates a cluster using the specified parameters.
 
     Args:
         param_upsert (str, optional): OpenAPI parameter corresponding to 'param_upsert'. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing details of the created cluster or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

@@ -21,7 +21,7 @@ async def notification_service__list_templates() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes a list of notification templates.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of notification templates.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.

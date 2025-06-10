@@ -24,7 +24,7 @@ async def project_service__list_links(path_name: str) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes all deep links associated with the specified project.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error, an exception is raised with details about the failure.
     '''
     logger.debug("Making GET request to /api/v1/projects/{name}/links")
 

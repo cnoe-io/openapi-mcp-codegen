@@ -18,13 +18,13 @@ async def project_service__get(path_name: str) -> Dict[str, Any]:
     Get a project by its name.
 
     Args:
-        path_name (str): The name of the project to retrieve. This corresponds to the 'path_name' parameter in the OpenAPI specification.
+        path_name (str): The name of the project to retrieve.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the project details.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes project details.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or an error is returned in the response.
     '''
     logger.debug("Making GET request to /api/v1/projects/{name}")
 
@@ -47,7 +47,7 @@ async def project_service__delete(path_name: str) -> Dict[str, Any]:
         path_name (str): The name of the project to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

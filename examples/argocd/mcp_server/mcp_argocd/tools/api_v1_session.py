@@ -18,20 +18,19 @@ async def session_service__create() -> Dict[str, Any]:
     Create a new JWT for authentication and set a cookie if using HTTP.
 
     This function makes an asynchronous POST request to the /api/v1/session endpoint
-    to create a new session. It returns the JSON response from the API call, which
-    includes the JWT token for authentication purposes. If the request fails, it
-    raises an exception with the error details.
+    to create a new session. It generates a JWT for authentication purposes and sets
+    a cookie if the request is made over HTTP.
 
     Args:
         None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the JWT token
+        Dict[str, Any]: The JSON response from the API call, which includes the JWT
         and any additional session information.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised
-        with the error message.
+        with the error details.
     '''
     logger.debug("Making POST request to /api/v1/session")
 
@@ -51,17 +50,18 @@ async def session_service__delete() -> Dict[str, Any]:
     Delete an existing JWT cookie if using HTTP.
 
     This function makes an asynchronous DELETE request to the session endpoint
-    to remove an existing JWT cookie. It is typically used in scenarios where
-    a user logs out or needs to invalidate their session.
+    to remove the JWT cookie associated with the current session.
 
     Args:
+        None
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, which may include
         an error message if the request was unsuccessful.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception
+        is raised with the error details.
     '''
     logger.debug("Making DELETE request to /api/v1/session")
 

@@ -17,15 +17,15 @@ async def application_set_service__list(
     param_projects: str = None, param_selector: str = None, param_appsetNamespace: str = None
 ) -> Dict[str, Any]:
     '''
-    List returns a list of applicationset.
+    List returns a list of application sets.
 
     Args:
-        param_projects (str, optional): OpenAPI parameter corresponding to 'param_projects'. Defaults to None.
-        param_selector (str, optional): OpenAPI parameter corresponding to 'param_selector'. Defaults to None.
-        param_appsetNamespace (str, optional): OpenAPI parameter corresponding to 'param_appsetNamespace'. Defaults to None.
+        param_projects (str, optional): The project names to restrict the returned list of application sets. Defaults to None.
+        param_selector (str, optional): The selector to restrict the returned list to applications only with matched labels. Defaults to None.
+        param_appsetNamespace (str, optional): The application set namespace. If not provided, defaults to the ArgoCD control plane namespace.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of applicationset.
+        Dict[str, Any]: The JSON response from the API call containing the list of application sets.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -52,7 +52,7 @@ async def application_set_service__create(param_upsert: str = None, param_dryRun
     Create an applicationset.
 
     Args:
-        param_upsert (str, optional): Specifies whether to upsert the application set. Defaults to None.
+        param_upsert (str, optional): Specifies whether to upsert the applicationset. Defaults to None.
         param_dryRun (str, optional): Indicates if the operation should be a dry run. Defaults to None.
 
     Returns:

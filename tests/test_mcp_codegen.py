@@ -207,3 +207,28 @@ def test_generate_init_files(setup_env):
     gen = MCPGenerator(**setup_env)
     gen.generate_init_files()
     assert os.path.exists(os.path.join(setup_env["output_dir"], "__init__.py"))
+
+def test_tool_parameter_descriptions(setup_env):
+    from openapi_mcp_codegen.mcp_codegen import MCPGenerator
+    import os
+
+    # Instantiate the generator and generate tool modules.
+    gen = MCPGenerator(**setup_env)
+    gen.generate_tool_modules()
+
+    # Determine the expected module file name for the /pet/findByStatus path.
+    # The module name is created by stripping '/' and replacing separators,
+    # so "/pet/findByStatus" becomes "pet_findbystatus.py"
+    tools_dir = os.path.join(gen.src_output_dir, "tools")
+    module_file = os.path.join(tools_dir, "pet_findbystatus.py")
+
+    assert os.path.exists(module_file), f"Expected file {module_file} does not exist"
+
+    with open(module_file, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Verify that the parameter description from the spec appears in the docstring.
+    # For example, the query parameter 'status' in the /pet/findByStatus path
+    # has the description "Status values that need to be considered for filter"
+    assert "Status values that need to be considered for filter" in content, \
+        "Parameter description not found in the function docstring"

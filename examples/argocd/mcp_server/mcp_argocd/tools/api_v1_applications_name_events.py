@@ -25,7 +25,7 @@ async def application_service__list_resource_events(
     ListResourceEvents returns a list of event resources.
 
     Args:
-        path_name (str): The name of the application path for which events are being requested.
+        path_name (str): The name of the application path for which events are being listed.
         param_resourceNamespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource. Defaults to None.
         param_resourceUID (str, optional): The unique identifier of the resource. Defaults to None.

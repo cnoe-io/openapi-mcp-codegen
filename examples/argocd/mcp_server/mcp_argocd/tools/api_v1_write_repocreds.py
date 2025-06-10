@@ -15,16 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def repo_creds_service__list_write_repository_credentials(param_url: str = None) -> Dict[str, Any]:
     '''
-    ListWriteRepositoryCredentials retrieves a list of all configured repository credential sets that have write access.
+    ListWriteRepositoryCredentials gets a list of all configured repository credential sets that have write access.
 
     Args:
-        param_url (str, optional): The URL parameter for the API request. Defaults to None.
+        param_url (str, optional): Repo URL for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of repository credentials with write access.
+        Dict[str, Any]: The JSON response from the API call containing the list of repository credentials with write access.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/write-repocreds")
 
@@ -43,16 +43,16 @@ async def repo_creds_service__list_write_repository_credentials(param_url: str =
 
 async def repo_creds_service__create_write_repository_credentials(param_upsert: str = None) -> Dict[str, Any]:
     '''
-    Create a new repository credential set with write access.
+    CreateWriteRepositoryCredentials creates a new repository credential set with write access.
 
     Args:
-        param_upsert (str, optional): Parameter to specify whether to upsert the repository credentials. Defaults to None.
+        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the details of the created repository credentials.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/write-repocreds")
 

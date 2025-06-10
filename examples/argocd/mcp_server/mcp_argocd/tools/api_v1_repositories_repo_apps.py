@@ -17,19 +17,19 @@ async def repository_service__list_apps(
     path_repo: str, param_revision: str = None, param_appName: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
     '''
-    ListApps returns a list of apps in the repository.
+    List applications in the specified repository.
 
     Args:
-        path_repo (str): The path to the repository.
+        path_repo (str): The path to the repository where the applications are located.
         param_revision (str, optional): The specific revision of the repository to query. Defaults to None.
-        param_appName (str, optional): The name of the application to filter by. Defaults to None.
-        param_appProject (str, optional): The project of the application to filter by. Defaults to None.
+        param_appName (str, optional): The name of the application to filter the results. Defaults to None.
+        param_appProject (str, optional): The project associated with the application to filter the results. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of applications.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of applications.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /api/v1/repositories/{repo}/apps")
 

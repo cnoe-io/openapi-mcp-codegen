@@ -17,14 +17,13 @@ async def settings_service__get_plugins() -> Dict[str, Any]:
     '''
     Get Argo CD plugins.
 
-    This function makes an asynchronous GET request to the Argo CD API to retrieve
-    the list of configured plugins. It returns the JSON response from the API call.
+    This function makes an asynchronous GET request to the Argo CD settings service
+    to retrieve the list of available plugins.
 
     Args:
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of
-        Argo CD plugins.
+        Dict[str, Any]: The JSON response from the API call containing plugin details.
 
     Raises:
         Exception: If the API request fails or returns an error.

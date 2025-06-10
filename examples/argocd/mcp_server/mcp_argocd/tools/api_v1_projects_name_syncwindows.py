@@ -15,22 +15,22 @@ logger = logging.getLogger("mcp_tools")
 
 async def project_service__get_sync_windows_state(path_name: str) -> Dict[str, Any]:
     '''
-    Get the state of sync windows for a given project path.
+    Get the state of sync windows for a given project.
 
-    This function checks if there are any active sync windows for the specified project path.
-    It makes an asynchronous GET request to the API endpoint associated with the project to
-    retrieve the sync windows state.
+    This function checks if there are any active sync windows for the specified project path name.
+    It makes an asynchronous GET request to the API endpoint associated with the project to retrieve
+    the sync windows state.
 
     Args:
         path_name (str): The name of the project path for which to retrieve the sync windows state.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call. The response
-        includes details about the sync windows state.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes
+        the state of sync windows. If the request fails, the dictionary will contain an error message.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the
-        error details.
+        appropriate error message.
     '''
     logger.debug("Making GET request to /api/v1/projects/{name}/syncwindows")
 

@@ -18,12 +18,12 @@ async def account_service__can_i(path_resource: str, path_action: str, path_subr
     CanI checks if the current account has permission to perform an action.
 
     Args:
-        path_resource (str): The resource path for which the permission check is being made.
-        path_action (str): The action path that is being checked for permission.
-        path_subresource (str): The subresource path involved in the permission check.
+        path_resource (str): The resource path for which permission is being checked.
+        path_action (str): The action to be performed on the resource.
+        path_subresource (str): The subresource path related to the main resource.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the permission status.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, indicating whether the action is permitted.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.

@@ -17,15 +17,15 @@ async def application_service__update(
     path_application_metadata_name: str, param_validate: str = None, param_project: str = None
 ) -> Dict[str, Any]:
     '''
-    Update an application.
+    Update an application using the specified metadata name.
 
     Args:
-        path_application_metadata_name (str): The name of the application metadata to update.
-        param_validate (str, optional): Validation parameter for the update process. Defaults to None.
-        param_project (str, optional): Project parameter for the update process. Defaults to None.
+        path_application_metadata_name (str): The unique name of the application within a namespace. This name is required when creating resources and is primarily intended for creation idempotence and configuration definition. It cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names.
+        param_validate (str, optional): OpenAPI parameter corresponding to 'param_validate'. Defaults to None.
+        param_project (str, optional): OpenAPI parameter corresponding to 'param_project'. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated application details.
+        Dict[str, Any]: The JSON response from the API call, containing the updated application details or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

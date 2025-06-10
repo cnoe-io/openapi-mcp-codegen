@@ -20,12 +20,12 @@ async def certificate_service__list_certificates(
     List all available repository certificates.
 
     Args:
-        param_hostNamePattern (str, optional): A pattern to match host names. Defaults to None.
-        param_certType (str, optional): The type of certificate to filter by. Defaults to None.
-        param_certSubType (str, optional): The subtype of certificate to filter by. Defaults to None.
+        param_hostNamePattern (str, optional): A file-glob pattern (not regular expression) the host name has to match. Defaults to None.
+        param_certType (str, optional): The type of the certificate to match (ssh or https). Defaults to None.
+        param_certSubType (str, optional): The sub type of the certificate to match (protocol dependent, usually only used for ssh certs). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing certificate details.
+        Dict[str, Any]: The JSON response from the API call containing the list of certificates.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -52,10 +52,10 @@ async def certificate_service__create_certificate(param_upsert: str = None) -> D
     Creates repository certificates on the server.
 
     Args:
-        param_upsert (str, optional): OpenAPI parameter corresponding to 'param_upsert'. Defaults to None.
+        param_upsert (str, optional): Whether to upsert already existing certificates. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the details of the created certificate.
+        Dict[str, Any]: The JSON response from the API call, containing details of the created certificate or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -82,12 +82,12 @@ async def certificate_service__delete_certificate(
     Delete the certificates that match the RepositoryCertificateQuery.
 
     Args:
-        param_hostNamePattern (str, optional): The pattern to match host names of the certificates to be deleted. Defaults to None.
-        param_certType (str, optional): The type of certificates to be deleted. Defaults to None.
-        param_certSubType (str, optional): The subtype of certificates to be deleted. Defaults to None.
+        param_hostNamePattern (str): A file-glob pattern (not regular expression) the host name has to match.
+        param_certType (str): The type of the certificate to match (ssh or https).
+        param_certSubType (str): The sub type of the certificate to match (protocol dependent, usually only used for ssh certs).
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

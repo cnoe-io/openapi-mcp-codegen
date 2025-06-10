@@ -18,13 +18,13 @@ async def repo_creds_service__update_write_repository_credentials(path_creds_url
     Update a repository credential set with write access.
 
     Args:
-        path_creds_url (str): The URL path for the repository credentials to be updated.
+        path_creds_url (str): The URL to which these credentials match.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated credentials information.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making PUT request to /api/v1/write-repocreds/{creds.url}")
 

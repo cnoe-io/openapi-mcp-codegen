@@ -30,17 +30,15 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_ac
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_manifests_with_files
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_manifestswithfiles
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_application_metadata_name
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import (
-    api_v1_applications_application_name_managed_resources,
+    api_v1_applications_applicationname_managed_resources,
 )
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import (
-    api_v1_applications_application_name_resource_tree,
-)
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_applicationname_resource_tree
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_name
 
@@ -54,7 +52,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_ap
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_name_operation
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_name_pods_pod_name_logs
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_name_pods_podname_logs
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_applications_name_resource
 
@@ -98,7 +96,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_cl
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys_key_id
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_gpgkeys_keyid
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_notifications_services
 
@@ -146,7 +144,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_re
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_repo_validate
 
-from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_source_repo_url_appdetails
+from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_repositories_source_repourl_appdetails
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_session
 
@@ -159,7 +157,7 @@ from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_se
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_stream_applications
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import (
-    api_v1_stream_applications_application_name_resource_tree,
+    api_v1_stream_applications_applicationname_resource_tree,
 )
 
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.tools import api_v1_write_repocreds
@@ -235,21 +233,21 @@ def main():
 
     mcp.tool()(api_v1_applications.application_service__create)
 
-    # Register api_v1_applications_manifests_with_files tools
+    # Register api_v1_applications_manifestswithfiles tools
 
-    mcp.tool()(api_v1_applications_manifests_with_files.application_service__get_manifests_with_files)
+    mcp.tool()(api_v1_applications_manifestswithfiles.application_service__get_manifests_with_files)
 
     # Register api_v1_applications_application_metadata_name tools
 
     mcp.tool()(api_v1_applications_application_metadata_name.application_service__update)
 
-    # Register api_v1_applications_application_name_managed_resources tools
+    # Register api_v1_applications_applicationname_managed_resources tools
 
-    mcp.tool()(api_v1_applications_application_name_managed_resources.application_service__managed_resources)
+    mcp.tool()(api_v1_applications_applicationname_managed_resources.application_service__managed_resources)
 
-    # Register api_v1_applications_application_name_resource_tree tools
+    # Register api_v1_applications_applicationname_resource_tree tools
 
-    mcp.tool()(api_v1_applications_application_name_resource_tree.application_service__resource_tree)
+    mcp.tool()(api_v1_applications_applicationname_resource_tree.application_service__resource_tree)
 
     # Register api_v1_applications_name tools
 
@@ -277,9 +275,9 @@ def main():
 
     mcp.tool()(api_v1_applications_name_operation.application_service__terminate_operation)
 
-    # Register api_v1_applications_name_pods_pod_name_logs tools
+    # Register api_v1_applications_name_pods_podname_logs tools
 
-    mcp.tool()(api_v1_applications_name_pods_pod_name_logs.application_service__pod_logs)
+    mcp.tool()(api_v1_applications_name_pods_podname_logs.application_service__pod_logs)
 
     # Register api_v1_applications_name_resource tools
 
@@ -381,9 +379,9 @@ def main():
 
     mcp.tool()(api_v1_gpgkeys.gpg_key_service__delete)
 
-    # Register api_v1_gpgkeys_key_id tools
+    # Register api_v1_gpgkeys_keyid tools
 
-    mcp.tool()(api_v1_gpgkeys_key_id.gpg_key_service__get)
+    mcp.tool()(api_v1_gpgkeys_keyid.gpg_key_service__get)
 
     # Register api_v1_notifications_services tools
 
@@ -487,9 +485,9 @@ def main():
 
     mcp.tool()(api_v1_repositories_repo_validate.repository_service__validate_access)
 
-    # Register api_v1_repositories_source_repo_url_appdetails tools
+    # Register api_v1_repositories_source_repourl_appdetails tools
 
-    mcp.tool()(api_v1_repositories_source_repo_url_appdetails.repository_service__get_app_details)
+    mcp.tool()(api_v1_repositories_source_repourl_appdetails.repository_service__get_app_details)
 
     # Register api_v1_session tools
 
@@ -513,9 +511,9 @@ def main():
 
     mcp.tool()(api_v1_stream_applications.application_service__watch)
 
-    # Register api_v1_stream_applications_application_name_resource_tree tools
+    # Register api_v1_stream_applications_applicationname_resource_tree tools
 
-    mcp.tool()(api_v1_stream_applications_application_name_resource_tree.application_service__watch_resource_tree)
+    mcp.tool()(api_v1_stream_applications_applicationname_resource_tree.application_service__watch_resource_tree)
 
     # Register api_v1_write_repocreds tools
 

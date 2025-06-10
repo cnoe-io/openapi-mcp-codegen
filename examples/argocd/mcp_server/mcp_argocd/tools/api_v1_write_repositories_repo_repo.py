@@ -15,10 +15,10 @@ logger = logging.getLogger("mcp_tools")
 
 async def repository_service__update_write_repository(path_repo_repo: str) -> Dict[str, Any]:
     '''
-    Update a write repository configuration.
+    UpdateWriteRepository updates a write repository configuration.
 
     Args:
-        path_repo_repo (str): The path to the repository to be updated.
+        path_repo_repo (str): The URL to the remote repository.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the updated repository configuration.

@@ -22,14 +22,14 @@ async def project_service__delete_token(
     Args:
         path_project (str): The project identifier in the API path.
         path_role (str): The role identifier in the API path.
-        path_iat (str): The issued-at timestamp identifier in the API path.
-        param_id (str, optional): An optional parameter ID for the API request. Defaults to None.
+        path_iat (str): The issued-at time identifier in the API path.
+        param_id (str, optional): An optional parameter ID for the request. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making DELETE request to /api/v1/projects/{project}/roles/{role}/token/{iat}")
 

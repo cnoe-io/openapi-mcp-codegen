@@ -24,7 +24,7 @@ async def application_service__get_resource(
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    Get a single application resource.
+    GetResource returns a single application resource.
 
     Args:
         path_name (str): The name of the application path.
@@ -37,7 +37,7 @@ async def application_service__get_resource(
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the resource details.
+        Dict[str, Any]: The JSON response from the API call containing the application resource details.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -77,21 +77,21 @@ async def application_service__patch_resource(
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    Patch a single application resource.
+    Patch a single application resource using the specified parameters.
 
     Args:
         path_name (str): The name of the application path.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
-        param_resourceName (str, optional): The name of the resource. Defaults to None.
+        param_resourceName (str, optional): The name of the resource to patch. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
         param_patchType (str, optional): The type of patch to apply. Defaults to None.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
-        param_project (str, optional): The project associated with the resource. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the patch operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -133,7 +133,7 @@ async def application_service__delete_resource(
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    Deletes a single application resource.
+    Delete a single application resource.
 
     Args:
         path_name (str): The name of the application path.
@@ -143,12 +143,12 @@ async def application_service__delete_resource(
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
         param_force (str, optional): Whether to force delete the resource. Defaults to None.
-        param_orphan (str, optional): Whether to orphan the resource upon deletion. Defaults to None.
+        param_orphan (str, optional): Whether to orphan the resource. Defaults to None.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

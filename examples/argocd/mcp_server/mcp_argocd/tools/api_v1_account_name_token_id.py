@@ -15,17 +15,17 @@ logger = logging.getLogger("mcp_tools")
 
 async def account_service__delete_token(path_name: str, path_id: str) -> Dict[str, Any]:
     '''
-    Deletes a token associated with a specific account.
+    Deletes a token associated with the specified account.
 
     Args:
         path_name (str): The name of the account from which the token will be deleted.
         path_id (str): The identifier of the token to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the deletion operation.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the status of the deletion operation.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with details of the failure.
+        Exception: If the API request fails or returns an error, an exception is raised with details about the failure.
     '''
     logger.debug("Making DELETE request to /api/v1/account/{name}/token/{id}")
 

@@ -39,29 +39,29 @@ async def repository_service__validate_access(
     Validate access to a repository with the given parameters.
 
     Args:
-        path_repo (str): The path to the repository to validate access for.
-        param_username (str, optional): The username for authentication. Defaults to None.
-        param_password (str, optional): The password for authentication. Defaults to None.
-        param_sshPrivateKey (str, optional): The SSH private key for authentication. Defaults to None.
-        param_insecure (str, optional): Flag to allow insecure connections. Defaults to None.
-        param_tlsClientCertData (str, optional): TLS client certificate data. Defaults to None.
-        param_tlsClientCertKey (str, optional): TLS client certificate key. Defaults to None.
-        param_type (str, optional): The type of repository. Defaults to None.
+        path_repo (str): The URL to the repository.
+        param_username (str, optional): Username for accessing the repository. Defaults to None.
+        param_password (str, optional): Password for accessing the repository. Defaults to None.
+        param_sshPrivateKey (str, optional): Private key data for accessing SSH repository. Defaults to None.
+        param_insecure (str, optional): Whether to skip certificate or host key validation. Defaults to None.
+        param_tlsClientCertData (str, optional): TLS client certificate data for accessing HTTPS repository. Defaults to None.
+        param_tlsClientCertKey (str, optional): TLS client certificate key for accessing HTTPS repository. Defaults to None.
+        param_type (str, optional): The type of the repository. Defaults to None.
         param_name (str, optional): The name of the repository. Defaults to None.
-        param_enableOci (str, optional): Flag to enable OCI support. Defaults to None.
-        param_githubAppPrivateKey (str, optional): GitHub App private key. Defaults to None.
-        param_githubAppID (str, optional): GitHub App ID. Defaults to None.
-        param_githubAppInstallationID (str, optional): GitHub App installation ID. Defaults to None.
-        param_githubAppEnterpriseBaseUrl (str, optional): GitHub App enterprise base URL. Defaults to None.
-        param_proxy (str, optional): Proxy settings for the request. Defaults to None.
-        param_project (str, optional): The project associated with the repository. Defaults to None.
-        param_gcpServiceAccountKey (str, optional): GCP service account key. Defaults to None.
-        param_forceHttpBasicAuth (str, optional): Flag to force HTTP basic authentication. Defaults to None.
-        param_useAzureWorkloadIdentity (str, optional): Flag to use Azure workload identity. Defaults to None.
-        param_bearerToken (str, optional): Bearer token for authentication. Defaults to None.
+        param_enableOci (str, optional): Whether Helm-OCI support should be enabled for this repository. Defaults to None.
+        param_githubAppPrivateKey (str, optional): GitHub App Private Key PEM data. Defaults to None.
+        param_githubAppID (str, optional): GitHub App ID used to access the repository. Defaults to None.
+        param_githubAppInstallationID (str, optional): GitHub App Installation ID of the installed GitHub App. Defaults to None.
+        param_githubAppEnterpriseBaseUrl (str, optional): GitHub App Enterprise base URL. Defaults to https://api.github.com if empty. Defaults to None.
+        param_proxy (str, optional): HTTP/HTTPS proxy to access the repository. Defaults to None.
+        param_project (str, optional): Reference between project and repository for automatic addition as an item inside SourceRepos project entity. Defaults to None.
+        param_gcpServiceAccountKey (str, optional): Google Cloud Platform service account key. Defaults to None.
+        param_forceHttpBasicAuth (str, optional): Whether to force HTTP basic authentication. Defaults to None.
+        param_useAzureWorkloadIdentity (str, optional): Whether to use Azure workload identity for authentication. Defaults to None.
+        param_bearerToken (str, optional): Bearer token used for Git authentication at the repository server. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the validation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

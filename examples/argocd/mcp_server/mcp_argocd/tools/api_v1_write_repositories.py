@@ -20,15 +20,15 @@ async def repository_service__list_write_repositories(
     ListWriteRepositories gets a list of all configured write repositories.
 
     Args:
-        param_repo (str, optional): The repository identifier to filter the list. Defaults to None.
-        param_forceRefresh (str, optional): A flag to force refresh the repository list. Defaults to None.
-        param_appProject (str, optional): The application project identifier to filter the repositories. Defaults to None.
+        param_repo (str, optional): Repo URL for query. Defaults to None.
+        param_forceRefresh (str, optional): Whether to force a cache refresh on repo's connection state. Defaults to None.
+        param_appProject (str, optional): App project for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of write repositories.
+        Dict[str, Any]: The JSON response from the API call containing the list of write repositories.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/write-repositories")
 
@@ -53,23 +53,15 @@ async def repository_service__create_write_repository(
     '''
     Create a new write repository configuration.
 
-    This function sends a POST request to the /api/v1/write-repositories endpoint
-    to create a new write repository configuration. It allows for optional parameters
-    to be included in the request.
-
     Args:
-        param_upsert (str, optional): A parameter to specify if the repository should be upserted.
-            Defaults to None.
-        param_credsOnly (str, optional): A parameter to specify if only credentials should be returned.
-            Defaults to None.
+        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
+        param_credsOnly (str, optional): Whether to operate on credential set instead of repository. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes details of the created
-        repository configuration or an error message if the request fails.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the
-        error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /api/v1/write-repositories")
 

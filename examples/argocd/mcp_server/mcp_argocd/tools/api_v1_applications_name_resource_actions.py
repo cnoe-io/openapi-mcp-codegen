@@ -27,7 +27,7 @@ async def application_service__list_resource_actions(
     ListResourceActions returns a list of resource actions.
 
     Args:
-        path_name (str): The name of the application path for which resource actions are being listed.
+        path_name (str): The name of the application path.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.

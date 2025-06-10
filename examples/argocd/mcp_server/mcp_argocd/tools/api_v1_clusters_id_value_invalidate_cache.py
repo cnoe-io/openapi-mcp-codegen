@@ -17,16 +17,16 @@ async def cluster_service__invalidate_cache(path_id_value: str) -> Dict[str, Any
     '''
     InvalidateCache invalidates the cluster cache.
 
-    This function sends a POST request to the specified cluster endpoint to invalidate its cache. It is an asynchronous operation that interacts with the cluster service API.
+    This function sends a POST request to the specified cluster server URL or cluster name to invalidate its cache. It is used to ensure that the cluster's cache is refreshed and up-to-date.
 
     Args:
-        path_id_value (str): The identifier for the cluster whose cache is to be invalidated. This corresponds to the 'path_id_value' parameter in the OpenAPI specification.
+        path_id_value (str): The cluster server URL or cluster name that identifies the cluster whose cache needs to be invalidated.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call. If the request is successful, the response will contain relevant data. If the request fails, the response will contain an error message.
+        Dict[str, Any]: The JSON response from the API call, which includes the status of the cache invalidation request.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with details about the failure.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/clusters/{id.value}/invalidate-cache")
 
