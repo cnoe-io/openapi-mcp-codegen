@@ -21,7 +21,7 @@ async def version_service__version() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the version information of the API server. The JSON response includes details such as version number, build date, and other relevant metadata.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes version information of the API server.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.

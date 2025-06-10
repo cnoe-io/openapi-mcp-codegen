@@ -27,17 +27,17 @@ async def application_service__get(
     Get returns an application by name.
 
     Args:
-        path_name (str): The name of the application to retrieve.
-        param_refresh (str, optional): If provided, refreshes the application data. Defaults to None.
-        param_projects (str, optional): Filters applications by projects. Defaults to None.
-        param_resourceVersion (str, optional): Specifies the resource version to retrieve. Defaults to None.
-        param_selector (str, optional): Filters applications by selector. Defaults to None.
-        param_repo (str, optional): Filters applications by repository. Defaults to None.
-        param_appNamespace (str, optional): Filters applications by namespace. Defaults to None.
-        param_project (str, optional): Filters applications by project. Defaults to None.
+        path_name (str): The application's name.
+        param_refresh (str, optional): Forces application reconciliation if set to 'hard'. Defaults to None.
+        param_projects (str, optional): The project names to restrict returned list applications. Defaults to None.
+        param_resourceVersion (str, optional): When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to None.
+        param_selector (str, optional): The selector to restrict returned list to applications only with matched labels. Defaults to None.
+        param_repo (str, optional): The repoURL to restrict returned list applications. Defaults to None.
+        param_appNamespace (str, optional): The application's namespace. Defaults to None.
+        param_project (str, optional): The project names to restrict returned list applications (legacy name for backwards-compatibility). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing application details.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

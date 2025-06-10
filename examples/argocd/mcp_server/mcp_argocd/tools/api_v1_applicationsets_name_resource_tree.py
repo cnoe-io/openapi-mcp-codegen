@@ -15,14 +15,14 @@ logger = logging.getLogger("mcp_tools")
 
 async def application_set_service__resource_tree(path_name: str, param_appsetNamespace: str = None) -> Dict[str, Any]:
     '''
-    ResourceTree returns resource tree.
+    ResourceTree returns the resource tree for a specified application set.
 
     Args:
         path_name (str): The name of the application set for which the resource tree is requested.
-        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to None.
+        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to the Argo CD control plane namespace if not specified.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the resource tree.
+        Dict[str, Any]: The JSON response from the API call containing the resource tree details.
 
     Raises:
         Exception: If the API request fails or returns an error.

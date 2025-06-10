@@ -19,13 +19,13 @@ async def project_service__create_token(path_project: str, path_role: str) -> Di
 
     Args:
         path_project (str): The project path for which the token is to be created.
-        path_role (str): The role path within the project for which the token is to be created.
+        path_role (str): The role path associated with the project for which the token is to be created.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the token details.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/projects/{project}/roles/{role}/token")
 

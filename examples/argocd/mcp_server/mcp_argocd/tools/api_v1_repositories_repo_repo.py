@@ -18,13 +18,13 @@ async def repository_service__update_repository(path_repo_repo: str) -> Dict[str
     Update a repository configuration.
 
     Args:
-        path_repo_repo (str): The path to the repository to be updated, specified as a string.
+        path_repo_repo (str): The URL to the remote repository.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the updated repository configuration details.
+        Dict[str, Any]: The JSON response from the API call, containing the updated repository configuration.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with details of the failure.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making PUT request to /api/v1/repositories/{repo.repo}")
 

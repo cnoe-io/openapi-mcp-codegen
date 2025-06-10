@@ -23,10 +23,10 @@ async def account_service__list_accounts() -> Dict[str, Any]:
         None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of accounts. If the request fails, it returns a dictionary with an error message.
+        Dict[str, Any]: The JSON response from the API call containing the list of accounts. If the request fails, returns a dictionary with an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/account")
 

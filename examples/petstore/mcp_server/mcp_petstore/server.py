@@ -18,23 +18,23 @@ from mcp.server.fastmcp import FastMCP
 
 from mcp_petstore.tools import pet
 
-from mcp_petstore.tools import pet_find_by_status
+from mcp_petstore.tools import pet_findbystatus
 
-from mcp_petstore.tools import pet_find_by_tags
+from mcp_petstore.tools import pet_findbytags
 
-from mcp_petstore.tools import pet_pet_id
+from mcp_petstore.tools import pet_petid
 
-from mcp_petstore.tools import pet_pet_id_upload_image
+from mcp_petstore.tools import pet_petid_uploadimage
 
 from mcp_petstore.tools import store_inventory
 
 from mcp_petstore.tools import store_order
 
-from mcp_petstore.tools import store_order_order_id
+from mcp_petstore.tools import store_order_orderid
 
 from mcp_petstore.tools import user
 
-from mcp_petstore.tools import user_create_with_list
+from mcp_petstore.tools import user_createwithlist
 
 from mcp_petstore.tools import user_login
 
@@ -75,25 +75,25 @@ def main():
 
     mcp.tool()(pet.add_pet)
 
-    # Register pet_find_by_status tools
+    # Register pet_findbystatus tools
 
-    mcp.tool()(pet_find_by_status.find_pets_by_status)
+    mcp.tool()(pet_findbystatus.find_pets_by_status)
 
-    # Register pet_find_by_tags tools
+    # Register pet_findbytags tools
 
-    mcp.tool()(pet_find_by_tags.find_pets_by_tags)
+    mcp.tool()(pet_findbytags.find_pets_by_tags)
 
-    # Register pet_pet_id tools
+    # Register pet_petid tools
 
-    mcp.tool()(pet_pet_id.get_pet_by_id)
+    mcp.tool()(pet_petid.get_pet_by_id)
 
-    mcp.tool()(pet_pet_id.update_pet_with_form)
+    mcp.tool()(pet_petid.update_pet_with_form)
 
-    mcp.tool()(pet_pet_id.delete_pet)
+    mcp.tool()(pet_petid.delete_pet)
 
-    # Register pet_pet_id_upload_image tools
+    # Register pet_petid_uploadimage tools
 
-    mcp.tool()(pet_pet_id_upload_image.upload_file)
+    mcp.tool()(pet_petid_uploadimage.upload_file)
 
     # Register store_inventory tools
 
@@ -103,19 +103,19 @@ def main():
 
     mcp.tool()(store_order.place_order)
 
-    # Register store_order_order_id tools
+    # Register store_order_orderid tools
 
-    mcp.tool()(store_order_order_id.get_order_by_id)
+    mcp.tool()(store_order_orderid.get_order_by_id)
 
-    mcp.tool()(store_order_order_id.delete_order)
+    mcp.tool()(store_order_orderid.delete_order)
 
     # Register user tools
 
     mcp.tool()(user.create_user)
 
-    # Register user_create_with_list tools
+    # Register user_createwithlist tools
 
-    mcp.tool()(user_create_with_list.create_users_with_list_input)
+    mcp.tool()(user_createwithlist.create_users_with_list_input)
 
     # Register user_login tools
 

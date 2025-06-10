@@ -27,14 +27,14 @@ async def application_service__watch(
     Watch returns a stream of application change events.
 
     Args:
-        param_name (str, optional): OpenAPI parameter corresponding to 'param_name'. Defaults to None.
-        param_refresh (str, optional): OpenAPI parameter corresponding to 'param_refresh'. Defaults to None.
-        param_projects (str, optional): OpenAPI parameter corresponding to 'param_projects'. Defaults to None.
-        param_resourceVersion (str, optional): OpenAPI parameter corresponding to 'param_resourceVersion'. Defaults to None.
-        param_selector (str, optional): OpenAPI parameter corresponding to 'param_selector'. Defaults to None.
-        param_repo (str, optional): OpenAPI parameter corresponding to 'param_repo'. Defaults to None.
-        param_appNamespace (str, optional): OpenAPI parameter corresponding to 'param_appNamespace'. Defaults to None.
-        param_project (str, optional): OpenAPI parameter corresponding to 'param_project'. Defaults to None.
+        param_name (str, optional): The application's name. Defaults to None.
+        param_refresh (str, optional): Forces application reconciliation if set to 'hard'. Defaults to None.
+        param_projects (str, optional): The project names to restrict returned list applications. Defaults to None.
+        param_resourceVersion (str, optional): When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to None.
+        param_selector (str, optional): The selector to restrict returned list to applications only with matched labels. Defaults to None.
+        param_repo (str, optional): The repoURL to restrict returned list applications. Defaults to None.
+        param_appNamespace (str, optional): The application's namespace. Defaults to None.
+        param_project (str, optional): The project names to restrict returned list applications (legacy name for backwards-compatibility). Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.

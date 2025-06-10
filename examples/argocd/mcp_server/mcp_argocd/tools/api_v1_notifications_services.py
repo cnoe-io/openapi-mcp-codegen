@@ -15,16 +15,17 @@ logger = logging.getLogger("mcp_tools")
 
 async def notification_service__list_services() -> Dict[str, Any]:
     '''
-    List available notification services.
+    List all available notification services.
 
     This function makes an asynchronous GET request to the notification service API
-    to retrieve a list of available services.
+    endpoint to retrieve a list of all available services.
 
     Args:
+        None
 
     Returns:
         Dict[str, Any]: A dictionary containing the JSON response from the API call,
-        which includes the list of notification services.
+        which includes details of the notification services.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised

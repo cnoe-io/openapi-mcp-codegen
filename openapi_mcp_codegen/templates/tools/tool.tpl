@@ -24,9 +24,8 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
 
     Args:
     {{ newline }}
-    {%- for param in func.params %}
-              {%- set pname = param.split(':')[0].strip() -%} {%- set ptype = (param.split(':')[1].strip() if ':' in param else "str") -%}
-    {{ pname }} ({{ ptype }}): OpenAPI parameter corresponding to '{{ pname }}'.
+    {%- for param in func.params_info %}
+        {{ param.name }} ({{ param.type }}):{% if param.description %} {{ param.description }}{% else %} OpenAPI parameter corresponding to '{{ param.name }}'{% endif %}
     {% endfor %}
 
     Returns:

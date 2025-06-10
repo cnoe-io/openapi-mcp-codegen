@@ -20,13 +20,13 @@ async def cluster_service__get(
     Get returns a cluster by server address.
 
     Args:
-        path_id_value (str): The identifier value for the cluster path.
-        param_server (str, optional): The server address parameter. Defaults to None.
-        param_name (str, optional): The name parameter for the cluster. Defaults to None.
-        param_id_type (str, optional): The type of identifier used. Defaults to None.
+        path_id_value (str): The cluster server URL or cluster name.
+        param_server (str, optional): OpenAPI parameter corresponding to 'param_server'. Defaults to None.
+        param_name (str, optional): OpenAPI parameter corresponding to 'param_name'. Defaults to None.
+        param_id_type (str, optional): The type of the specified cluster identifier ("server" - default, "name"). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing cluster details.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -57,15 +57,15 @@ async def cluster_service__update(
     Update a cluster with specified parameters.
 
     Args:
-        path_id_value (str): The identifier value for the cluster path.
+        path_id_value (str): The cluster server URL or cluster name.
         param_updatedFields (str, optional): Fields to be updated in the cluster. Defaults to None.
-        param_id_type (str, optional): Type of the identifier used for the cluster. Defaults to None.
+        param_id_type (str, optional): The type of the specified cluster identifier, either "server" or "name". Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the update operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making PUT request to /api/v1/clusters/{id.value}")
 
@@ -92,13 +92,13 @@ async def cluster_service__delete(
     Delete a cluster.
 
     Args:
-        path_id_value (str): The identifier value for the cluster to be deleted.
-        param_server (str, optional): The server parameter for the API request. Defaults to None.
-        param_name (str, optional): The name parameter for the API request. Defaults to None.
-        param_id_type (str, optional): The ID type parameter for the API request. Defaults to None.
+        path_id_value (str): The cluster server URL or cluster name.
+        param_server (str, optional): OpenAPI parameter corresponding to 'param_server'. Defaults to None.
+        param_name (str, optional): OpenAPI parameter corresponding to 'param_name'. Defaults to None.
+        param_id_type (str, optional): The type of the specified cluster identifier ("server" - default, "name"). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

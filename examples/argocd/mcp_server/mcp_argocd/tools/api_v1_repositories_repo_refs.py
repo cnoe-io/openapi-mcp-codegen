@@ -20,9 +20,9 @@ async def repository_service__list_refs(
     List references for a given repository.
 
     Args:
-        path_repo (str): The path to the repository for which to list references.
-        param_forceRefresh (str, optional): A parameter to force refresh the data. Defaults to None.
-        param_appProject (str, optional): The application project parameter. Defaults to None.
+        path_repo (str): The URL of the repository to query.
+        param_forceRefresh (str, optional): Indicates whether to force a cache refresh on the repository's connection state. Defaults to None.
+        param_appProject (str, optional): The application project for the query. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of references.

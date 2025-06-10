@@ -21,9 +21,9 @@ async def application_service__update_spec(
 
     Args:
         path_name (str): The name of the application path to update the spec for.
-        param_validate (str, optional): Validation parameter for the spec update. Defaults to None.
-        param_appNamespace (str, optional): Namespace parameter for the application. Defaults to None.
-        param_project (str, optional): Project parameter for the application. Defaults to None.
+        param_validate (str, optional): Validation parameter for the request. Defaults to None.
+        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the updated application spec.

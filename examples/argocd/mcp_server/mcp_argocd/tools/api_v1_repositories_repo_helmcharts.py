@@ -17,15 +17,15 @@ async def repository_service__get_helm_charts(
     path_repo: str, param_forceRefresh: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
     '''
-    Get a list of Helm charts in the specified repository.
+    GetHelmCharts returns a list of helm charts in the specified repository.
 
     Args:
-        path_repo (str): The path to the repository from which to retrieve Helm charts.
-        param_forceRefresh (str, optional): A parameter to force refresh the data. Defaults to None.
-        param_appProject (str, optional): The application project parameter. Defaults to None.
+        path_repo (str): The URL of the repository to query.
+        param_forceRefresh (str, optional): Indicates whether to force a cache refresh on the repository's connection state. Defaults to None.
+        param_appProject (str, optional): The application project for the query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of Helm charts.
+        Dict[str, Any]: The JSON response from the API call containing the list of helm charts.
 
     Raises:
         Exception: If the API request fails or returns an error.

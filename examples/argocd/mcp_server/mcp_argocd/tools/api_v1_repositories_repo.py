@@ -20,12 +20,12 @@ async def repository_service__get(
     Get returns a repository or its credentials.
 
     Args:
-        path_repo (str): The path to the repository for which information or credentials are requested.
-        param_forceRefresh (str, optional): A parameter to force refresh the repository data. Defaults to None.
-        param_appProject (str, optional): The application project associated with the repository. Defaults to None.
+        path_repo (str): The URL of the repository to query.
+        param_forceRefresh (str, optional): Indicates whether to force a cache refresh on the repository's connection state. Defaults to None.
+        param_appProject (str, optional): The application project associated with the query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing repository details or credentials.
+        Dict[str, Any]: The JSON response from the API call, containing the repository details or credentials.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -55,12 +55,12 @@ async def repository_service__delete_repository(
     DeleteRepository deletes a repository from the configuration.
 
     Args:
-        path_repo (str): The path of the repository to be deleted.
-        param_forceRefresh (str, optional): A parameter to force refresh the repository state. Defaults to None.
-        param_appProject (str, optional): The application project associated with the repository. Defaults to None.
+        path_repo (str): Repo URL for query.
+        param_forceRefresh (str, optional): Whether to force a cache refresh on repo's connection state. Defaults to None.
+        param_appProject (str, optional): App project for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

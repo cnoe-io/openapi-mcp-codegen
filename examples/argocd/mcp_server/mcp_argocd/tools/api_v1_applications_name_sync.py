@@ -18,13 +18,13 @@ async def application_service__sync(path_name: str) -> Dict[str, Any]:
     Syncs an application to its target state.
 
     Args:
-        path_name (str): The name of the application path to be synchronized.
+        path_name (str): The name of the application path to be synced.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the synchronization process.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the sync operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/applications/{name}/sync")
 

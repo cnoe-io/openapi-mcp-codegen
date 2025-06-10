@@ -20,15 +20,15 @@ async def repository_service__get_write(
     GetWrite returns a repository or its write credentials.
 
     Args:
-        path_repo (str): The path to the repository for which write credentials are requested.
-        param_forceRefresh (str, optional): A flag to force refresh the credentials. Defaults to None.
-        param_appProject (str, optional): The application project associated with the repository. Defaults to None.
+        path_repo (str): The URL of the repository for the query.
+        param_forceRefresh (str, optional): Indicates whether to force a cache refresh on the repository's connection state. Defaults to None.
+        param_appProject (str, optional): The application project associated with the query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the repository details or write credentials.
+        Dict[str, Any]: The JSON response from the API call containing the repository information or write credentials.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /api/v1/write-repositories/{repo}")
 
@@ -52,15 +52,15 @@ async def repository_service__delete_write_repository(
     path_repo: str, param_forceRefresh: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
     '''
-    Delete a write repository from the configuration.
+    DeleteWriteRepository deletes a write repository from the configuration.
 
     Args:
-        path_repo (str): The path of the repository to be deleted.
-        param_forceRefresh (str, optional): A parameter to force refresh the repository. Defaults to None.
-        param_appProject (str, optional): The application project associated with the repository. Defaults to None.
+        path_repo (str): Repo URL for query.
+        param_forceRefresh (str, optional): Whether to force a cache refresh on repo's connection state. Defaults to None.
+        param_appProject (str, optional): App project for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

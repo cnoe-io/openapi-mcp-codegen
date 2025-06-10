@@ -18,7 +18,7 @@ async def account_service__get_account(path_name: str) -> Dict[str, Any]:
     GetAccount returns an account.
 
     Args:
-        path_name (str): The path parameter specifying the account name to retrieve.
+        path_name (str): The path name used to identify the account in the API request.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing account details.

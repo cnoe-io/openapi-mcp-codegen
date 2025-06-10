@@ -18,8 +18,7 @@ async def notification_service__list_triggers() -> Dict[str, Any]:
     List triggers for the notification service.
 
     This function makes an asynchronous GET request to the notification service API
-    to retrieve a list of triggers. It returns the JSON response containing the
-    triggers data.
+    to retrieve a list of triggers. It returns the JSON response from the API call.
 
     Args:
         None

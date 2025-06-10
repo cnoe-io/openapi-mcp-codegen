@@ -22,21 +22,21 @@ async def application_service__get_manifests(
     param_revisions: str = None,
 ) -> Dict[str, Any]:
     '''
-    GetManifests returns application manifests.
+    Get application manifests.
 
     Args:
-        path_name (str): The name of the application path for which manifests are requested.
-        param_revision (str, optional): The specific revision of the application to retrieve manifests for. Defaults to None.
+        path_name (str): The path name of the application.
+        param_revision (str, optional): The specific revision of the application. Defaults to None.
         param_appNamespace (str, optional): The namespace of the application. Defaults to None.
-        param_project (str, optional): The project associated with the application. Defaults to None.
-        param_sourcePositions (str, optional): The source positions parameter for the application. Defaults to None.
-        param_revisions (str, optional): Additional revisions parameter for the application. Defaults to None.
+        param_project (str, optional): The project to which the application belongs. Defaults to None.
+        param_sourcePositions (str, optional): The source positions for the application. Defaults to None.
+        param_revisions (str, optional): The revisions of the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the application manifests.
+        Dict[str, Any]: The JSON response from the API call containing the application manifests.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/applications/{name}/manifests")
 

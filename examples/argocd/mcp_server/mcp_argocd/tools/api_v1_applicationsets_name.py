@@ -18,11 +18,11 @@ async def application_set_service__get(path_name: str, param_appsetNamespace: st
     Get an applicationset by name.
 
     Args:
-        path_name (str): The name of the applicationset to retrieve.
-        param_appsetNamespace (str, optional): The namespace of the applicationset. Defaults to None.
+        path_name (str): The name of the applicationset.
+        param_appsetNamespace (str, optional): The application set namespace. Defaults to None, which uses the ArgoCD control plane namespace.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the applicationset details.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -50,7 +50,7 @@ async def application_set_service__delete(path_name: str, param_appsetNamespace:
 
     Args:
         path_name (str): The name of the application set to delete.
-        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to None.
+        param_appsetNamespace (str, optional): The namespace of the application set. Defaults to the ArgoCD control plane namespace if not provided.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.

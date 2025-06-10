@@ -20,15 +20,15 @@ async def application_service__list_links(
     ListLinks returns the list of all application deep links.
 
     Args:
-        path_name (str): The name of the path for which to retrieve deep links.
-        param_namespace (str, optional): The namespace parameter for filtering links. Defaults to None.
-        param_project (str, optional): The project parameter for filtering links. Defaults to None.
+        path_name (str): The name of the application path for which to list deep links.
+        param_namespace (str, optional): The namespace parameter for the API request. Defaults to None.
+        param_project (str, optional): The project parameter for the API request. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of application deep links.
+        Dict[str, Any]: The JSON response from the API call containing the list of application deep links.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/applications/{name}/links")
 

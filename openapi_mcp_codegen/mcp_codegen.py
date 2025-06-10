@@ -233,7 +233,7 @@ class MCPGenerator:
       from cnoe_agent_utils import LLMFactory
       from langchain_core.messages import SystemMessage, HumanMessage
 
-      logger.info(f"Enhancing docstrings in: {input_path}")
+      logger.info(f"Starting LLM docstring enhancement for file: {input_path}")
 
       llm = LLMFactory().get_llm()
 
@@ -295,12 +295,16 @@ class MCPGenerator:
               doc = ast.get_docstring(node, clean=False)
               if doc is not None and len(node.body) > 0:
                   doc_node = node.body[0]
-                  if isinstance(doc_node, ast.Expr) and isinstance(doc_node.value, ast.Str):
+                  if isinstance(doc_node, ast.Expr) and isinstance(doc_node.value, ast.Constant):
                       doc_start = doc_node.lineno - 1
                       doc_end = doc_start + len(doc.splitlines())
                       func_source_lines = source_lines[node.lineno - 1:node.end_lineno]
                       func_source = "\n".join(func_source_lines)
-                      new_doc = get_openapi_docstring(func_name, args, doc, func_source)
+                      try:
+                          new_doc = get_openapi_docstring(func_name, args, doc, func_source)
+                      except Exception as enhance_error:
+                          logger.error(f"LLM enhancement failed for function '{func_name}': {enhance_error}. Raising error.")
+                          raise RuntimeError(f"LLM enhancement failed for function '{func_name}': {enhance_error}") from enhance_error
                       indent = re.match(r'^(\s*)', source_lines[doc_start]).group(1)
                       new_doc_lines = [(indent + line if line.strip() else line) for line in new_doc.splitlines()]
                       docstring_replacements.append((doc_start, doc_end, new_doc_lines))
@@ -408,6 +412,7 @@ class MCPGenerator:
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
           continue
         params = []
+        params_infos = []  # <-- NEW: holds parameter details for documentation
         for p in op.get("parameters", []):
           # Resolve parameter reference if the parameter itself is a $ref
           if "$ref" in p:
@@ -426,23 +431,36 @@ class MCPGenerator:
               ptype = self._get_python_type(schema)
               # For path parameters, assume they are required
               params.append(f"{pname}: {ptype}")
+              params_infos.append({
+                  "name": pname,
+                  "type": ptype,
+                  "description": p.get("description", "")
+              })
           elif p.get("in") == "query":
               pname = "param_" + p.get("name", "param").replace('.', '_')
               schema = p.get("schema", {})
               if "$ref" in schema:
                   schema = self._resolve_ref(schema["$ref"])
               ptype = self._get_python_type(schema)
+              desc = p.get("description", "")
               if p.get("required"):
-                params.append(f"{pname}: {ptype}")
+                  params.append(f"{pname}: {ptype}")
               else:
-                params.append(f"{pname}: {ptype} = None")
+                  params.append(f"{pname}: {ptype} = None")
+              params_infos.append({
+                  "name": pname,
+                  "type": ptype,
+                  "description": desc
+              })
         if "requestBody" in op:
             request_body = op["requestBody"]
             content = request_body.get("content", {})
             if "application/json" in content:
                 schema = content["application/json"].get("schema", {})
                 body_params = self._extract_body_params(schema, prefix="body")
-                params.extend(body_params)
+                for sig, info in body_params:
+                    params.append(sig)
+                    params_infos.append(info)
         # Reorder parameters: all non-default parameters first, then default parameters
         non_default_params = [p for p in params if "=" not in p]
         default_params = [p for p in params if "=" in p]
@@ -471,12 +489,13 @@ class MCPGenerator:
           "summary": op.get("summary", ""),
           "description": op.get("description", ""),
           "method": method.upper(),
-          "params": params,
+          "params": params,  # (used for signature)
+          "params_info": params_infos,  # <-- NEW: list of dicts with name, type, and description
           "path": path,  # original path (optional, for reference)
           "formatted_path": formatted_path
         })
       if functions:
-        output_path = os.path.join(tools_dir, f"{camel_to_snake(module_name)}.py").lower()
+        output_path = os.path.join(tools_dir, f"{module_name.lower()}.py")
         mcp_server_base_package = self.config.get('mcp_server_base_package', '')
         self.render_template(
           "tools/tool.tpl",
@@ -510,7 +529,16 @@ class MCPGenerator:
 
     if enhancement_futures:
         concurrent.futures.wait(enhancement_futures)
+        errors_found = []
+        for future in enhancement_futures:
+            try:
+                future.result()
+            except Exception as e:
+                logger.error(f"Error during parallel LLM docstring enhancement: {e}")
+                errors_found.append(e)
         executor.shutdown(wait=True)
+        if errors_found:
+            raise RuntimeError("One or more errors occurred during LLM docstring enhancement.") from errors_found[0]
 
   def generate_server(self):
     """
@@ -616,41 +644,55 @@ class MCPGenerator:
   def _extract_body_params(self, schema: Dict[str, Any], prefix: str = "body") -> list:
       """
       Recursively extract parameters from a request body schema.
-      Each parameter name is prefixed (default "body") so that nested properties are flattened.
-      Returns a list of strings for use in the function signature.
+      Each parameter name is prefixed so that nested properties are flattened.
+      Returns a list of tuples: (signature_string, {name, type, description})
       """
       if "$ref" in schema:
           schema = self._resolve_ref(schema["$ref"])
       params = []
       if schema.get("type") == "object" and "properties" in schema:
           required_fields = schema.get("required", [])
+          params_info = []
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
               param_name = f"{prefix}_{camel_to_snake(prop_name)}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
-                      params.extend(self._extract_body_params(resolved_prop, prefix=param_name))
+                      sub_params = self._extract_body_params(resolved_prop, prefix=param_name)
+                      for sig, info in sub_params:
+                          params.append(sig)
+                          params_info.append(info)
                       continue
                   else:
                       prop = resolved_prop
               if prop.get("type") == "object" and "properties" in prop:
-                  params.extend(self._extract_body_params(prop, prefix=param_name))
+                  sub_params = self._extract_body_params(prop, prefix=param_name)
+                  for sig, info in sub_params:
+                      params.append(sig)
+                      params_info.append(info)
               else:
                   if "$ref" in prop:
                       prop = self._resolve_ref(prop["$ref"])
                   py_type = self._get_python_type(prop)
                   if prop_name in required_fields:
-                      params.append(f"{param_name}: {py_type}")
+                      sig = f"{param_name}: {py_type}"
                   else:
-                      params.append(f"{param_name}: {py_type} = None")
+                      sig = f"{param_name}: {py_type} = None"
+                  params.append(sig)
+                  params_info.append({
+                      "name": param_name,
+                      "type": py_type,
+                      "description": prop.get("description", "")
+                  })
+          return list(zip(params, params_info))
       else:
-          # Handle non-object schema as a single parameter
           if "$ref" in schema:
               schema = self._resolve_ref(schema["$ref"])
           py_type = self._get_python_type(schema)
-          params.append(f"{prefix}: {py_type}")
-      return params
+          sig = f"{prefix}: {py_type}"
+          info = {"name": prefix, "type": py_type, "description": schema.get("description", "")}
+          return [(sig, info)]
 
   def generate(self):
     """

@@ -20,9 +20,9 @@ async def repository_service__list_repositories(
     ListRepositories gets a list of all configured repositories.
 
     Args:
-        param_repo (str, optional): The repository identifier to filter the list. Defaults to None.
-        param_forceRefresh (str, optional): A flag to force refresh the repository list. Defaults to None.
-        param_appProject (str, optional): The application project identifier to filter the repositories. Defaults to None.
+        param_repo (str, optional): Repo URL for query. Defaults to None.
+        param_forceRefresh (str, optional): Whether to force a cache refresh on repo's connection state. Defaults to None.
+        param_appProject (str, optional): App project for query. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of repositories.
@@ -54,11 +54,11 @@ async def repository_service__create_repository(
     Create a new repository configuration.
 
     Args:
-        param_upsert (str, optional): Parameter to specify if the repository should be upserted. Defaults to None.
-        param_credsOnly (str, optional): Parameter to specify if only credentials should be updated. Defaults to None.
+        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
+        param_credsOnly (str, optional): Whether to operate on credential set instead of repository. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created repository configuration.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

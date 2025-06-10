@@ -25,15 +25,15 @@ async def application_service__revision_chart_details(
     Get the chart metadata (description, maintainers, home) for a specific revision of the application.
 
     Args:
-        path_name (str): The name of the application for which the chart details are requested.
-        path_revision (str): The specific revision of the application for which the chart details are requested.
-        param_appNamespace (str, optional): The namespace of the application. Defaults to None.
-        param_project (str, optional): The project associated with the application. Defaults to None.
-        param_sourceIndex (str, optional): The source index of the application. Defaults to None.
-        param_versionId (str, optional): The version ID of the application. Defaults to None.
+        path_name (str): The application's name.
+        path_revision (str): The revision of the application.
+        param_appNamespace (str, optional): The application's namespace. Defaults to None.
+        param_project (str, optional): OpenAPI parameter corresponding to 'param_project'. Defaults to None.
+        param_sourceIndex (str, optional): Source index for multi-source applications. Defaults to None.
+        param_versionId (str, optional): Version ID from historical data for multi-source applications. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the chart metadata.
+        Dict[str, Any]: The JSON response from the API call containing chart metadata.
 
     Raises:
         Exception: If the API request fails or returns an error.

@@ -15,13 +15,13 @@ logger = logging.getLogger("mcp_tools")
 
 async def repo_creds_service__list_repository_credentials(param_url: str = None) -> Dict[str, Any]:
     '''
-    List all configured repository credential sets.
+    ListRepositoryCredentials gets a list of all configured repository credential sets.
 
     Args:
-        param_url (str, optional): The URL parameter for the API request. Defaults to None.
+        param_url (str, optional): Repo URL for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the list of repository credentials.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -46,10 +46,10 @@ async def repo_creds_service__create_repository_credentials(param_upsert: str = 
     Create a new repository credential set.
 
     Args:
-        param_upsert (str, optional): The parameter to specify whether to upsert the repository credentials. Defaults to None.
+        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the details of the created repository credentials.
+        Dict[str, Any]: The JSON response from the API call, containing the details of the created repository credentials.
 
     Raises:
         Exception: If the API request fails or returns an error.
