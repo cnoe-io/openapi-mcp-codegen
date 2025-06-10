@@ -13,23 +13,35 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def account_service__create_token(path_name: str) -> Dict[str, Any]:
+async def account_service__create_token(
+    path_name: str, body_expires_in: int = None, body_id: str = None, body_name: str = None
+) -> Dict[str, Any]:
     '''
     CreateToken creates a token for the specified account.
 
     Args:
-        path_name (str): The name of the account for which the token is to be created.
+        path_name (str): The name of the account for which the token is being created.
+        body_expires_in (int, optional): The duration in seconds until the token expires. Defaults to None.
+        body_id (str, optional): The unique identifier for the token. Defaults to None.
+        body_name (str, optional): The name associated with the token. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the token details if successful.
+        Dict[str, Any]: The JSON response from the API call, containing the details of the created token.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /api/v1/account/{name}/token")
 
     params = {}
     data = {}
+
+    if body_expires_in:
+        data["expires_in"] = body_expires_in
+    if body_id:
+        data["id"] = body_id
+    if body_name:
+        data["name"] = body_name
 
     success, response = await make_api_request(
         f"/api/v1/account/{path_name}/token", method="POST", params=params, data=data

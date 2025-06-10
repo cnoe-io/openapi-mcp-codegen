@@ -422,7 +422,17 @@ class MCPGenerator:
           if p.get("in") == "header":
               continue
 
-          if p.get("in") == "path":
+          elif p.get("in") == "body":
+              # Handle body parameter similar to requestBody.
+              schema = p.get("schema", {})
+              if "$ref" in schema:
+                  schema = self._resolve_ref(schema["$ref"])
+              body_params = self._extract_body_params(schema, prefix="body")
+              for sig, info in body_params:
+                  params.append(sig)
+                  params_infos.append(info)
+
+          elif p.get("in") == "path":
               # Prepend "path_" to the parameter name
               pname = "path_" + p.get("name", "param").replace('.', '_')
               schema = p.get("schema", {})

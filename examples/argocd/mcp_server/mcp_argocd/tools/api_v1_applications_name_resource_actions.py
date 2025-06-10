@@ -5,7 +5,7 @@
 """Tools for /api/v1/applications/{name}/resource/actions operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
@@ -24,17 +24,17 @@ async def application_service__list_resource_actions(
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    ListResourceActions returns a list of resource actions.
+    List resource actions for a specified application.
 
     Args:
-        path_name (str): The name of the application path.
+        path_name (str): The name of the application for which to list resource actions.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
-        param_project (str, optional): The project associated with the resource. Defaults to None.
+        param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of resource actions.
@@ -65,23 +65,66 @@ async def application_service__list_resource_actions(
     return response
 
 
-async def application_service__run_resource_action(path_name: str) -> Dict[str, Any]:
+async def application_service__run_resource_action(
+    path_name: str,
+    body_action: str = None,
+    body_app_namespace: str = None,
+    body_group: str = None,
+    body_kind: str = None,
+    body_name: str = None,
+    body_namespace: str = None,
+    body_project: str = None,
+    body_resource_action_parameters: List[str] = None,
+    body_resource_name: str = None,
+    body_version: str = None,
+) -> Dict[str, Any]:
     '''
-    Run a resource action for a specified application.
+    Run a resource action on an application service.
 
     Args:
-        path_name (str): The name of the application path for which the resource action is to be executed.
+        path_name (str): The name of the path for the application service.
+        body_action (str, optional): The action to be performed on the resource. Defaults to None.
+        body_app_namespace (str, optional): The namespace of the application. Defaults to None.
+        body_group (str, optional): The group of the resource. Defaults to None.
+        body_kind (str, optional): The kind of the resource. Defaults to None.
+        body_name (str, optional): The name of the resource. Defaults to None.
+        body_namespace (str, optional): The namespace of the resource. Defaults to None.
+        body_project (str, optional): The project associated with the resource. Defaults to None.
+        body_resource_action_parameters (List[str], optional): Parameters for the resource action. Defaults to None.
+        body_resource_name (str, optional): The name of the resource on which the action is performed. Defaults to None.
+        body_version (str, optional): The version of the resource. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the result of the resource action.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /api/v1/applications/{name}/resource/actions")
 
     params = {}
     data = {}
+
+    if body_action:
+        data["action"] = body_action
+    if body_app_namespace:
+        data["app_namespace"] = body_app_namespace
+    if body_group:
+        data["group"] = body_group
+    if body_kind:
+        data["kind"] = body_kind
+    if body_name:
+        data["name"] = body_name
+    if body_namespace:
+        data["namespace"] = body_namespace
+    if body_project:
+        data["project"] = body_project
+    if body_resource_action_parameters:
+        data["resource_action_parameters"] = body_resource_action_parameters
+    if body_resource_name:
+        data["resource_name"] = body_resource_name
+    if body_version:
+        data["version"] = body_version
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/resource/actions", method="POST", params=params, data=data

@@ -13,31 +13,44 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def application_service__get_manifests_with_files() -> Dict[str, Any]:
+async def application_service__get_manifests_with_files(
+    body_chunk_chunk: str = None,
+    body_query_app_namespace: str = None,
+    body_query_checksum: str = None,
+    body_query_name: str = None,
+    body_query_project: str = None,
+) -> Dict[str, Any]:
     '''
     Get application manifests using provided files to generate them.
 
-    This function makes an asynchronous POST request to the endpoint
-    '/api/v1/applications/manifestsWithFiles' to retrieve application
-    manifests. The manifests are generated based on the files provided
-    in the request.
-
     Args:
-        None
+        body_chunk_chunk (str, optional): The chunk of the body to be used in the request. Defaults to None.
+        body_query_app_namespace (str, optional): The application namespace for the query. Defaults to None.
+        body_query_checksum (str, optional): The checksum for the query to ensure data integrity. Defaults to None.
+        body_query_name (str, optional): The name of the application for the query. Defaults to None.
+        body_query_project (str, optional): The project associated with the application for the query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes
-        the application manifests. If the request fails, the response will
-        contain an error message.
+        Dict[str, Any]: The JSON response from the API call containing the application manifests.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception
-        is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /api/v1/applications/manifestsWithFiles")
 
     params = {}
     data = {}
+
+    if body_chunk_chunk:
+        data["chunk_chunk"] = body_chunk_chunk
+    if body_query_app_namespace:
+        data["query_app_namespace"] = body_query_app_namespace
+    if body_query_checksum:
+        data["query_checksum"] = body_query_checksum
+    if body_query_name:
+        data["query_name"] = body_query_name
+    if body_query_project:
+        data["query_project"] = body_query_project
 
     success, response = await make_api_request(
         "/api/v1/applications/manifestsWithFiles", method="POST", params=params, data=data

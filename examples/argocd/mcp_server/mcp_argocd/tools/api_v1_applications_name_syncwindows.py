@@ -17,18 +17,18 @@ async def application_service__get_application_sync_windows(
     path_name: str, param_appNamespace: str = None, param_project: str = None
 ) -> Dict[str, Any]:
     '''
-    Get sync windows of the application.
+    Get the synchronization windows of the specified application.
 
     Args:
-        path_name (str): The name of the application path.
+        path_name (str): The name of the application for which to retrieve sync windows.
         param_appNamespace (str, optional): The namespace of the application. Defaults to None.
         param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing sync windows information.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the sync windows information.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /api/v1/applications/{name}/syncwindows")
 

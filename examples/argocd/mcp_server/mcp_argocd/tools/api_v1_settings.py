@@ -20,9 +20,10 @@ async def settings_service__get() -> Dict[str, Any]:
     This function makes an asynchronous GET request to the Argo CD API to retrieve the current settings.
 
     Args:
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the Argo CD settings.
+        Dict[str, Any]: The JSON response from the API call containing Argo CD settings.
 
     Raises:
         Exception: If the API request fails or returns an error.

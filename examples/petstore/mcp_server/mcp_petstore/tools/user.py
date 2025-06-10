@@ -23,37 +23,27 @@ async def create_user(
     body_phone: str = None,
     body_user_status: int = None,
 ) -> Dict[str, Any]:
-    """
-    Create user.
+    '''
+    Create a new user.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This function allows a logged-in user to create a new user account by providing the necessary user details.
 
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_username (str): OpenAPI parameter corresponding to 'body_username'
-
-        body_first_name (str): OpenAPI parameter corresponding to 'body_first_name'
-
-        body_last_name (str): OpenAPI parameter corresponding to 'body_last_name'
-
-        body_email (str): OpenAPI parameter corresponding to 'body_email'
-
-        body_password (str): OpenAPI parameter corresponding to 'body_password'
-
-        body_phone (str): OpenAPI parameter corresponding to 'body_phone'
-
-        body_user_status (int): User Status
-
+        body_id (int, optional): The unique identifier for the user. Defaults to None.
+        body_username (str, optional): The username for the user. Defaults to None.
+        body_first_name (str, optional): The first name of the user. Defaults to None.
+        body_last_name (str, optional): The last name of the user. Defaults to None.
+        body_email (str, optional): The email address of the user. Defaults to None.
+        body_password (str, optional): The password for the user account. Defaults to None.
+        body_phone (str, optional): The phone number of the user. Defaults to None.
+        body_user_status (int, optional): The status of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the user creation process.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /user")
 
     params = {}

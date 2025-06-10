@@ -15,6 +15,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def repository_service__validate_access(
     path_repo: str,
+    body: str,
     param_username: str = None,
     param_password: str = None,
     param_sshPrivateKey: str = None,
@@ -40,6 +41,7 @@ async def repository_service__validate_access(
 
     Args:
         path_repo (str): The URL to the repository.
+        body (str): OpenAPI parameter corresponding to 'body'.
         param_username (str, optional): Username for accessing the repository. Defaults to None.
         param_password (str, optional): Password for accessing the repository. Defaults to None.
         param_sshPrivateKey (str, optional): Private key data for accessing SSH repository. Defaults to None.
@@ -48,13 +50,13 @@ async def repository_service__validate_access(
         param_tlsClientCertKey (str, optional): TLS client certificate key for accessing HTTPS repository. Defaults to None.
         param_type (str, optional): The type of the repository. Defaults to None.
         param_name (str, optional): The name of the repository. Defaults to None.
-        param_enableOci (str, optional): Whether Helm-OCI support should be enabled for this repository. Defaults to None.
+        param_enableOci (str, optional): Whether helm-oci support should be enabled for this repository. Defaults to None.
         param_githubAppPrivateKey (str, optional): GitHub App Private Key PEM data. Defaults to None.
-        param_githubAppID (str, optional): GitHub App ID used to access the repository. Defaults to None.
+        param_githubAppID (str, optional): GitHub App ID of the app used to access the repository. Defaults to None.
         param_githubAppInstallationID (str, optional): GitHub App Installation ID of the installed GitHub App. Defaults to None.
-        param_githubAppEnterpriseBaseUrl (str, optional): GitHub App Enterprise base URL. Defaults to https://api.github.com if empty. Defaults to None.
+        param_githubAppEnterpriseBaseUrl (str, optional): GitHub App Enterprise base URL. Defaults to None.
         param_proxy (str, optional): HTTP/HTTPS proxy to access the repository. Defaults to None.
-        param_project (str, optional): Reference between project and repository for automatic addition as an item inside SourceRepos project entity. Defaults to None.
+        param_project (str, optional): Reference between project and repository for automatic addition to SourceRepos project entity. Defaults to None.
         param_gcpServiceAccountKey (str, optional): Google Cloud Platform service account key. Defaults to None.
         param_forceHttpBasicAuth (str, optional): Whether to force HTTP basic authentication. Defaults to None.
         param_useAzureWorkloadIdentity (str, optional): Whether to use Azure workload identity for authentication. Defaults to None.

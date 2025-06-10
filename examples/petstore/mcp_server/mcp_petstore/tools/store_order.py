@@ -21,33 +21,23 @@ async def place_order(
     body_status: str = None,
     body_complete: bool = None,
 ) -> Dict[str, Any]:
-    """
+    '''
     Place an order for a pet.
 
-    OpenAPI Description:
-        Place a new order in the store.
-
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_pet_id (int): OpenAPI parameter corresponding to 'body_pet_id'
-
-        body_quantity (int): OpenAPI parameter corresponding to 'body_quantity'
-
-        body_ship_date (str): OpenAPI parameter corresponding to 'body_ship_date'
-
-        body_status (str): Order Status
-
-        body_complete (bool): OpenAPI parameter corresponding to 'body_complete'
-
+        body_id (int, optional): The unique identifier for the order. Defaults to None.
+        body_pet_id (int, optional): The unique identifier for the pet being ordered. Defaults to None.
+        body_quantity (int, optional): The quantity of the pet to be ordered. Defaults to None.
+        body_ship_date (str, optional): The date when the pet should be shipped. Defaults to None.
+        body_status (str, optional): The status of the order. Defaults to None.
+        body_complete (bool, optional): Indicates whether the order is complete. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing order details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /store/order")
 
     params = {}

@@ -28,7 +28,7 @@ async def application_service__resource_tree(
 
     Args:
         path_applicationName (str): The name of the application for which the resource tree is requested.
-        param_namespace (str, optional): The namespace of the resource. Defaults to None.
+        param_namespace (str, optional): The namespace of the resources. Defaults to None.
         param_name (str, optional): The name of the resource. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
         param_group (str, optional): The group of the resource. Defaults to None.
@@ -37,7 +37,7 @@ async def application_service__resource_tree(
         param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the resource tree.
+        Dict[str, Any]: The JSON response containing the resource tree of the application.
 
     Raises:
         Exception: If the API request fails or returns an error.

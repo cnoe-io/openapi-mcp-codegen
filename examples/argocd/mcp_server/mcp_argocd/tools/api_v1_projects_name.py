@@ -24,7 +24,7 @@ async def project_service__get(path_name: str) -> Dict[str, Any]:
         Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes project details.
 
     Raises:
-        Exception: If the API request fails or an error is returned in the response.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making GET request to /api/v1/projects/{name}")
 

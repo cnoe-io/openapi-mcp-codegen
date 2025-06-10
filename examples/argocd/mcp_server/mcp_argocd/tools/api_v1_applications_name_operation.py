@@ -17,15 +17,15 @@ async def application_service__terminate_operation(
     path_name: str, param_appNamespace: str = None, param_project: str = None
 ) -> Dict[str, Any]:
     '''
-    Terminate the currently running operation for a specified application.
+    TerminateOperation terminates the currently running operation.
 
     Args:
-        path_name (str): The name of the application whose operation is to be terminated.
+        path_name (str): The name of the path for the application operation to be terminated.
         param_appNamespace (str, optional): The namespace of the application. Defaults to None.
         param_project (str, optional): The project associated with the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the termination request.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the termination operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

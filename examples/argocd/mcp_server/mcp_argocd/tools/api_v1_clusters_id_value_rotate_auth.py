@@ -17,14 +17,16 @@ async def cluster_service__rotate_auth(path_id_value: str) -> Dict[str, Any]:
     '''
     Rotate the bearer token used for a cluster.
 
+    This function sends a POST request to the cluster service to rotate the authentication token for the specified cluster. The cluster is identified by either its server URL or name.
+
     Args:
-        path_id_value (str): The cluster server URL or cluster name.
+        path_id_value (str): The identifier for the cluster, which can be either the cluster server URL or the cluster name.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the token rotation operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/clusters/{id.value}/rotate-auth")
 

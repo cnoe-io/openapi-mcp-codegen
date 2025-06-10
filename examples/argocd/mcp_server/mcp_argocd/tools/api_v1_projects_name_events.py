@@ -15,10 +15,10 @@ logger = logging.getLogger("mcp_tools")
 
 async def project_service__list_events(path_name: str) -> Dict[str, Any]:
     '''
-    List events for a specified project.
+    ListEvents returns a list of project events.
 
     Args:
-        path_name (str): The name of the project for which to list events.
+        path_name (str): The name of the project path for which events are to be listed.
 
     Returns:
         Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes the list of project events.

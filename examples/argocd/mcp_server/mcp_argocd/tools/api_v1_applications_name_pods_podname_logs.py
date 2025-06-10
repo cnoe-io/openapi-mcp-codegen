@@ -49,12 +49,12 @@ async def application_service__pod_logs(
         param_untilTime (str, optional): The time until which logs should be fetched. Defaults to None.
         param_filter (str, optional): Filter criteria for the logs. Defaults to None.
         param_kind (str, optional): The kind of resource. Defaults to None.
-        param_group (str, optional): The API group of the resource. Defaults to None.
+        param_group (str, optional): The group of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource. Defaults to None.
-        param_previous (str, optional): Whether to fetch logs from the previous instance of the container. Defaults to None.
+        param_previous (str, optional): Whether to fetch logs from the previous instance of the pod. Defaults to None.
         param_appNamespace (str, optional): The namespace of the application. Defaults to None.
         param_project (str, optional): The project associated with the application. Defaults to None.
-        param_matchCase (str, optional): Whether to match case in filter criteria. Defaults to None.
+        param_matchCase (str, optional): Whether to match case in the filter criteria. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the log entries.

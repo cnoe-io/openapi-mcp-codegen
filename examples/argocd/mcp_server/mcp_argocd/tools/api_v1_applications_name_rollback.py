@@ -13,15 +13,29 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def application_service__rollback(path_name: str) -> Dict[str, Any]:
+async def application_service__rollback(
+    path_name: str,
+    body_app_namespace: str = None,
+    body_dry_run: bool = None,
+    body_id: int = None,
+    body_name: str = None,
+    body_project: str = None,
+    body_prune: bool = None,
+) -> Dict[str, Any]:
     '''
     Rollback syncs an application to its target state.
 
     Args:
-        path_name (str): The name of the application path to rollback.
+        path_name (str): The name of the path for the application rollback.
+        body_app_namespace (str, optional): The namespace of the application. Defaults to None.
+        body_dry_run (bool, optional): If true, performs a dry run of the rollback. Defaults to None.
+        body_id (int, optional): The ID of the application. Defaults to None.
+        body_name (str, optional): The name of the application. Defaults to None.
+        body_project (str, optional): The project associated with the application. Defaults to None.
+        body_prune (bool, optional): If true, prunes resources during rollback. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the rollback operation.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -30,6 +44,19 @@ async def application_service__rollback(path_name: str) -> Dict[str, Any]:
 
     params = {}
     data = {}
+
+    if body_app_namespace:
+        data["app_namespace"] = body_app_namespace
+    if body_dry_run:
+        data["dry_run"] = body_dry_run
+    if body_id:
+        data["id"] = body_id
+    if body_name:
+        data["name"] = body_name
+    if body_project:
+        data["project"] = body_project
+    if body_prune:
+        data["prune"] = body_prune
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/rollback", method="POST", params=params, data=data

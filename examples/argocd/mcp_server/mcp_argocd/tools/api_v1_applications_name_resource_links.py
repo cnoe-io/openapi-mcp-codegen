@@ -27,7 +27,7 @@ async def application_service__list_resource_links(
     ListResourceLinks returns the list of all resource deep links.
 
     Args:
-        path_name (str): The name of the application path for which resource links are to be listed.
+        path_name (str): The name of the application path for which resource links are requested.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
@@ -37,7 +37,7 @@ async def application_service__list_resource_links(
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of resource links.
+        Dict[str, Any]: The JSON response from the API call containing the list of resource deep links.
 
     Raises:
         Exception: If the API request fails or returns an error.

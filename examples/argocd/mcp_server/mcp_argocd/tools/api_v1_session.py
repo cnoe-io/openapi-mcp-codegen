@@ -13,29 +13,34 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def session_service__create() -> Dict[str, Any]:
+async def session_service__create(
+    body_password: str = None, body_token: str = None, body_username: str = None
+) -> Dict[str, Any]:
     '''
     Create a new JWT for authentication and set a cookie if using HTTP.
 
-    This function makes an asynchronous POST request to the /api/v1/session endpoint
-    to create a new session. It generates a JWT for authentication purposes and sets
-    a cookie if the request is made over HTTP.
-
     Args:
-        None
+        body_password (str, optional): The password for authentication. Defaults to None.
+        body_token (str, optional): The token for authentication. Defaults to None.
+        body_username (str, optional): The username for authentication. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the JWT
-        and any additional session information.
+        Dict[str, Any]: The JSON response from the API call, containing the JWT and any additional information.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised
-        with the error details.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/session")
 
     params = {}
     data = {}
+
+    if body_password:
+        data["password"] = body_password
+    if body_token:
+        data["token"] = body_token
+    if body_username:
+        data["username"] = body_username
 
     success, response = await make_api_request("/api/v1/session", method="POST", params=params, data=data)
 
@@ -50,18 +55,17 @@ async def session_service__delete() -> Dict[str, Any]:
     Delete an existing JWT cookie if using HTTP.
 
     This function makes an asynchronous DELETE request to the session endpoint
-    to remove the JWT cookie associated with the current session.
+    to remove an existing JWT cookie, if applicable. It is typically used in
+    the context of logging out a user or invalidating a session.
 
     Args:
-        None
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, which may include
         an error message if the request was unsuccessful.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception
-        is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making DELETE request to /api/v1/session")
 

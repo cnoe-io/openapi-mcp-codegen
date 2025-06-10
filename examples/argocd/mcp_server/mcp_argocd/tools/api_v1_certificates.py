@@ -5,7 +5,7 @@
 """Tools for /api/v1/certificates operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
@@ -47,15 +47,27 @@ async def certificate_service__list_certificates(
     return response
 
 
-async def certificate_service__create_certificate(param_upsert: str = None) -> Dict[str, Any]:
+async def certificate_service__create_certificate(
+    body_items: List[str] = None,
+    body_metadata_continue: str = None,
+    body_metadata_remaining_item_count: int = None,
+    body_metadata_resource_version: str = None,
+    body_metadata_self_link: str = None,
+    param_upsert: str = None,
+) -> Dict[str, Any]:
     '''
     Creates repository certificates on the server.
 
     Args:
-        param_upsert (str, optional): Whether to upsert already existing certificates. Defaults to None.
+        body_items (List[str], optional): A list of items representing the certificates to be created. Defaults to None.
+        body_metadata_continue (str, optional): A token indicating that the server has more data available. This value is opaque and can be used to issue another request to retrieve the next set of available objects. Defaults to None.
+        body_metadata_remaining_item_count (int, optional): The number of remaining items that the server can return. Defaults to None.
+        body_metadata_resource_version (str, optional): The version of the resource. Defaults to None.
+        body_metadata_self_link (str, optional): A URL representing the self-link of the resource. Defaults to None.
+        param_upsert (str, optional): A parameter indicating whether to upsert already existing certificates. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created certificate or an error message.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the certificate creation.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -66,6 +78,17 @@ async def certificate_service__create_certificate(param_upsert: str = None) -> D
     data = {}
 
     params["upsert"] = param_upsert
+
+    if body_items:
+        data["items"] = body_items
+    if body_metadata_continue:
+        data["metadata_continue"] = body_metadata_continue
+    if body_metadata_remaining_item_count:
+        data["metadata_remaining_item_count"] = body_metadata_remaining_item_count
+    if body_metadata_resource_version:
+        data["metadata_resource_version"] = body_metadata_resource_version
+    if body_metadata_self_link:
+        data["metadata_self_link"] = body_metadata_self_link
 
     success, response = await make_api_request("/api/v1/certificates", method="POST", params=params, data=data)
 

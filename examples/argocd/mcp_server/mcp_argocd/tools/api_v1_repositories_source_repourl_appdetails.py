@@ -5,7 +5,7 @@
 """Tools for /api/v1/repositories/{source.repoURL}/appdetails operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
@@ -13,23 +13,234 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def repository_service__get_app_details(path_source_repoURL: str) -> Dict[str, Any]:
+async def repository_service__get_app_details(
+    path_source_repoURL: str,
+    body_app_name: str = None,
+    body_app_project: str = None,
+    body_source_chart: str = None,
+    body_source_directory_exclude: str = None,
+    body_source_directory_include: str = None,
+    body_source_directory_jsonnet_ext_vars: List[str] = None,
+    body_source_directory_jsonnet_libs: List[str] = None,
+    body_source_directory_jsonnet_tlas: List[str] = None,
+    body_source_directory_recurse: bool = None,
+    body_source_helm_api_versions: List[str] = None,
+    body_source_helm_file_parameters: List[str] = None,
+    body_source_helm_ignore_missing_value_files: bool = None,
+    body_source_helm_kube_version: str = None,
+    body_source_helm_namespace: str = None,
+    body_source_helm_parameters: List[str] = None,
+    body_source_helm_pass_credentials: bool = None,
+    body_source_helm_release_name: str = None,
+    body_source_helm_skip_crds: bool = None,
+    body_source_helm_skip_schema_validation: bool = None,
+    body_source_helm_skip_tests: bool = None,
+    body_source_helm_value_files: List[str] = None,
+    body_source_helm_values: str = None,
+    body_source_helm_values_object_raw: str = None,
+    body_source_helm_version: str = None,
+    body_source_kustomize_api_versions: List[str] = None,
+    body_source_kustomize_common_annotations: Dict[str, Any] = None,
+    body_source_kustomize_common_annotations_envsubst: bool = None,
+    body_source_kustomize_common_labels: Dict[str, Any] = None,
+    body_source_kustomize_components: List[str] = None,
+    body_source_kustomize_force_common_annotations: bool = None,
+    body_source_kustomize_force_common_labels: bool = None,
+    body_source_kustomize_ignore_missing_components: bool = None,
+    body_source_kustomize_images: List[str] = None,
+    body_source_kustomize_kube_version: str = None,
+    body_source_kustomize_label_include_templates: bool = None,
+    body_source_kustomize_label_without_selector: bool = None,
+    body_source_kustomize_name_prefix: str = None,
+    body_source_kustomize_name_suffix: str = None,
+    body_source_kustomize_namespace: str = None,
+    body_source_kustomize_patches: List[str] = None,
+    body_source_kustomize_replicas: List[str] = None,
+    body_source_kustomize_version: str = None,
+    body_source_name: str = None,
+    body_source_path: str = None,
+    body_source_plugin_env: List[str] = None,
+    body_source_plugin_name: str = None,
+    body_source_plugin_parameters: List[str] = None,
+    body_source_ref: str = None,
+    body_source_repo_url: str = None,
+    body_source_target_revision: str = None,
+    body_source_index: int = None,
+    body_version_id: int = None,
+) -> Dict[str, Any]:
     '''
-    Get application details from a repository URL.
+    Get application details by the given repository path.
 
     Args:
-        path_source_repoURL (str): The URL to the repository (Git or Helm) that contains the application manifests.
+        path_source_repoURL (str): The URL to the repository (Git or Helm) containing the application manifests.
+        body_app_name (str, optional): The name of the application. Defaults to None.
+        body_app_project (str, optional): The project associated with the application. Defaults to None.
+        body_source_chart (str, optional): The Helm chart name, required for applications sourced from a Helm repo. Defaults to None.
+        body_source_directory_exclude (str, optional): Directories to exclude from the source. Defaults to None.
+        body_source_directory_include (str, optional): Directories to include from the source. Defaults to None.
+        body_source_directory_jsonnet_ext_vars (List[str], optional): External variables for Jsonnet. Defaults to None.
+        body_source_directory_jsonnet_libs (List[str], optional): Libraries for Jsonnet. Defaults to None.
+        body_source_directory_jsonnet_tlas (List[str], optional): Top-level arguments for Jsonnet. Defaults to None.
+        body_source_directory_recurse (bool, optional): Whether to recurse into directories. Defaults to None.
+        body_source_helm_api_versions (List[str], optional): Kubernetes resource API versions for Helm templating. Defaults to None.
+        body_source_helm_file_parameters (List[str], optional): File parameters for Helm. Defaults to None.
+        body_source_helm_ignore_missing_value_files (bool, optional): Ignore missing value files in Helm. Defaults to None.
+        body_source_helm_kube_version (str, optional): Kubernetes API version for Helm templating. Defaults to None.
+        body_source_helm_namespace (str, optional): Namespace for Helm templating. Defaults to None.
+        body_source_helm_parameters (List[str], optional): Parameters for Helm. Defaults to None.
+        body_source_helm_pass_credentials (bool, optional): Pass credentials to Helm. Defaults to None.
+        body_source_helm_release_name (str, optional): Release name for Helm. Defaults to None.
+        body_source_helm_skip_crds (bool, optional): Skip CRDs in Helm. Defaults to None.
+        body_source_helm_skip_schema_validation (bool, optional): Skip schema validation in Helm. Defaults to None.
+        body_source_helm_skip_tests (bool, optional): Skip tests in Helm. Defaults to None.
+        body_source_helm_value_files (List[str], optional): Value files for Helm. Defaults to None.
+        body_source_helm_values (str, optional): Values for Helm. Defaults to None.
+        body_source_helm_values_object_raw (str, optional): Raw serialization of Helm values object. Defaults to None.
+        body_source_helm_version (str, optional): Helm version. Defaults to None.
+        body_source_kustomize_api_versions (List[str], optional): Kubernetes resource API versions for Kustomize. Defaults to None.
+        body_source_kustomize_common_annotations (Dict[str, Any], optional): Common annotations for Kustomize. Defaults to None.
+        body_source_kustomize_common_annotations_envsubst (bool, optional): Environment substitution for common annotations in Kustomize. Defaults to None.
+        body_source_kustomize_common_labels (Dict[str, Any], optional): Common labels for Kustomize. Defaults to None.
+        body_source_kustomize_components (List[str], optional): Components for Kustomize. Defaults to None.
+        body_source_kustomize_force_common_annotations (bool, optional): Force common annotations in Kustomize. Defaults to None.
+        body_source_kustomize_force_common_labels (bool, optional): Force common labels in Kustomize. Defaults to None.
+        body_source_kustomize_ignore_missing_components (bool, optional): Ignore missing components in Kustomize. Defaults to None.
+        body_source_kustomize_images (List[str], optional): Images for Kustomize. Defaults to None.
+        body_source_kustomize_kube_version (str, optional): Kubernetes API version for Kustomize. Defaults to None.
+        body_source_kustomize_label_include_templates (bool, optional): Include templates in label for Kustomize. Defaults to None.
+        body_source_kustomize_label_without_selector (bool, optional): Label without selector for Kustomize. Defaults to None.
+        body_source_kustomize_name_prefix (str, optional): Name prefix for Kustomize. Defaults to None.
+        body_source_kustomize_name_suffix (str, optional): Name suffix for Kustomize. Defaults to None.
+        body_source_kustomize_namespace (str, optional): Namespace for Kustomize. Defaults to None.
+        body_source_kustomize_patches (List[str], optional): Patches for Kustomize. Defaults to None.
+        body_source_kustomize_replicas (List[str], optional): Replicas for Kustomize. Defaults to None.
+        body_source_kustomize_version (str, optional): Kustomize version. Defaults to None.
+        body_source_name (str, optional): Name used to refer to a source, displayed in the UI. Defaults to None.
+        body_source_path (str, optional): Directory path within the Git repository. Defaults to None.
+        body_source_plugin_env (List[str], optional): Environment variables for plugins. Defaults to None.
+        body_source_plugin_name (str, optional): Name of the plugin. Defaults to None.
+        body_source_plugin_parameters (List[str], optional): Parameters for plugins. Defaults to None.
+        body_source_ref (str, optional): Reference to another source within sources field. Defaults to None.
+        body_source_repo_url (str, optional): Repository URL for the source. Defaults to None.
+        body_source_target_revision (str, optional): Revision of the source to sync the application to. Defaults to None.
+        body_source_index (int, optional): Index of the source. Defaults to None.
+        body_version_id (int, optional): Version ID of the application. Defaults to None.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes application details.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making POST request to /api/v1/repositories/{source.repoURL}/appdetails")
 
     params = {}
     data = {}
+
+    if body_app_name:
+        data["app_name"] = body_app_name
+    if body_app_project:
+        data["app_project"] = body_app_project
+    if body_source_chart:
+        data["source_chart"] = body_source_chart
+    if body_source_directory_exclude:
+        data["source_directory_exclude"] = body_source_directory_exclude
+    if body_source_directory_include:
+        data["source_directory_include"] = body_source_directory_include
+    if body_source_directory_jsonnet_ext_vars:
+        data["source_directory_jsonnet_ext_vars"] = body_source_directory_jsonnet_ext_vars
+    if body_source_directory_jsonnet_libs:
+        data["source_directory_jsonnet_libs"] = body_source_directory_jsonnet_libs
+    if body_source_directory_jsonnet_tlas:
+        data["source_directory_jsonnet_tlas"] = body_source_directory_jsonnet_tlas
+    if body_source_directory_recurse:
+        data["source_directory_recurse"] = body_source_directory_recurse
+    if body_source_helm_api_versions:
+        data["source_helm_api_versions"] = body_source_helm_api_versions
+    if body_source_helm_file_parameters:
+        data["source_helm_file_parameters"] = body_source_helm_file_parameters
+    if body_source_helm_ignore_missing_value_files:
+        data["source_helm_ignore_missing_value_files"] = body_source_helm_ignore_missing_value_files
+    if body_source_helm_kube_version:
+        data["source_helm_kube_version"] = body_source_helm_kube_version
+    if body_source_helm_namespace:
+        data["source_helm_namespace"] = body_source_helm_namespace
+    if body_source_helm_parameters:
+        data["source_helm_parameters"] = body_source_helm_parameters
+    if body_source_helm_pass_credentials:
+        data["source_helm_pass_credentials"] = body_source_helm_pass_credentials
+    if body_source_helm_release_name:
+        data["source_helm_release_name"] = body_source_helm_release_name
+    if body_source_helm_skip_crds:
+        data["source_helm_skip_crds"] = body_source_helm_skip_crds
+    if body_source_helm_skip_schema_validation:
+        data["source_helm_skip_schema_validation"] = body_source_helm_skip_schema_validation
+    if body_source_helm_skip_tests:
+        data["source_helm_skip_tests"] = body_source_helm_skip_tests
+    if body_source_helm_value_files:
+        data["source_helm_value_files"] = body_source_helm_value_files
+    if body_source_helm_values:
+        data["source_helm_values"] = body_source_helm_values
+    if body_source_helm_values_object_raw:
+        data["source_helm_values_object_raw"] = body_source_helm_values_object_raw
+    if body_source_helm_version:
+        data["source_helm_version"] = body_source_helm_version
+    if body_source_kustomize_api_versions:
+        data["source_kustomize_api_versions"] = body_source_kustomize_api_versions
+    if body_source_kustomize_common_annotations:
+        data["source_kustomize_common_annotations"] = body_source_kustomize_common_annotations
+    if body_source_kustomize_common_annotations_envsubst:
+        data["source_kustomize_common_annotations_envsubst"] = body_source_kustomize_common_annotations_envsubst
+    if body_source_kustomize_common_labels:
+        data["source_kustomize_common_labels"] = body_source_kustomize_common_labels
+    if body_source_kustomize_components:
+        data["source_kustomize_components"] = body_source_kustomize_components
+    if body_source_kustomize_force_common_annotations:
+        data["source_kustomize_force_common_annotations"] = body_source_kustomize_force_common_annotations
+    if body_source_kustomize_force_common_labels:
+        data["source_kustomize_force_common_labels"] = body_source_kustomize_force_common_labels
+    if body_source_kustomize_ignore_missing_components:
+        data["source_kustomize_ignore_missing_components"] = body_source_kustomize_ignore_missing_components
+    if body_source_kustomize_images:
+        data["source_kustomize_images"] = body_source_kustomize_images
+    if body_source_kustomize_kube_version:
+        data["source_kustomize_kube_version"] = body_source_kustomize_kube_version
+    if body_source_kustomize_label_include_templates:
+        data["source_kustomize_label_include_templates"] = body_source_kustomize_label_include_templates
+    if body_source_kustomize_label_without_selector:
+        data["source_kustomize_label_without_selector"] = body_source_kustomize_label_without_selector
+    if body_source_kustomize_name_prefix:
+        data["source_kustomize_name_prefix"] = body_source_kustomize_name_prefix
+    if body_source_kustomize_name_suffix:
+        data["source_kustomize_name_suffix"] = body_source_kustomize_name_suffix
+    if body_source_kustomize_namespace:
+        data["source_kustomize_namespace"] = body_source_kustomize_namespace
+    if body_source_kustomize_patches:
+        data["source_kustomize_patches"] = body_source_kustomize_patches
+    if body_source_kustomize_replicas:
+        data["source_kustomize_replicas"] = body_source_kustomize_replicas
+    if body_source_kustomize_version:
+        data["source_kustomize_version"] = body_source_kustomize_version
+    if body_source_name:
+        data["source_name"] = body_source_name
+    if body_source_path:
+        data["source_path"] = body_source_path
+    if body_source_plugin_env:
+        data["source_plugin_env"] = body_source_plugin_env
+    if body_source_plugin_name:
+        data["source_plugin_name"] = body_source_plugin_name
+    if body_source_plugin_parameters:
+        data["source_plugin_parameters"] = body_source_plugin_parameters
+    if body_source_ref:
+        data["source_ref"] = body_source_ref
+    if body_source_repo_url:
+        data["source_repo_url"] = body_source_repo_url
+    if body_source_target_revision:
+        data["source_target_revision"] = body_source_target_revision
+    if body_source_index:
+        data["source_index"] = body_source_index
+    if body_version_id:
+        data["version_id"] = body_version_id
 
     success, response = await make_api_request(
         f"/api/v1/repositories/{path_source_repoURL}/appdetails", method="POST", params=params, data=data

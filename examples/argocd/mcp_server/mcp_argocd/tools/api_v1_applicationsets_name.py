@@ -19,10 +19,10 @@ async def application_set_service__get(path_name: str, param_appsetNamespace: st
 
     Args:
         path_name (str): The name of the applicationset.
-        param_appsetNamespace (str, optional): The application set namespace. Defaults to None, which uses the ArgoCD control plane namespace.
+        param_appsetNamespace (str, optional): The application set namespace. Defaults to the ArgoCD control plane namespace if not provided.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing the applicationset details.
 
     Raises:
         Exception: If the API request fails or returns an error.

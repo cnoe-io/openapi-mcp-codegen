@@ -48,12 +48,67 @@ async def repository_service__list_repositories(
 
 
 async def repository_service__create_repository(
-    param_upsert: str = None, param_credsOnly: str = None
+    body_bearer_token: str = None,
+    body_connection_state_attempted_at: str = None,
+    body_connection_state_message: str = None,
+    body_connection_state_status: str = None,
+    body_enable_lfs: bool = None,
+    body_enable_oci: bool = None,
+    body_force_http_basic_auth: bool = None,
+    body_gcp_service_account_key: str = None,
+    body_github_app_enterprise_base_url: str = None,
+    body_github_app_id: int = None,
+    body_github_app_installation_id: int = None,
+    body_github_app_private_key: str = None,
+    body_inherited_creds: bool = None,
+    body_insecure: bool = None,
+    body_insecure_ignore_host_key: bool = None,
+    body_name: str = None,
+    body_no_proxy: str = None,
+    body_password: str = None,
+    body_project: str = None,
+    body_proxy: str = None,
+    body_repo: str = None,
+    body_ssh_private_key: str = None,
+    body_tls_client_cert_data: str = None,
+    body_tls_client_cert_key: str = None,
+    body_type: str = None,
+    body_use_azure_workload_identity: bool = None,
+    body_username: str = None,
+    param_upsert: str = None,
+    param_credsOnly: str = None,
 ) -> Dict[str, Any]:
     '''
     Create a new repository configuration.
 
     Args:
+        body_bearer_token (str, optional): The bearer token for authentication. Defaults to None.
+        body_connection_state_attempted_at (str, optional): Timestamp of the last connection attempt. Defaults to None.
+        body_connection_state_message (str, optional): Message describing the connection state. Defaults to None.
+        body_connection_state_status (str, optional): Status of the connection state. Defaults to None.
+        body_enable_lfs (bool, optional): Whether to enable git-lfs support for the repository. Defaults to None.
+        body_enable_oci (bool, optional): Whether to enable OCI support. Defaults to None.
+        body_force_http_basic_auth (bool, optional): Whether to force HTTP basic authentication. Defaults to None.
+        body_gcp_service_account_key (str, optional): GCP service account key. Defaults to None.
+        body_github_app_enterprise_base_url (str, optional): Base URL for GitHub App Enterprise. Defaults to None.
+        body_github_app_id (int, optional): GitHub App ID. Defaults to None.
+        body_github_app_installation_id (int, optional): GitHub App installation ID. Defaults to None.
+        body_github_app_private_key (str, optional): GitHub App private key. Defaults to None.
+        body_inherited_creds (bool, optional): Whether to inherit credentials. Defaults to None.
+        body_insecure (bool, optional): Whether to allow insecure connections. Defaults to None.
+        body_insecure_ignore_host_key (bool, optional): Whether to ignore host key verification. Defaults to None.
+        body_name (str, optional): Name of the repository. Defaults to None.
+        body_no_proxy (str, optional): No proxy setting. Defaults to None.
+        body_password (str, optional): Password for authentication. Defaults to None.
+        body_project (str, optional): Project associated with the repository. Defaults to None.
+        body_proxy (str, optional): Proxy setting. Defaults to None.
+        body_repo (str, optional): Repository URL. Defaults to None.
+        body_ssh_private_key (str, optional): SSH private key for authentication. Defaults to None.
+        body_tls_client_cert_data (str, optional): TLS client certificate data. Defaults to None.
+        body_tls_client_cert_key (str, optional): TLS client certificate key. Defaults to None.
+        body_type (str, optional): Type of the repository, either "git" or "helm". Defaults to None.
+        body_use_azure_workload_identity (bool, optional): Whether to use Azure workload identity. Defaults to None.
+        body_username (str, optional): Username for authentication. Defaults to None.
         param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
         param_credsOnly (str, optional): Whether to operate on credential set instead of repository. Defaults to None.
 
@@ -70,6 +125,61 @@ async def repository_service__create_repository(
 
     params["upsert"] = param_upsert
     params["credsOnly"] = param_credsOnly
+
+    if body_bearer_token:
+        data["bearer_token"] = body_bearer_token
+    if body_connection_state_attempted_at:
+        data["connection_state_attempted_at"] = body_connection_state_attempted_at
+    if body_connection_state_message:
+        data["connection_state_message"] = body_connection_state_message
+    if body_connection_state_status:
+        data["connection_state_status"] = body_connection_state_status
+    if body_enable_lfs:
+        data["enable_lfs"] = body_enable_lfs
+    if body_enable_oci:
+        data["enable_oci"] = body_enable_oci
+    if body_force_http_basic_auth:
+        data["force_http_basic_auth"] = body_force_http_basic_auth
+    if body_gcp_service_account_key:
+        data["gcp_service_account_key"] = body_gcp_service_account_key
+    if body_github_app_enterprise_base_url:
+        data["github_app_enterprise_base_url"] = body_github_app_enterprise_base_url
+    if body_github_app_id:
+        data["github_app_id"] = body_github_app_id
+    if body_github_app_installation_id:
+        data["github_app_installation_id"] = body_github_app_installation_id
+    if body_github_app_private_key:
+        data["github_app_private_key"] = body_github_app_private_key
+    if body_inherited_creds:
+        data["inherited_creds"] = body_inherited_creds
+    if body_insecure:
+        data["insecure"] = body_insecure
+    if body_insecure_ignore_host_key:
+        data["insecure_ignore_host_key"] = body_insecure_ignore_host_key
+    if body_name:
+        data["name"] = body_name
+    if body_no_proxy:
+        data["no_proxy"] = body_no_proxy
+    if body_password:
+        data["password"] = body_password
+    if body_project:
+        data["project"] = body_project
+    if body_proxy:
+        data["proxy"] = body_proxy
+    if body_repo:
+        data["repo"] = body_repo
+    if body_ssh_private_key:
+        data["ssh_private_key"] = body_ssh_private_key
+    if body_tls_client_cert_data:
+        data["tls_client_cert_data"] = body_tls_client_cert_data
+    if body_tls_client_cert_key:
+        data["tls_client_cert_key"] = body_tls_client_cert_key
+    if body_type:
+        data["type"] = body_type
+    if body_use_azure_workload_identity:
+        data["use_azure_workload_identity"] = body_use_azure_workload_identity
+    if body_username:
+        data["username"] = body_username
 
     success, response = await make_api_request("/api/v1/repositories", method="POST", params=params, data=data)
 

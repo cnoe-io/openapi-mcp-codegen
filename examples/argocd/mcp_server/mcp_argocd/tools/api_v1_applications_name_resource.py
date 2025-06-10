@@ -67,6 +67,7 @@ async def application_service__get_resource(
 
 async def application_service__patch_resource(
     path_name: str,
+    body: str,
     param_namespace: str = None,
     param_resourceName: str = None,
     param_version: str = None,
@@ -80,7 +81,8 @@ async def application_service__patch_resource(
     Patch a single application resource using the specified parameters.
 
     Args:
-        path_name (str): The name of the application path.
+        path_name (str): The name of the application path to patch.
+        body (str): The body content for the patch request.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource to patch. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
@@ -133,7 +135,7 @@ async def application_service__delete_resource(
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    Delete a single application resource.
+    Deletes a single application resource.
 
     Args:
         path_name (str): The name of the application path.
@@ -143,12 +145,12 @@ async def application_service__delete_resource(
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
         param_force (str, optional): Whether to force delete the resource. Defaults to None.
-        param_orphan (str, optional): Whether to orphan the resource. Defaults to None.
+        param_orphan (str, optional): Whether to orphan the resource upon deletion. Defaults to None.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

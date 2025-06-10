@@ -33,7 +33,7 @@ async def application_service__revision_metadata(
         param_versionId (str, optional): Version ID from historical data for multi-source applications. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the meta-data of the specified application revision.
+        Dict[str, Any]: The JSON response from the API call containing the metadata of the specified application revision.
 
     Raises:
         Exception: If the API request fails or returns an error.

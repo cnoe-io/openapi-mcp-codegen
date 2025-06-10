@@ -33,8 +33,8 @@ async def application_service__managed_resources(
         param_version (str, optional): The version of the resource. Defaults to None.
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
-        param_appNamespace (str, optional): The application namespace of the resource. Defaults to None.
-        param_project (str, optional): The project associated with the resource. Defaults to None.
+        param_appNamespace (str, optional): The application namespace. Defaults to None.
+        param_project (str, optional): The project associated with the resources. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of managed resources.

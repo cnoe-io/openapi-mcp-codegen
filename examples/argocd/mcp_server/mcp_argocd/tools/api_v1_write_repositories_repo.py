@@ -25,10 +25,10 @@ async def repository_service__get_write(
         param_appProject (str, optional): The application project associated with the query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the repository information or write credentials.
+        Dict[str, Any]: The JSON response from the API call containing the repository details or write credentials.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error.
     '''
     logger.debug("Making GET request to /api/v1/write-repositories/{repo}")
 

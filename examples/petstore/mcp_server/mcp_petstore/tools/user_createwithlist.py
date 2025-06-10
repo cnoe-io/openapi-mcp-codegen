@@ -14,23 +14,18 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def create_users_with_list_input(body: List[str]) -> Dict[str, Any]:
-    """
-    Creates list of users with given input array.
-
-    OpenAPI Description:
-        Creates list of users with given input array.
+    '''
+    Creates a list of users with the given input array.
 
     Args:
-
-        body (List[str]): OpenAPI parameter corresponding to 'body'
-
+        body (List[str]): A list of user data strings to be processed and created.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes details of the created users or an error message.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+    '''
     logger.debug("Making POST request to /user/createWithList")
 
     params = {}

@@ -41,15 +41,29 @@ async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
     return response
 
 
-async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
+async def gpg_key_service__create(
+    body_fingerprint: str = None,
+    body_key_data: str = None,
+    body_key_id: str = None,
+    body_owner: str = None,
+    body_sub_type: str = None,
+    body_trust: str = None,
+    param_upsert: str = None,
+) -> Dict[str, Any]:
     '''
     Create one or more GPG public keys in the server's configuration.
 
     Args:
+        body_fingerprint (str, optional): The fingerprint of the GPG key. Defaults to None.
+        body_key_data (str, optional): The actual key data of the GPG key. Defaults to None.
+        body_key_id (str, optional): The ID of the GPG key. Defaults to None.
+        body_owner (str, optional): The owner of the GPG key. Defaults to None.
+        body_sub_type (str, optional): The sub-type of the GPG key. Defaults to None.
+        body_trust (str, optional): The trust level of the GPG key. Defaults to None.
         param_upsert (str, optional): Whether to upsert already existing public keys. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -60,6 +74,19 @@ async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
     data = {}
 
     params["upsert"] = param_upsert
+
+    if body_fingerprint:
+        data["fingerprint"] = body_fingerprint
+    if body_key_data:
+        data["key_data"] = body_key_data
+    if body_key_id:
+        data["key_id"] = body_key_id
+    if body_owner:
+        data["owner"] = body_owner
+    if body_sub_type:
+        data["sub_type"] = body_sub_type
+    if body_trust:
+        data["trust"] = body_trust
 
     success, response = await make_api_request("/api/v1/gpgkeys", method="POST", params=params, data=data)
 

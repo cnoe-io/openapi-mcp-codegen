@@ -5,7 +5,7 @@
 """Tools for /api/v1/projects/{project.metadata.name} operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
 # Configure logging
@@ -13,20 +13,79 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def project_service__update(path_project_metadata_name: str) -> Dict[str, Any]:
+async def project_service__update(
+    path_project_metadata_name: str,
+    body_project_metadata_annotations: Dict[str, Any] = None,
+    body_project_metadata_creation_timestamp: str = None,
+    body_project_metadata_deletion_grace_period_seconds: int = None,
+    body_project_metadata_deletion_timestamp: str = None,
+    body_project_metadata_finalizers: List[str] = None,
+    body_project_metadata_generate_name: str = None,
+    body_project_metadata_generation: int = None,
+    body_project_metadata_labels: Dict[str, Any] = None,
+    body_project_metadata_managed_fields: List[str] = None,
+    body_project_metadata_name: str = None,
+    body_project_metadata_namespace: str = None,
+    body_project_metadata_owner_references: List[str] = None,
+    body_project_metadata_resource_version: str = None,
+    body_project_metadata_self_link: str = None,
+    body_project_metadata_uid: str = None,
+    body_project_spec_cluster_resource_blacklist: List[str] = None,
+    body_project_spec_cluster_resource_whitelist: List[str] = None,
+    body_project_spec_description: str = None,
+    body_project_spec_destination_service_accounts: List[str] = None,
+    body_project_spec_destinations: List[str] = None,
+    body_project_spec_namespace_resource_blacklist: List[str] = None,
+    body_project_spec_namespace_resource_whitelist: List[str] = None,
+    body_project_spec_orphaned_resources_ignore: List[str] = None,
+    body_project_spec_orphaned_resources_warn: bool = None,
+    body_project_spec_permit_only_project_scoped_clusters: bool = None,
+    body_project_spec_roles: List[str] = None,
+    body_project_spec_signature_keys: List[str] = None,
+    body_project_spec_source_namespaces: List[str] = None,
+    body_project_spec_source_repos: List[str] = None,
+    body_project_spec_sync_windows: List[str] = None,
+    body_project_status_jwt_tokens_by_role: Dict[str, Any] = None,
+) -> Dict[str, Any]:
     '''
-    Update a project with the specified metadata name.
+    Update a project with the specified metadata and specifications.
 
     Args:
-        path_project_metadata_name (str): The unique name of the project within a namespace.
-            This name is required when creating resources, although some resources may allow
-            a client to request the generation of an appropriate name automatically. The name
-            is primarily intended for creation idempotence and configuration definition.
-            It cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
+        path_project_metadata_name (str): The unique name of the project within a namespace. Required for resource creation. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names.
+        body_project_metadata_annotations (Dict[str, Any], optional): Annotations for the project metadata.
+        body_project_metadata_creation_timestamp (str, optional): The creation timestamp of the project metadata.
+        body_project_metadata_deletion_grace_period_seconds (int, optional): The grace period in seconds before deletion of the project metadata.
+        body_project_metadata_deletion_timestamp (str, optional): The deletion timestamp of the project metadata.
+        body_project_metadata_finalizers (List[str], optional): Finalizers for the project metadata.
+        body_project_metadata_generate_name (str, optional): Prefix used by the server to generate a unique name if the Name field is not provided. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency.
+        body_project_metadata_generation (int, optional): The generation number of the project metadata.
+        body_project_metadata_labels (Dict[str, Any], optional): Labels for the project metadata.
+        body_project_metadata_managed_fields (List[str], optional): Managed fields for internal housekeeping.
+        body_project_metadata_name (str, optional): The name of the project metadata.
+        body_project_metadata_namespace (str, optional): The namespace within which the name must be unique. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces.
+        body_project_metadata_owner_references (List[str], optional): Owner references for the project metadata.
+        body_project_metadata_resource_version (str, optional): The internal version of the object for concurrency control. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency.
+        body_project_metadata_self_link (str, optional): The self-link of the project metadata.
+        body_project_metadata_uid (str, optional): The unique identifier for the project metadata. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids.
+        body_project_spec_cluster_resource_blacklist (List[str], optional): Blacklist of cluster resources for the project specification.
+        body_project_spec_cluster_resource_whitelist (List[str], optional): Whitelist of cluster resources for the project specification.
+        body_project_spec_description (str, optional): Description of the project specification.
+        body_project_spec_destination_service_accounts (List[str], optional): Service accounts to be impersonated for application sync operations.
+        body_project_spec_destinations (List[str], optional): Destinations for the project specification.
+        body_project_spec_namespace_resource_blacklist (List[str], optional): Blacklist of namespace resources for the project specification.
+        body_project_spec_namespace_resource_whitelist (List[str], optional): Whitelist of namespace resources for the project specification.
+        body_project_spec_orphaned_resources_ignore (List[str], optional): Resources to ignore for orphaned resource checks.
+        body_project_spec_orphaned_resources_warn (bool, optional): Flag to warn about orphaned resources.
+        body_project_spec_permit_only_project_scoped_clusters (bool, optional): Flag to permit only project-scoped clusters.
+        body_project_spec_roles (List[str], optional): Roles for the project specification.
+        body_project_spec_signature_keys (List[str], optional): Signature keys for the project specification.
+        body_project_spec_source_namespaces (List[str], optional): Source namespaces for the project specification.
+        body_project_spec_source_repos (List[str], optional): Source repositories for the project specification.
+        body_project_spec_sync_windows (List[str], optional): Sync windows for the project specification.
+        body_project_status_jwt_tokens_by_role (Dict[str, Any], optional): JWT tokens by role for the project status.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated project
-        details or an error message if the update fails.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -35,6 +94,69 @@ async def project_service__update(path_project_metadata_name: str) -> Dict[str, 
 
     params = {}
     data = {}
+
+    if body_project_metadata_annotations:
+        data["project_metadata_annotations"] = body_project_metadata_annotations
+    if body_project_metadata_creation_timestamp:
+        data["project_metadata_creation_timestamp"] = body_project_metadata_creation_timestamp
+    if body_project_metadata_deletion_grace_period_seconds:
+        data["project_metadata_deletion_grace_period_seconds"] = body_project_metadata_deletion_grace_period_seconds
+    if body_project_metadata_deletion_timestamp:
+        data["project_metadata_deletion_timestamp"] = body_project_metadata_deletion_timestamp
+    if body_project_metadata_finalizers:
+        data["project_metadata_finalizers"] = body_project_metadata_finalizers
+    if body_project_metadata_generate_name:
+        data["project_metadata_generate_name"] = body_project_metadata_generate_name
+    if body_project_metadata_generation:
+        data["project_metadata_generation"] = body_project_metadata_generation
+    if body_project_metadata_labels:
+        data["project_metadata_labels"] = body_project_metadata_labels
+    if body_project_metadata_managed_fields:
+        data["project_metadata_managed_fields"] = body_project_metadata_managed_fields
+    if body_project_metadata_name:
+        data["project_metadata_name"] = body_project_metadata_name
+    if body_project_metadata_namespace:
+        data["project_metadata_namespace"] = body_project_metadata_namespace
+    if body_project_metadata_owner_references:
+        data["project_metadata_owner_references"] = body_project_metadata_owner_references
+    if body_project_metadata_resource_version:
+        data["project_metadata_resource_version"] = body_project_metadata_resource_version
+    if body_project_metadata_self_link:
+        data["project_metadata_self_link"] = body_project_metadata_self_link
+    if body_project_metadata_uid:
+        data["project_metadata_uid"] = body_project_metadata_uid
+    if body_project_spec_cluster_resource_blacklist:
+        data["project_spec_cluster_resource_blacklist"] = body_project_spec_cluster_resource_blacklist
+    if body_project_spec_cluster_resource_whitelist:
+        data["project_spec_cluster_resource_whitelist"] = body_project_spec_cluster_resource_whitelist
+    if body_project_spec_description:
+        data["project_spec_description"] = body_project_spec_description
+    if body_project_spec_destination_service_accounts:
+        data["project_spec_destination_service_accounts"] = body_project_spec_destination_service_accounts
+    if body_project_spec_destinations:
+        data["project_spec_destinations"] = body_project_spec_destinations
+    if body_project_spec_namespace_resource_blacklist:
+        data["project_spec_namespace_resource_blacklist"] = body_project_spec_namespace_resource_blacklist
+    if body_project_spec_namespace_resource_whitelist:
+        data["project_spec_namespace_resource_whitelist"] = body_project_spec_namespace_resource_whitelist
+    if body_project_spec_orphaned_resources_ignore:
+        data["project_spec_orphaned_resources_ignore"] = body_project_spec_orphaned_resources_ignore
+    if body_project_spec_orphaned_resources_warn:
+        data["project_spec_orphaned_resources_warn"] = body_project_spec_orphaned_resources_warn
+    if body_project_spec_permit_only_project_scoped_clusters:
+        data["project_spec_permit_only_project_scoped_clusters"] = body_project_spec_permit_only_project_scoped_clusters
+    if body_project_spec_roles:
+        data["project_spec_roles"] = body_project_spec_roles
+    if body_project_spec_signature_keys:
+        data["project_spec_signature_keys"] = body_project_spec_signature_keys
+    if body_project_spec_source_namespaces:
+        data["project_spec_source_namespaces"] = body_project_spec_source_namespaces
+    if body_project_spec_source_repos:
+        data["project_spec_source_repos"] = body_project_spec_source_repos
+    if body_project_spec_sync_windows:
+        data["project_spec_sync_windows"] = body_project_spec_sync_windows
+    if body_project_status_jwt_tokens_by_role:
+        data["project_status_jwt_tokens_by_role"] = body_project_status_jwt_tokens_by_role
 
     success, response = await make_api_request(
         f"/api/v1/projects/{path_project_metadata_name}", method="PUT", params=params, data=data

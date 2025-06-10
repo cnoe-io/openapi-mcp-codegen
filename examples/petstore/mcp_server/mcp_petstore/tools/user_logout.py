@@ -14,21 +14,24 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def logout_user() -> Dict[str, Any]:
-    """
-    Logs out current logged in user session.
+    '''
+    Logs out the current logged-in user session.
 
-    OpenAPI Description:
-        Log user out of the system.
+    This function makes an asynchronous GET request to the '/user/logout' endpoint
+    to log the user out of the system. It handles the API response and returns the
+    result as a JSON object.
 
     Args:
-
+        None
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, which includes
+        information about the success or failure of the logout operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
-    """
+        Exception: If the API request fails or returns an error, an exception is
+        raised with details about the failure.
+    '''
     logger.debug("Making GET request to /user/logout")
 
     params = {}

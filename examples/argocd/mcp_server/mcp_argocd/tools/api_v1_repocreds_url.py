@@ -18,7 +18,7 @@ async def repo_creds_service__delete_repository_credentials(path_url: str) -> Di
     Delete a repository credential set from the configuration.
 
     Args:
-        path_url (str): The URL path parameter specifying the repository credentials to delete.
+        path_url (str): The URL path parameter identifying the repository credentials to delete.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.

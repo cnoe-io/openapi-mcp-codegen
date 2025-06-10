@@ -41,15 +41,53 @@ async def repo_creds_service__list_repository_credentials(param_url: str = None)
     return response
 
 
-async def repo_creds_service__create_repository_credentials(param_upsert: str = None) -> Dict[str, Any]:
+async def repo_creds_service__create_repository_credentials(
+    body_bearer_token: str = None,
+    body_enable_oci: bool = None,
+    body_force_http_basic_auth: bool = None,
+    body_gcp_service_account_key: str = None,
+    body_github_app_enterprise_base_url: str = None,
+    body_github_app_id: int = None,
+    body_github_app_installation_id: int = None,
+    body_github_app_private_key: str = None,
+    body_no_proxy: str = None,
+    body_password: str = None,
+    body_proxy: str = None,
+    body_ssh_private_key: str = None,
+    body_tls_client_cert_data: str = None,
+    body_tls_client_cert_key: str = None,
+    body_type: str = None,
+    body_url: str = None,
+    body_use_azure_workload_identity: bool = None,
+    body_username: str = None,
+    param_upsert: str = None,
+) -> Dict[str, Any]:
     '''
-    Create a new repository credential set.
+    CreateRepositoryCredentials creates a new repository credential set.
 
     Args:
-        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
+        body_bearer_token (str, optional): The bearer token for authentication. Defaults to None.
+        body_enable_oci (bool, optional): Flag to enable OCI support. Defaults to None.
+        body_force_http_basic_auth (bool, optional): Flag to force HTTP basic authentication. Defaults to None.
+        body_gcp_service_account_key (str, optional): The GCP service account key. Defaults to None.
+        body_github_app_enterprise_base_url (str, optional): The base URL for GitHub App Enterprise. Defaults to None.
+        body_github_app_id (int, optional): The GitHub App ID. Defaults to None.
+        body_github_app_installation_id (int, optional): The GitHub App installation ID. Defaults to None.
+        body_github_app_private_key (str, optional): The private key for the GitHub App. Defaults to None.
+        body_no_proxy (str, optional): The no-proxy setting. Defaults to None.
+        body_password (str, optional): The password for authentication. Defaults to None.
+        body_proxy (str, optional): The proxy setting. Defaults to None.
+        body_ssh_private_key (str, optional): The SSH private key. Defaults to None.
+        body_tls_client_cert_data (str, optional): The TLS client certificate data. Defaults to None.
+        body_tls_client_cert_key (str, optional): The TLS client certificate key. Defaults to None.
+        body_type (str, optional): Specifies the type of the repository credentials, either "git" or "helm". Defaults to "git" if empty or absent. Defaults to None.
+        body_url (str, optional): The URL of the repository. Defaults to None.
+        body_use_azure_workload_identity (bool, optional): Flag to use Azure workload identity. Defaults to None.
+        body_username (str, optional): The username for authentication. Defaults to None.
+        param_upsert (str, optional): Specifies whether to create in upsert mode. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the details of the created repository credentials.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -60,6 +98,43 @@ async def repo_creds_service__create_repository_credentials(param_upsert: str = 
     data = {}
 
     params["upsert"] = param_upsert
+
+    if body_bearer_token:
+        data["bearer_token"] = body_bearer_token
+    if body_enable_oci:
+        data["enable_oci"] = body_enable_oci
+    if body_force_http_basic_auth:
+        data["force_http_basic_auth"] = body_force_http_basic_auth
+    if body_gcp_service_account_key:
+        data["gcp_service_account_key"] = body_gcp_service_account_key
+    if body_github_app_enterprise_base_url:
+        data["github_app_enterprise_base_url"] = body_github_app_enterprise_base_url
+    if body_github_app_id:
+        data["github_app_id"] = body_github_app_id
+    if body_github_app_installation_id:
+        data["github_app_installation_id"] = body_github_app_installation_id
+    if body_github_app_private_key:
+        data["github_app_private_key"] = body_github_app_private_key
+    if body_no_proxy:
+        data["no_proxy"] = body_no_proxy
+    if body_password:
+        data["password"] = body_password
+    if body_proxy:
+        data["proxy"] = body_proxy
+    if body_ssh_private_key:
+        data["ssh_private_key"] = body_ssh_private_key
+    if body_tls_client_cert_data:
+        data["tls_client_cert_data"] = body_tls_client_cert_data
+    if body_tls_client_cert_key:
+        data["tls_client_cert_key"] = body_tls_client_cert_key
+    if body_type:
+        data["type"] = body_type
+    if body_url:
+        data["url"] = body_url
+    if body_use_azure_workload_identity:
+        data["use_azure_workload_identity"] = body_use_azure_workload_identity
+    if body_username:
+        data["username"] = body_username
 
     success, response = await make_api_request("/api/v1/repocreds", method="POST", params=params, data=data)
 

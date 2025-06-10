@@ -18,10 +18,10 @@ async def project_service__get_detailed_project(path_name: str) -> Dict[str, Any
     Get a detailed project including project, global project, and scoped resources by name.
 
     Args:
-        path_name (str): The name of the project to retrieve detailed information for.
+        path_name (str): The name of the project to retrieve details for.
 
     Returns:
-        Dict[str, Any]: A dictionary containing the detailed information of the project, including project, global project, and scoped resources.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes details of the project.
 
     Raises:
         Exception: If the API request fails or returns an error.

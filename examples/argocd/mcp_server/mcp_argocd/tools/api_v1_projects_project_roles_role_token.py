@@ -13,16 +13,29 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def project_service__create_token(path_project: str, path_role: str) -> Dict[str, Any]:
+async def project_service__create_token(
+    path_project: str,
+    path_role: str,
+    body_description: str = None,
+    body_expires_in: int = None,
+    body_id: str = None,
+    body_project: str = None,
+    body_role: str = None,
+) -> Dict[str, Any]:
     '''
     Create a new project token.
 
     Args:
-        path_project (str): The project path for which the token is to be created.
-        path_role (str): The role path associated with the project for which the token is to be created.
+        path_project (str): The project identifier in the path for which the token is being created.
+        path_role (str): The role identifier in the path associated with the token.
+        body_description (str, optional): A description for the token. Defaults to None.
+        body_expires_in (int, optional): The expiration time in seconds for the token. Defaults to None.
+        body_id (str, optional): The unique identifier for the token. Defaults to None.
+        body_project (str, optional): The project identifier in the body for which the token is being created. Defaults to None.
+        body_role (str, optional): The role identifier in the body associated with the token. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the token details.
+        Dict[str, Any]: The JSON response from the API call, containing the details of the created token or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.
@@ -31,6 +44,17 @@ async def project_service__create_token(path_project: str, path_role: str) -> Di
 
     params = {}
     data = {}
+
+    if body_description:
+        data["description"] = body_description
+    if body_expires_in:
+        data["expires_in"] = body_expires_in
+    if body_id:
+        data["id"] = body_id
+    if body_project:
+        data["project"] = body_project
+    if body_role:
+        data["role"] = body_role
 
     success, response = await make_api_request(
         f"/api/v1/projects/{path_project}/roles/{path_role}/token", method="POST", params=params, data=data

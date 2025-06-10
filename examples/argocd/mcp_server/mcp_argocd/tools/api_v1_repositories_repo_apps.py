@@ -17,10 +17,10 @@ async def repository_service__list_apps(
     path_repo: str, param_revision: str = None, param_appName: str = None, param_appProject: str = None
 ) -> Dict[str, Any]:
     '''
-    List applications in the specified repository.
+    ListApps returns a list of applications in the specified repository.
 
     Args:
-        path_repo (str): The path to the repository where the applications are located.
+        path_repo (str): The path to the repository where the apps are located.
         param_revision (str, optional): The specific revision of the repository to query. Defaults to None.
         param_appName (str, optional): The name of the application to filter the results. Defaults to None.
         param_appProject (str, optional): The project associated with the application to filter the results. Defaults to None.
