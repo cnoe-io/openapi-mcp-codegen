@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -20,9 +44,9 @@ async def application_service__list_links(
     ListLinks returns the list of all application deep links.
 
     Args:
-        path_name (str): The name of the application path for which to list deep links.
-        param_namespace (str, optional): The namespace parameter for the API request. Defaults to None.
-        param_project (str, optional): The project parameter for the API request. Defaults to None.
+        path_name (str): The name of the application path for which links are to be listed.
+        param_namespace (str, optional): The namespace parameter for filtering links. Defaults to None.
+        param_project (str, optional): The project parameter for filtering links. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call containing the list of application deep links.
@@ -35,8 +59,12 @@ async def application_service__list_links(
     params = {}
     data = {}
 
-    params["namespace"] = param_namespace
-    params["project"] = param_project
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/links", method="GET", params=params, data=data
