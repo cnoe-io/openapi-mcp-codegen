@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import tempfile
@@ -232,3 +231,50 @@ def test_tool_parameter_descriptions(setup_env):
     # has the description "Status values that need to be considered for filter"
     assert "Status values that need to be considered for filter" in content, \
         "Parameter description not found in the function docstring"
+
+def test_query_parameter_without_schema(setup_env):
+    import shutil
+    # Instantiate the generator using the fixture
+    gen = MCPGenerator(**setup_env)
+    # Override the spec with a dummy path containing a query parameter without a schema
+    gen.spec = {
+        "paths": {
+            "/dummy": {
+                "get": {
+                    "operationId": "getDummy",
+                    "parameters": [
+                        {
+                            "name": "example",
+                            "in": "query",
+                            "type": "integer",  # Directly set type without "schema"
+                            "required": True,
+                            "description": "An example query parameter without a schema field."
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Success"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    # Ensure the tools directory is clean for generation
+    tools_dir = os.path.join(gen.src_output_dir, "tools")
+    if os.path.exists(tools_dir):
+        shutil.rmtree(tools_dir)
+    os.makedirs(tools_dir, exist_ok=True)
+    
+    # Generate tool modules based on the dummy spec
+    gen.generate_tool_modules()
+
+    # The module file for the "/dummy" path should be "dummy.py"
+    module_file = os.path.join(tools_dir, "dummy.py")
+    assert os.path.exists(module_file), f"Expected file {module_file} does not exist"
+
+    with open(module_file, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Verify that the query parameter "example" is declared with type "int" as extracted from the parameter object.
+    assert "param_example: int" in content, "Expected query parameter type to be int in the generated function signature"

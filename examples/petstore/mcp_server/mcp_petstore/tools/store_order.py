@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from mcp_petstore.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -15,56 +39,48 @@ logger = logging.getLogger("mcp_tools")
 
 async def place_order(
     body_id: int = None,
-    body_pet_id: int = None,
+    body_petId: int = None,
     body_quantity: int = None,
-    body_ship_date: str = None,
+    body_shipDate: str = None,
     body_status: str = None,
     body_complete: bool = None,
 ) -> Dict[str, Any]:
-    """
+    '''
     Place an order for a pet.
 
-    OpenAPI Description:
-        Place a new order in the store.
-
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_pet_id (int): OpenAPI parameter corresponding to 'body_pet_id'
-
-        body_quantity (int): OpenAPI parameter corresponding to 'body_quantity'
-
-        body_ship_date (str): OpenAPI parameter corresponding to 'body_ship_date'
-
-        body_status (str): Order Status
-
-        body_complete (bool): OpenAPI parameter corresponding to 'body_complete'
-
+        body_id (int, optional): The unique identifier for the order. Defaults to None.
+        body_petId (int, optional): The unique identifier for the pet being ordered. Defaults to None.
+        body_quantity (int, optional): The quantity of the pet to order. Defaults to None.
+        body_shipDate (str, optional): The date when the pet should be shipped. Defaults to None.
+        body_status (str, optional): The status of the order. Defaults to None.
+        body_complete (bool, optional): Indicates whether the order is complete. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing order details or error information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /store/order")
 
     params = {}
     data = {}
 
-    if body_id:
-        data["id"] = body_id
-    if body_pet_id:
-        data["pet_id"] = body_pet_id
-    if body_quantity:
-        data["quantity"] = body_quantity
-    if body_ship_date:
-        data["ship_date"] = body_ship_date
-    if body_status:
-        data["status"] = body_status
-    if body_complete:
-        data["complete"] = body_complete
+    flat_body = {}
+    if body_id is not None:
+        flat_body["id"] = body_id
+    if body_petId is not None:
+        flat_body["petId"] = body_petId
+    if body_quantity is not None:
+        flat_body["quantity"] = body_quantity
+    if body_shipDate is not None:
+        flat_body["shipDate"] = body_shipDate
+    if body_status is not None:
+        flat_body["status"] = body_status
+    if body_complete is not None:
+        flat_body["complete"] = body_complete
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/store/order", method="POST", params=params, data=data)
 

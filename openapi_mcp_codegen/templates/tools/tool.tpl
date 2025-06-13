@@ -10,6 +10,17 @@ from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
 from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request
 
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert a flat dict with underscore‐separated keys into a nested dictionary."""
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split('_')
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -38,12 +49,21 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
 
     params = {}
     data = {}
-    {% for param in func.params %} {%- set param_name = param.split(':')[0] | trim %} {% if param_name.startswith("param_") %}
-    params["{{ param_name[6:] }}"] = {{ param_name }} {% endif %} {% endfor %}
+    {% for param in func.params_info %}
+        {%- if param.name.startswith("param_") %}
+    params["{{ param.name[6:] }}"] = (str({{ param.name }}).lower() if isinstance({{ param.name }}, bool) else {{ param.name }})
+        {%- endif %}
+    {% endfor %}
 
-    {% for param in func.params %} {%- set param_name = param.split(':')[0] | trim %} {% if param_name.startswith("body_") %}
-    if {{ param_name }}:
-      data["{{ param_name[5:] }}"] = {{ param_name }}    {% endif %} {% endfor %}
+    flat_body = {}
+    {%- for param in func.params %}
+        {%- set param_name = param.split(':')[0] | trim %}
+        {%- if param_name.startswith("body_") %}
+    if {{ param_name }} is not None:
+        flat_body["{{ param_name[5:] }}"] = {{ param_name }}
+        {%- endif %}
+    {%- endfor %}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"{{ func.formatted_path }}",

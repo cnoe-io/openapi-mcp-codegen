@@ -8,33 +8,55 @@ import logging
 from typing import Dict, Any
 from mcp_petstore.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
 async def get_pet_by_id(path_petId: int) -> Dict[str, Any]:
-    """
+    '''
     Find pet by ID.
 
-    OpenAPI Description:
-        Returns a single pet.
-
     Args:
-
-        path_petId (int): ID of pet to return
-
+        path_petId (int): ID of the pet to return.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing pet details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /pet/{petId}")
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/pet/{path_petId}", method="GET", params=params, data=data)
 
@@ -45,34 +67,31 @@ async def get_pet_by_id(path_petId: int) -> Dict[str, Any]:
 
 
 async def update_pet_with_form(path_petId: int, param_name: str = None, param_status: str = None) -> Dict[str, Any]:
-    """
+    '''
     Updates a pet in the store with form data.
 
-    OpenAPI Description:
-        Updates a pet resource based on the form data.
-
     Args:
-
-        path_petId (int): ID of pet that needs to be updated
-
-        param_name (str): Name of pet that needs to be updated
-
-        param_status (str): Status of pet that needs to be updated
-
+        path_petId (int): ID of the pet that needs to be updated.
+        param_name (str, optional): Name of the pet that needs to be updated. Defaults to None.
+        param_status (str, optional): Status of the pet that needs to be updated. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /pet/{petId}")
 
     params = {}
     data = {}
 
-    params["name"] = param_name
-    params["status"] = param_status
+    params["name"] = str(param_name).lower() if isinstance(param_name, bool) else param_name
+
+    params["status"] = str(param_status).lower() if isinstance(param_status, bool) else param_status
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/pet/{path_petId}", method="POST", params=params, data=data)
 
@@ -83,27 +102,25 @@ async def update_pet_with_form(path_petId: int, param_name: str = None, param_st
 
 
 async def delete_pet(path_petId: int) -> Dict[str, Any]:
-    """
+    '''
     Deletes a pet.
 
-    OpenAPI Description:
-        Delete a pet.
-
     Args:
-
-        path_petId (int): Pet id to delete
-
+        path_petId (int): Pet id to delete.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /pet/{petId}")
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/pet/{path_petId}", method="DELETE", params=params, data=data)
 

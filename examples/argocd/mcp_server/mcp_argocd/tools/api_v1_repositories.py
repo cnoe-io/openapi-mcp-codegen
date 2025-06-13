@@ -8,24 +8,48 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
 async def repository_service__list_repositories(
-    param_repo: str = None, param_forceRefresh: str = None, param_appProject: str = None
+    param_repo: str = None, param_forceRefresh: bool = False, param_appProject: str = None
 ) -> Dict[str, Any]:
     '''
-    ListRepositories gets a list of all configured repositories.
+    List all configured repositories.
 
     Args:
         param_repo (str, optional): Repo URL for query. Defaults to None.
-        param_forceRefresh (str, optional): Whether to force a cache refresh on repo's connection state. Defaults to None.
+        param_forceRefresh (bool, optional): Whether to force a cache refresh on the repo's connection state. Defaults to False.
         param_appProject (str, optional): App project for query. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of repositories.
+        Dict[str, Any]: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -35,9 +59,16 @@ async def repository_service__list_repositories(
     params = {}
     data = {}
 
-    params["repo"] = param_repo
-    params["forceRefresh"] = param_forceRefresh
-    params["appProject"] = param_appProject
+    params["repo"] = str(param_repo).lower() if isinstance(param_repo, bool) else param_repo
+
+    params["forceRefresh"] = (
+        str(param_forceRefresh).lower() if isinstance(param_forceRefresh, bool) else param_forceRefresh
+    )
+
+    params["appProject"] = str(param_appProject).lower() if isinstance(param_appProject, bool) else param_appProject
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/repositories", method="GET", params=params, data=data)
 
@@ -48,14 +79,69 @@ async def repository_service__list_repositories(
 
 
 async def repository_service__create_repository(
-    param_upsert: str = None, param_credsOnly: str = None
+    body_bearerToken: str = None,
+    body_connectionState_attemptedAt: str = None,
+    body_connectionState_message: str = None,
+    body_connectionState_status: str = None,
+    body_enableLfs: bool = None,
+    body_enableOCI: bool = None,
+    body_forceHttpBasicAuth: bool = None,
+    body_gcpServiceAccountKey: str = None,
+    body_githubAppEnterpriseBaseUrl: str = None,
+    body_githubAppID: int = None,
+    body_githubAppInstallationID: int = None,
+    body_githubAppPrivateKey: str = None,
+    body_inheritedCreds: bool = None,
+    body_insecure: bool = None,
+    body_insecureIgnoreHostKey: bool = None,
+    body_name: str = None,
+    body_noProxy: str = None,
+    body_password: str = None,
+    body_project: str = None,
+    body_proxy: str = None,
+    body_repo: str = None,
+    body_sshPrivateKey: str = None,
+    body_tlsClientCertData: str = None,
+    body_tlsClientCertKey: str = None,
+    body_type: str = None,
+    body_useAzureWorkloadIdentity: bool = None,
+    body_username: str = None,
+    param_upsert: bool = False,
+    param_credsOnly: bool = False,
 ) -> Dict[str, Any]:
     '''
     Create a new repository configuration.
 
     Args:
-        param_upsert (str, optional): Whether to create in upsert mode. Defaults to None.
-        param_credsOnly (str, optional): Whether to operate on credential set instead of repository. Defaults to None.
+        body_bearerToken (str, optional): The bearer token for authentication. Defaults to None.
+        body_connectionState_attemptedAt (str, optional): The timestamp of the last connection attempt. Defaults to None.
+        body_connectionState_message (str, optional): The message related to the connection state. Defaults to None.
+        body_connectionState_status (str, optional): The status of the connection state. Defaults to None.
+        body_enableLfs (bool, optional): Specifies whether git-lfs support should be enabled for this repo. Only valid for Git repositories. Defaults to None.
+        body_enableOCI (bool, optional): Specifies whether OCI support should be enabled. Defaults to None.
+        body_forceHttpBasicAuth (bool, optional): Specifies whether to force HTTP basic authentication. Defaults to None.
+        body_gcpServiceAccountKey (str, optional): The GCP service account key. Defaults to None.
+        body_githubAppEnterpriseBaseUrl (str, optional): The base URL for GitHub App Enterprise. Defaults to None.
+        body_githubAppID (int, optional): The GitHub App ID. Defaults to None.
+        body_githubAppInstallationID (int, optional): The GitHub App Installation ID. Defaults to None.
+        body_githubAppPrivateKey (str, optional): The private key for the GitHub App. Defaults to None.
+        body_inheritedCreds (bool, optional): Specifies whether credentials are inherited. Defaults to None.
+        body_insecure (bool, optional): Specifies whether the connection is insecure. Defaults to None.
+        body_insecureIgnoreHostKey (bool, optional): Specifies whether to ignore the host key in insecure connections. Defaults to None.
+        body_name (str, optional): The name of the repository. Defaults to None.
+        body_noProxy (str, optional): The no-proxy settings. Defaults to None.
+        body_password (str, optional): The password for authentication. Defaults to None.
+        body_project (str, optional): The project associated with the repository. Defaults to None.
+        body_proxy (str, optional): The proxy settings. Defaults to None.
+        body_repo (str, optional): The repository URL. Defaults to None.
+        body_sshPrivateKey (str, optional): The SSH private key for authentication. Only used with Git repositories. Defaults to None.
+        body_tlsClientCertData (str, optional): The TLS client certificate data. Defaults to None.
+        body_tlsClientCertKey (str, optional): The TLS client certificate key. Defaults to None.
+        body_type (str, optional): The type of the repository, either "git" or "helm". Defaults to "git" if empty or absent. Defaults to None.
+        body_useAzureWorkloadIdentity (bool, optional): Specifies whether to use Azure Workload Identity. Defaults to None.
+        body_username (str, optional): The username for authentication. Defaults to None.
+        param_upsert (bool, optional): Whether to create in upsert mode. Defaults to False.
+        param_credsOnly (bool, optional): Whether to operate on credential set instead of repository. Defaults to False.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -68,8 +154,66 @@ async def repository_service__create_repository(
     params = {}
     data = {}
 
-    params["upsert"] = param_upsert
-    params["credsOnly"] = param_credsOnly
+    params["upsert"] = str(param_upsert).lower() if isinstance(param_upsert, bool) else param_upsert
+
+    params["credsOnly"] = str(param_credsOnly).lower() if isinstance(param_credsOnly, bool) else param_credsOnly
+
+    flat_body = {}
+    if body_bearerToken is not None:
+        flat_body["bearerToken"] = body_bearerToken
+    if body_connectionState_attemptedAt is not None:
+        flat_body["connectionState_attemptedAt"] = body_connectionState_attemptedAt
+    if body_connectionState_message is not None:
+        flat_body["connectionState_message"] = body_connectionState_message
+    if body_connectionState_status is not None:
+        flat_body["connectionState_status"] = body_connectionState_status
+    if body_enableLfs is not None:
+        flat_body["enableLfs"] = body_enableLfs
+    if body_enableOCI is not None:
+        flat_body["enableOCI"] = body_enableOCI
+    if body_forceHttpBasicAuth is not None:
+        flat_body["forceHttpBasicAuth"] = body_forceHttpBasicAuth
+    if body_gcpServiceAccountKey is not None:
+        flat_body["gcpServiceAccountKey"] = body_gcpServiceAccountKey
+    if body_githubAppEnterpriseBaseUrl is not None:
+        flat_body["githubAppEnterpriseBaseUrl"] = body_githubAppEnterpriseBaseUrl
+    if body_githubAppID is not None:
+        flat_body["githubAppID"] = body_githubAppID
+    if body_githubAppInstallationID is not None:
+        flat_body["githubAppInstallationID"] = body_githubAppInstallationID
+    if body_githubAppPrivateKey is not None:
+        flat_body["githubAppPrivateKey"] = body_githubAppPrivateKey
+    if body_inheritedCreds is not None:
+        flat_body["inheritedCreds"] = body_inheritedCreds
+    if body_insecure is not None:
+        flat_body["insecure"] = body_insecure
+    if body_insecureIgnoreHostKey is not None:
+        flat_body["insecureIgnoreHostKey"] = body_insecureIgnoreHostKey
+    if body_name is not None:
+        flat_body["name"] = body_name
+    if body_noProxy is not None:
+        flat_body["noProxy"] = body_noProxy
+    if body_password is not None:
+        flat_body["password"] = body_password
+    if body_project is not None:
+        flat_body["project"] = body_project
+    if body_proxy is not None:
+        flat_body["proxy"] = body_proxy
+    if body_repo is not None:
+        flat_body["repo"] = body_repo
+    if body_sshPrivateKey is not None:
+        flat_body["sshPrivateKey"] = body_sshPrivateKey
+    if body_tlsClientCertData is not None:
+        flat_body["tlsClientCertData"] = body_tlsClientCertData
+    if body_tlsClientCertKey is not None:
+        flat_body["tlsClientCertKey"] = body_tlsClientCertKey
+    if body_type is not None:
+        flat_body["type"] = body_type
+    if body_useAzureWorkloadIdentity is not None:
+        flat_body["useAzureWorkloadIdentity"] = body_useAzureWorkloadIdentity
+    if body_username is not None:
+        flat_body["username"] = body_username
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/repositories", method="POST", params=params, data=data)
 

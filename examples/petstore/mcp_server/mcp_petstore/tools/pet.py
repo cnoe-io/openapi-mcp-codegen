@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any, List
 from mcp_petstore.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -15,61 +39,52 @@ logger = logging.getLogger("mcp_tools")
 
 async def update_pet(
     body_name: str,
-    body_photo_urls: List[str],
+    body_photoUrls: List[str],
     body_id: int = None,
     body_category_id: int = None,
     body_category_name: str = None,
     body_tags: List[str] = None,
     body_status: str = None,
 ) -> Dict[str, Any]:
-    """
-    Update an existing pet.
-
-    OpenAPI Description:
-        Update an existing pet by Id.
+    '''
+    Update an existing pet by Id.
 
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_category_id (int): OpenAPI parameter corresponding to 'body_category_id'
-
-        body_category_name (str): OpenAPI parameter corresponding to 'body_category_name'
-
-        body_photo_urls (List[str]): OpenAPI parameter corresponding to 'body_photo_urls'
-
-        body_tags (List[str]): OpenAPI parameter corresponding to 'body_tags'
-
-        body_status (str): pet status in the store
-
+        body_name (str): The name of the pet.
+        body_photoUrls (List[str]): A list of URLs pointing to the pet's photos.
+        body_id (int, optional): The unique identifier of the pet. Defaults to None.
+        body_category_id (int, optional): The unique identifier of the pet's category. Defaults to None.
+        body_category_name (str, optional): The name of the pet's category. Defaults to None.
+        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
+        body_status (str, optional): The status of the pet in the store. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated pet information.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making PUT request to /pet")
 
     params = {}
     data = {}
 
-    if body_name:
-        data["name"] = body_name
-    if body_photo_urls:
-        data["photo_urls"] = body_photo_urls
-    if body_id:
-        data["id"] = body_id
-    if body_category_id:
-        data["category_id"] = body_category_id
-    if body_category_name:
-        data["category_name"] = body_category_name
-    if body_tags:
-        data["tags"] = body_tags
-    if body_status:
-        data["status"] = body_status
+    flat_body = {}
+    if body_name is not None:
+        flat_body["name"] = body_name
+    if body_photoUrls is not None:
+        flat_body["photoUrls"] = body_photoUrls
+    if body_id is not None:
+        flat_body["id"] = body_id
+    if body_category_id is not None:
+        flat_body["category_id"] = body_category_id
+    if body_category_name is not None:
+        flat_body["category_name"] = body_category_name
+    if body_tags is not None:
+        flat_body["tags"] = body_tags
+    if body_status is not None:
+        flat_body["status"] = body_status
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/pet", method="PUT", params=params, data=data)
 
@@ -81,61 +96,52 @@ async def update_pet(
 
 async def add_pet(
     body_name: str,
-    body_photo_urls: List[str],
+    body_photoUrls: List[str],
     body_id: int = None,
     body_category_id: int = None,
     body_category_name: str = None,
     body_tags: List[str] = None,
     body_status: str = None,
 ) -> Dict[str, Any]:
-    """
+    '''
     Add a new pet to the store.
 
-    OpenAPI Description:
-        Add a new pet to the store.
-
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_category_id (int): OpenAPI parameter corresponding to 'body_category_id'
-
-        body_category_name (str): OpenAPI parameter corresponding to 'body_category_name'
-
-        body_photo_urls (List[str]): OpenAPI parameter corresponding to 'body_photo_urls'
-
-        body_tags (List[str]): OpenAPI parameter corresponding to 'body_tags'
-
-        body_status (str): pet status in the store
-
+        body_name (str): The name of the pet.
+        body_photoUrls (List[str]): A list of URLs pointing to photos of the pet.
+        body_id (int, optional): The unique identifier for the pet. Defaults to None.
+        body_category_id (int, optional): The unique identifier for the pet's category. Defaults to None.
+        body_category_name (str, optional): The name of the pet's category. Defaults to None.
+        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
+        body_status (str, optional): The status of the pet in the store. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing details of the added pet.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /pet")
 
     params = {}
     data = {}
 
-    if body_name:
-        data["name"] = body_name
-    if body_photo_urls:
-        data["photo_urls"] = body_photo_urls
-    if body_id:
-        data["id"] = body_id
-    if body_category_id:
-        data["category_id"] = body_category_id
-    if body_category_name:
-        data["category_name"] = body_category_name
-    if body_tags:
-        data["tags"] = body_tags
-    if body_status:
-        data["status"] = body_status
+    flat_body = {}
+    if body_name is not None:
+        flat_body["name"] = body_name
+    if body_photoUrls is not None:
+        flat_body["photoUrls"] = body_photoUrls
+    if body_id is not None:
+        flat_body["id"] = body_id
+    if body_category_id is not None:
+        flat_body["category_id"] = body_category_id
+    if body_category_name is not None:
+        flat_body["category_name"] = body_category_name
+    if body_tags is not None:
+        flat_body["tags"] = body_tags
+    if body_status is not None:
+        flat_body["status"] = body_status
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/pet", method="POST", params=params, data=data)
 

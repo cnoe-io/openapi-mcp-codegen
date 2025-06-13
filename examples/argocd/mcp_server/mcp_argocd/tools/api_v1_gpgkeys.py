@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -31,7 +55,10 @@ async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
     params = {}
     data = {}
 
-    params["keyID"] = param_keyID
+    params["keyID"] = str(param_keyID).lower() if isinstance(param_keyID, bool) else param_keyID
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/gpgkeys", method="GET", params=params, data=data)
 
@@ -41,12 +68,26 @@ async def gpg_key_service__list(param_keyID: str = None) -> Dict[str, Any]:
     return response
 
 
-async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
+async def gpg_key_service__create(
+    body_fingerprint: str = None,
+    body_keyData: str = None,
+    body_keyID: str = None,
+    body_owner: str = None,
+    body_subType: str = None,
+    body_trust: str = None,
+    param_upsert: bool = False,
+) -> Dict[str, Any]:
     '''
     Create one or more GPG public keys in the server's configuration.
 
     Args:
-        param_upsert (str, optional): Whether to upsert already existing public keys. Defaults to None.
+        body_fingerprint (str, optional): The fingerprint of the GPG key. Defaults to None.
+        body_keyData (str, optional): The key data of the GPG key. Defaults to None.
+        body_keyID (str, optional): The ID of the GPG key. Defaults to None.
+        body_owner (str, optional): The owner of the GPG key. Defaults to None.
+        body_subType (str, optional): The subtype of the GPG key. Defaults to None.
+        body_trust (str, optional): The trust level of the GPG key. Defaults to None.
+        param_upsert (bool, optional): Whether to upsert already existing public keys. Defaults to False.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call.
@@ -59,7 +100,22 @@ async def gpg_key_service__create(param_upsert: str = None) -> Dict[str, Any]:
     params = {}
     data = {}
 
-    params["upsert"] = param_upsert
+    params["upsert"] = str(param_upsert).lower() if isinstance(param_upsert, bool) else param_upsert
+
+    flat_body = {}
+    if body_fingerprint is not None:
+        flat_body["fingerprint"] = body_fingerprint
+    if body_keyData is not None:
+        flat_body["keyData"] = body_keyData
+    if body_keyID is not None:
+        flat_body["keyID"] = body_keyID
+    if body_owner is not None:
+        flat_body["owner"] = body_owner
+    if body_subType is not None:
+        flat_body["subType"] = body_subType
+    if body_trust is not None:
+        flat_body["trust"] = body_trust
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/gpgkeys", method="POST", params=params, data=data)
 
@@ -74,20 +130,23 @@ async def gpg_key_service__delete(param_keyID: str = None) -> Dict[str, Any]:
     Delete specified GPG public key from the server's configuration.
 
     Args:
-        param_keyID (str): The GPG key ID to query for.
+        param_keyID (str): The GPG key ID to query for. If the key ID is a boolean, it will be converted to a lowercase string.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the delete operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making DELETE request to /api/v1/gpgkeys")
 
     params = {}
     data = {}
 
-    params["keyID"] = param_keyID
+    params["keyID"] = str(param_keyID).lower() if isinstance(param_keyID, bool) else param_keyID
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/gpgkeys", method="DELETE", params=params, data=data)
 

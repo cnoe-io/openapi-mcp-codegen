@@ -14,9 +14,9 @@ API_URL = os.getenv("PETSTORE_API_URL")
 API_TOKEN = os.getenv("PETSTORE_TOKEN")
 
 if not API_URL:
-    raise ValueError("API_URL environment variable is not set.")
+    raise ValueError("PETSTORE_API_URL environment variable is not set.")
 if not API_TOKEN:
-    raise ValueError("API_TOKEN environment variable is not set.")
+    raise ValueError("PETSTORE_API_TOKEN environment variable is not set.")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)

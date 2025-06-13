@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -37,7 +61,7 @@ async def application_service__get_resource(
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the application resource details.
+        Dict[str, Any]: The JSON response from the API call containing the resource details.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -47,13 +71,26 @@ async def application_service__get_resource(
     params = {}
     data = {}
 
-    params["namespace"] = param_namespace
-    params["resourceName"] = param_resourceName
-    params["version"] = param_version
-    params["group"] = param_group
-    params["kind"] = param_kind
-    params["appNamespace"] = param_appNamespace
-    params["project"] = param_project
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+
+    params["resourceName"] = (
+        str(param_resourceName).lower() if isinstance(param_resourceName, bool) else param_resourceName
+    )
+
+    params["version"] = str(param_version).lower() if isinstance(param_version, bool) else param_version
+
+    params["group"] = str(param_group).lower() if isinstance(param_group, bool) else param_group
+
+    params["kind"] = str(param_kind).lower() if isinstance(param_kind, bool) else param_kind
+
+    params["appNamespace"] = (
+        str(param_appNamespace).lower() if isinstance(param_appNamespace, bool) else param_appNamespace
+    )
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/resource", method="GET", params=params, data=data
@@ -67,6 +104,7 @@ async def application_service__get_resource(
 
 async def application_service__patch_resource(
     path_name: str,
+    body: str,
     param_namespace: str = None,
     param_resourceName: str = None,
     param_version: str = None,
@@ -80,7 +118,8 @@ async def application_service__patch_resource(
     Patch a single application resource using the specified parameters.
 
     Args:
-        path_name (str): The name of the application path.
+        path_name (str): The name of the application resource path.
+        body (str): The body content for the patch request.
         param_namespace (str, optional): The namespace of the resource. Defaults to None.
         param_resourceName (str, optional): The name of the resource to patch. Defaults to None.
         param_version (str, optional): The version of the resource. Defaults to None.
@@ -88,27 +127,41 @@ async def application_service__patch_resource(
         param_kind (str, optional): The kind of the resource. Defaults to None.
         param_patchType (str, optional): The type of patch to apply. Defaults to None.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
-        param_project (str, optional): The project associated with the application. Defaults to None.
+        param_project (str, optional): The project associated with the resource. Defaults to None.
 
     Returns:
         Dict[str, Any]: The JSON response from the API call, containing the result of the patch operation.
 
     Raises:
-        Exception: If the API request fails or returns an error.
+        Exception: If the API request fails or returns an error, an exception is raised with the error details.
     '''
     logger.debug("Making POST request to /api/v1/applications/{name}/resource")
 
     params = {}
     data = {}
 
-    params["namespace"] = param_namespace
-    params["resourceName"] = param_resourceName
-    params["version"] = param_version
-    params["group"] = param_group
-    params["kind"] = param_kind
-    params["patchType"] = param_patchType
-    params["appNamespace"] = param_appNamespace
-    params["project"] = param_project
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+
+    params["resourceName"] = (
+        str(param_resourceName).lower() if isinstance(param_resourceName, bool) else param_resourceName
+    )
+
+    params["version"] = str(param_version).lower() if isinstance(param_version, bool) else param_version
+
+    params["group"] = str(param_group).lower() if isinstance(param_group, bool) else param_group
+
+    params["kind"] = str(param_kind).lower() if isinstance(param_kind, bool) else param_kind
+
+    params["patchType"] = str(param_patchType).lower() if isinstance(param_patchType, bool) else param_patchType
+
+    params["appNamespace"] = (
+        str(param_appNamespace).lower() if isinstance(param_appNamespace, bool) else param_appNamespace
+    )
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/resource", method="POST", params=params, data=data
@@ -127,13 +180,13 @@ async def application_service__delete_resource(
     param_version: str = None,
     param_group: str = None,
     param_kind: str = None,
-    param_force: str = None,
-    param_orphan: str = None,
+    param_force: bool = False,
+    param_orphan: bool = False,
     param_appNamespace: str = None,
     param_project: str = None,
 ) -> Dict[str, Any]:
     '''
-    Delete a single application resource.
+    DeleteResource deletes a single application resource.
 
     Args:
         path_name (str): The name of the application path.
@@ -142,8 +195,8 @@ async def application_service__delete_resource(
         param_version (str, optional): The version of the resource. Defaults to None.
         param_group (str, optional): The group of the resource. Defaults to None.
         param_kind (str, optional): The kind of the resource. Defaults to None.
-        param_force (str, optional): Whether to force delete the resource. Defaults to None.
-        param_orphan (str, optional): Whether to orphan the resource. Defaults to None.
+        param_force (bool, optional): Whether to force delete the resource. Defaults to False.
+        param_orphan (bool, optional): Whether to orphan the resource upon deletion. Defaults to False.
         param_appNamespace (str, optional): The application namespace. Defaults to None.
         param_project (str, optional): The project associated with the resource. Defaults to None.
 
@@ -158,15 +211,30 @@ async def application_service__delete_resource(
     params = {}
     data = {}
 
-    params["namespace"] = param_namespace
-    params["resourceName"] = param_resourceName
-    params["version"] = param_version
-    params["group"] = param_group
-    params["kind"] = param_kind
-    params["force"] = param_force
-    params["orphan"] = param_orphan
-    params["appNamespace"] = param_appNamespace
-    params["project"] = param_project
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+
+    params["resourceName"] = (
+        str(param_resourceName).lower() if isinstance(param_resourceName, bool) else param_resourceName
+    )
+
+    params["version"] = str(param_version).lower() if isinstance(param_version, bool) else param_version
+
+    params["group"] = str(param_group).lower() if isinstance(param_group, bool) else param_group
+
+    params["kind"] = str(param_kind).lower() if isinstance(param_kind, bool) else param_kind
+
+    params["force"] = str(param_force).lower() if isinstance(param_force, bool) else param_force
+
+    params["orphan"] = str(param_orphan).lower() if isinstance(param_orphan, bool) else param_orphan
+
+    params["appNamespace"] = (
+        str(param_appNamespace).lower() if isinstance(param_appNamespace, bool) else param_appNamespace
+    )
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/resource", method="DELETE", params=params, data=data

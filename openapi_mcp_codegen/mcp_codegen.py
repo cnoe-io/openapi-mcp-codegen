@@ -404,7 +404,6 @@ class MCPGenerator:
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     for path, ops in self.spec.get('paths', {}).items():
       logger.debug(f"Ops: {ops}")
-      # path = path.lower()
       module_name = path.strip('/').replace('/', '_').replace('-', '_').replace('.', '_') or "root"
       module_name = module_name.replace("{", "").replace("}", "")
       functions = []
@@ -412,7 +411,8 @@ class MCPGenerator:
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
           continue
         params = []
-        params_infos = []  # <-- NEW: holds parameter details for documentation
+        # Holds parameter details for documentation
+        params_infos = []
         for p in op.get("parameters", []):
           # Resolve parameter reference if the parameter itself is a $ref
           if "$ref" in p:
@@ -438,7 +438,8 @@ class MCPGenerator:
               })
           elif p.get("in") == "query":
               pname = "param_" + p.get("name", "param").replace('.', '_')
-              schema = p.get("schema", {})
+              # If the schema is not defined, use the parameter object itself
+              schema = p.get("schema") or p
               if "$ref" in schema:
                   schema = self._resolve_ref(schema["$ref"])
               ptype = self._get_python_type(schema)
@@ -446,12 +447,21 @@ class MCPGenerator:
               if p.get("required"):
                   params.append(f"{pname}: {ptype}")
               else:
-                  params.append(f"{pname}: {ptype} = None")
+                  if ptype == "bool":
+                      params.append(f"{pname}: {ptype} = False")
+                  else:
+                      params.append(f"{pname}: {ptype} = None")
               params_infos.append({
                   "name": pname,
                   "type": ptype,
                   "description": desc
               })
+          elif p.get("in") == "body":
+              schema = p.get("schema", {})
+              body_params = self._extract_body_params(schema, prefix="body")
+              for sig, info in body_params:
+                  params.append(sig)
+                  params_infos.append(info)
         if "requestBody" in op:
             request_body = op["requestBody"]
             content = request_body.get("content", {})
@@ -655,7 +665,7 @@ class MCPGenerator:
           params_info = []
           for prop_name, prop in schema["properties"].items():
               # Compute a parameter name by appending with underscore
-              param_name = f"{prefix}_{camel_to_snake(prop_name)}"
+              param_name = f"{prefix}_{prop_name}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
@@ -686,6 +696,16 @@ class MCPGenerator:
                       "description": prop.get("description", "")
                   })
           return list(zip(params, params_info))
+      elif schema.get("type") == "array":
+          items = schema.get("items", {})
+          # If the items are objects with properties, set type to a list of dicts.
+          if items.get("type") == "object" and "properties" in items:
+              py_type = "List[Dict[str, Any]]"
+          else:
+              py_type = self._get_python_type(schema)
+          sig = f"{prefix}: {py_type}"
+          info = {"name": prefix, "type": py_type, "description": schema.get("description", "")}
+          return [(sig, info)]
       else:
           if "$ref" in schema:
               schema = self._resolve_ref(schema["$ref"])

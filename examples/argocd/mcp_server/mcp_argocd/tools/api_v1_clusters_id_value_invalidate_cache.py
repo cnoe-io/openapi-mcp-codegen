@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -15,15 +39,13 @@ logger = logging.getLogger("mcp_tools")
 
 async def cluster_service__invalidate_cache(path_id_value: str) -> Dict[str, Any]:
     '''
-    InvalidateCache invalidates the cluster cache.
-
-    This function sends a POST request to the specified cluster server URL or cluster name to invalidate its cache. It is used to ensure that the cluster's cache is refreshed and up-to-date.
+    Invalidate the cache for a specified cluster.
 
     Args:
-        path_id_value (str): The cluster server URL or cluster name that identifies the cluster whose cache needs to be invalidated.
+        path_id_value (str): The identifier for the cluster, which can be either the cluster server URL or the cluster name.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, which includes the status of the cache invalidation request.
+        Dict[str, Any]: The JSON response from the API call, containing the result of the cache invalidation operation.
 
     Raises:
         Exception: If the API request fails or returns an error, an exception is raised with the error details.
@@ -32,6 +54,9 @@ async def cluster_service__invalidate_cache(path_id_value: str) -> Dict[str, Any
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/clusters/{path_id_value}/invalidate-cache", method="POST", params=params, data=data

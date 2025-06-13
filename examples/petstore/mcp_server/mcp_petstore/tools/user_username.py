@@ -8,33 +8,55 @@ import logging
 from typing import Dict, Any
 from mcp_petstore.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
 async def get_user_by_name(path_username: str) -> Dict[str, Any]:
-    """
-    Get user by user name.
-
-    OpenAPI Description:
-        Get user detail based on username.
+    '''
+    Get user details based on the username.
 
     Args:
-
-        path_username (str): The name that needs to be fetched. Use user1 for testing
-
+        path_username (str): The username to be fetched. Use 'user1' for testing.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing user details.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making GET request to /user/{username}")
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/user/{path_username}", method="GET", params=params, data=data)
 
@@ -48,67 +70,58 @@ async def update_user(
     path_username: str,
     body_id: int = None,
     body_username: str = None,
-    body_first_name: str = None,
-    body_last_name: str = None,
+    body_firstName: str = None,
+    body_lastName: str = None,
     body_email: str = None,
     body_password: str = None,
     body_phone: str = None,
-    body_user_status: int = None,
+    body_userStatus: int = None,
 ) -> Dict[str, Any]:
-    """
+    '''
     Update user resource.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This function updates the user information for the specified username. It can only be executed by the logged-in user. The function makes a PUT request to the API endpoint to update the user details.
 
     Args:
-
-        path_username (str): name that need to be deleted
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_username (str): OpenAPI parameter corresponding to 'body_username'
-
-        body_first_name (str): OpenAPI parameter corresponding to 'body_first_name'
-
-        body_last_name (str): OpenAPI parameter corresponding to 'body_last_name'
-
-        body_email (str): OpenAPI parameter corresponding to 'body_email'
-
-        body_password (str): OpenAPI parameter corresponding to 'body_password'
-
-        body_phone (str): OpenAPI parameter corresponding to 'body_phone'
-
-        body_user_status (int): User Status
-
+        path_username (str): The username of the user to be updated.
+        body_id (int, optional): The ID of the user. Defaults to None.
+        body_username (str, optional): The new username for the user. Defaults to None.
+        body_firstName (str, optional): The first name of the user. Defaults to None.
+        body_lastName (str, optional): The last name of the user. Defaults to None.
+        body_email (str, optional): The email address of the user. Defaults to None.
+        body_password (str, optional): The password for the user account. Defaults to None.
+        body_phone (str, optional): The phone number of the user. Defaults to None.
+        body_userStatus (int, optional): The status of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing the updated user information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making PUT request to /user/{username}")
 
     params = {}
     data = {}
 
-    if body_id:
-        data["id"] = body_id
-    if body_username:
-        data["username"] = body_username
-    if body_first_name:
-        data["first_name"] = body_first_name
-    if body_last_name:
-        data["last_name"] = body_last_name
-    if body_email:
-        data["email"] = body_email
-    if body_password:
-        data["password"] = body_password
-    if body_phone:
-        data["phone"] = body_phone
-    if body_user_status:
-        data["user_status"] = body_user_status
+    flat_body = {}
+    if body_id is not None:
+        flat_body["id"] = body_id
+    if body_username is not None:
+        flat_body["username"] = body_username
+    if body_firstName is not None:
+        flat_body["firstName"] = body_firstName
+    if body_lastName is not None:
+        flat_body["lastName"] = body_lastName
+    if body_email is not None:
+        flat_body["email"] = body_email
+    if body_password is not None:
+        flat_body["password"] = body_password
+    if body_phone is not None:
+        flat_body["phone"] = body_phone
+    if body_userStatus is not None:
+        flat_body["userStatus"] = body_userStatus
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/user/{path_username}", method="PUT", params=params, data=data)
 
@@ -119,27 +132,27 @@ async def update_user(
 
 
 async def delete_user(path_username: str) -> Dict[str, Any]:
-    """
-    Delete user resource.
+    '''
+    Delete a user resource.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This function allows the logged-in user to delete a specified user resource by username.
 
     Args:
-
-        path_username (str): The name that needs to be deleted
-
+        path_username (str): The username of the user to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making DELETE request to /user/{username}")
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/user/{path_username}", method="DELETE", params=params, data=data)
 

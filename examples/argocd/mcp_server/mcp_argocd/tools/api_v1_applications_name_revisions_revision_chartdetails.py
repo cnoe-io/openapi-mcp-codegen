@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -18,8 +42,8 @@ async def application_service__revision_chart_details(
     path_revision: str,
     param_appNamespace: str = None,
     param_project: str = None,
-    param_sourceIndex: str = None,
-    param_versionId: str = None,
+    param_sourceIndex: int = None,
+    param_versionId: int = None,
 ) -> Dict[str, Any]:
     '''
     Get the chart metadata (description, maintainers, home) for a specific revision of the application.
@@ -29,11 +53,11 @@ async def application_service__revision_chart_details(
         path_revision (str): The revision of the application.
         param_appNamespace (str, optional): The application's namespace. Defaults to None.
         param_project (str, optional): OpenAPI parameter corresponding to 'param_project'. Defaults to None.
-        param_sourceIndex (str, optional): Source index for multi-source applications. Defaults to None.
-        param_versionId (str, optional): Version ID from historical data for multi-source applications. Defaults to None.
+        param_sourceIndex (int, optional): Source index for multi-source applications. Defaults to None.
+        param_versionId (int, optional): Version ID from historical data for multi-source applications. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing chart metadata.
+        Dict[str, Any]: The JSON response from the API call containing the chart metadata.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -43,10 +67,18 @@ async def application_service__revision_chart_details(
     params = {}
     data = {}
 
-    params["appNamespace"] = param_appNamespace
-    params["project"] = param_project
-    params["sourceIndex"] = param_sourceIndex
-    params["versionId"] = param_versionId
+    params["appNamespace"] = (
+        str(param_appNamespace).lower() if isinstance(param_appNamespace, bool) else param_appNamespace
+    )
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    params["sourceIndex"] = str(param_sourceIndex).lower() if isinstance(param_sourceIndex, bool) else param_sourceIndex
+
+    params["versionId"] = str(param_versionId).lower() if isinstance(param_versionId, bool) else param_versionId
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         f"/api/v1/applications/{path_name}/revisions/{path_revision}/chartdetails",

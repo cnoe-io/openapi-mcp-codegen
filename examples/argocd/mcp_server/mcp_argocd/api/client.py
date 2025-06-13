@@ -14,9 +14,9 @@ API_URL = os.getenv("ARGOCD_API_URL")
 API_TOKEN = os.getenv("ARGOCD_TOKEN")
 
 if not API_URL:
-    raise ValueError("API_URL environment variable is not set.")
+    raise ValueError("ARGOCD_API_URL environment variable is not set.")
 if not API_TOKEN:
-    raise ValueError("API_TOKEN environment variable is not set.")
+    raise ValueError("ARGOCD_API_TOKEN environment variable is not set.")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -59,7 +59,11 @@ async def make_api_request(
         )
 
     try:
-        headers_dict = {"Authorization": "Bearer f{token}", "Accept": "application/json"}
+        headers_dict = {
+            "Authorization": "Bearer {token}",
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
         headers = {key: value.format(token=token) for key, value in headers_dict.items()}
 
         logger.debug("Request headers prepared (Authorization header masked)")
