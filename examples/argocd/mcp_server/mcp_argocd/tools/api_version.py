@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested structure.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -15,21 +39,29 @@ logger = logging.getLogger("mcp_tools")
 
 async def version_service__version() -> Dict[str, Any]:
     '''
-    Version returns version information of the API server.
+    Fetches version information of the API server.
+
+    This function makes an asynchronous GET request to the API server's version endpoint
+    to retrieve version details.
 
     Args:
-        None
 
     Returns:
-        Dict[str, Any]: A dictionary containing the JSON response from the API call, which includes version information of the API server.
+        Dict[str, Any]: A dictionary containing the JSON response from the API call, which
+        includes version information of the server. If the request fails, the dictionary
+        will contain an "error" key with the error message.
 
     Raises:
-        Exception: If the API request fails or returns an error, an exception is raised with the error details.
+        Exception: If the API request fails or returns an error, an exception is raised
+        with the error details.
     '''
     logger.debug("Making GET request to /api/version")
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/version", method="GET", params=params, data=data)
 

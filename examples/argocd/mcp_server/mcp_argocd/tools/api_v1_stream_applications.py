@@ -5,8 +5,32 @@
 """Tools for /api/v1/stream/applications operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
+
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -16,12 +40,12 @@ logger = logging.getLogger("mcp_tools")
 async def application_service__watch(
     param_name: str = None,
     param_refresh: str = None,
-    param_projects: str = None,
+    param_projects: List[str] = None,
     param_resourceVersion: str = None,
     param_selector: str = None,
     param_repo: str = None,
     param_appNamespace: str = None,
-    param_project: str = None,
+    param_project: List[str] = None,
 ) -> Dict[str, Any]:
     '''
     Watch returns a stream of application change events.
@@ -29,15 +53,15 @@ async def application_service__watch(
     Args:
         param_name (str, optional): The application's name. Defaults to None.
         param_refresh (str, optional): Forces application reconciliation if set to 'hard'. Defaults to None.
-        param_projects (str, optional): The project names to restrict returned list applications. Defaults to None.
+        param_projects (List[str], optional): The project names to restrict the returned list of applications. Defaults to None.
         param_resourceVersion (str, optional): When specified with a watch call, shows changes that occur after that particular version of a resource. Defaults to None.
-        param_selector (str, optional): The selector to restrict returned list to applications only with matched labels. Defaults to None.
-        param_repo (str, optional): The repoURL to restrict returned list applications. Defaults to None.
+        param_selector (str, optional): The selector to restrict the returned list to applications only with matched labels. Defaults to None.
+        param_repo (str, optional): The repoURL to restrict the returned list of applications. Defaults to None.
         param_appNamespace (str, optional): The application's namespace. Defaults to None.
-        param_project (str, optional): The project names to restrict returned list applications (legacy name for backwards-compatibility). Defaults to None.
+        param_project (List[str], optional): The project names to restrict the returned list of applications (legacy name for backwards-compatibility). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call containing application change events.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -47,14 +71,28 @@ async def application_service__watch(
     params = {}
     data = {}
 
-    params["name"] = param_name
-    params["refresh"] = param_refresh
-    params["projects"] = param_projects
-    params["resourceVersion"] = param_resourceVersion
-    params["selector"] = param_selector
-    params["repo"] = param_repo
-    params["appNamespace"] = param_appNamespace
-    params["project"] = param_project
+    params["name"] = str(param_name).lower() if isinstance(param_name, bool) else param_name
+
+    params["refresh"] = str(param_refresh).lower() if isinstance(param_refresh, bool) else param_refresh
+
+    params["projects"] = str(param_projects).lower() if isinstance(param_projects, bool) else param_projects
+
+    params["resourceVersion"] = (
+        str(param_resourceVersion).lower() if isinstance(param_resourceVersion, bool) else param_resourceVersion
+    )
+
+    params["selector"] = str(param_selector).lower() if isinstance(param_selector, bool) else param_selector
+
+    params["repo"] = str(param_repo).lower() if isinstance(param_repo, bool) else param_repo
+
+    params["appNamespace"] = (
+        str(param_appNamespace).lower() if isinstance(param_appNamespace, bool) else param_appNamespace
+    )
+
+    params["project"] = str(param_project).lower() if isinstance(param_project, bool) else param_project
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/stream/applications", method="GET", params=params, data=data)
 

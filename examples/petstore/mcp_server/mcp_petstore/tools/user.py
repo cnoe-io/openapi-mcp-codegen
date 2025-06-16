@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from mcp_petstore.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -16,65 +40,57 @@ logger = logging.getLogger("mcp_tools")
 async def create_user(
     body_id: int = None,
     body_username: str = None,
-    body_first_name: str = None,
-    body_last_name: str = None,
+    body_firstName: str = None,
+    body_lastName: str = None,
     body_email: str = None,
     body_password: str = None,
     body_phone: str = None,
-    body_user_status: int = None,
+    body_userStatus: int = None,
 ) -> Dict[str, Any]:
-    """
-    Create user.
+    '''
+    Create a new user in the system.
 
-    OpenAPI Description:
-        This can only be done by the logged in user.
+    This operation can only be performed by a user who is currently logged in.
 
     Args:
-
-        body_id (int): OpenAPI parameter corresponding to 'body_id'
-
-        body_username (str): OpenAPI parameter corresponding to 'body_username'
-
-        body_first_name (str): OpenAPI parameter corresponding to 'body_first_name'
-
-        body_last_name (str): OpenAPI parameter corresponding to 'body_last_name'
-
-        body_email (str): OpenAPI parameter corresponding to 'body_email'
-
-        body_password (str): OpenAPI parameter corresponding to 'body_password'
-
-        body_phone (str): OpenAPI parameter corresponding to 'body_phone'
-
-        body_user_status (int): User Status
-
+        body_id (int, optional): The unique identifier for the user. Defaults to None.
+        body_username (str, optional): The username for the user. Defaults to None.
+        body_firstName (str, optional): The first name of the user. Defaults to None.
+        body_lastName (str, optional): The last name of the user. Defaults to None.
+        body_email (str, optional): The email address of the user. Defaults to None.
+        body_password (str, optional): The password for the user account. Defaults to None.
+        body_phone (str, optional): The phone number of the user. Defaults to None.
+        body_userStatus (int, optional): The status of the user. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Dict[str, Any]: The JSON response from the API call, containing details of the created user or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
-    """
+    '''
     logger.debug("Making POST request to /user")
 
     params = {}
     data = {}
 
-    if body_id:
-        data["id"] = body_id
-    if body_username:
-        data["username"] = body_username
-    if body_first_name:
-        data["first_name"] = body_first_name
-    if body_last_name:
-        data["last_name"] = body_last_name
-    if body_email:
-        data["email"] = body_email
-    if body_password:
-        data["password"] = body_password
-    if body_phone:
-        data["phone"] = body_phone
-    if body_user_status:
-        data["user_status"] = body_user_status
+    flat_body = {}
+    if body_id is not None:
+        flat_body["id"] = body_id
+    if body_username is not None:
+        flat_body["username"] = body_username
+    if body_firstName is not None:
+        flat_body["firstName"] = body_firstName
+    if body_lastName is not None:
+        flat_body["lastName"] = body_lastName
+    if body_email is not None:
+        flat_body["email"] = body_email
+    if body_password is not None:
+        flat_body["password"] = body_password
+    if body_phone is not None:
+        flat_body["phone"] = body_phone
+    if body_userStatus is not None:
+        flat_body["userStatus"] = body_userStatus
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/user", method="POST", params=params, data=data)
 

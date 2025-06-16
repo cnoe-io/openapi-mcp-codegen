@@ -8,6 +8,30 @@ import logging
 from typing import Dict, Any
 from agent_argocd.protocol_bindings.mcp_server.mcp_argocd.api.client import make_api_request
 
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
+
+    Args:
+        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
+
+    Returns:
+        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
+
+    Raises:
+        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
+    '''
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
+
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
@@ -15,10 +39,11 @@ logger = logging.getLogger("mcp_tools")
 
 async def notification_service__list_triggers() -> Dict[str, Any]:
     '''
-    List triggers for the notification service.
+    List triggers from the notification service.
 
     This function makes an asynchronous GET request to the notification service API
-    to retrieve a list of triggers. It returns the JSON response from the API call.
+    to retrieve a list of triggers. It returns the JSON response containing the
+    triggers data.
 
     Args:
         None
@@ -33,6 +58,9 @@ async def notification_service__list_triggers() -> Dict[str, Any]:
 
     params = {}
     data = {}
+
+    flat_body = {}
+    data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
         "/api/v1/notifications/triggers", method="GET", params=params, data=data

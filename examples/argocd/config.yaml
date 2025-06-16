@@ -7,8 +7,9 @@ license: Apache-2.0
 mcp_server_base_package: "agent_argocd.protocol_bindings.mcp_server."
 python_version: 3.13.2
 headers:
-  Authorization: Bearer f{token}
+  Authorization: Bearer {token}
   Accept: application/json
+  Content-Type: application/json
 poetry_dependencies: |
   python = ">=3.13,<4.0"
   httpx = ">=0.24.0"
