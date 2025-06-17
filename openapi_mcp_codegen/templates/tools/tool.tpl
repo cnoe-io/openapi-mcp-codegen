@@ -8,18 +8,7 @@
 import logging
 from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
-from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    """Convert a flat dict with underscore‐separated keys into a nested dictionary."""
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split('_')
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
+from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,7 +40,8 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
     data = {}
     {% for param in func.params_info %}
         {%- if param.name.startswith("param_") %}
-    params["{{ param.name[6:] }}"] = (str({{ param.name }}).lower() if isinstance({{ param.name }}, bool) else {{ param.name }})
+    if {{ param.name }} is not None:
+        params["{{ param.name[6:] }}"] = (str({{ param.name }}).lower() if isinstance({{ param.name }}, bool) else {{ param.name }})
         {%- endif %}
     {% endfor %}
 
