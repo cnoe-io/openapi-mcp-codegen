@@ -7,7 +7,7 @@ authors = [
   { name = "{{ author }}", email = "{{ email }}" }
 ]
 readme = "README.md"
-requires-python = ">={{ python_version }}"
+requires-python = ">={{ python_version }},<4.0"
 
 [tool.poetry.scripts]
 mcp_argocd = "mcp_{{ mcp_name }}.server:main"
