@@ -74,6 +74,11 @@ generate-argocd: setup-venv install
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
 
+generate-splunk: setup-venv install
+	@echo "Generating code for Splunk example..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/splunk/SPL-openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm
+
 # This rule allows passing arguments to the run target
 %:
 	@:

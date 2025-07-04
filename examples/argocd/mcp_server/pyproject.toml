@@ -7,7 +7,6 @@ authors = [
   { name = "Sri Aradhyula", email = "sraradhy@cisco.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.12,<4.0"
 
 [tool.poetry.scripts]
 mcp_argocd = "mcp_argocd.server:main"
