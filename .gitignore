@@ -182,3 +182,5 @@ generated/
 # MacOS
 .DS_Store
 .aider*
+
+examples/argocd/mcp_server

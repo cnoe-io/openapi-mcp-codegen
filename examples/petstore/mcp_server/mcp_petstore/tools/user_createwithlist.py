@@ -6,31 +6,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_petstore.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_petstore.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -42,10 +18,10 @@ async def create_users_with_list_input(body: List[str]) -> Dict[str, Any]:
     Creates a list of users with the given input array.
 
     Args:
-        body (List[str]): A list of user data strings to be used for creating users.
+        body (List[str]): A list of user data to be created.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the user creation process.
+        Dict[str, Any]: The JSON response from the API call containing the result of the user creation operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

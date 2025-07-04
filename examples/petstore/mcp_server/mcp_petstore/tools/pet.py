@@ -6,31 +6,7 @@
 
 import logging
 from typing import Dict, Any, List
-from mcp_petstore.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_petstore.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,15 +27,15 @@ async def update_pet(
 
     Args:
         body_name (str): The name of the pet.
-        body_photoUrls (List[str]): A list of URLs pointing to the pet's photos.
+        body_photoUrls (List[str]): List of photo URLs associated with the pet.
         body_id (int, optional): The unique identifier of the pet. Defaults to None.
         body_category_id (int, optional): The unique identifier of the pet's category. Defaults to None.
         body_category_name (str, optional): The name of the pet's category. Defaults to None.
-        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
+        body_tags (List[str], optional): List of tags associated with the pet. Defaults to None.
         body_status (str, optional): The status of the pet in the store. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated pet information.
+        Dict[str, Any]: The JSON response from the API call containing the updated pet information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -108,15 +84,15 @@ async def add_pet(
 
     Args:
         body_name (str): The name of the pet.
-        body_photoUrls (List[str]): A list of URLs pointing to photos of the pet.
+        body_photoUrls (List[str]): List of photo URLs for the pet.
         body_id (int, optional): The unique identifier for the pet. Defaults to None.
         body_category_id (int, optional): The unique identifier for the pet's category. Defaults to None.
         body_category_name (str, optional): The name of the pet's category. Defaults to None.
-        body_tags (List[str], optional): A list of tags associated with the pet. Defaults to None.
-        body_status (str, optional): The status of the pet in the store. Defaults to None.
+        body_tags (List[str], optional): List of tags associated with the pet. Defaults to None.
+        body_status (str, optional): The status of the pet in the store (e.g., 'available', 'pending', 'sold'). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the added pet.
+        Dict[str, Any]: The JSON response from the API call containing the created pet's details or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

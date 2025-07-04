@@ -6,31 +6,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_petstore.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_petstore.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -48,22 +24,22 @@ async def create_user(
     body_userStatus: int = None,
 ) -> Dict[str, Any]:
     '''
-    Create a new user in the system.
+    Creates a new user in the system.
 
-    This operation can only be performed by a user who is currently logged in.
+    This operation can only be performed by a logged-in user. The function sends a POST request to the '/user' endpoint with the provided user details.
 
     Args:
-        body_id (int, optional): The unique identifier for the user. Defaults to None.
-        body_username (str, optional): The username for the user. Defaults to None.
-        body_firstName (str, optional): The first name of the user. Defaults to None.
-        body_lastName (str, optional): The last name of the user. Defaults to None.
-        body_email (str, optional): The email address of the user. Defaults to None.
-        body_password (str, optional): The password for the user account. Defaults to None.
-        body_phone (str, optional): The phone number of the user. Defaults to None.
-        body_userStatus (int, optional): The status of the user. Defaults to None.
+        body_id (int, optional): Unique identifier for the user. Defaults to None.
+        body_username (str, optional): Username for the new user. Defaults to None.
+        body_firstName (str, optional): First name of the user. Defaults to None.
+        body_lastName (str, optional): Last name of the user. Defaults to None.
+        body_email (str, optional): Email address of the user. Defaults to None.
+        body_password (str, optional): Password for the user account. Defaults to None.
+        body_phone (str, optional): Phone number of the user. Defaults to None.
+        body_userStatus (int, optional): Status code representing the user's status. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing details of the created user or an error message.
+        Dict[str, Any]: The JSON response from the API call, containing the created user information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

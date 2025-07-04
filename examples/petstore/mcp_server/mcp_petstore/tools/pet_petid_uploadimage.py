@@ -6,31 +6,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_petstore.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains keys that cannot be split into valid parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_petstore.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -39,14 +15,14 @@ logger = logging.getLogger("mcp_tools")
 
 async def upload_file(path_petId: int, param_additionalMetadata: str = None) -> Dict[str, Any]:
     '''
-    Uploads an image of the pet.
+    Uploads an image for a specified pet.
 
     Args:
         path_petId (int): ID of the pet to update.
-        param_additionalMetadata (str, optional): Additional metadata for the image upload. Defaults to None.
+        param_additionalMetadata (str, optional): Additional metadata to associate with the image. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the result of the image upload.
+        Dict[str, Any]: The JSON response from the API call containing the result of the upload operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -56,11 +32,12 @@ async def upload_file(path_petId: int, param_additionalMetadata: str = None) -> 
     params = {}
     data = {}
 
-    params["additionalMetadata"] = (
-        str(param_additionalMetadata).lower()
-        if isinstance(param_additionalMetadata, bool)
-        else param_additionalMetadata
-    )
+    if param_additionalMetadata is not None:
+        params["additionalMetadata"] = (
+            str(param_additionalMetadata).lower()
+            if isinstance(param_additionalMetadata, bool)
+            else param_additionalMetadata
+        )
 
     flat_body = {}
     data = assemble_nested_body(flat_body)
