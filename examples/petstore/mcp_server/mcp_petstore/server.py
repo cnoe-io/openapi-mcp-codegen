@@ -51,7 +51,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
 
     # Get MCP configuration from environment variables
-    MCP_MODE = os.getenv("MCP_MODE", "STDIO")
+    MCP_MODE = os.getenv("MCP_MODE", "stdio").lower()
 
     # Get host and port for server
     MCP_HOST = os.getenv("MCP_HOST", "localhost")

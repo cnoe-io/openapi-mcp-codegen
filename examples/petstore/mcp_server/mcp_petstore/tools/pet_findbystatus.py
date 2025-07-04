@@ -6,31 +6,7 @@
 
 import logging
 from typing import Dict, Any
-from mcp_petstore.api.client import make_api_request
-
-
-def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
-    '''
-    Convert a flat dictionary with underscore-separated keys into a nested dictionary.
-
-    Args:
-        flat_body (Dict[str, Any]): A dictionary where keys are underscore-separated strings representing nested paths.
-
-    Returns:
-        Dict[str, Any]: A nested dictionary constructed from the flat dictionary.
-
-    Raises:
-        ValueError: If the input dictionary contains invalid keys that cannot be split into parts.
-    '''
-    nested = {}
-    for key, value in flat_body.items():
-        parts = key.split("_")
-        d = nested
-        for part in parts[:-1]:
-            d = d.setdefault(part, {})
-        d[parts[-1]] = value
-    return nested
-
+from mcp_petstore.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -41,11 +17,13 @@ async def find_pets_by_status(param_status: str = None) -> Dict[str, Any]:
     '''
     Finds pets by their status.
 
+    Multiple status values can be provided as a comma-separated string.
+
     Args:
-        param_status (str, optional): Status values that need to be considered for filtering. Multiple status values can be provided as comma-separated strings. Defaults to None.
+        param_status (str, optional): Status values to filter pets by (e.g., "available,pending,sold"). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of pets matching the given status.
+        Dict[str, Any]: The JSON response from the API call containing the list of pets matching the provided status values.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -55,7 +33,8 @@ async def find_pets_by_status(param_status: str = None) -> Dict[str, Any]:
     params = {}
     data = {}
 
-    params["status"] = str(param_status).lower() if isinstance(param_status, bool) else param_status
+    if param_status is not None:
+        params["status"] = str(param_status).lower() if isinstance(param_status, bool) else param_status
 
     flat_body = {}
     data = assemble_nested_body(flat_body)

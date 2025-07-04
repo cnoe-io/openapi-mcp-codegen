@@ -16,11 +16,24 @@ API_TOKEN = os.getenv("PETSTORE_TOKEN")
 if not API_URL:
     raise ValueError("PETSTORE_API_URL environment variable is not set.")
 if not API_TOKEN:
-    raise ValueError("PETSTORE_API_TOKEN environment variable is not set.")
+    raise ValueError("PETSTORE_TOKEN environment variable is not set.")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_petstore")
+
+
+
+def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert a flat dict with underscore‐separated keys into a nested dictionary."""
+    nested = {}
+    for key, value in flat_body.items():
+        parts = key.split("_")
+        d = nested
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested
 
 
 async def make_api_request(
