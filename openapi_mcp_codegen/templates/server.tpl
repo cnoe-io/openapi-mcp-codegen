@@ -52,7 +52,7 @@ def main():
 {% endfor %}{% endfor %}
 
     # Run the MCP server
-    mcp.run()
+    mcp.run(transport=MCP_MODE)
 
 if __name__ == "__main__":
     main()

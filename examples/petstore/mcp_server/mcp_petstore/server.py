@@ -134,7 +134,7 @@ def main():
     mcp.tool()(user_username.delete_user)
 
     # Run the MCP server
-    mcp.run()
+    mcp.run(transport=MCP_MODE)
 
 
 if __name__ == "__main__":
