@@ -42,21 +42,27 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 
 ## ⚡ Quick Start with `pipx` (Recommended)
 
-**Optional Enhancements:**  
-Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.  
-To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
-
 ```bash
-pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
+  --output-dir examples/petstore/mcp_server
 ```
 
 ### 📌 Optional: Pin a release tag
 
 ```bash
-pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.2.0 openapi_mcp_codegen \
+pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
+  --spec-file examples/petstore/openapi_petstore.json \
+  --output-dir examples/petstore/mcp_server
+```
+
+### 🤖 Optional: Enhance Docstrings via LLM
+
+Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.  
+To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
+
+```bash
+pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
