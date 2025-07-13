@@ -12,12 +12,6 @@
 
 ---
 
-**Note:**  
-The `--enhance-docstring-with-llm` flag enables generic LLM integration for docstring improvement.  
-Both require proper configuration of your preferred LLM provider. See [Configure LLM Providers](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms) for details.
-
----
-
 Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
 
 This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
@@ -34,6 +28,7 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 - 📋 **Logging** & **error handling** setup
 - ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
 - 📚 **Comprehensive documentation** generation
+- 🤖 **Enhanced Docstrings via LLM** integration
 
 ---
 
