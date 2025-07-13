@@ -12,6 +12,12 @@
 
 ---
 
+**Note:**  
+The `--enhance-docstring-with-llm` flag enables generic LLM integration for docstring improvement.  
+Both require proper configuration of your preferred LLM provider. See [Configure LLM Providers](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms) for details.
+
+---
+
 Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
 
 This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
@@ -33,29 +39,32 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 
 ## 📦 Requirements
 
-- 🐍 Python **3.8+**
-- ⚡ [`uv`](https://github.com/astral-sh/uv) and [`uvx`](https://github.com/astral-sh/uvx) (recommended)
+- 🐍 Python **3.13+**
+- ⚡ [pipx](https://github.com/pipxproject/pipx) (recommended)
 - 🧪 Optional: [Poetry](https://python-poetry.org/) for local development
 
 ---
 
-## ⚡ Quick Start with `uvx` (Recommended)
+## ⚡ Quick Start with `pipx` (Recommended)
 
-No install required — just run the generator directly from GitHub:
+**Optional Enhancements:**  
+Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.  
+To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
 
 ```bash
-uvx https://github.com/cnoe-io/openapi-mcp-codegen.git -- generate \
-  --spec-file examples/openapi_petstore.json \
-  --output-dir examples/mcp_petstore \
-  --enhance-docstring-with-llm-openapi
+pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+  --spec-file examples/petstore/openapi_petstore.json \
+  --output-dir examples/petstore/mcp_server \
+  --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
 ```
 
 ### 📌 Optional: Pin a release tag
 
 ```bash
-uvx https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.2.0 -- generate \
-  --spec-file examples/openapi_petstore.json \
-  --output-dir examples/mcp_petstore
+pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.2.0 openapi_mcp_codegen \
+  --spec-file examples/petstore/openapi_petstore.json \
+  --output-dir examples/petstore/mcp_server \
+  --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
 ```
 
 ---

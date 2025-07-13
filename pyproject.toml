@@ -1,6 +1,11 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [project]
 name = "openapi_mcp_codegen"
 version = "0.1.0"
+requires-python = ">=3.13,<4.0"
 license = "Apache-2.0"
 description = "Utility tool to generate MCP servers from OpenAPI specification"
 authors = [
@@ -14,36 +19,28 @@ maintainers = [
 dependencies = [
     "click>=8.2.0",
     "pyyaml>=6.0.2",
-    "pip (>=25.1.1,<26.0.0)",
-    "jinja2 (>=3.1.6,<4.0.0)",
-    "ruff (>=0.11.10,<0.12.0)",
-    "langchain-openai (>=0.3.18,<0.4.0)",
-    "langchain-anthropic (>=0.3.14,<0.4.0)",
-    "langchain-google-genai (>=2.1.5,<3.0.0)",
-    "langchain[core] (>=0.3.25,<0.4.0)",
-    "langchain-core (>=0.3.62,<0.4.0)",
-    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
-    "fastapi (>=0.115.14,<0.116.0)",
+    "jinja2>=3.1.6,<4.0.0",
+    "ruff>=0.11.10,<0.12.0",
+    "langchain-openai>=0.3.18,<0.4.0",
+    "langchain-anthropic>=0.3.14,<0.4.0",
+    "langchain-google-genai>=2.1.5,<3.0.0",
+    "langchain[core]>=0.3.25,<0.4.0",
+    "langchain-core>=0.3.62,<0.4.0",
+    "cnoe-agent-utils>=0.1.3,<0.2.0",
+    "fastapi>=0.115.14,<0.116.0",
+    "httpx>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
 ]
 
+[project.scripts]
+openapi_mcp_codegen = "openapi_mcp_codegen.__main__:main"
 
-[tool.poetry.dependencies]
-python = ">=3.13,<4.0"
-httpx = "^0.24.0"
-python-dotenv = "^1.0.0"
-pydantic = "^2.0.0"
-pyyaml = "^6.0.1"
+[tool.poetry]
+packages = [
+    { include = "openapi_mcp_codegen" },
+]
+include = ["openapi_mcp_codegen/templates/**/*"]
 
 [tool.poetry.group.dev.dependencies]
 pip = "^25.1.1"
-
-[tool.poetry.scripts]
-openapi_mcp_codegen = "openapi_mcp_codegen.__main__:main"
-
-[tool.uv.sources]
-openapi-mcp-codegen = { workspace = true }
-
-[dependency-groups]
-dev = [
-    "openapi-mcp-codegen",
-]
