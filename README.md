@@ -29,6 +29,9 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 - ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
 - 📚 **Comprehensive documentation** generation
 - 🤖 **Enhanced Docstrings via LLM** integration
+- 🚀 **`--generate-agent` flag** – additionally produces a LangGraph
+  React agent (with A2A server, Makefile, README and .env.example)
+  alongside the generated MCP server.
 
 ---
 
@@ -45,7 +48,8 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 ```bash
 pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server
+  --output-dir examples/petstore/mcp_server \
+  --generate-agent
 ```
 
 ### 📌 Optional: Pin a release tag
@@ -53,7 +57,8 @@ pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main open
 ```bash
 pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server
+  --output-dir examples/petstore/mcp_server \
+  --generate-agent
 ```
 
 ### 🤖 Optional: Enhance Docstrings via LLM
@@ -65,6 +70,7 @@ To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-
 pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
+  --generate-agent \
   --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
 ```
 
@@ -89,19 +95,19 @@ poetry install
 
 ### 3. **Run the generator:**
 
-- The generator will create code in a new directory called `mcp_<server-name>` or the directory you specify.
+- The generator will create code in a new directory called `mcp_<server-name>` in the directory you specify.
 - Follow the setup instructions printed by the generator.
 
 **Option 1:**
 
 ```bash
-make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
 ```
 
 **Option 2:**
 
 ```bash
-poetry run generate --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+poetry run openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
 ```
 
 ---
@@ -127,6 +133,26 @@ mcp_petstore/
 ├── poetry.lock
 ├── pyproject.toml
 └── README.md
+```
+
+### 🛠 Working with the generated agent
+
+When you run the generator with `--generate-agent`, the output directory
+also contains:
+
+* `agent.py` – LangGraph wrapper  
+* `protocol_bindings/a2a_server/` – runnable A2A server  
+* `Makefile`, `README.md`, `.env.example`
+
+Example:
+
+```bash
+cd examples/petstore/mcp_server
+cp .env.example .env         # add {{ MCP_NAME | upper }}_API_URL & TOKEN
+make run-a2a                 # start the A2A server
+
+# In another terminal:
+make run-a2a-client          # docker chat client
 ```
 
 ---

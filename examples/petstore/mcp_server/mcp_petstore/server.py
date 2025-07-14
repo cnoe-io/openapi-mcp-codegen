@@ -44,98 +44,98 @@ from mcp_petstore.tools import user_username
 
 
 def main():
-    # Load environment variables
-    load_dotenv()
+  # Load environment variables
+  load_dotenv()
 
-    # Configure logging
-    logging.basicConfig(level=logging.DEBUG)
+  # Configure logging
+  logging.basicConfig(level=logging.DEBUG)
 
-    # Get MCP configuration from environment variables
-    MCP_MODE = os.getenv("MCP_MODE", "stdio").lower()
+  # Get MCP configuration from environment variables
+  MCP_MODE = os.getenv("MCP_MODE", "stdio").lower()
 
-    # Get host and port for server
-    MCP_HOST = os.getenv("MCP_HOST", "localhost")
-    MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+  # Get host and port for server
+  MCP_HOST = os.getenv("MCP_HOST", "localhost")
+  MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
 
-    logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
+  logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
 
-    # Get agent name from environment variables
-    AGENT_NAME = os.getenv("AGENT_NAME", "PETSTORE Agent")
-    logging.info(f"Agent name: {AGENT_NAME}")
+  # Get agent name from environment variables
+  AGENT_NAME = os.getenv("AGENT_NAME", "PETSTORE Agent")
+  logging.info(f"Agent name: {AGENT_NAME}")
 
-    # Create server instance
-    if MCP_MODE == "SSE":
-        mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
-    else:
-        mcp = FastMCP("PETSTORE MCP Server")
+  # Create server instance
+  if MCP_MODE == "SSE":
+    mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+  else:
+    mcp = FastMCP("PETSTORE MCP Server")
 
-    # Register pet tools
+  # Register pet tools
 
-    mcp.tool()(pet.update_pet)
+  mcp.tool()(pet.update_pet)
 
-    mcp.tool()(pet.add_pet)
+  mcp.tool()(pet.add_pet)
 
-    # Register pet_findbystatus tools
+  # Register pet_findbystatus tools
 
-    mcp.tool()(pet_findbystatus.find_pets_by_status)
+  mcp.tool()(pet_findbystatus.find_pets_by_status)
 
-    # Register pet_findbytags tools
+  # Register pet_findbytags tools
 
-    mcp.tool()(pet_findbytags.find_pets_by_tags)
+  mcp.tool()(pet_findbytags.find_pets_by_tags)
 
-    # Register pet_petid tools
+  # Register pet_petid tools
 
-    mcp.tool()(pet_petid.get_pet_by_id)
+  mcp.tool()(pet_petid.get_pet_by_id)
 
-    mcp.tool()(pet_petid.update_pet_with_form)
+  mcp.tool()(pet_petid.update_pet_with_form)
 
-    mcp.tool()(pet_petid.delete_pet)
+  mcp.tool()(pet_petid.delete_pet)
 
-    # Register pet_petid_uploadimage tools
+  # Register pet_petid_uploadimage tools
 
-    mcp.tool()(pet_petid_uploadimage.upload_file)
+  mcp.tool()(pet_petid_uploadimage.upload_file)
 
-    # Register store_inventory tools
+  # Register store_inventory tools
 
-    mcp.tool()(store_inventory.get_inventory)
+  mcp.tool()(store_inventory.get_inventory)
 
-    # Register store_order tools
+  # Register store_order tools
 
-    mcp.tool()(store_order.place_order)
+  mcp.tool()(store_order.place_order)
 
-    # Register store_order_orderid tools
+  # Register store_order_orderid tools
 
-    mcp.tool()(store_order_orderid.get_order_by_id)
+  mcp.tool()(store_order_orderid.get_order_by_id)
 
-    mcp.tool()(store_order_orderid.delete_order)
+  mcp.tool()(store_order_orderid.delete_order)
 
-    # Register user tools
+  # Register user tools
 
-    mcp.tool()(user.create_user)
+  mcp.tool()(user.create_user)
 
-    # Register user_createwithlist tools
+  # Register user_createwithlist tools
 
-    mcp.tool()(user_createwithlist.create_users_with_list_input)
+  mcp.tool()(user_createwithlist.create_users_with_list_input)
 
-    # Register user_login tools
+  # Register user_login tools
 
-    mcp.tool()(user_login.login_user)
+  mcp.tool()(user_login.login_user)
 
-    # Register user_logout tools
+  # Register user_logout tools
 
-    mcp.tool()(user_logout.logout_user)
+  mcp.tool()(user_logout.logout_user)
 
-    # Register user_username tools
+  # Register user_username tools
 
-    mcp.tool()(user_username.get_user_by_name)
+  mcp.tool()(user_username.get_user_by_name)
 
-    mcp.tool()(user_username.update_user)
+  mcp.tool()(user_username.update_user)
 
-    mcp.tool()(user_username.delete_user)
+  mcp.tool()(user_username.delete_user)
 
-    # Run the MCP server
-    mcp.run(transport=MCP_MODE)
+  # Run the MCP server
+  mcp.run(transport=MCP_MODE)
 
 
 if __name__ == "__main__":
-    main()
+  main()

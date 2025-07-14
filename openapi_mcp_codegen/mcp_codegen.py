@@ -16,6 +16,8 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
 
+from openapi_mcp_codegen.eval_codegen.eval_codegen import generate_eval_suite
+
 def camel_to_snake(name):
     if name.isupper():
         return "_".join(name).lower()
@@ -102,7 +104,9 @@ class MCPGenerator:
       config_path: str,
       dry_run: bool = False,
       enhance_docstring_with_llm: bool = False,
-      enhance_docstring_with_llm_openapi: bool = False):
+      enhance_docstring_with_llm_openapi: bool = False,
+      generate_eval: bool = False,
+      generate_agent: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -127,6 +131,8 @@ class MCPGenerator:
     self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
+    self.generate_eval = generate_eval
+    self.generate_agent_flag = generate_agent
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -198,7 +204,7 @@ class MCPGenerator:
       "ruff",
       "format",
       "--line-length",
-      "120",
+      "140",
       input_file
       ],
       check=True,
@@ -212,7 +218,7 @@ class MCPGenerator:
       "--ignore",
       "E402",
       "--line-length",
-      "120",
+      "140",
       input_file
       ],
       check=True,
@@ -567,6 +573,141 @@ class MCPGenerator:
       **file_header_kwargs)
     self.run_ruff_lint(os.path.join(self.src_output_dir, 'server.py'))
 
+  def generate_agent(self):
+      logger.info("Generating agent wrapper")
+      agent_dir = self.output_dir            # render directly into target dir
+      logger.debug(f"Agent directory (output dir): {agent_dir}")
+      os.makedirs(agent_dir, exist_ok=True)
+
+      from pathlib import Path  # add at top of file if not already imported
+      abs_uri = Path(self.output_dir).resolve().as_uri()              # absolute file URI of MCP project
+
+      file_header_kwargs = self.get_file_header_kwargs()
+
+      logger.info("Rendering agent/agent.py template")
+      self.render_template(
+          "agent/agent.tpl",
+          os.path.join(agent_dir, "agent.py"),
+          mcp_name=self.mcp_name,
+          **file_header_kwargs,
+      )
+
+      # Render Makefile into the agent root
+      logger.info("Rendering agent/Makefile")
+      self.render_template(
+          "agent/Makefile.tpl",
+          os.path.join(agent_dir, "Makefile"),
+          mcp_name=self.mcp_name,
+          **file_header_kwargs,
+      )
+
+      # Render README.md so Hatchling's readme field resolves
+      logger.info("Rendering agent/README.md")
+      self.render_template(
+          "agent/README.tpl",
+          os.path.join(agent_dir, "README.md"),
+          mcp_name=self.mcp_name,
+          **file_header_kwargs,
+      )
+
+      # Render .env.example for the agent
+      logger.info("Rendering agent/.env.example")
+      self.render_template(
+          "agent/env.tpl",
+          os.path.join(agent_dir, ".env.example"),
+          mcp_name=self.mcp_name,
+          **file_header_kwargs,
+      )
+
+      logger.info("Formatting agent/agent.py with Ruff")
+      self.run_ruff_lint(os.path.join(agent_dir, "agent.py"))
+
+      # ---------------------------------------------------------------- pyproject.toml
+      logger.info("Rendering agent/pyproject.toml")
+      agent_dependencies = self.config.get(
+          "agent_poetry_dependencies",
+          """
+    "a2a-sdk==0.2.8",
+    "httpx==0.28.1",
+    "agentevals>=0.0.7",
+    "agntcy-acp>=1.3.2",
+    "click>=8.2.0",
+    "langchain-anthropic>=0.3.13",
+    "langchain-core>=0.3.60",
+    "langchain-google-genai>=2.1.4",
+    "langchain-mcp-adapters>=0.1.0",
+    "langchain-openai>=0.3.17",
+    "langgraph>=0.4.5",
+    "pytest>=8.3.5",
+    "tabulate>=0.9.0",
+    "uv",
+    "rich (>=14.0.0,<15.0.0)",
+    "sseclient (>=0.0.27,<0.0.28)",
+    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+          """,
+      )
+      combined_dependencies = agent_dependencies
+      self.render_template(
+          "agent/pyproject.tpl",
+          os.path.join(agent_dir, "pyproject.toml"),
+          mcp_name=self.mcp_name,
+          version=self.config.get("version", "0.1.0"),
+          description=self.config.get(
+              "agent_description",
+              f"LangGraph agent for {self.mcp_name} MCP tools",
+          ),
+          author=self.config.get("author", "CNOE Contributors"),
+          email=self.config.get("email", "auto@example.com"),
+          license=self.config.get("license", "Apache-2.0"),
+          poetry_dependencies=combined_dependencies,
+          **file_header_kwargs,
+      )
+
+      # generate A2A server
+      self._generate_a2a_server(agent_dir)
+
+      logger.info("Agent wrapper generation completed")
+
+  # ------------------------------------------------------------------ A2A
+  def _generate_a2a_server(self, agent_dir: str) -> None:
+      logger.info("Generating A2A server scaffolding")
+      a2a_dir = os.path.join(agent_dir, "protocol_bindings", "a2a_server")
+      os.makedirs(a2a_dir, exist_ok=True)
+      logger.debug(f"A2A server directory: {a2a_dir}")
+
+      fh = self.get_file_header_kwargs()
+
+      proto_dir = os.path.join(agent_dir, "protocol_bindings")
+      os.makedirs(proto_dir, exist_ok=True)
+      logger.info("Rendering protocol_bindings/__init__.py")
+      self.render_template("init_empty.tpl", os.path.join(proto_dir, "__init__.py"), **fh)
+      self.run_ruff_lint(os.path.join(proto_dir, "__init__.py"))
+
+      logger.info("Rendering a2a_server/__init__.py")
+      self.render_template("init_empty.tpl", os.path.join(a2a_dir, "__init__.py"), **fh)
+
+      logger.info("Rendering state.py")
+      self.render_template("agent/a2a_server/state.tpl", os.path.join(a2a_dir, "state.py"), **fh)
+
+      logger.info("Rendering helpers.py")
+      self.render_template("agent/a2a_server/helpers.tpl", os.path.join(a2a_dir, "helpers.py"), **fh)
+
+      logger.info("Rendering agent.py")
+      self.render_template("agent/a2a_server/agent.tpl", os.path.join(a2a_dir, "agent.py"), mcp_name=self.mcp_name, **fh)
+
+      logger.info("Rendering agent_executor.py")
+      self.render_template("agent/a2a_server/agent_executor.tpl", os.path.join(a2a_dir, "agent_executor.py"), mcp_name=self.mcp_name, **fh)
+
+      logger.info("Rendering __main__.py")
+      self.render_template("agent/a2a_server/__main__.tpl", os.path.join(a2a_dir, "__main__.py"), mcp_name=self.mcp_name, **fh)
+
+      # Ruff format
+      for file in ["state.py", "helpers.py", "agent.py", "agent_executor.py", "__main__.py"]:
+          logger.debug(f"Formatting {file} with Ruff")
+          self.run_ruff_lint(os.path.join(a2a_dir, file))
+
+      logger.info("A2A server scaffolding generation completed")
+
   def generate_pyproject(self):
     """
     Generate the pyproject.toml file.
@@ -607,7 +748,7 @@ class MCPGenerator:
     Generate the README.md file.
     """
     logger.info("Generating README.md")
-    output_path = os.path.join(self.output_dir, 'README.md')
+    output_path = os.path.join(self.src_output_dir, 'README.md')
     self.render_template(
       'readme.tpl',
       output_path,
@@ -714,6 +855,24 @@ class MCPGenerator:
           info = {"name": prefix, "type": py_type, "description": schema.get("description", "")}
           return [(sig, info)]
 
+  def generate_eval_suite(self):
+    """
+    Create eval/ folder with prompts, trajectories and pytest-based
+    benchmark harness.
+    """
+    logger.info("Generating evaluation suite")
+    # configurable number of synthetic prompts, default 5
+    num_prompts = int(self.config.get("num_eval_prompts", 5))
+    eval_dir = os.path.join(self.output_dir, "eval")
+    os.makedirs(eval_dir, exist_ok=True)
+    generate_eval_suite(
+        spec=self.spec,
+        mcp_name=self.mcp_name,
+        tools_map=self.tools_map,
+        dest_dir=eval_dir,
+        num_prompts=num_prompts,
+    )
+
   def generate(self):
     """
     Generate all components based on the OpenAPI specification and templates.
@@ -724,8 +883,12 @@ class MCPGenerator:
     self.generate_models()
     self.generate_tool_modules()
     self.generate_server()
-    self.generate_init_files()
     self.generate_pyproject()
+    if self.generate_agent_flag:
+        self.generate_agent()
+    self.generate_init_files()
     self.generate_env()
     self.generate_readme()
+    if self.generate_eval:
+        self.generate_eval_suite()
     logger.info("MCP code generation completed")

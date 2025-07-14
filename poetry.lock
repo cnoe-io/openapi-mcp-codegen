@@ -381,14 +381,14 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cnoe-agent-utils"
-version = "0.1.3"
+version = "0.1.4"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.13"
 groups = ["main"]
 files = [
-    {file = "cnoe_agent_utils-0.1.3-py3-none-any.whl", hash = "sha256:f71d1686d5f1b72d39a62e706662c5cdfd2656de78c9d02c0289fb815a9edbed"},
-    {file = "cnoe_agent_utils-0.1.3.tar.gz", hash = "sha256:d7916bbd8b2362582afb6118ea36f0d8833fd908731be410a33f5af2c34e5403"},
+    {file = "cnoe_agent_utils-0.1.4-py3-none-any.whl", hash = "sha256:6894588c4509084904ff447fdd6c03f1fa6e76a28dd058e85be3d798b766fc15"},
+    {file = "cnoe_agent_utils-0.1.4.tar.gz", hash = "sha256:4d3ccbaaf0eeb5c116478dbb3a139f42145a86707887d784061ec1ca15f7943e"},
 ]
 
 [package.dependencies]
@@ -2831,4 +2831,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4.0"
-content-hash = "7d432fd18fe3bf505ba87efb5a74e09d2715a491c2ac7c30b5adf60b51538b59"
+content-hash = "e098529f85c10b426e9b28521e5aa4771946bd9d8fdd05ecf89e41ea9217908b"
