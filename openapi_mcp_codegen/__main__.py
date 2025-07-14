@@ -50,6 +50,18 @@ def get_mcp_name(spec_path):
     help="Set logging level.",
   )
 @click.option(
+    "--generate-eval",
+    is_flag=True,
+    default=False,
+    help="Generate an evaluation suite for the produced MCP server",
+)
+@click.option(
+    "--generate-agent",
+    is_flag=True,
+    default=False,
+    help="Generate a LangGraph React-agent wrapper that uses the produced MCP server.",
+)
+@click.option(
   "--dry-run",
   is_flag=True,
   default=False,
@@ -70,9 +82,13 @@ def get_mcp_name(spec_path):
 def main(
    log_level,
    spec_file,
-   output_dir,dry_run,
+   output_dir,
+   dry_run,
    enhance_docstring_with_llm,
-   enhance_docstring_with_llm_openapi):
+   enhance_docstring_with_llm_openapi,
+   generate_eval,
+   generate_agent,
+):
   # Load environment variables from .env file if present
   env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
   if os.path.exists(env_path):
@@ -104,6 +120,8 @@ def main(
       dry_run=dry_run,
       enhance_docstring_with_llm=enhance_docstring_with_llm,
       enhance_docstring_with_llm_openapi=enhance_docstring_with_llm_openapi,
+      generate_eval=generate_eval,
+      generate_agent=generate_agent,
   )
   generator.generate()
 

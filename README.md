@@ -89,19 +89,19 @@ poetry install
 
 ### 3. **Run the generator:**
 
-- The generator will create code in a new directory called `mcp_<server-name>` or the directory you specify.
+- The generator will create code in a new directory called `mcp_<server-name>` in the directory you specify.
 - Follow the setup instructions printed by the generator.
 
 **Option 1:**
 
 ```bash
-make generate -- --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
 ```
 
 **Option 2:**
 
 ```bash
-poetry run generate --spec-file examples/openapi_petstore.json --output-dir examples/mcp_petstore
+poetry run openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
 ```
 
 ---
