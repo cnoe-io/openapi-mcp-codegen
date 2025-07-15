@@ -611,6 +611,7 @@ class MCPGenerator:
     "pytest>=8.3.5",
     "agentevals>=0.0.7",
     "openevals>=0.0.6",
+    "langsmith>=0.3.32",
     "tabulate>=0.9.0",
       """
 

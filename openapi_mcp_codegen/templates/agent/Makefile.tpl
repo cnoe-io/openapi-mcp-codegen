@@ -16,7 +16,7 @@ reset:
 
 {% if generate_eval %}
 .PHONY: eval
-eval:  ## run eval suite
+eval:  ## run evaluation script
 	uv pip install -e . --upgrade
-	uv run pytest -q
+	uv run python eval/evaluate_agent.py
 {% endif %}

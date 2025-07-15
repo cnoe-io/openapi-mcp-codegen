@@ -165,6 +165,15 @@ def generate_eval_suite(
     )
     flat_iter = iter(ref_pairs)
 
+    tool_names = [
+        _camel_to_snake(
+            spec["paths"][path][method].get("operationId") or f"{method}_{path.strip('/')}"
+        )
+        for (path, method, _), variants in zip(meta, all_variants)
+    ]
+    outs_list = []
+    trajs_list = []
+    all_variants_out = []
     for (path, method, _), prompt_variants in zip(meta, all_variants):
         tool_name = _camel_to_snake(
             spec["paths"][path][method].get("operationId") or f"{method}_{path.strip('/')}"
@@ -175,36 +184,33 @@ def generate_eval_suite(
             args_json, answer = next(flat_iter)
             trajs.append(_mk_trajectory(variant, tool_name, args_json, answer))
             outs.append(answer)
-        cases.append(
-            {"input": prompt_variants, "output": outs, "trajectories": trajs}
-        )
+        outs_list.append(outs)
+        trajs_list.append(trajs)
+        all_variants_out.append(prompt_variants)
 
-    with open(os.path.join(dest_dir, "generated_prompts.json"), "w", encoding="utf-8") as fp:
-        json.dump(cases, fp, indent=2, ensure_ascii=False)
+    # 2. create YAML dataset and driver -------------------------------------------
+    yaml_cases = []
+    for idx, (tool_name, prompt_variants, outs, trajs) in enumerate( zip(tool_names, all_variants_out, outs_list, trajs_list) ):
+        for j, (p, ans, tr) in enumerate(zip(prompt_variants, outs, trajs)):
+            yaml_cases.append({
+                "id": f"tc_{idx}_{j}",
+                "prompt": p,
+                "answer": ans,
+                "simple_traj": ";".join([n["agent"] for n in tr]),  # __start__;reference_agent;...
+            })
 
-    # 2. create __init__.py marker -------------------------------------------------
-    with open(os.path.join(dest_dir, "__init__.py"), "w", encoding="utf-8") as fp:
-        fp.write("")
-
-    # 3. generate pytest harness ---------------------------------------------------
     from jinja2 import Environment, FileSystemLoader
     from pathlib import Path
 
-    tmpl_env = Environment(
-        loader=FileSystemLoader(
-            str(
-                Path(__file__).resolve().parent.parent
-                / "templates"
-                / "agent"
-                / "eval"
-            )
-        )
-    )
-    harness_code = tmpl_env.get_template("test_agent_eval.tpl").render()
-    # write the test one level above `eval/` (same dir as agent.py)
-    harness_path = os.path.join(os.path.dirname(dest_dir), "test_agent_eval.py")
-    with open(harness_path, "w", encoding="utf-8") as fp:
-        fp.write(harness_code)
+    env = Environment(loader=FileSystemLoader(str(Path(__file__).resolve().parent.parent / "templates" / "agent" / "eval")))
+    with open(os.path.join(dest_dir, "dataset.yaml"), "w", encoding="utf-8") as fp:
+        fp.write(env.get_template("dataset.tpl").render(tests=yaml_cases))
+    with open(os.path.join(dest_dir, "evaluate_agent.py"), "w", encoding="utf-8") as fp:
+        fp.write(env.get_template("evaluate_agent.tpl").render(mcp_name=mcp_name))
+
+    # 3. create __init__.py marker -------------------------------------------------
+    with open(os.path.join(dest_dir, "__init__.py"), "w", encoding="utf-8") as fp:
+        fp.write("")
 
     # 4. tell the generator we are done
     print(f"✅   Evaluation suite written to: {dest_dir}")
