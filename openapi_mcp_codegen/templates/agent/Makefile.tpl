@@ -13,3 +13,10 @@ run-a2a-client:
 # Convenience: clean Python cache/dist artefacts
 reset:
 	find . -type d \( -name '__pycache__' -o -name '*.egg-info' \) -print0 | xargs -0 rm -rf
+
+{% if generate_eval %}
+.PHONY: eval
+eval:  ## run eval suite
+	uv pip install -e . --upgrade
+	uv run pytest -q
+{% endif %}

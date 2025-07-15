@@ -27,3 +27,13 @@ See `Makefile` for useful targets.
    ```
 
 Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools!
+
+{% if generate_eval %}
+## 📊 Evaluation
+
+Run the automated suite:
+
+```bash
+make eval
+```
+{% endif %}

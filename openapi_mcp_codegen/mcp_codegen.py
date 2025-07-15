@@ -204,7 +204,7 @@ class MCPGenerator:
       "ruff",
       "format",
       "--line-length",
-      "140",
+      "200",
       input_file
       ],
       check=True,
@@ -218,7 +218,7 @@ class MCPGenerator:
       "--ignore",
       "E402",
       "--line-length",
-      "140",
+      "200",
       input_file
       ],
       check=True,
@@ -579,16 +579,50 @@ class MCPGenerator:
       logger.debug(f"Agent directory (output dir): {agent_dir}")
       os.makedirs(agent_dir, exist_ok=True)
 
+      server_pkg = os.path.basename(self.src_output_dir)  # e.g. "mcp_komodor"
+
       from pathlib import Path  # add at top of file if not already imported
       abs_uri = Path(self.output_dir).resolve().as_uri()              # absolute file URI of MCP project
 
       file_header_kwargs = self.get_file_header_kwargs()
 
+      # Pass the generate_eval flag to all agent-level templates
+      generate_eval = self.generate_eval
+
+      # Build two dependency blocks and concatenate conditionally
+      base_deps = """
+    "a2a-sdk==0.2.8",
+    "httpx==0.28.1",
+    "agntcy-acp>=1.3.2",
+    "click>=8.2.0",
+    "langchain-anthropic>=0.3.13",
+    "langchain-core>=0.3.60",
+    "langchain-google-genai>=2.1.4",
+    "langchain-mcp-adapters<0.1.0",
+    "langchain-openai>=0.3.17",
+    "langgraph>=0.4.5",
+    "uv",
+    "rich (>=14.0.0,<15.0.0)",
+    "sseclient (>=0.0.27,<0.0.28)",
+    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+      """
+
+      eval_deps = """
+    "pytest>=8.3.5",
+    "agentevals>=0.0.7",
+    "openevals>=0.0.6",
+    "tabulate>=0.9.0",
+      """
+
+      agent_dependencies = base_deps + (eval_deps if self.generate_eval else "")
+
       logger.info("Rendering agent/agent.py template")
       self.render_template(
           "agent/agent.tpl",
           os.path.join(agent_dir, "agent.py"),
-          mcp_name=self.mcp_name,
+          mcp_name=self.mcp_name,          # keep for env-var prefixes
+          server_pkg=server_pkg,           # ← NEW
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
@@ -598,6 +632,7 @@ class MCPGenerator:
           "agent/Makefile.tpl",
           os.path.join(agent_dir, "Makefile"),
           mcp_name=self.mcp_name,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
@@ -607,6 +642,7 @@ class MCPGenerator:
           "agent/README.tpl",
           os.path.join(agent_dir, "README.md"),
           mcp_name=self.mcp_name,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
@@ -624,29 +660,6 @@ class MCPGenerator:
 
       # ---------------------------------------------------------------- pyproject.toml
       logger.info("Rendering agent/pyproject.toml")
-      agent_dependencies = self.config.get(
-          "agent_poetry_dependencies",
-          """
-    "a2a-sdk==0.2.8",
-    "httpx==0.28.1",
-    "agentevals>=0.0.7",
-    "agntcy-acp>=1.3.2",
-    "click>=8.2.0",
-    "langchain-anthropic>=0.3.13",
-    "langchain-core>=0.3.60",
-    "langchain-google-genai>=2.1.4",
-    "langchain-mcp-adapters>=0.1.0",
-    "langchain-openai>=0.3.17",
-    "langgraph>=0.4.5",
-    "pytest>=8.3.5",
-    "tabulate>=0.9.0",
-    "uv",
-    "rich (>=14.0.0,<15.0.0)",
-    "sseclient (>=0.0.27,<0.0.28)",
-    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
-          """,
-      )
-      combined_dependencies = agent_dependencies
       self.render_template(
           "agent/pyproject.tpl",
           os.path.join(agent_dir, "pyproject.toml"),
@@ -659,12 +672,26 @@ class MCPGenerator:
           author=self.config.get("author", "CNOE Contributors"),
           email=self.config.get("email", "auto@example.com"),
           license=self.config.get("license", "Apache-2.0"),
-          poetry_dependencies=combined_dependencies,
+          poetry_dependencies=agent_dependencies,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
       # generate A2A server
       self._generate_a2a_server(agent_dir)
+
+      # If generate_eval is True, build the eval directory here
+      if self.generate_eval:
+          logger.info("Generating evaluation suite inside agent dir")
+          eval_dir = os.path.join(agent_dir, "eval")
+          os.makedirs(eval_dir, exist_ok=True)
+          generate_eval_suite(
+              spec=self.spec,
+              mcp_name=self.mcp_name,
+              tools_map=self.tools_map,
+              dest_dir=eval_dir,
+              num_prompts=int(self.config.get("num_eval_prompts", 5)),
+          )
 
       logger.info("Agent wrapper generation completed")
 
@@ -889,6 +916,4 @@ class MCPGenerator:
     self.generate_init_files()
     self.generate_env()
     self.generate_readme()
-    if self.generate_eval:
-        self.generate_eval_suite()
     logger.info("MCP code generation completed")

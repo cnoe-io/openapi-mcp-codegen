@@ -6,7 +6,6 @@
 """LangGraph React-agent wrapper for the generated MCP server."""
 
 import asyncio
-import importlib.util
 import logging
 import os
 from pathlib import Path
@@ -20,11 +19,10 @@ from cnoe_agent_utils import LLMFactory
 
 logger = logging.getLogger(__name__)
 
-# Locate the generated MCP server module
-spec = importlib.util.find_spec("mcp_{{ mcp_name }}.server")
-if not spec or not spec.origin:
-    raise ImportError("Cannot find mcp_{{ mcp_name }}.server module")
-server_path = str(Path(spec.origin).resolve())
+# Absolute path to the generated MCP server’s main module
+server_path = str((Path(__file__).parent / "{{ server_pkg }}" / "server.py").resolve())
+if not Path(server_path).is_file():  # sanity-check
+    raise FileNotFoundError(f"MCP server module not found at {server_path}")
 
 
 async def create_agent(prompt: str | None = None, response_format=None):
@@ -47,12 +45,13 @@ async def create_agent(prompt: str | None = None, response_format=None):
                 "env": {
                     "{{ mcp_name | upper }}_API_URL": api_url,
                     "{{ mcp_name | upper }}_TOKEN": api_token,
+                    "MOCK_API": os.getenv("MOCK_API", "0"),
                 },
                 "transport": "stdio",
             }
         }
     ) as client:
-        tools = await client.get_tools()
+        tools = client.get_tools()
         agent = create_react_agent(
             LLMFactory().get_llm(),
             tools=tools,

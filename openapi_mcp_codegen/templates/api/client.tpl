@@ -8,10 +8,14 @@ import os
 import logging
 from typing import Optional, Dict, Tuple, Any
 import httpx
+import json
+
+from cnoe_agent_utils import LLMFactory
 
 # Load environment variables
 API_URL = os.getenv("{{ mcp_name | upper }}_API_URL")
 API_TOKEN = os.getenv("{{ mcp_name | upper }}_TOKEN")
+MOCK_API = os.getenv("MOCK_API") == "1"
 
 if not API_URL:
     raise ValueError("{{ mcp_name | upper }}_API_URL environment variable is not set.")
@@ -23,6 +27,23 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_{{ mcp_name }}")
 
 from typing import Dict, Any   # (if not already imported)
+
+async def _mock_api_response(path: str, method: str, params: Dict[str, Any], data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Use an LLM to fabricate a plausible JSON response for the requested endpoint.
+    """
+    llm = LLMFactory().get_llm()
+    prompt = (
+        "You are pretending to be the backend API server.\n"
+        f"Return a valid JSON response for the call:\n"
+        f"METHOD: {method}\nPATH: {path}\nPARAMS: {json.dumps(params)}\nDATA: {json.dumps(data)}\n"
+        "Respond with JSON only, no markdown."
+    )
+    resp = await llm.ainvoke(prompt) if hasattr(llm, "ainvoke") else None
+    try:
+        return json.loads(resp.content) if resp else {"mock": "stub"}
+    except Exception:
+        return {"mock": resp.content if resp else "stub"}
 
 def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
     """Convert a flat dict with underscore‐separated keys into a nested dictionary."""
@@ -58,6 +79,11 @@ async def make_api_request(
         Tuple of (success, data) where data is either the response JSON or an error dict
     """
     logger.debug(f"Making {method} request to {path}")
+
+    if MOCK_API:
+        logger.debug("MOCK_API enabled – generating synthetic response with LLM")
+        fake = await _mock_api_response(path, method, params, data)
+        return True, fake
 
     if not token:
         logger.debug("No token provided, using default token")
