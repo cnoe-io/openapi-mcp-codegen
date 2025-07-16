@@ -6,7 +6,6 @@
 """LangGraph React-agent wrapper for the generated MCP server."""
 
 import asyncio
-import importlib.util
 import logging
 import os
 from pathlib import Path
@@ -20,11 +19,10 @@ from cnoe_agent_utils import LLMFactory
 
 logger = logging.getLogger(__name__)
 
-# Locate the generated MCP server module
-spec = importlib.util.find_spec("mcp_{{ mcp_name }}.server")
-if not spec or not spec.origin:
-    raise ImportError("Cannot find mcp_{{ mcp_name }}.server module")
-server_path = str(Path(spec.origin).resolve())
+# Absolute path to the generated MCP server’s main module
+server_path = str((Path(__file__).parent / "{{ server_pkg }}" / "server.py").resolve())
+if not Path(server_path).is_file():  # sanity-check
+    raise FileNotFoundError(f"MCP server module not found at {server_path}")
 
 
 async def create_agent(prompt: str | None = None, response_format=None):
@@ -39,28 +37,49 @@ async def create_agent(prompt: str | None = None, response_format=None):
     if not api_url or not api_token:
         raise ValueError("Set {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN env vars")
 
-    async with MultiServerMCPClient(
+    # Determine whether we are running against a mock backend
+    mock_api_flag = os.getenv("MOCK_API", "0").lower() not in {"0", "false", ""}
+
+    client = MultiServerMCPClient(
         {
             "{{ mcp_name }}": {
                 "command": "uv",
                 "args": ["run", server_path],
-                "env": {
-                    "{{ mcp_name | upper }}_API_URL": api_url,
-                    "{{ mcp_name | upper }}_TOKEN": api_token,
-                },
+                "env": (
+                    lambda _base: (
+                        _base
+                        | (
+                            {  # ← Azure creds only when mocking
+                                "AZURE_OPENAI_DEPLOYMENT": os.getenv("AZURE_OPENAI_DEPLOYMENT", ""),
+                                "AZURE_OPENAI_API_VERSION": os.getenv("AZURE_OPENAI_API_VERSION", ""),
+                                "AZURE_OPENAI_ENDPOINT":    os.getenv("AZURE_OPENAI_ENDPOINT", ""),
+                                "AZURE_OPENAI_API_KEY":     os.getenv("AZURE_OPENAI_API_KEY", ""),
+                            }
+                            if mock_api_flag
+                            else {}
+                        )
+                    )
+                )(
+                    {
+                        "{{ mcp_name | upper }}_API_URL": api_url,
+                        "{{ mcp_name | upper }}_TOKEN":  api_token,
+                        "MOCK_API": "1" if mock_api_flag else "0",
+                    }
+                ),
                 "transport": "stdio",
             }
         }
-    ) as client:
-        tools = await client.get_tools()
-        agent = create_react_agent(
-            LLMFactory().get_llm(),
-            tools=tools,
-            checkpointer=memory,
-            prompt=prompt,
-            response_format=response_format,
-        )
-        return agent
+    )
+
+    tools = await client.get_tools()
+    agent = create_react_agent(
+        LLMFactory().get_llm(),
+        tools=tools,
+        checkpointer=memory,
+        prompt=prompt,
+        response_format=response_format,
+    )
+    return agent
 
 
 # Convenience synchronous wrapper
