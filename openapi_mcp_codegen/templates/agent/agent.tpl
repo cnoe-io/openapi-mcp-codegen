@@ -37,29 +37,49 @@ async def create_agent(prompt: str | None = None, response_format=None):
     if not api_url or not api_token:
         raise ValueError("Set {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN env vars")
 
-    async with MultiServerMCPClient(
+    # Determine whether we are running against a mock backend
+    mock_api_flag = os.getenv("MOCK_API", "0").lower() not in {"0", "false", ""}
+
+    client = MultiServerMCPClient(
         {
             "{{ mcp_name }}": {
                 "command": "uv",
                 "args": ["run", server_path],
-                "env": {
-                    "{{ mcp_name | upper }}_API_URL": api_url,
-                    "{{ mcp_name | upper }}_TOKEN": api_token,
-                    "MOCK_API": os.getenv("MOCK_API", "0"),
-                },
+                "env": (
+                    lambda _base: (
+                        _base
+                        | (
+                            {  # ← Azure creds only when mocking
+                                "AZURE_OPENAI_DEPLOYMENT": os.getenv("AZURE_OPENAI_DEPLOYMENT", ""),
+                                "AZURE_OPENAI_API_VERSION": os.getenv("AZURE_OPENAI_API_VERSION", ""),
+                                "AZURE_OPENAI_ENDPOINT":    os.getenv("AZURE_OPENAI_ENDPOINT", ""),
+                                "AZURE_OPENAI_API_KEY":     os.getenv("AZURE_OPENAI_API_KEY", ""),
+                            }
+                            if mock_api_flag
+                            else {}
+                        )
+                    )
+                )(
+                    {
+                        "{{ mcp_name | upper }}_API_URL": api_url,
+                        "{{ mcp_name | upper }}_TOKEN":  api_token,
+                        "MOCK_API": "1" if mock_api_flag else "0",
+                    }
+                ),
                 "transport": "stdio",
             }
         }
-    ) as client:
-        tools = client.get_tools()
-        agent = create_react_agent(
-            LLMFactory().get_llm(),
-            tools=tools,
-            checkpointer=memory,
-            prompt=prompt,
-            response_format=response_format,
-        )
-        return agent
+    )
+
+    tools = await client.get_tools()
+    agent = create_react_agent(
+        LLMFactory().get_llm(),
+        tools=tools,
+        checkpointer=memory,
+        prompt=prompt,
+        response_format=response_format,
+    )
+    return agent
 
 
 # Convenience synchronous wrapper

@@ -598,7 +598,7 @@ class MCPGenerator:
     "langchain-anthropic>=0.3.13",
     "langchain-core>=0.3.60",
     "langchain-google-genai>=2.1.4",
-    "langchain-mcp-adapters<0.1.0",
+    "langchain-mcp-adapters>=0.1.9",
     "langchain-openai>=0.3.17",
     "langgraph>=0.4.5",
     "uv",

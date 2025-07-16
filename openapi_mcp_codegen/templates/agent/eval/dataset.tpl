@@ -2,9 +2,11 @@ tests:
 {% for test in tests %}
   {{ test.id }}:
     input: "{{ test.prompt }}"
-    reference_output: "{{ test.answer|escape }}"
+    output: "{{ test.answer }}"
     reference_trajectory:
-      solution_1: "{{ test.simple_traj }}"
-    test_type: basic_functionality
-    metadata: {}
+      {{ test.reference_traj | indent(6, false) }}
+    tool:
+      name: "{{ test.tool_name }}"
+      arguments:
+        {{ test.arguments_yaml | indent(8, false) }}
 {% endfor %}

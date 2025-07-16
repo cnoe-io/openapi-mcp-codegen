@@ -5,7 +5,7 @@ Loads YAML test cases and computes trajectory-match, correctness, hallucination.
 
 import asyncio, yaml, os, sys, json
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Any
 import uuid
 
 from langsmith import aevaluate
@@ -21,7 +21,7 @@ from cnoe_agent_utils import LLMFactory
 from agent import create_agent
 DATASET = Path(__file__).with_name("dataset.yaml")
 
-_AGENT = asyncio.run(create_agent())
+_AGENT = None
 
 CORR    = create_llm_as_judge(prompt=CORRECTNESS_PROMPT,   feedback_key="correctness",   judge=LLMFactory().get_llm())
 HALLU   = create_llm_as_judge(prompt=HALLUCINATION_PROMPT, feedback_key="hallucination", judge=LLMFactory().get_llm())
@@ -37,9 +37,11 @@ def load_dataset() -> List[Dict]:
         raw = yaml.safe_load(fp)
     items = []
     for tid, data in raw["tests"].items():
-        traj   = data["reference_trajectory"]["solution_1"].split(";")
-        det_traj = [{"role": "system", "agent": n, "content": ""} for n in traj]
-        items.append({"id": tid, "input": data["input"], "ref_out": data["reference_output"], "ref_traj": det_traj})
+        det_traj = data["reference_trajectory"]                 # now native YAML list
+        # det_traj is a list-of-dicts already
+        # ref_out = next((m["content"] for m in reversed(det_traj) if m.get("role") == "assistant"), "")
+        ref_out = data["output"]
+        items.append({"id": tid, "input": data["input"], "ref_out": ref_out, "ref_traj": det_traj})
     return items
 
 async def predict(inputs):
@@ -66,6 +68,8 @@ async def metric_hallucination(run: Run, example: Example):
 
 async def main():
     cases = load_dataset()
+    global _AGENT
+    _AGENT = await create_agent()
 
     # 2. Create / reuse a LangSmith dataset
     dataset_name = "{{ mcp_name }}_agent_eval"
