@@ -14,7 +14,10 @@ from langsmith import Client
 
 sys.path.append(str(Path(__file__).parent.parent))  # make agent importable
 
-from agentevals.trajectory.match import create_trajectory_match_evaluator
+from agentevals.trajectory.llm import (
+    create_trajectory_llm_as_judge,
+    TRAJECTORY_ACCURACY_PROMPT,
+)
 from openevals.llm import create_llm_as_judge
 from openevals.prompts import CORRECTNESS_PROMPT, HALLUCINATION_PROMPT
 from cnoe_agent_utils import LLMFactory
@@ -50,13 +53,23 @@ async def predict(inputs):
     # Store everything aevaluate-needs as outputs
     return {"traj": traj, "outputs": outputs}
 
-STRICT  = create_trajectory_match_evaluator(trajectory_match_mode="strict")
-UNORDER = create_trajectory_match_evaluator(trajectory_match_mode="unordered")
+TRAJ_ACC = create_trajectory_llm_as_judge(
+    prompt=TRAJECTORY_ACCURACY_PROMPT,
+    feedback_key="trajectory_accuracy",
+    judge=LLMFactory().get_llm(),
+)
 
-async def metric_traj_match(run: Run, example: Example):
-    ok = UNORDER(outputs=run.outputs["traj"], reference_outputs=example.outputs["ref_traj"])["score"] or \
-         STRICT(outputs=run.outputs["traj"],  reference_outputs=example.outputs["ref_traj"])["score"]
-    return {"key": "traj_match", "score": 1 if ok else 0}
+async def metric_traj_accuracy(run: Run, example: Example):
+    """
+    Uses an LLM judge to compare the agent-generated trajectory with the reference trajectory.
+    Returns a continuous 0-1 score.
+    """
+    score = TRAJ_ACC(
+        inputs=example.inputs["prompt"],
+        outputs=run.outputs["traj"],
+        reference_outputs=example.outputs["ref_traj"],
+    )["score"]
+    return {"key": "traj_accuracy", "score": score}
 
 async def metric_correctness(run: Run, example: Example):
     score = CORR(inputs=example.inputs["prompt"], outputs=run.outputs["outputs"], reference_outputs=example.outputs["ref_out"])["score"]
@@ -98,7 +111,7 @@ async def main():
     await aevaluate(
         predict,
         data=dataset_name,   #  ← pass dataset name, not local Examples
-        evaluators=[metric_traj_match, metric_correctness, metric_hallucination],
+        evaluators=[metric_traj_accuracy, metric_correctness, metric_hallucination],
         experiment_prefix="agent_eval",
         max_concurrency=None,
     )
