@@ -178,6 +178,12 @@ class MCPGenerator:
     Returns:
       str: Corresponding Python type.
     """
+    # Enumerations -------------------------------------------------------
+    if prop.get("enum"):
+        enum_vals = prop["enum"]
+        # Produce Literal["opt1", "opt2"]  (or ints, bools, …)
+        literal_items = ", ".join(repr(v) for v in enum_vals)
+        return f"Literal[{literal_items}]"
     t = prop.get("type", "string")
     if t == "integer":
       return "int"
@@ -204,7 +210,7 @@ class MCPGenerator:
       "ruff",
       "format",
       "--line-length",
-      "200",
+      "120",
       input_file
       ],
       check=True,
@@ -216,9 +222,7 @@ class MCPGenerator:
       "check",
       "--fix",
       "--ignore",
-      "E402",
-      "--line-length",
-      "200",
+      "E402,E501",
       input_file
       ],
       check=True,

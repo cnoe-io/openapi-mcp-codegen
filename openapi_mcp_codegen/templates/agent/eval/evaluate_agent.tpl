@@ -21,7 +21,11 @@ from agentevals.trajectory.llm import (
 from openevals.llm import create_llm_as_judge
 from openevals.prompts import CORRECTNESS_PROMPT, HALLUCINATION_PROMPT
 from cnoe_agent_utils import LLMFactory
-from agent import create_agent
+# Import create_agent from the generated project, preferring the local file.
+try:
+    from agent import create_agent          # local agent.py in project root
+except ImportError:
+    from {{ mcp_name }}.agent import create_agent  # installed package fallback
 DATASET = Path(__file__).with_name("dataset.yaml")
 
 _AGENT = None

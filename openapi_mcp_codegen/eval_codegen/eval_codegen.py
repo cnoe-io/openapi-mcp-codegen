@@ -10,6 +10,7 @@ import json
 import uuid
 import asyncio
 import re
+import httpx, os
 from typing import Dict, List, Any
 import yaml
 from cnoe_agent_utils import LLMFactory
@@ -50,12 +51,14 @@ def _camel_to_snake(name: str) -> str:
     return out.replace("-", "_").lower()
 
 
-async def _llm_tool_output_async(
+async def _tool_output_async(
     llm,
     prompt: str,
     tool_name: str,
     arg_spec: str,
     tool_desc: str,
+    path: str,
+    method: str,
 ) -> tuple[str, str, str]:
     """
     Given the *user prompt*, produce:
@@ -64,54 +67,200 @@ async def _llm_tool_output_async(
       • assistant answer text.
     Returns (args_json, tool_output_json, answer_text).
     """
-    if not hasattr(llm, "ainvoke"):
-        return "{}", "{}", f"[ANSWER] call to {tool_name}"
+    mock_api_flag = os.getenv("MOCK_API", "1").lower() not in {"0", "false", ""}
 
-    sys_msg = SystemMessage(
-        content=(
-            "You simulate both the caller and backend of a Komodor API, a Kubernetes management platform.\n"
-            f"Tool/function: {tool_name}\n"
-            f"Tool description: {tool_desc}\n"
-            f"Argument schema: {arg_spec}\n\n"
-            "For the **USER REQUEST** below:\n"
-            "  1) craft concrete JSON arguments matching the schema;\n"
-            "  2) invent a realistic JSON response from the backend;\n"
-            "  3) write the assistant's natural-language reply.\n\n"
-            "Return ONLY a JSON object with keys:\n"
-            '  "args":        <JSON object>,\n'
-            '  "tool_output": <JSON object>,\n'
-            '  "answer":      <string>\n'
-            "No markdown, no code-fences."
-        )
+    # ---- build system prompt -------------------------------------------------
+    _lines = [
+        "You simulate both the caller and backend of a Komodor API, a Kubernetes management platform.",
+        f"Tool/function: {tool_name}",
+        f"Tool description: {tool_desc}",
+        f"Argument schema: {arg_spec}",
+        "",
+        "For the **USER REQUEST** below:",
+        "  1) craft concrete JSON arguments matching the schema;",
+    ]
+    if mock_api_flag:
+        _lines.append("  2) invent a realistic JSON response from the backend;")
+        _lines.append("  3) write the assistant's natural-language reply.")
+    else:
+        _lines.append("  2) write the assistant's natural-language reply.")
+    _lines.extend(
+        [
+            "",
+            'Return ONLY a JSON object with keys:',
+            '  "args":        <JSON object>,',
+        ]
+        + (['  "tool_output": <JSON object>,'] if mock_api_flag else [])
+        + ['  "answer":      <string>', "No markdown, no code-fences."],
     )
-    resp = await llm.ainvoke([sys_msg, SystemMessage(prompt)])
-    try:
-        data = json.loads(resp.content)
-        return (
-            json.dumps(data.get("args", {}),        ensure_ascii=False),
-            json.dumps(data.get("tool_output", {}), ensure_ascii=False),
-            data.get("answer", "").strip(),
-        )
-    except Exception:
-        # Fallback: empty args/output, raw content as answer
-        return "{}", "{}", resp.content.strip()
+    sys_msg_base = SystemMessage(content="\n".join(_lines))
+
+    max_attempts = 3
+    last_err: str | None = None
+
+    for attempt in range(max_attempts):
+        msgs = [sys_msg_base]
+        if last_err:
+            msgs.append(
+                SystemMessage(
+                    content=(
+                        "The previous attempt failed with the following error:\n"
+                        f"{last_err}\n"
+                        "Please correct the arguments and try again. "
+                        "Return ONLY the corrected JSON object."
+                    )
+                )
+            )
+        msgs.append(SystemMessage(prompt))
+
+        resp = await llm.ainvoke(msgs)
+
+        try:
+            data = json.loads(resp.content)
+            args_json = json.dumps(data.get("args", {}), ensure_ascii=False)
+            answer = data.get("answer", "").strip()
+        except Exception as e:
+            last_err = f"Invalid JSON returned by LLM: {e}"
+            continue  # retry
+
+        # ------------------------------------------------------------- backend
+        if mock_api_flag:
+            tool_output_json = json.dumps(data.get("tool_output", {}), ensure_ascii=False)
+            return args_json, tool_output_json, answer
+
+        try:  # real API call
+            base_url = os.getenv("KOMODOR_API_URL") or os.getenv("{{ mcp_name | upper }}_API_URL")
+            token    = os.getenv("KOMODOR_TOKEN")   or os.getenv("{{ mcp_name | upper }}_TOKEN")
+            if not base_url or not token:
+                raise ValueError("KOMODOR_API_URL / KOMODOR_TOKEN env vars are required when MOCK_API=0")
+
+            args_dict = json.loads(args_json) if isinstance(args_json, str) else args_json
+            # substitute path parameters  {param}
+            url = base_url + path
+            for k, v in args_dict.items():
+                url = url.replace(f"{{{k}}}", str(v)).replace(f"{{path_{k}}}", str(v))
+
+            headers = {"X-API-KEY": f"{token}"}
+            async with httpx.AsyncClient(timeout=30) as client:
+                response = await client.request(method.upper(), url, json=args_dict, params=args_dict, headers=headers)
+                # Retry if the backend did not return success
+                if not 200 <= response.status_code < 300:
+                    last_err = (
+                        f"Non-2xx status code {response.status_code}: "
+                        f"{response.text[:500]}"  # trim long bodies
+                    )
+                    continue  # ask the LLM to resubmit corrected arguments
+                try:
+                    tool_output_json = json.dumps(response.json(), ensure_ascii=False)
+                except Exception:
+                    tool_output_json = json.dumps({"status_code": response.status_code, "text": response.text}, ensure_ascii=False)
+                return args_json, tool_output_json, answer
+        except Exception as e:
+            last_err = str(e)
+            continue  # retry
+
+    # Fallback after all retries failed
+    return "{}", "{}", f"[LLM failed after {max_attempts} attempts] {last_err or ''}"
 
 def _generate_tool_outputs_bulk(
     prompts:    List[str],
     tool_names: List[str],
     arg_specs:  List[str],
     tool_descs: List[str],
+    paths:      List[str],
+    methods:    List[str],
+    agent_dir:  str,                         # NEW
+    mcp_name:   str,                         # NEW
 ) -> List[tuple[str, str, str]]:
-    llm = LLMFactory().get_llm()
-    async def _runner():
-        return await asyncio.gather(
-            *[
-                _llm_tool_output_async(llm, p, t, s, d)
-                for p, t, s, d in zip(prompts, tool_names, arg_specs, tool_descs)
-            ],
-            return_exceptions=False,
+    import sys
+    sys.path.insert(0, agent_dir)       # make agent.py importable
+    from agent import create_agent      # local generated agent
+    import importlib, pkgutil, inspect
+
+    pkg_name = f"mcp_{mcp_name}"
+    tools_pkg = importlib.import_module(f"{pkg_name}.tools")
+
+    # Build mapping: tool-function name -> function object
+    tool_func_map: dict[str, Any] = {}
+    for _, modname, _ in pkgutil.walk_packages(tools_pkg.__path__):
+        mod = importlib.import_module(f"{pkg_name}.tools.{modname}")
+        for name, obj in inspect.getmembers(mod):
+            if inspect.iscoroutinefunction(obj) or callable(obj):
+                tool_func_map[name] = obj
+
+    import re  # already imported at top; keep if present
+
+    def _lookup_tool(name: str):
+        """Return the generated function matching *name*.
+
+        Falls back to the generator’s naming convention that replaces
+        “/ . -” by “_”.
+        """
+        if name in tool_func_map:
+            return tool_func_map[name]
+        alt = re.sub(r"[./-]", "_", name)
+        if alt in tool_func_map:
+            return tool_func_map[alt]
+        raise KeyError(
+            f"Tool function {name!r} not found (tried {alt!r}). "
+            f"Available: {sorted(tool_func_map)[:20]}..."
         )
-    return asyncio.run(_runner())
+
+    from langchain_core.messages import AIMessage, ToolMessage, SystemMessage
+    import uuid
+
+    async def _agent_runner():
+        """Run all prompt/tool pairs in parallel and preserve order."""
+        from langchain_core.messages import AIMessage, ToolMessage
+
+        async def _process(prompt: str, tool: str) -> tuple[str, str, str]:
+            agent = await create_agent(tools=[_lookup_tool(tool)])
+            cfg = {"configurable": {"thread_id": uuid.uuid4().hex}}
+            messages = [
+                SystemMessage(
+                    content=(
+                        "If the API fails with error 400 try to fix the errors and retry up to "
+                        "two more times. Do not ask the user for input."
+                    )
+                ),
+                ("user", prompt),
+            ]
+            res = await agent.ainvoke({"messages": messages}, cfg)
+            msgs = res["messages"]
+
+            args_json, tool_output_json, answer = "{}", "{}", ""
+            for m in msgs:
+                if isinstance(m, AIMessage) and m.tool_calls:
+                    tc = m.tool_calls[0]
+                    call_args_raw = (
+                        tc.get("function", {}).get("arguments", {})
+                        if isinstance(tc, dict)
+                        else getattr(tc, "function", {}).get("arguments", {})
+                    )
+                    if isinstance(call_args_raw, str):
+                        try:
+                            call_args_raw = json.loads(call_args_raw)
+                        except Exception:
+                            call_args_raw = {"raw": call_args_raw}
+                    args_json = json.dumps(call_args_raw, ensure_ascii=False)
+                elif isinstance(m, ToolMessage):
+                    tool_output_json = (
+                        json.dumps(m.content, ensure_ascii=False)
+                        if not isinstance(m.content, str)
+                        else m.content
+                    )
+            for m in reversed(msgs):
+                if isinstance(m, AIMessage) and not m.tool_calls:
+                    answer = m.content
+                    break
+            return args_json, tool_output_json, answer
+
+        tasks = [
+            _process(p, t) for p, t in zip(prompts, tool_names)
+        ]
+        return await asyncio.gather(*tasks)
+
+    return asyncio.run(_agent_runner())
 
 
 
@@ -264,6 +413,9 @@ def generate_eval_suite(
         tool_descs_for_seeds,
     )
 
+    # TODO: remove
+    all_variants = all_variants[:5]
+
     flat_prompts   = [v for variants in all_variants for v in variants]
     flat_toolnames = [
         _camel_to_snake(
@@ -284,11 +436,22 @@ def generate_eval_suite(
         for _ in range(num_prompts)
     ]
 
+    flat_paths = [
+        p for (p, m, _), variants in zip(meta, all_variants) for _ in variants
+    ]
+    flat_methods = [
+        m for (p, m, _), variants in zip(meta, all_variants) for _ in variants
+    ]
+
     flat_triplets = _generate_tool_outputs_bulk(
         flat_prompts,
         flat_toolnames,
         flat_argspecs,
         flat_descs,
+        flat_paths,
+        flat_methods,
+        agent_dir=os.path.dirname(dest_dir),   # ← pass path where agent.py lives
+        mcp_name=mcp_name,                     # NEW
     )
     triplet_iter  = iter(flat_triplets)   # each: (args_json, tool_output, answer)
 
@@ -344,8 +507,6 @@ def generate_eval_suite(
                     "arguments_yaml": yaml.safe_dump(args_dict, sort_keys=False),
                 }
             )
-    # TODO: remove
-    yaml_cases = yaml_cases[:10]
 
     from jinja2 import Environment, FileSystemLoader
     from pathlib import Path

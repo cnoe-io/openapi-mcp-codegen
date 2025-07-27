@@ -8,8 +8,11 @@
 import asyncio
 import logging
 import os
+import inspect
 from pathlib import Path
 from typing import Any, Dict
+from langchain.tools import StructuredTool
+from langchain_core.tools import BaseTool
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.prebuilt import create_react_agent
@@ -25,10 +28,23 @@ if not Path(server_path).is_file():  # sanity-check
     raise FileNotFoundError(f"MCP server module not found at {server_path}")
 
 
-async def create_agent(prompt: str | None = None, response_format=None):
+async def create_agent(
+    prompt: str | None = None,
+    response_format=None,
+    tools_subset: list[str] | None = None,
+    tools: list[Any] | None = None,        # NEW – pass tools directly
+):
     """
     Spin-up the MCP server as a subprocess via MultiServerMCPClient and build
     a LangGraph React agent that has access to its tools.
+
+    Args:
+        prompt (str | None): Optional prompt to use for the agent.
+        response_format: Optional response format.
+        tools_subset (list[str] | None): If provided, restrict the agent to only these tool names.
+
+    Returns:
+        The created LangGraph React agent.
     """
     memory = MemorySaver()
 
@@ -71,7 +87,34 @@ async def create_agent(prompt: str | None = None, response_format=None):
         }
     )
 
-    tools = await client.get_tools()
+    if tools is not None:                     # ← local-tools path
+        converted: list[Any] = []
+        for t in tools:
+            # Already a LangChain/BaseTool → use as-is
+            if isinstance(t, BaseTool):
+                converted.append(t)
+                continue
+
+            if inspect.iscoroutinefunction(t):
+                # Build StructuredTool and ensure the coroutine branch is used
+                st = StructuredTool.from_function(t)  # wraps signature
+                st.coroutine = t                      # tell LC this is async
+                converted.append(st)
+            else:
+                converted.append(StructuredTool.from_function(t))
+
+        tools = converted
+    else:                                     # ← original remote-MCP path
+        tools = await client.get_tools()
+    # Respect caller-supplied subset of tools -------------------------------
+    if tools_subset:
+        tools = [t for t in tools if getattr(t, "name", "") in tools_subset]
+        if not tools:
+            raise ValueError(
+                f"No tools matched the requested subset {tools_subset!r}. "
+                "Available tool names: "
+                + ", ".join(getattr(t, 'name', '<unknown>') for t in await client.get_tools())
+            )
     agent = create_react_agent(
         LLMFactory().get_llm(),
         tools=tools,
@@ -83,5 +126,10 @@ async def create_agent(prompt: str | None = None, response_format=None):
 
 
 # Convenience synchronous wrapper
-def create_agent_sync(prompt: str | None = None, response_format=None):
-    return asyncio.run(create_agent(prompt, response_format))
+def create_agent_sync(
+    prompt: str | None = None,
+    response_format=None,
+    tools_subset: list[str] | None = None,
+    tools: list[Any] | None = None,        # NEW
+):
+    return asyncio.run(create_agent(prompt, response_format, tools_subset, tools))
