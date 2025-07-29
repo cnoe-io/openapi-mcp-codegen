@@ -11,6 +11,7 @@ import concurrent.futures
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, Any
 import subprocess
+import itertools        # NEW (near other imports)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -578,6 +579,9 @@ class MCPGenerator:
     self.run_ruff_lint(os.path.join(self.src_output_dir, 'server.py'))
 
   def generate_agent(self):
+      from cnoe_agent_utils import LLMFactory
+      from langchain_core.messages import SystemMessage
+      import textwrap
       logger.info("Generating agent wrapper")
       agent_dir = self.output_dir            # render directly into target dir
       logger.debug(f"Agent directory (output dir): {agent_dir}")
@@ -592,6 +596,40 @@ class MCPGenerator:
 
       # Pass the generate_eval flag to all agent-level templates
       generate_eval = self.generate_eval
+
+      # --------------------------------------------------- build system prompt via LLM
+      tool_docs = []
+      for path, ops in self.spec.get("paths", {}).items():
+          for method, op in ops.items():
+              if method.upper() not in {"GET", "POST", "PUT", "DELETE"}:
+                  continue
+              t_name = camel_to_snake(op.get("operationId") or f"{method}_{path.strip('/')}")
+              desc   = (op.get("description") or op.get("summary") or "").strip()
+              tool_docs.append(f"- {t_name}: {desc}")
+
+      tools_text = "\n".join(tool_docs) if tool_docs else "<no tools>"
+
+      llm = LLMFactory().get_llm()
+      sys_req = SystemMessage(
+          content=(
+              f"Write the SYSTEM prompt for a {self.mcp_name} assistant that "
+              "can call the following tools:\n"
+              f"{tools_text}\n\n"
+              "Explain the general capabilities of the agent. "
+              "Keep the prompt concise and actionable."
+          )
+      )
+      try:
+          system_prompt = llm.invoke([sys_req]).content.strip()
+      except Exception as e:                          # fallback if LLM unavailable
+          logger.warning(f"LLM failed to generate system prompt: {e}. Using stub.")
+          system_prompt = textwrap.dedent(
+              f"""\
+              You are an expert assistant for the {self.mcp_name} API.
+              You can call the following tools:\n{tools_text}\n
+              When a tool is appropriate, reply ONLY with the JSON payload.
+              Otherwise, answer normally."""
+          ).strip()
 
       # Build two dependency blocks and concatenate conditionally
       base_deps = """
@@ -613,8 +651,8 @@ class MCPGenerator:
 
       eval_deps = """
     "pytest>=8.3.5",
-    "agentevals>=0.0.7",
     "openevals>=0.0.6",
+    "agentevals>=0.0.7",
     "langsmith>=0.3.32",
     "tabulate>=0.9.0",
       """
@@ -628,6 +666,7 @@ class MCPGenerator:
           mcp_name=self.mcp_name,          # keep for env-var prefixes
           server_pkg=server_pkg,           # ← NEW
           generate_eval=generate_eval,
+          system_prompt=system_prompt,     # << NEW
           **file_header_kwargs,
       )
 
@@ -695,7 +734,7 @@ class MCPGenerator:
               mcp_name=self.mcp_name,
               tools_map=self.tools_map,
               dest_dir=eval_dir,
-              num_prompts=int(self.config.get("num_eval_prompts", 5)),
+              num_prompts=int(self.config.get("num_eval_prompts", 1)),
           )
 
       logger.info("Agent wrapper generation completed")
@@ -832,6 +871,25 @@ class MCPGenerator:
       """
       if "$ref" in schema:
           schema = self._resolve_ref(schema["$ref"])
+
+      # Handle JSON-Schema composition keywords ---------------------------------
+      for key in ("allOf", "oneOf", "anyOf"):
+          if key in schema:
+              merged: list[tuple[str, dict]] = []
+              for subschema in schema[key]:
+                  if "$ref" in subschema:
+                      subschema = self._resolve_ref(subschema["$ref"])
+                  merged.extend(self._extract_body_params(subschema, prefix=prefix))
+              # Deduplicate identical signatures that may occur when the same
+              # property appears in multiple branches
+              seen: set[str] = set()
+              unique: list[tuple[str, dict]] = []
+              for sig, info in merged:
+                  if sig not in seen:
+                      unique.append((sig, info))
+                      seen.add(sig)
+              return unique
+
       params = []
       if schema.get("type") == "object" and "properties" in schema:
           required_fields = schema.get("required", [])
@@ -887,23 +945,6 @@ class MCPGenerator:
           info = {"name": prefix, "type": py_type, "description": schema.get("description", "")}
           return [(sig, info)]
 
-  def generate_eval_suite(self):
-    """
-    Create eval/ folder with prompts, trajectories and pytest-based
-    benchmark harness.
-    """
-    logger.info("Generating evaluation suite")
-    # configurable number of synthetic prompts, default 5
-    num_prompts = int(self.config.get("num_eval_prompts", 5))
-    eval_dir = os.path.join(self.output_dir, "eval")
-    os.makedirs(eval_dir, exist_ok=True)
-    generate_eval_suite(
-        spec=self.spec,
-        mcp_name=self.mcp_name,
-        tools_map=self.tools_map,
-        dest_dir=eval_dir,
-        num_prompts=num_prompts,
-    )
 
   def generate(self):
     """

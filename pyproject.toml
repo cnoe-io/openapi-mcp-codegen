@@ -29,6 +29,7 @@ dependencies = [
     "langchain-core>=0.3.62,<0.4.0",
     "langchain-mcp-adapters>=0.1.9",
     "langgraph>=0.4.5",
+    "agentevals>=0.0.7",
     "cnoe-agent-utils>=0.1.3,<0.2.0",
     "fastapi>=0.115.14,<0.116.0",
     "httpx>=0.24.0",

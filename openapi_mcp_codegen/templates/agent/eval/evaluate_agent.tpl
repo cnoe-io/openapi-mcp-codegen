@@ -21,11 +21,11 @@ from agentevals.trajectory.llm import (
 from openevals.llm import create_llm_as_judge
 from openevals.prompts import CORRECTNESS_PROMPT, HALLUCINATION_PROMPT
 from cnoe_agent_utils import LLMFactory
-# Import create_agent from the generated project, preferring the local file.
+# Import create_agent and the shared DEFAULT_SYSTEM_PROMPT
 try:
-    from agent import create_agent          # local agent.py in project root
+    from agent import create_agent, DEFAULT_SYSTEM_PROMPT
 except ImportError:
-    from {{ mcp_name }}.agent import create_agent  # installed package fallback
+    from {{ mcp_name }}.agent import create_agent, DEFAULT_SYSTEM_PROMPT
 DATASET = Path(__file__).with_name("dataset.yaml")
 
 _AGENT = None
@@ -86,7 +86,7 @@ async def metric_hallucination(run: Run, example: Example):
 async def main():
     cases = load_dataset()
     global _AGENT
-    _AGENT = await create_agent()
+    _AGENT = await create_agent(prompt=DEFAULT_SYSTEM_PROMPT)
 
     # 2. Create / reuse a LangSmith dataset
     dataset_name = "{{ mcp_name }}_agent_eval"
