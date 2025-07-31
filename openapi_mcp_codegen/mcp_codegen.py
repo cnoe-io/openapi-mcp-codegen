@@ -128,7 +128,7 @@ class MCPGenerator:
     with open(config_path, encoding='utf-8') as f:
       self.config = yaml.safe_load(f)
     self.spec = self._load_spec()
-    self.mcp_name = self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
+    self.mcp_name = self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace('-', '').replace(' ', '')
     self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
@@ -366,7 +366,7 @@ class MCPGenerator:
     logger.info("Generating models")
     schemas = self.spec.get('components', {}).get('schemas', {})
     for schema_name, schema in schemas.items():
-      model_name = ''.join(word.capitalize() for word in re.split(r'[_\-]+', schema_name))
+      model_name = ''.join(word.capitalize() for word in re.split(r'[_\-]+', schema_name)).replace('.', '')
       fields = []
       required_fields = schema.get('required', [])
       for prop_name, prop in schema.get('properties', {}).items():
@@ -421,10 +421,16 @@ class MCPGenerator:
       for method, op in ops.items():
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
           continue
+        # Merge path-item level parameters with operation-level parameters
+        path_level_params = ops.get("parameters", [])  # may be absent
+        op_level_params   = op.get("parameters", [])   # may be absent
+        all_params: list = list(
+            itertools.chain(path_level_params, op_level_params)
+        )
         params = []
         # Holds parameter details for documentation
         params_infos = []
-        for p in op.get("parameters", []):
+        for p in all_params:
           # Resolve parameter reference if the parameter itself is a $ref
           if "$ref" in p:
               p = self._resolve_ref(p["$ref"])
@@ -473,11 +479,23 @@ class MCPGenerator:
               for sig, info in body_params:
                   params.append(sig)
                   params_infos.append(info)
+        # ---------------------------------------------------- requestBody
         if "requestBody" in op:
             request_body = op["requestBody"]
+
+            # Resolve component-level requestBodies references
+            if isinstance(request_body, dict) and "$ref" in request_body:
+                request_body = self._resolve_ref(request_body["$ref"]) or {}
+
+            # At this point request_body must be the expanded object with “content”
             content = request_body.get("content", {})
-            if "application/json" in content:
-                schema = content["application/json"].get("schema", {})
+            # Prefer JSON but fall back to the first available media type
+            media = (
+                content.get("application/json")
+                or next(iter(content.values()), {})
+            )
+            schema = media.get("schema", {})
+            if schema:
                 body_params = self._extract_body_params(schema, prefix="body")
                 for sig, info in body_params:
                     params.append(sig)
@@ -489,7 +507,7 @@ class MCPGenerator:
 
         # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
         formatted_path = path
-        for p in op.get("parameters", []):
+        for p in all_params:
             # Resolve the parameter if it uses a $ref
             if "$ref" in p:
                 p = self._resolve_ref(p["$ref"])
@@ -642,6 +660,7 @@ class MCPGenerator:
     "langchain-google-genai>=2.1.4",
     "langchain-mcp-adapters>=0.1.9",
     "langchain-openai>=0.3.17",
+    "langchain>=0.3.27",
     "langgraph>=0.4.5",
     "uv",
     "rich (>=14.0.0,<15.0.0)",
@@ -895,10 +914,16 @@ class MCPGenerator:
           required_fields = schema.get("required", [])
           params_info = []
           for prop_name, prop in schema["properties"].items():
-              # Compute a parameter name by appending with underscore
-              param_name = f"{prefix}_{prop_name}"
+              # Use “__” between nesting levels so that a single “_” inside a
+              # field name is preserved when we rebuild the JSON body later.
+              delim = "_" if prefix == "body" else "__"
+              param_name = f"{prefix}{delim}{prop_name}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
+                  # Use “__” between nesting levels so that a single “_” inside a
+                  # field name is preserved when we rebuild the JSON body later.
+                  delim = "_" if prefix == "body" else "__"
+                  param_name = f"{prefix}{delim}{prop_name}"
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
                       sub_params = self._extract_body_params(resolved_prop, prefix=param_name)
                       for sig, info in sub_params:
