@@ -6,7 +6,7 @@
 """Tools for {{ path }} operations"""
 
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Literal
 from pydantic import BaseModel
 from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request, assemble_nested_body
 

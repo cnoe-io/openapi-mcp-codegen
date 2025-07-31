@@ -28,11 +28,11 @@ class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
         query = context.get_user_input()
         task = context.current_task or new_task(context.message)
         if context.current_task is None:
-            event_queue.enqueue_event(task)
+            await event_queue.enqueue_event(task)
 
         async for event in self.agent.stream(query, task.contextId):
             if event["is_task_complete"]:
-                event_queue.enqueue_event(
+                await event_queue.enqueue_event(
                     TaskArtifactUpdateEvent(
                         append=False,
                         contextId=task.contextId,
@@ -45,7 +45,7 @@ class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
                         ),
                     )
                 )
-                event_queue.enqueue_event(
+                await event_queue.enqueue_event(
                     TaskStatusUpdateEvent(
                         final=True,
                         contextId=task.contextId,
@@ -54,7 +54,7 @@ class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
                     )
                 )
             else:
-                event_queue.enqueue_event(
+                await event_queue.enqueue_event(
                     TaskStatusUpdateEvent(
                         final=False,
                         contextId=task.contextId,
