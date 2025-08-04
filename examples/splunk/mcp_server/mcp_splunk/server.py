@@ -62,8 +62,6 @@ def main():
     # Create server instance
     if MCP_MODE == "SSE":
         mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
-    elif MCP_MODE == "http":
-        mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT  )
     else:
         mcp = FastMCP("SPLUNK MCP Server")
 

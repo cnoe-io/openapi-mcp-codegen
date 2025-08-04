@@ -5,7 +5,7 @@
 """Tools for /team operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any, List
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -15,7 +15,7 @@ logger = logging.getLogger("mcp_tools")
 
 async def retrieve__teams_by__name(
     param_limit: int = None, param_offset: float = None, param_name: str = None, param_order_by: str = None
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Retrieves teams using a name search.
 
@@ -26,7 +26,7 @@ async def retrieve__teams_by__name(
         param_order_by (str, optional): Property on which the API should sort results. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of teams matching the search criteria.
+        Any: The JSON response from the API call containing the list of teams matching the search criteria.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -69,7 +69,7 @@ async def create__single__team(
     body_notificationLists_major: List[str] = None,
     body_notificationLists_minor: List[str] = None,
     body_notificationLists_info: List[str] = None,
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Creates a new team with specified members and notification settings.
 
@@ -85,7 +85,7 @@ async def create__single__team(
         body_notificationLists_info (List[str], optional): Notification services to use for information alerts. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the created team's details or an error message.
+        Any: The JSON response from the API call containing the created team details or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.

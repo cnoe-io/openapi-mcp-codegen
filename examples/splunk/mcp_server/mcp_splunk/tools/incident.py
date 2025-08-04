@@ -5,7 +5,7 @@
 """Tools for /incident operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -15,18 +15,18 @@ logger = logging.getLogger("mcp_tools")
 
 async def retrieve__incidents(
     param_includeResolved: bool = False, param_limit: int = None, param_offset: int = None, param_query: str = None
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Retrieves information for the latest incidents in an organization.
 
     Args:
-        param_includeResolved (bool, optional): Controls retrieval of the latest resolved incidents. If True, includes resolved incidents in the results. Defaults to False.
+        param_includeResolved (bool, optional): Controls retrieval of the latest resolved incidents. Set to True to include resolved incidents in the results. Defaults to False.
         param_limit (int, optional): Number of results to return from the result set. Limits the number of incidents returned. Defaults to None.
         param_offset (int, optional): Index in the result set at which the API starts returning results. Used for pagination. Defaults to None.
         param_query (str, optional): Controls which latest incidents to retrieve, based on descriptions and other filters. For example, to retrieve the latest incidents created by detectors linked to a team with the ID `FO1Vq3ABXYZ`, specify `teamId:FO1Vq3ABXYZ`. To search for latest incidents by specific values of a dimension or custom property, use `query=<name>:<value>`. If `<value>` contains non-alphanumeric characters, encode the non-alphanumeric characters and surround the value with double quotes (e.g., `region:"US%20East"`). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the latest incidents matching the specified criteria.
+        Any: The JSON response from the API call containing the latest incidents matching the specified criteria.
 
     Raises:
         Exception: If the API request fails or returns an error.

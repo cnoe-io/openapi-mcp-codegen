@@ -5,7 +5,7 @@
 """Tools for /team/{tid}/member/{uid} operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def update__team__membership__user__id(path_tid: str, path_uid: str) -> Dict[str, Any]:
+async def update__team__membership__user__id(path_tid: str, path_uid: str) -> Any:
     '''
     Updates a team by adding a user by ID.
 
@@ -22,7 +22,7 @@ async def update__team__membership__user__id(path_tid: str, path_uid: str) -> Di
         path_uid (str): The unique identifier of the user to add to the team.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, containing the updated team membership information or an error message.
+        Any: The JSON response from the API call indicating the result of the operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -43,7 +43,7 @@ async def update__team__membership__user__id(path_tid: str, path_uid: str) -> Di
     return response
 
 
-async def delete__team__user__user__id(path_tid: str, path_uid: str) -> Dict[str, Any]:
+async def delete__team__user__user__id(path_tid: str, path_uid: str) -> Any:
     '''
     Deletes a user from a team.
 
@@ -52,7 +52,7 @@ async def delete__team__user__user__id(path_tid: str, path_uid: str) -> Dict[str
         path_uid (str): The unique identifier of the user to be deleted from the team.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, typically containing the result of the deletion operation or error details.
+        Any: The JSON response from the API call indicating the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

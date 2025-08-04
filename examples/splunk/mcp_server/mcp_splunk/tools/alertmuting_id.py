@@ -5,7 +5,7 @@
 """Tools for /alertmuting/{id} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any, List
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def retrieve__muting__rule_id(path_id: str) -> Dict[str, Any]:
+async def retrieve__muting__rule_id(path_id: str) -> Any:
     '''
     Retrieves the muting rule specified by the given muting rule ID.
 
@@ -21,7 +21,7 @@ async def retrieve__muting__rule_id(path_id: str) -> Dict[str, Any]:
         path_id (str): The ID of the muting rule to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the details of the muting rule.
+        Any: The JSON response containing the details of the specified muting rule.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -58,7 +58,7 @@ async def update__single__muting__rule(
     body_sendAlertsOnceMutingPeriodHasEnded: bool = None,
     body_startTime: int = None,
     body_stopTime: int = None,
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Updates a muting rule in Splunk Observability Cloud.
 
@@ -70,9 +70,9 @@ async def update__single__muting__rule(
         body_description (str, optional): Description of the muting rule. Defaults to None.
         body_filters (List[str], optional): List of muting filters for this rule. Defaults to None.
         body_id (str, optional): ID of the muting rule. Set by the system. Defaults to None.
-        body_lastUpdated (int, optional): Last updated time in Unix format. This field is read-only and set by the system. Defaults to None.
-        body_lastUpdatedBy (str, optional): ID of the user who last updated the rule. This field is read-only and set by the system. Defaults to None.
-        body_recurrence_unit (str, optional): Unit of the recurrence period. Can be 'd' for days or 'w' for weeks. Defaults to None.
+        body_lastUpdated (int, optional): Team last updated time in Unix format. This field is read-only and set by the system. Defaults to None.
+        body_lastUpdatedBy (str, optional): ID of the user who last updated the chart. This field is read-only and set by the system. Defaults to None.
+        body_recurrence_unit (str, optional): Unit of the recurrence period. Can be days ('d') or weeks ('w'). Defaults to None.
         body_recurrence_value (int, optional): Amount of time, expressed as an integer applicable to the unit. Defaults to None.
         body_linkedTeams (List[str], optional): IDs of teams linked to the detector that created the incident. This property is read-only and always set by the system. Defaults to None.
         body_sendAlertsOnceMutingPeriodHasEnded (bool, optional): Controls notifications after the muting period ends. Defaults to None.
@@ -80,7 +80,7 @@ async def update__single__muting__rule(
         body_stopTime (int, optional): Ending timestamp of the muting rule in Unix time (milliseconds). Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the updated muting rule details or error information.
+        Any: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -134,15 +134,15 @@ async def update__single__muting__rule(
     return response
 
 
-async def delete__single__muting__rule(path_id: str) -> Dict[str, Any]:
+async def delete__single__muting__rule(path_id: str) -> Any:
     '''
     Deletes a muting rule specified by the given ID.
 
     Args:
-        path_id (str): The ID of the muting rule to delete.
+        path_id (str): The unique identifier of the muting rule to delete.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call indicating the result of the delete operation.
+        Any: The JSON response from the API call indicating the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

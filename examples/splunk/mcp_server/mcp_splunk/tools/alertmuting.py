@@ -5,7 +5,7 @@
 """Tools for /alertmuting operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any, List
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -15,19 +15,19 @@ logger = logging.getLogger("mcp_tools")
 
 async def retrieve__muting__rules__using__query(
     param_include: str = None, param_limit: int = None, param_offset: int = None, param_order_by: str = None, param_query: str = None
-) -> Dict[str, Any]:
+) -> Any:
     '''
-    Retrieves notification muting rules based on query parameters.
+    Retrieves muting rules based on search criteria.
 
     Args:
-        param_include (str, optional): Type of muting rules to retrieve. Defaults to None.
+        param_include (str, optional): Type of muting rules you want to retrieve. Defaults to None.
         param_limit (int, optional): Number of results to return from the result set. Defaults to None.
         param_offset (int, optional): Index in the result set from which the API starts returning results. Defaults to None.
-        param_order_by (str, optional): Metadata property on which to sort the results. Defaults to None.
-        param_query (str, optional): Query string specifying the muting rules to retrieve. Defaults to None.
+        param_order_by (str, optional): Metadata property on which the API sorts the results. Defaults to None.
+        param_query (str, optional): Query that specifies the muting rules you want to retrieve. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the list of muting rules and associated metadata.
+        Any: The JSON response from the API call containing the list of muting rules matching the search criteria.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -78,7 +78,7 @@ async def create__single__muting__rule(
     body_sendAlertsOnceMutingPeriodHasEnded: bool = None,
     body_startTime: int = None,
     body_stopTime: int = None,
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Creates a new muting rule.
 
@@ -99,7 +99,7 @@ async def create__single__muting__rule(
         body_stopTime (int, optional): Ending timestamp of the muting rule, in Unix time in milliseconds. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Any: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.

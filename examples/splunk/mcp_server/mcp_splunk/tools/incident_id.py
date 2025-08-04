@@ -5,7 +5,7 @@
 """Tools for /incident/{id} operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,15 +13,15 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def retrieve__incident_id(path_id: str) -> Dict[str, Any]:
+async def retrieve__incident_id(path_id: str) -> Any:
     '''
-    Retrieves an incident based on its ID.
+    Retrieves an incident by its unique identifier.
 
     Args:
         path_id (str): The unique identifier of the incident to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the incident details.
+        Any: The JSON response containing the incident details if the request is successful.
 
     Raises:
         Exception: If the API request fails or returns an error.

@@ -5,7 +5,7 @@
 """Tools for /incident/{id}/clear operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def clear__single__incident(path_id: str) -> Dict[str, Any]:
+async def clear__single__incident(path_id: str) -> Any:
     '''
     Clears a specific incident identified by the provided incident ID.
 
@@ -21,7 +21,7 @@ async def clear__single__incident(path_id: str) -> Dict[str, Any]:
         path_id (str): The unique identifier of the incident to be cleared.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call indicating the result of the clear operation.
+        Any: The JSON response from the API call indicating the result of the clear operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

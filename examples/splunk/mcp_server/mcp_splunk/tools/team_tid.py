@@ -5,7 +5,7 @@
 """Tools for /team/{tid} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any, List
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def retrieve__team__using_id(path_tid: str) -> Dict[str, Any]:
+async def retrieve__team__using_id(path_tid: str) -> Any:
     '''
     Retrieves a team by its unique team ID.
 
@@ -21,7 +21,7 @@ async def retrieve__team__using_id(path_tid: str) -> Dict[str, Any]:
         path_tid (str): The unique identifier of the team to retrieve.
 
     Returns:
-        Dict[str, Any]: The JSON response containing the team's details if the request is successful, or an error message if the request fails.
+        Any: The JSON response containing the team details if the request is successful.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -53,7 +53,7 @@ async def update__team(
     body_notificationLists_major: List[str] = None,
     body_notificationLists_minor: List[str] = None,
     body_notificationLists_info: List[str] = None,
-) -> Dict[str, Any]:
+) -> Any:
     '''
     Updates the team specified by the given team ID.
 
@@ -70,7 +70,7 @@ async def update__team(
         body_notificationLists_info (List[str], optional): Notification services to use for informational alerts. Defaults to None.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the updated team information or an error message.
+        Any: The JSON response from the API call containing the updated team information or an error message.
 
     Raises:
         Exception: If the API request fails or returns an error.
@@ -109,15 +109,15 @@ async def update__team(
     return response
 
 
-async def delete__team(path_tid: str) -> Dict[str, Any]:
+async def delete__team(path_tid: str) -> Any:
     '''
-    Deletes the team specified by the given team ID.
+    Deletes a team specified by the team ID.
 
     Args:
         path_tid (str): The unique identifier of the team to be deleted.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call, typically containing the result of the delete operation or error details.
+        Any: The JSON response from the API call indicating the result of the delete operation.
 
     Raises:
         Exception: If the API request fails or returns an error.

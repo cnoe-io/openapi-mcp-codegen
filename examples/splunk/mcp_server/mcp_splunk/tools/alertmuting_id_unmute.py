@@ -5,7 +5,7 @@
 """Tools for /alertmuting/{id}/unmute operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_splunk.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,15 +13,15 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 
-async def unmute__single__muting__rule(path_id: str) -> Dict[str, Any]:
+async def unmute__single__muting__rule(path_id: str) -> Any:
     '''
-    Ends the active muting period for a muting rule.
+    Ends the active muting period for a specified muting rule.
 
     Args:
-        path_id (str): ID of the muting rule you want to unmute.
+        path_id (str): The unique identifier of the muting rule to unmute.
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call containing the result of the unmute operation.
+        Any: The JSON response from the API call indicating the result of the unmute operation.
 
     Raises:
         Exception: If the API request fails or returns an error.
