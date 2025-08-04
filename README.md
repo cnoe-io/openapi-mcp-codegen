@@ -1,7 +1,6 @@
 # 🚀 OpenAPI to MCP Server Code Generator
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)](https://www.python.org/)
-[![Poetry](https://img.shields.io/badge/poetry-1.0%2B-blueviolet?logo=python)](https://python-poetry.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
 [![Conventional Commits](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/conventional_commits.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/conventional_commits.yml)
@@ -38,15 +37,16 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 ## 📦 Requirements
 
 - 🐍 Python **3.13+**
-- ⚡ [pipx](https://github.com/pipxproject/pipx) (recommended)
-- 🧪 Optional: [Poetry](https://python-poetry.org/) for local development
+- ⚡ [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 ---
 
-## ⚡ Quick Start with `pipx` (Recommended)
+## ⚡ Quick Start with `uv` (Recommended)
+
+**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
 
 ```bash
-pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
+uvx run https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --generate-agent
@@ -55,7 +55,7 @@ pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main open
 ### 📌 Optional: Pin a release tag
 
 ```bash
-pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
+uv run python --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --generate-agent
@@ -63,7 +63,7 @@ pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 op
 
 ### 🤖 Optional: Enhance Docstrings via LLM
 
-Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.  
+Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.
 To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
 
 ```bash
@@ -140,8 +140,8 @@ mcp_petstore/
 When you run the generator with `--generate-agent`, the output directory
 also contains:
 
-* `agent.py` – LangGraph wrapper  
-* `protocol_bindings/a2a_server/` – runnable A2A server  
+* `agent.py` – LangGraph wrapper
+* `protocol_bindings/a2a_server/` – runnable A2A server
 * `Makefile`, `README.md`, `.env.example`
 
 Example:

@@ -16,7 +16,6 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
 
-
 def camel_to_snake(name):
     if name.isupper():
         return "_".join(name).lower()
@@ -489,7 +488,7 @@ class MCPGenerator:
                 # Replace placeholder {orig_name} with {fixed_name}
                 formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + fixed_name + "}")
 
-        operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}"))
+        operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}").replace(" ", "_"))
         logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
 
         # Remove any curly braces from the operation id

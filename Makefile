@@ -6,7 +6,7 @@ add-copyright-license-headers:
 	@echo "Adding copyright license headers..."
 	docker run --rm -v $(shell pwd)/openapi_mcp_codegen:/workspace ghcr.io/google/addlicense:latest -c "CNOE" -l apache -s=only -v /workspace
 
-setup-venv:
+setup-venv: check-uv
 	@echo "======================================="
 	@echo " Setting up the Virtual Environment   "
 	@echo "======================================="
@@ -23,15 +23,22 @@ setup-venv:
 	@echo "To activate venv manually, run: source .venv/bin/activate"
 	. .venv/bin/activate
 
+check-uv:
 	@echo "======================================="
-	@echo " Adding pip as a Poetry dependency    "
+	@echo " Checking if uv CLI is installed       "
 	@echo "======================================="
-	. .venv/bin/activate && poetry add pip --dev
+	@if ! command -v uv >/dev/null 2>&1; then \
+		echo "uv CLI not found. Running uv-install..."; \
+		$(MAKE) uv-install; \
+	else \
+		echo "uv CLI is already installed."; \
+	fi
 
+uv-install:
 	@echo "======================================="
-	@echo " Installing dependencies with Poetry  "
+	@echo " Installing uv CLI                    "
 	@echo "======================================="
-	. .venv/bin/activate && poetry install
+	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 activate-venv:
 	@echo "Activating virtual environment..."
@@ -41,13 +48,6 @@ activate-venv:
 		echo "Virtual environment not found. Please run 'make setup-venv' first."; \
 	fi
 
-install:
-	@echo "======================================="
-	@echo " Activating virtual environment and    "
-	@echo " Installing poetry the current package "
-	@echo "======================================="
-	. .venv/bin/activate && poetry install
-
 lint: setup-venv
 	@echo "Running ruff..."
 	. .venv/bin/activate && ruff check openapi_mcp_codegen tests
@@ -56,28 +56,33 @@ ruff-fix: setup-venv
 	@echo "Running ruff and fix lint errors..."
 	. .venv/bin/activate && ruff check openapi_mcp_codegen tests --fix
 
-generate: setup-venv install
+generate: uv-sync
 	@echo "Running the application with arguments: $(filter-out $@,$(MAKECMDGOALS))"
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true
-	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
+	. .venv/bin/activate && uv run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
 
 
-generate-petstore: setup-venv install
+generate-petstore: uv-sync
 	@echo "Generating code for Petstore example..."
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true
-	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm
+	. .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm
 
 generate-argocd: setup-venv install
 	@echo "Generating code for ArgoCD example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
 
-generate-splunk: setup-venv install
+uv-sync: setup-venv
+	@echo "Running uv sync..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv sync
+
+generate-splunk: uv-sync
 	@echo "Generating code for Splunk example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/splunk/SPL-openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/splunk/openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm
 
 # This rule allows passing arguments to the run target
 %:
@@ -110,7 +115,7 @@ test-venv:
 	@echo "======================================="
 	@echo " Installing test dependencies         "
 	@echo "======================================="
-	. .venv/bin/activate && pip install -U pip pytest && poetry install
+	. .venv/bin/activate && pip install -U pip pytest
 
 test: test-venv
 	@echo "======================================="
