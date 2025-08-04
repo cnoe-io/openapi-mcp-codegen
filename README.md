@@ -2,7 +2,6 @@
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?logo=python)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
-
 [![Conventional Commits](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/conventional_commits.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/conventional_commits.yml)
 [![Ruff Linter](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/ruff.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/ruff.yml)
 [![Super Linter](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/superlinter.yml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/superlinter.yml)
@@ -45,8 +44,12 @@ This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
 
 **Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
 
+```
+uv sync
+```
+
 ```bash
-uvx run https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --generate-agent
@@ -55,7 +58,7 @@ uvx run https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
 ### 📌 Optional: Pin a release tag
 
 ```bash
-uv run python --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --generate-agent
@@ -80,6 +83,8 @@ pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main open
 
 Prefer to run locally or contribute?
 
+**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
+
 ### 1. **Clone the repo:**
 
 ```bash
@@ -90,7 +95,7 @@ cd openapi-mcp-codegen
 ### 2. **Install dependencies with Poetry:**
 
 ```bash
-poetry install
+uv sync
 ```
 
 ### 3. **Run the generator:**
@@ -107,7 +112,7 @@ make generate -- --spec-file examples/petstore/openapi_petstore.json --output-di
 **Option 2:**
 
 ```bash
-poetry run openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
+uv run openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
 ```
 
 ---
@@ -199,5 +204,4 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ## 🙏 Acknowledgements
 
 - [MCP on PyPI](https://pypi.org/project/mcp/), the official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) Python package
-- Thanks to the MCP community for their support
-- Built with [Poetry](https://python-poetry.org/), [uv](https://github.com/astral-sh/uv), and open source love 💜
+- Uses [uv](https://github.com/astral-sh/uv)

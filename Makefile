@@ -124,6 +124,19 @@ test: test-venv
 	. .venv/bin/activate && pytest tests
 
 
+## ========== Release & Versioning ==========
+release: setup-venv  ## Bump version and create a release
+	@. .venv/bin/activate; poetry install
+	@. .venv/bin/activate; poetry add commitizen --dev
+	@. .venv/bin/activate; git tag -d stable || echo "No stable tag found."
+	@. .venv/bin/activate; cz changelog
+	@git add CHANGELOG.md
+	@git commit -m "docs: update changelog"
+	@. .venv/bin/activate; cz bump --increment PATCH
+	@. .venv/bin/activate; git tag -f stable
+	@echo "Version bumped and stable tag updated successfully."
+
+
 help:
 	@echo "Available targets:"
 	@echo "  add-copyright-license-headers  Add copyright license headers to source files"
@@ -133,7 +146,11 @@ help:
 	@echo "  lint                           Run ruff linter on codebase"
 	@echo "  ruff-fix                       Run ruff and fix lint errors"
 	@echo "  generate [ARGS]                Build, install, and run the application with optional arguments"
+	@echo "  generate-petstore              Generate code for the Petstore example"
+	@echo "  generate-argocd                Generate code for the ArgoCD example"
+	@echo "  generate-splunk                Generate code for the Splunk example"
 	@echo "  cz-changelog                   Generate changelog using commitizen"
 	@echo "  test                           Run tests using pytest"
 	@echo "  test-venv                      Set up test virtual environment and install test dependencies"
+	@echo "  release                        Bump version and create a release"
 	@echo "  help                           Show this help message"
