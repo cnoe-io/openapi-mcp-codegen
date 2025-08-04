@@ -1,12 +1,12 @@
 # Makefile
 
-.PHONY: build setup-venv activate-venv install run run-acp run-client langgraph-dev help
+.PHONY: build setup-venv activate-venv install run add-copyright-license-headers lint ruff-fix generate generate-petstore generate-argocd generate-splunk uv-sync cz-changelog test release help
 
 add-copyright-license-headers:
 	@echo "Adding copyright license headers..."
 	docker run --rm -v $(shell pwd)/openapi_mcp_codegen:/workspace ghcr.io/google/addlicense:latest -c "CNOE" -l apache -s=only -v /workspace
 
-setup-venv:
+setup-venv: check-uv
 	@echo "======================================="
 	@echo " Setting up the Virtual Environment   "
 	@echo "======================================="
@@ -23,15 +23,22 @@ setup-venv:
 	@echo "To activate venv manually, run: source .venv/bin/activate"
 	. .venv/bin/activate
 
+check-uv:
 	@echo "======================================="
-	@echo " Adding pip as a Poetry dependency    "
+	@echo " Checking if uv CLI is installed       "
 	@echo "======================================="
-	. .venv/bin/activate && poetry add pip --dev
+	@if ! command -v uv >/dev/null 2>&1; then \
+		echo "uv CLI not found. Running uv-install..."; \
+		$(MAKE) uv-install; \
+	else \
+		echo "uv CLI is already installed."; \
+	fi
 
+uv-install:
 	@echo "======================================="
-	@echo " Installing dependencies with Poetry  "
+	@echo " Installing uv CLI                    "
 	@echo "======================================="
-	. .venv/bin/activate && poetry install
+	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 activate-venv:
 	@echo "Activating virtual environment..."
@@ -41,43 +48,41 @@ activate-venv:
 		echo "Virtual environment not found. Please run 'make setup-venv' first."; \
 	fi
 
-install:
-	@echo "======================================="
-	@echo " Activating virtual environment and    "
-	@echo " Installing poetry the current package "
-	@echo "======================================="
-	. .venv/bin/activate && poetry install
-
 lint: setup-venv
 	@echo "Running ruff..."
-	. .venv/bin/activate && ruff check openapi_mcp_codegen tests
+	. .venv/bin/activate && uv run python -m ruff check openapi_mcp_codegen tests
 
 ruff-fix: setup-venv
 	@echo "Running ruff and fix lint errors..."
-	. .venv/bin/activate && ruff check openapi_mcp_codegen tests --fix
+	. .venv/bin/activate && uv run python -m ruff check openapi_mcp_codegen tests --fix
 
-generate: setup-venv install
+generate: uv-sync
 	@echo "Running the application with arguments: $(filter-out $@,$(MAKECMDGOALS))"
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true
-	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
+	. .venv/bin/activate && uv run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
 
 
-generate-petstore: setup-venv install
+generate-petstore: uv-sync
 	@echo "Generating code for Petstore example..."
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true
-	. .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm
+	. .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server --enhance-docstring-with-llm
 
 generate-argocd: setup-venv install
 	@echo "Generating code for ArgoCD example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
 
-generate-splunk: setup-venv install
+uv-sync: setup-venv
+	@echo "Running uv sync..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv sync
+
+generate-splunk: uv-sync
 	@echo "Generating code for Splunk example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && poetry run python -m openapi_mcp_codegen --spec-file examples/splunk/SPL-openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/splunk/openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm --generate-agent
 
 # This rule allows passing arguments to the run target
 %:
@@ -93,30 +98,24 @@ cz-changelog: setup-venv
 	@echo "======================================="
 	. .venv/bin/activate && cz bump --changelog
 
-# test_Makefile
-
-.PHONY: test test-venv
-
-test-venv:
-	@echo "======================================="
-	@echo " Setting up test virtual environment   "
-	@echo "======================================="
-	@if [ ! -d ".venv" ]; then \
-		python3 -m venv .venv; \
-		echo "Test virtual environment created."; \
-	else \
-		echo "Test virtual environment already exists."; \
-	fi
-	@echo "======================================="
-	@echo " Installing test dependencies         "
-	@echo "======================================="
-	. .venv/bin/activate && pip install -U pip pytest && poetry install
-
-test: test-venv
+test: setup-venv
 	@echo "======================================="
 	@echo " Running pytest on tests directory     "
 	@echo "======================================="
-	. .venv/bin/activate && pytest tests
+	. .venv/bin/activate && uv run python -m pytest tests
+
+
+## ========== Release & Versioning ==========
+release: setup-venv  ## Bump version and create a release
+	@. .venv/bin/activate; poetry install
+	@. .venv/bin/activate; poetry add commitizen --dev
+	@. .venv/bin/activate; git tag -d stable || echo "No stable tag found."
+	@. .venv/bin/activate; cz changelog
+	@git add CHANGELOG.md
+	@git commit -m "docs: update changelog"
+	@. .venv/bin/activate; cz bump --increment PATCH
+	@. .venv/bin/activate; git tag -f stable
+	@echo "Version bumped and stable tag updated successfully."
 
 
 help:
@@ -128,7 +127,11 @@ help:
 	@echo "  lint                           Run ruff linter on codebase"
 	@echo "  ruff-fix                       Run ruff and fix lint errors"
 	@echo "  generate [ARGS]                Build, install, and run the application with optional arguments"
+	@echo "  generate-petstore              Generate code for the Petstore example"
+	@echo "  generate-argocd                Generate code for the ArgoCD example"
+	@echo "  generate-splunk                Generate code for the Splunk example"
 	@echo "  cz-changelog                   Generate changelog using commitizen"
 	@echo "  test                           Run tests using pytest"
 	@echo "  test-venv                      Set up test virtual environment and install test dependencies"
+	@echo "  release                        Bump version and create a release"
 	@echo "  help                           Show this help message"

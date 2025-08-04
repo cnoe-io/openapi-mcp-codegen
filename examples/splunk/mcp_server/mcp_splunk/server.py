@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""
+ MCP Server
+
+This server provides a Model Context Protocol (MCP) interface to the ,
+allowing large language models and AI assistants to interact with the service.
+"""
+
+import logging
+import os
+from dotenv import load_dotenv
+from mcp.server.fastmcp import FastMCP
+
+
+from mcp_splunk.tools import incident
+
+from mcp_splunk.tools import incident_id
+
+from mcp_splunk.tools import incident_clear
+
+from mcp_splunk.tools import incident_id_clear
+
+from mcp_splunk.tools import alertmuting
+
+from mcp_splunk.tools import alertmuting_id
+
+from mcp_splunk.tools import alertmuting_id_unmute
+
+from mcp_splunk.tools import team
+
+from mcp_splunk.tools import team_tid
+
+from mcp_splunk.tools import team_tid_members
+
+from mcp_splunk.tools import team_tid_member_uid
+
+
+def main():
+  # Load environment variables
+  load_dotenv()
+
+  # Configure logging
+  logging.basicConfig(level=logging.DEBUG)
+
+  # Get MCP configuration from environment variables
+  MCP_MODE = os.getenv("MCP_MODE", "stdio").lower()
+
+  # Get host and port for server
+  MCP_HOST = os.getenv("MCP_HOST", "localhost")
+  MCP_PORT = int(os.getenv("MCP_PORT", "8000"))
+
+  logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
+
+  # Get agent name from environment variables
+  AGENT_NAME = os.getenv("AGENT_NAME", "SPLUNK Agent")
+  logging.info(f"Agent name: {AGENT_NAME}")
+
+  # Create server instance
+  if MCP_MODE == "SSE":
+    mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+  else:
+    mcp = FastMCP("SPLUNK MCP Server")
+
+  # Register incident tools
+
+  mcp.tool()(incident.retrieve__incidents)
+
+  # Register incident_id tools
+
+  mcp.tool()(incident_id.retrieve__incident_id)
+
+  # Register incident_clear tools
+
+  mcp.tool()(incident_clear.clear__incidents)
+
+  # Register incident_id_clear tools
+
+  mcp.tool()(incident_id_clear.clear__single__incident)
+
+  # Register alertmuting tools
+
+  mcp.tool()(alertmuting.retrieve__muting__rules__using__query)
+
+  mcp.tool()(alertmuting.create__single__muting__rule)
+
+  # Register alertmuting_id tools
+
+  mcp.tool()(alertmuting_id.retrieve__muting__rule_id)
+
+  mcp.tool()(alertmuting_id.update__single__muting__rule)
+
+  mcp.tool()(alertmuting_id.delete__single__muting__rule)
+
+  # Register alertmuting_id_unmute tools
+
+  mcp.tool()(alertmuting_id_unmute.unmute__single__muting__rule)
+
+  # Register team tools
+
+  mcp.tool()(team.retrieve__teams_by__name)
+
+  mcp.tool()(team.create__single__team)
+
+  # Register team_tid tools
+
+  mcp.tool()(team_tid.retrieve__team__using_id)
+
+  mcp.tool()(team_tid.update__team)
+
+  mcp.tool()(team_tid.delete__team)
+
+  # Register team_tid_members tools
+
+  mcp.tool()(team_tid_members.add__team__member__list)
+
+  mcp.tool()(team_tid_members.delete__team__members__list)
+
+  # Register team_tid_member_uid tools
+
+  mcp.tool()(team_tid_member_uid.update__team__membership__user__id)
+
+  mcp.tool()(team_tid_member_uid.delete__team__user__user__id)
+
+  # Run the MCP server
+  mcp.run(transport=MCP_MODE)
+
+
+if __name__ == "__main__":
+  main()

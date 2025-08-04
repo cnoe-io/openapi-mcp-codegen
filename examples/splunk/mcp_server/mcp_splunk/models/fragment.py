@@ -1,0 +1,22 @@
+"""Model for Fragment"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Fragment(BaseModel):
+  """SignalFlow code fragment that generated the value for a triggered event"""
+
+
+class FragmentResponse(APIResponse):
+  """Response model for Fragment"""
+
+  data: Optional[Fragment] = None
+
+
+class FragmentListResponse(APIResponse):
+  """List response model for Fragment"""
+
+  data: List[Fragment] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

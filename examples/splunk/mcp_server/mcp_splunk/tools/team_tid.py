@@ -1,0 +1,173 @@
+"""Tools for /team/{tid} operations"""
+
+import logging
+from typing import Any, List
+from mcp_splunk.api.client import make_api_request, assemble_nested_body
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("mcp_tools")
+
+
+async def retrieve__team__using_id(path_tid: str) -> Any:
+  """
+  Retrieves the team specified in the {tid} path parameter
+
+  OpenAPI Description:
+      Retrieves a team
+
+
+  Args:
+
+      path_tid (str): Team ID
+
+
+
+  Returns:
+      Any: The JSON response from the API call.
+
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /team/{tid}")
+
+  params = {}
+  data = {}
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/team/{path_tid}", method="GET", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
+
+
+async def update__team(
+  path_tid: str,
+  body_description: str = None,
+  body_members: List[str] = None,
+  body_name: str = None,
+  body_notificationLists_default: List[str] = None,
+  body_notificationLists_critical: List[str] = None,
+  body_notificationLists_warning: List[str] = None,
+  body_notificationLists_major: List[str] = None,
+  body_notificationLists_minor: List[str] = None,
+  body_notificationLists_info: List[str] = None,
+) -> Any:
+  """
+  Updates the team specified in the {tid} path parameter
+
+  OpenAPI Description:
+      Updates a team
+
+
+  Args:
+
+      path_tid (str): Team ID
+
+
+      body_description (str): Team description
+
+
+      body_members (List[str]): List of user IDs that belong to a team
+
+
+      body_name (str): Team name
+
+
+      body_notificationLists_default (List[str]): Notification services to use for undefined alerts
+
+
+      body_notificationLists_critical (List[str]): Notification services to use for critical alerts
+
+
+      body_notificationLists_warning (List[str]): Notification services to use for warning alerts
+
+
+      body_notificationLists_major (List[str]): Notification services to use for major alerts
+
+
+      body_notificationLists_minor (List[str]): Notification services to use for minor alerts
+
+
+      body_notificationLists_info (List[str]): Notification services to use for information alerts
+
+
+
+  Returns:
+      Any: The JSON response from the API call.
+
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /team/{tid}")
+
+  params = {}
+  data = {}
+
+  flat_body = {}
+  if body_description is not None:
+    flat_body["description"] = body_description
+  if body_members is not None:
+    flat_body["members"] = body_members
+  if body_name is not None:
+    flat_body["name"] = body_name
+  if body_notificationLists_default is not None:
+    flat_body["notificationLists_default"] = body_notificationLists_default
+  if body_notificationLists_critical is not None:
+    flat_body["notificationLists_critical"] = body_notificationLists_critical
+  if body_notificationLists_warning is not None:
+    flat_body["notificationLists_warning"] = body_notificationLists_warning
+  if body_notificationLists_major is not None:
+    flat_body["notificationLists_major"] = body_notificationLists_major
+  if body_notificationLists_minor is not None:
+    flat_body["notificationLists_minor"] = body_notificationLists_minor
+  if body_notificationLists_info is not None:
+    flat_body["notificationLists_info"] = body_notificationLists_info
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/team/{path_tid}", method="PUT", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
+
+
+async def delete__team(path_tid: str) -> Any:
+  """
+  Deletes the team specified in the {tid} path parameter
+
+  OpenAPI Description:
+      Deletes a team
+
+
+  Args:
+
+      path_tid (str): Team ID
+
+
+
+  Returns:
+      Any: The JSON response from the API call.
+
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /team/{tid}")
+
+  params = {}
+  data = {}
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/team/{path_tid}", method="DELETE", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

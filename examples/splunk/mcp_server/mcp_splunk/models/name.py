@@ -1,0 +1,22 @@
+"""Model for Name"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Name(BaseModel):
+  """Detector name"""
+
+
+class NameResponse(APIResponse):
+  """Response model for Name"""
+
+  data: Optional[Name] = None
+
+
+class NameListResponse(APIResponse):
+  """List response model for Name"""
+
+  data: List[Name] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

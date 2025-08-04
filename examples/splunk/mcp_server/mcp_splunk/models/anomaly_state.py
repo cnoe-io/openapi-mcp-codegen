@@ -1,0 +1,22 @@
+"""Model for Anomalystate"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Anomalystate(BaseModel):
+  """Indicates the current state of an event or incident"""
+
+
+class AnomalystateResponse(APIResponse):
+  """Response model for Anomalystate"""
+
+  data: Optional[Anomalystate] = None
+
+
+class AnomalystateListResponse(APIResponse):
+  """List response model for Anomalystate"""
+
+  data: List[Anomalystate] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

@@ -1,0 +1,22 @@
+"""Model for Timestamp"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Timestamp(BaseModel):
+  """Event occurrence timestamp, in *nix time in milliseconds"""
+
+
+class TimestampResponse(APIResponse):
+  """Response model for Timestamp"""
+
+  data: Optional[Timestamp] = None
+
+
+class TimestampListResponse(APIResponse):
+  """List response model for Timestamp"""
+
+  data: List[Timestamp] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

@@ -1,0 +1,22 @@
+"""Model for Dimensions"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Dimensions(BaseModel):
+  """Dimensions that matched the detector rule for a triggered event"""
+
+
+class DimensionsResponse(APIResponse):
+  """Response model for Dimensions"""
+
+  data: Optional[Dimensions] = None
+
+
+class DimensionsListResponse(APIResponse):
+  """List response model for Dimensions"""
+
+  data: List[Dimensions] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

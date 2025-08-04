@@ -31,14 +31,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.13.2"
-      - name: Install Poetry
+      - name: Install UV
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-        env:
-          POETRY_HOME: /opt/poetry
-      - name: Add Poetry to PATH
-        run: echo "/opt/poetry/bin" >> $GITHUB_PATH
-      - name: Install ruff with Poetry
-        run: poetry add --dev ruff
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Add UV to PATH
+        run: echo "/opt/uv/bin" >> $GITHUB_PATH
       - name: Run ruff linter # python linting
-        run: make lint
+        run: uv run python -m ruff check openapi_mcp_codegen tests

@@ -1,8 +1,3 @@
-{% if file_headers %}
-# {{ file_headers_copyright }}
-# {{ file_headers_license }}
-# {{ file_headers_message }}
-{% endif %}
 """LangGraph React-agent wrapper for the generated MCP server."""
 
 import asyncio
@@ -10,9 +5,7 @@ import importlib.util
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict
 
-from langchain_core.runnables import RunnableConfig
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_mcp_adapters.client import MultiServerMCPClient
@@ -21,9 +14,9 @@ from cnoe_agent_utils import LLMFactory
 logger = logging.getLogger(__name__)
 
 # Locate the generated MCP server module
-spec = importlib.util.find_spec("mcp_{{ mcp_name }}.server")
+spec = importlib.util.find_spec("mcp_splunk.server")
 if not spec or not spec.origin:
-    raise ImportError("Cannot find mcp_{{ mcp_name }}.server module")
+    raise ImportError("Cannot find mcp_splunk.server module")
 server_path = str(Path(spec.origin).resolve())
 
 
@@ -34,19 +27,19 @@ async def create_agent(prompt: str | None = None, response_format=None):
     """
     memory = MemorySaver()
 
-    api_url   = os.getenv("{{ mcp_name | upper }}_API_URL")
-    api_token = os.getenv("{{ mcp_name | upper }}_TOKEN")
+    api_url = os.getenv("SPLUNK_API_URL")
+    api_token = os.getenv("SPLUNK_TOKEN")
     if not api_url or not api_token:
-        raise ValueError("Set {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN env vars")
+        raise ValueError("Set SPLUNK_API_URL and SPLUNK_TOKEN env vars")
 
     client = MultiServerMCPClient(
         {
-            "{{ mcp_name }}": {
+            "splunk": {
                 "command": "uv",
                 "args": ["run", server_path],
                 "env": {
-                    "{{ mcp_name | upper }}_API_URL": api_url,
-                    "{{ mcp_name | upper }}_TOKEN": api_token,
+                    "SPLUNK_API_URL": api_url,
+                    "SPLUNK_TOKEN": api_token,
                 },
                 "transport": "stdio",
             }

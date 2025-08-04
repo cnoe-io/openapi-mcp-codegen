@@ -1,0 +1,22 @@
+"""Model for Active"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Active(BaseModel):
+  """Flag that indicates if the incident is ongoing"""
+
+
+class ActiveResponse(APIResponse):
+  """Response model for Active"""
+
+  data: Optional[Active] = None
+
+
+class ActiveListResponse(APIResponse):
+  """List response model for Active"""
+
+  data: List[Active] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

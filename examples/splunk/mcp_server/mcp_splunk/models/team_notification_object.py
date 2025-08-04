@@ -1,0 +1,22 @@
+"""Model for Teamnotificationobject"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Teamnotificationobject(BaseModel):
+  """Properties of a team notification"""
+
+
+class TeamnotificationobjectResponse(APIResponse):
+  """Response model for Teamnotificationobject"""
+
+  data: Optional[Teamnotificationobject] = None
+
+
+class TeamnotificationobjectListResponse(APIResponse):
+  """List response model for Teamnotificationobject"""
+
+  data: List[Teamnotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

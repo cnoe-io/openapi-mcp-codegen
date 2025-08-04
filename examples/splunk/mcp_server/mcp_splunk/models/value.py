@@ -1,0 +1,22 @@
+"""Model for Value"""
+
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from .base import APIResponse, PaginationInfo
+
+
+class Value(BaseModel):
+  """Value that matched a detector rule and triggered an alert or clear"""
+
+
+class ValueResponse(APIResponse):
+  """Response model for Value"""
+
+  data: Optional[Value] = None
+
+
+class ValueListResponse(APIResponse):
+  """List response model for Value"""
+
+  data: List[Value] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None
