@@ -16,7 +16,6 @@ import subprocess
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("mcp_codegen")
 
-from openapi_mcp_codegen.eval_codegen.eval_codegen import generate_eval_suite
 
 def camel_to_snake(name):
     if name.isupper():
@@ -105,7 +104,6 @@ class MCPGenerator:
       dry_run: bool = False,
       enhance_docstring_with_llm: bool = False,
       enhance_docstring_with_llm_openapi: bool = False,
-      generate_eval: bool = False,
       generate_agent: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
@@ -131,7 +129,6 @@ class MCPGenerator:
     self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
-    self.generate_eval = generate_eval
     self.generate_agent_flag = generate_agent
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
@@ -216,9 +213,7 @@ class MCPGenerator:
       "check",
       "--fix",
       "--ignore",
-      "E402",
-      "--line-length",
-      "140",
+      "E402,E501",
       input_file
       ],
       check=True,
@@ -629,7 +624,6 @@ class MCPGenerator:
           """
     "a2a-sdk==0.2.8",
     "httpx==0.28.1",
-    "agentevals>=0.0.7",
     "agntcy-acp>=1.3.2",
     "click>=8.2.0",
     "langchain-anthropic>=0.3.13",
@@ -855,23 +849,6 @@ class MCPGenerator:
           info = {"name": prefix, "type": py_type, "description": schema.get("description", "")}
           return [(sig, info)]
 
-  def generate_eval_suite(self):
-    """
-    Create eval/ folder with prompts, trajectories and pytest-based
-    benchmark harness.
-    """
-    logger.info("Generating evaluation suite")
-    # configurable number of synthetic prompts, default 5
-    num_prompts = int(self.config.get("num_eval_prompts", 5))
-    eval_dir = os.path.join(self.output_dir, "eval")
-    os.makedirs(eval_dir, exist_ok=True)
-    generate_eval_suite(
-        spec=self.spec,
-        mcp_name=self.mcp_name,
-        tools_map=self.tools_map,
-        dest_dir=eval_dir,
-        num_prompts=num_prompts,
-    )
 
   def generate(self):
     """
@@ -889,6 +866,4 @@ class MCPGenerator:
     self.generate_init_files()
     self.generate_env()
     self.generate_readme()
-    if self.generate_eval:
-        self.generate_eval_suite()
     logger.info("MCP code generation completed")

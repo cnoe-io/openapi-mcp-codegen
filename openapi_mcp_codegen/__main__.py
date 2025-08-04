@@ -50,12 +50,6 @@ def get_mcp_name(spec_path):
     help="Set logging level.",
   )
 @click.option(
-    "--generate-eval",
-    is_flag=True,
-    default=False,
-    help="Generate an evaluation suite for the produced MCP server",
-)
-@click.option(
     "--generate-agent",
     is_flag=True,
     default=False,
@@ -86,7 +80,6 @@ def main(
    dry_run,
    enhance_docstring_with_llm,
    enhance_docstring_with_llm_openapi,
-   generate_eval,
    generate_agent,
 ):
   # Load environment variables from .env file if present
@@ -120,7 +113,6 @@ def main(
       dry_run=dry_run,
       enhance_docstring_with_llm=enhance_docstring_with_llm,
       enhance_docstring_with_llm_openapi=enhance_docstring_with_llm_openapi,
-      generate_eval=generate_eval,
       generate_agent=generate_agent,
   )
   generator.generate()
