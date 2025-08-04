@@ -1,4 +1,3 @@
-# Copyright 2025 CNOE
 """Launch an A2A HTTP server exposing the Splunk agent."""
 
 import click

@@ -1,4 +1,3 @@
-# Copyright 2025 CNOE
 """Helper functions for mapping agent responses to A2A events."""
 
 from datetime import datetime

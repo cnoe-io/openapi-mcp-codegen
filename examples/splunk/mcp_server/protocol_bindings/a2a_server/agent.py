@@ -1,4 +1,3 @@
-# Copyright 2025 CNOE
 """Splunk LangGraph agent wrapper used by the A2A server."""
 
 import logging

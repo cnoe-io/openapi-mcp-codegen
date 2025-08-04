@@ -1,4 +1,3 @@
-# Copyright 2025 CNOE
 """AgentExecutor implementation that connects the Splunk agent to A2A."""
 
 from typing_extensions import override
