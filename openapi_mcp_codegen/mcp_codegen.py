@@ -741,7 +741,7 @@ class MCPGenerator:
     Generate the README.md file.
     """
     logger.info("Generating README.md")
-    output_path = os.path.join(self.src_output_dir, 'README.md')
+    output_path = os.path.join(self.output_dir, 'README.md')
     self.render_template(
       'readme.tpl',
       output_path,

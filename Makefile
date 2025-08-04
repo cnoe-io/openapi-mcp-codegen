@@ -50,11 +50,11 @@ activate-venv:
 
 lint: setup-venv
 	@echo "Running ruff..."
-	. .venv/bin/activate && ruff check openapi_mcp_codegen tests
+	. .venv/bin/activate && uv run python -m ruff check openapi_mcp_codegen tests
 
 ruff-fix: setup-venv
 	@echo "Running ruff and fix lint errors..."
-	. .venv/bin/activate && ruff check openapi_mcp_codegen tests --fix
+	. .venv/bin/activate && uv run python -m ruff check openapi_mcp_codegen tests --fix
 
 generate: uv-sync
 	@echo "Running the application with arguments: $(filter-out $@,$(MAKECMDGOALS))"
@@ -121,7 +121,7 @@ test: test-venv
 	@echo "======================================="
 	@echo " Running pytest on tests directory     "
 	@echo "======================================="
-	. .venv/bin/activate && pytest tests
+	. .venv/bin/activate && uv run python -m pytest tests
 
 
 ## ========== Release & Versioning ==========
