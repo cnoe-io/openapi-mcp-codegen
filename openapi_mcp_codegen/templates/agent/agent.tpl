@@ -39,7 +39,7 @@ async def create_agent(prompt: str | None = None, response_format=None):
     if not api_url or not api_token:
         raise ValueError("Set {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN env vars")
 
-    async with MultiServerMCPClient(
+    client = MultiServerMCPClient(
         {
             "{{ mcp_name }}": {
                 "command": "uv",
@@ -51,16 +51,16 @@ async def create_agent(prompt: str | None = None, response_format=None):
                 "transport": "stdio",
             }
         }
-    ) as client:
-        tools = await client.get_tools()
-        agent = create_react_agent(
-            LLMFactory().get_llm(),
-            tools=tools,
-            checkpointer=memory,
-            prompt=prompt,
-            response_format=response_format,
-        )
-        return agent
+    )
+    tools = await client.get_tools()
+    agent = create_react_agent(
+        LLMFactory().get_llm(),
+        tools=tools,
+        checkpointer=memory,
+        prompt=prompt,
+        response_format=response_format,
+    )
+    return agent
 
 
 # Convenience synchronous wrapper

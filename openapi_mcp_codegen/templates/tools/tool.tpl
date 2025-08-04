@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("mcp_tools")
 
 {% for func in functions %}
-async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, Any]:
+async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Any:
     """
     {{ func.summary }}
 
@@ -29,7 +29,7 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Dict[str, A
     {% endfor %}
 
     Returns:
-        Dict[str, Any]: The JSON response from the API call.
+        Any: The JSON response from the API call.
 
     Raises:
         Exception: If the API request fails or returns an error.
