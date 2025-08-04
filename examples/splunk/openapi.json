@@ -1,0 +1,2417 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "3.7.1",
+    "title": "splunk",
+    "x-update-date": "* 2019-05-30: 3.0.1\n* 2019-11-13: 3.3.0\n* 2019-11-24: 3.4.0\n* 2019-12-10: 3.5.0\n* 2020-01-29: 3.6.0\n* 2020-01-31: 3.7.0\n* 2020-02-26: 3.7.1\n* 2024-02-13: 3.8.0\n",
+    "x-version-info": "* 2019-05-30: 3.0.1: Added documentation for GET `/incident` and GET `/incident/{id}`\n* 2019-06-05: 3.1.0: Updates for DOCS-483: Updates for corrected authentication token requirements\n  Simplified description of X-SF-TOKEN\n* 2019-11-13: 3.3.0: Updates for DOCS-973 and DOCS-240: Fix two incorrect statements in the REST API documentation for alertmuting\n* 2019-11-24: 3.4.0: Fixes for DOCS-170 and DOCS-172\n* 2019-12-10: 3.5.0: DOCS-930 user decides about muted notifications\n* 2020-01-29: 3.6.0: DOCS-938: Clear incidents by selecting metadata for signals that caused them\n* 2020-01-31: 3.7.0: DOCS-939: Describe new query parameter that mutes and clears simultaneously\n* 2020-02-26: 3.7.1: DOCS-1104: Incorrect position of duration property in response object\n* 2024-02-13: 3.8.0: O11YDOCS-5710: Add recurrence to muting rules API\n",
+    "x-doc-link": "[Detect anomalies with detectors](/docs/detectors/detectors_events_alerts)\n",
+    "x-description": "This API provides two endpoints:\n\n* `/incident`: Operations that retrieve incident information or clear an incident\n* `/alertmuting`: Operations that create, retrieve, update, or delete notification muting rules\n\n## Requirements\n\n* You must have an organization access token with the API permission or a session token to use the API.\n* You have to have the Splunk Observability Cloud admin, power, or read_only role to use the `GET /incident`, `GET /incident/{id}`, `GET /alertmuting`, and `GET /alertmuting/{id}` operations.\n* You have to have the Splunk Observability Cloud admin or power role to use the `PUT /incident/clear`, `PUT /incident/{id}/clear`, `POST /alertmuting`,  `PUT /alertmuting/{id}`, `DELETE /alertmuting/{id}`, and `PUT /alertmuting/{id}/unmute` operations.\n\n\n## Incidents\n\nAn incident is the combination of an alert event and a clear event. Splunk Observability Cloud\ngenerates alert events when an incoming stream of data triggers a rule you define for a\ndetector. When the condition that triggered the alert is no longer true, Splunk Observability Cloud\ntriggers a clear event. Use the `/incident` endpoint to retrieve information for these\nevents.\n\n## Event time series (ETS)\n\nAn event time series (ETS) is a collection of events with the same metric and the same set of dimensions for the same detector rule. Each ETS points to only the latest incident.\n\n## Notification muting\n\nNotification muting controls the optional notifications for a detector rule. If you've\ndefined a notification service for a detector rule, Splunk Observability Cloud sends you a notification for\nan alert event and a clear event. Notification muting controls these notifications.\n\nTo learn more about notification muting, see the section [Mute alert notifications](https://docs.splunk.com/observability/en/alerts-detectors-notifications/mute-notifications.html)\nin the user documentation.\n\nNote: Although the detectors API only works with detectors you create in the API\n(v2 detectors), the `/v2/incident`</code>` and `/v2/alertmuting`\nendpoints work with all alerts, events, incidents, and notifications,\nregardless of which detector version created them. This means that you can use the\nendpoints to work with incidents and muting rules for detectors you create in the UI.\n",
+    "description": "API for retrieving or clearing incidents and muting \"critical-notifications\".\n\n## Requirements\n\n* You must have an organization access token with the API permission or a session token to use the API.\n* You have to have the Splunk Observability Cloud admin, power, or read_only role to use the `GET /incident`, `GET /incident/{id}`, `GET /alertmuting`, and `GET /alertmuting/{id}` operations.\n* You have to have the Splunk Observability Cloud admin or power role to use the `PUT /incident/clear`, `PUT /incident/{id}/clear`, `POST /alertmuting`,  `PUT /alertmuting/{id}`, `DELETE /alertmuting/{id}`, and `PUT /alertmuting/{id}/unmute` operations.\n"
+  },
+  "servers": [
+    {
+      "url": "https://outshift.signalfx.com/v2",
+      "description": "Incident/Notification API endpoint URL\n",
+      "x-description": "Splunk Observability Cloud API endpoint. Replace `{REALM}` with the name of your realm.\n\nFor example, if your realm is `eu0`,  use `https://api.eu0.signalfx.com/v2`.\nTo find your realm, go to your profile page in the user interface.\n\nIf you don't include a realm and use `https://api.signalfx.com/v2`,\nthe API interprets the endpoint as pointing to the `us0` realm.\n"
+    }
+  ],
+  "paths": {
+    "/incident": {
+      "get": {
+        "tags": [
+          "Retrieve Incidents"
+        ],
+        "summary": "Retrieves information for the latest incidents in an organization",
+        "description": "Retrieves the latest incidents in an organization\n",
+        "x-description": "Retrieves information for the latest incidents in an organization, one incident from each ETS. This endpoint retrieves\nincidents created by detectors you add in the UI and detectors you add using the API.\n\nNote: Splunk Observability Cloud returns a maximum of 10,000 incidents, even if your organization contains more than 10,000. To learn more, see the\n[Considerations for retrieve operations](https://dev.splunk.com/observability/docs/apibasics/retrieve_data_basics#Considerations-for-retrieve-operations) section in the developer guide.\n",
+        "operationId": "Retrieve Incidents",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "includeResolved",
+            "in": "query",
+            "description": "Controls retrieval of the latest resolved incidents\n",
+            "x-description": "Specifies which latest incidents to retrieve based on their status. If\nthe value is `true`, the API returns latest incident for which the status\nis `\"resolved\"`; otherwise, the API only returns the latest active incidents.\n",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "required": false
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return from the result set\n",
+            "x-description": "The number of results to return from the result set.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": false
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Index in result set at which the API starts returning results\n",
+            "x-description": "The result object in the result set at which the API should start\nreturning results to you. If omitted, the API starts at the first\nresult in the set.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": false
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Controls which latest incidents to retrieve, based on descriptions and other filters. For example, to retrieve the latest incidents created by detectors linked to a team with the ID `FO1Vq3ABXYZ`, specify `teamId:FO1Vq3ABXYZ`.\n\nTo search for latest incidents by specific values of a dimension or custom property, use `query=<name>:<value>`. If `<value>` contains non-alphanumeric characters, encode the non-alphanumeric characters and surround the value with double quotes. For example, the region custom property value `US East` must be passed in the parameter as `region:\"US%20East\"`.\n\nHere are examples of the `query` parameter used alone and with other available query parameters:\n\n- `https://app.{realm}.signalfx.com/v2/incident?query=teamId:FO1Vq3ABXYZ`\n- `https://app.{realm}.signalfx.com/v2/incident?query=region:\"US%20East\"&limit=5&offset=5`\n\nFor information about how to link detectors to teams, see [Detectors linked to teams](https://quickdraw.splunk.com/redirect/?product=Observability&location=devdocs.getincidents.byteamid&version=current).\n",
+            "x-description": "Controls which latest incidents to retrieve, based on descriptions and other filters. For example, to retrieve the latest incidents created by detectors linked to a team with the ID `FO1Vq3ABXYZ`, specify `teamId:FO1Vq3ABXYZ`.\n\nTo search for latest incidents by specific values of a dimension or custom property, use `query=<name>:<value>`. If `<value>` contains non-alphanumeric characters, encode the non-alphanumeric characters and surround the value with double quotes. For example, the region custom property value `US East` must be passed in the parameter as `region:\"US%20East\"`.\n\nHere are examples of the `query` parameter used alone and with other available query parameters:\n\n- `https://app.{realm}.signalfx.com/v2/incident?query=teamId:FO1Vq3ABXYZ`\n- `https://app.{realm}.signalfx.com/v2/incident?query=region:\"US%20East\"&limit=5&offset=5`\n\nFor information about how to link detectors to teams, see [Detectors linked to teams](https://quickdraw.splunk.com/redirect/?product=Observability&location=devdocs.getincidents.byteamid&version=current).\n",
+            "schema": {
+              "type": "string"
+            },
+            "example": "teamId:FO1Vq3ABXYZ",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful operation\n",
+            "headers": {
+              "Content-Type": {
+                "description": "`\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveIncidentResponses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/incident/{id}": {
+      "get": {
+        "tags": [
+          "Retrieve Incident ID"
+        ],
+        "summary": "Retrieves the incident specified in the {id} path parameter",
+        "description": "Retrieves an incident based on its ID\n",
+        "x-description": "Retrieves an incident, based on the incident ID\nspecified in the `{id}` path parameter. This endpoint retrieves an\nincident created by a detector you add using the UI or a detector\nyou add using the API (a v2 detector).\n",
+        "operationId": "Retrieve Incident ID",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of incident to retrieve\n",
+            "x-description": "ID of an incident\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful retrieval\n",
+            "headers": {
+              "Content-Type": {
+                "description": "`\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveIncidentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/incident/clear": {
+      "put": {
+        "tags": [
+          "Clear Incidents by Filter"
+        ],
+        "summary": "Clears specified incidents",
+        "description": "Clears alerts specified in the request body\n",
+        "x-description": "Clears alerts identified by the rules in the request body.\n",
+        "operationId": "Clear Incidents",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "`\"application/json\"`\n",
+            "x-description": "Format of the request body. Always `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token\n",
+            "x-description": "Authentication token\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Rules that identify an incident you want to clear\n",
+          "x-description": "Rules that identify an incident you want to clear\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidentClearRules"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success. The API doesn't return a response body.\n",
+            "x-description": "Successful request. This request doesn't return a response body.\n"
+          },
+          "400": {
+            "description": "Invalid request\n",
+            "x-description": "Invalid request body. Some causes are:\n\n* JSON is not well-formed\n* Missing required property in request body\n* Invalid value for a property.\n\nFor example, if you misspell `propertyValue` as `propertyValue`, you receive\nthe following error response body:\n\n```\n    {\n        \"code\": 400,\n        \"message\": \"Failed to deserialize payload at: sf.rest.shared.model.incident.ClearMultipleIncidentsRequest[\\\"filters\\\"]->java.util.ArrayList[0]->sf.rest.shared.model.PropertyFilter[\\\"propertyValue\\\"]\"\n    }\n```\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "description": "HTTP response code 400\n",
+                      "x-description": "HTTP response code, always `400`\n",
+                      "type": "integer"
+                    },
+                    "message": {
+                      "description": "Error message\n",
+                      "x-description": "Human-readable text string\n",
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": "{\n  \"code\": 400,\n  \"message\": \"Failed to deserialize payload at: sf.rest.shared.model.incident.ClearMultipleIncidentsRequest[\\\"filters\\\"]->java.util.ArrayList[0]->sf.rest.shared.model.PropertyFilter[\\\"propertyValue\\\"]\"\n}\n"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid authentication token\n",
+            "x-description": "Invalid authentication token\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "\"Invalid token specified.\"\n"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/incident/{id}/clear": {
+      "put": {
+        "tags": [
+          "Clear Single Incident"
+        ],
+        "summary": "Clears an incident specified by the `{id}`path parameter",
+        "description": "Clears an incident\n",
+        "x-description": "Manually clears the incident identified by the\nincident ID specified in the `{id}` path parameter.\n\nThis API can be used with incidents created by a detector you add\nusing the UI or a detector you add using the API (a v2\ndetector).\n\nThis operation doesn't return a response body.\n",
+        "operationId": "Clear Single Incident",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the incident you want to clear\n",
+            "x-description": "The id of an existing incident that you want to clear\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successfully cleared the event\n"
+          }
+        }
+      }
+    },
+    "/alertmuting": {
+      "get": {
+        "tags": [
+          "Retrieve Muting Rules Query"
+        ],
+        "summary": "Retrieves muting rules based on search criteria",
+        "description": "Retrieves notification muting rules based on query parameters\n",
+        "x-description": "Retrieves muting rules based on the query\nyou specify in the `query` query parameter.\nThis endpoint retrieves muting rules regardless of the version\nof the detector associated with the rule.\n\nNote: Splunk Observability Cloud returns a maximum of 10,000 rules, even if your organization contains more than 10,000. To learn more, see the\n[Considerations for retrieve operations](https://dev.splunk.com/observability/docs/apibasics/retrieve_data_basics#Considerations-for-retrieve-operations) section in the developer guide.\n",
+        "operationId": "Retrieve Muting Rules Using Query",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "description": "Type of muting rules you want to retrieve\n",
+            "x-description": "Specifies the type of muting rules you want to retrieve. The allowed values are:\n\n* `Past`: Retrieve expired muting rules\n* `Future`: Retrieve muting rules scheduled to start in the future\n* `Ongoing`: Retrieve currently active muting rules\n* `Open`: Retrieve muting rules with no scheduled end date\n* `All`: Retrieve muting rules of all types\n",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Past",
+                "Future",
+                "Ongoing",
+                "Open",
+                "All"
+              ],
+              "example": "All"
+            },
+            "required": false
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return from the result set\n",
+            "x-description": "The number of results to return from the\nresult set.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": 50
+            },
+            "required": false
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Index in the result set from which the API starts returning results\n",
+            "x-description": "The result object in the result set at which\nthe API should start returning results to you.\nIf omitted, the API starts at the first result\nin the set.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "example": 0
+            },
+            "required": false
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Metadata property on which the API sorts the results\n",
+            "x-description": "The metadata property on which the API should\nsort the results. You don't have to include\nthis property in the query, but the name must\nbe a property of muting rules.\n\nPrepend a `-` character to the property name to sort in descending order. If you want to apply `order_by` to non-custom property fields like `timestamp`, prepend the field with `sf_`. For example: `order_by=-sf_timestamp`.\n",
+            "schema": {
+              "type": "string",
+              "example": "sf_timestamp"
+            },
+            "required": false
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "description": "Query that specifies the muting rules you want to retrieve\n",
+            "x-description": "Specify which muting rules to retrieve based on description and filters.\n\n* You can retrieve muting rules with description containing specific keywords using this format: `query=sf_description:<pattern>`. For example, this is a query for muting rules with description related to CPU: `query=sf_description:cpu_*`.\n* You can retrieve muting rules with filters containing specific keywords using this format: `query=sf_filters.lowercase:<pattern>`. For example, this is a query for muting rules with filters for the AWS US East region: `query=sf_filters.lowercase:us-east-2a`.\n* To search for muting rules by specific values of a dimension or custom property, use `query=<name>:<value>`. If `<value>` contains non-alphanumeric characters, encode the non-alphanumeric characters and surround the value with double quotes. For example, the region custom property value `US East` must be passed in the parameter as `region:\"US%20East\"`.\n\nNote: The value for `sf_description` is case sensitive.\n",
+            "schema": {
+              "type": "string",
+              "example": "sf_description:cpu_*"
+            },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successfully retrieved muting rules,\nor no rules matched the search criteria\n",
+            "headers": {
+              "Content-Type": {
+                "description": "Always `\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveAlertMutingRulesResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Create Single Muting Rule"
+        ],
+        "summary": "Creates a new muting rule",
+        "description": "Creates a new notification muting rule\n",
+        "x-description": "Creates a new muting rule, based on the\nspecifications in the request body. Unlike the detector APIs, you can\nuse the muting APIs with detectors you create in the UI as\nwell as detectors you create with the API.\n\nNote: In some cases, Splunk Observability Cloud may send notifications during a muting period.\nTo learn more, see the section\n[Mute alert notifications](https://docs.splunk.com/observability/en/alerts-detectors-notifications/mute-notifications.html)\nin the user documentation.\n\nWhen you create a muting rule, you can resolve all of the alerts for the\nmuting rule you created by setting the optional `resolveMatchingActiveAlerts`\nquery parameter to `true`. The flag's default value is `false`.\n",
+        "operationId": "Create Single Muting Rule",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "resolveMatchingActiveAlerts",
+            "in": "query",
+            "description": "Indicates that Splunk Observability Cloud should resolve alerts for the matched rules\n",
+            "x-description": "Optional resolve alerts flag. If you set the flag to `true`,\nSplunk Observability Cloud resolves the alerts that match the muting rule you created.\nIf you leave out the parameter or set it to `false`, Splunk Observability Cloud takes no action.\n",
+            "schema": {
+              "type": "boolean"
+            },
+            "required": false,
+            "example": true
+          }
+        ],
+        "requestBody": {
+          "description": "Properties of a new notification muting rule\n",
+          "x-description": "Contains the specification of a new muting rule.\n\nNote: You can't create properties that are marked read-only\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertMutingRule"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success\n",
+            "x-description": "Successful request.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "Always `\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertMutingRule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alertmuting/{id}": {
+      "get": {
+        "tags": [
+          "Retrieve Muting Rule ID"
+        ],
+        "summary": "Retrieves the muting rule specified in the {id} path parameter",
+        "description": "Retrieves a muting rule\n",
+        "x-description": "Retrieves a muting rule, based on the rule ID specified in the\n`{id}` path parameter. Unlike the detector APIs, you can use the alert\nmuting APIs with detectors you create in the UI as well as detectors you\ncreate with the API.\n",
+        "operationId": "Retrieve Muting Rule ID",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the muting rule you want\n",
+            "x-description": "ID of a muting rule\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful retrieval of the specified muting rule\n",
+            "headers": {
+              "Content-Type": {
+                "description": "Always `\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertMutingRule"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Update Single Muting Rule"
+        ],
+        "summary": "Updates a muting rule",
+        "description": "Updates a muting rule\n",
+        "x-description": "Updates the muting rule specified in the `{id}` path parameter,\nusing the values specified in the request body. Unlike the detector\nAPIs, you can use the muting APIs with detectors you create in the\nUI as well as detectors you create with the API.\n\nNote: In some cases, Splunk Observability Cloud may send notifications during a muting period.\nTo learn more, see the section\n[Mute alert notifications](https://docs.splunk.com/observability/en/alerts-detectors-notifications/mute-notifications.html)\nin the user documentation.\n\nWhen you update a muting rule, you can resolve all of the alerts that match\nthe rule by setting the optional `resolveMatchingActiveAlerts` query parameter\nto `true`. The flag's default value is `false`.\n",
+        "operationId": "Update Single Muting Rule",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the muting rule you want to modify\n",
+            "x-description": "The ID of a muting rule\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "resolveMatchingActiveAlerts",
+            "in": "query",
+            "description": "Indicates that you want Splunk Observability Cloud to resolve alerts for the rule\n",
+            "x-description": "Optional resolve alerts flag. If you set the flag to `true`,\nSplunk Observability Cloud resolves the alerts for the muting rule you're updating.\nIf you leave out the parameter or set it to `false`, Splunk Observability Cloud takes no action.\n",
+            "schema": {
+              "type": "boolean"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "description": "Properties you want to update. These overwrite existing properties\n",
+          "x-description": "Muting rule properties that overwrite existing properties\n\nNote: You can't create or update properties that are marked\nread-only.\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertMutingRule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successfully updated the muting rule\n",
+            "headers": {
+              "Content-Type": {
+                "description": "Always `\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertMutingRule"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Delete Single Muting Rule"
+        ],
+        "summary": "Deletes a muting rule specified in the {id} path parameter",
+        "description": "Deletes a muting rule\n",
+        "x-description": "Deletes a muting rule, specified by the rule ID in the `{id}`\npath parameter. Unlike the detector APIs that create v2 detectors,\nyou can use the muting APIs with detectors you create using the web\nUI as well as detectors you create using the API (v2 detectors).\n\nThis operation doesn't return a response body.\n\nNote: You can't delete an active muting rule.\n",
+        "operationId": "Delete Single Muting Rule",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the muting rule you want to delete\n",
+            "x-description": "The ID of a muting rule\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful deletion of a muting rule that starts in the future.\n"
+          },
+          "400": {
+            "description": "Invalid request\n",
+            "x-description": "Bad request, for example, you tried to delete a muting rule that starts in the past\n"
+          },
+          "404": {
+            "description": "The muting rule doesn't exist\n",
+            "x-description": "Muting rule for the ID you specified doesn't exist.\n"
+          }
+        }
+      }
+    },
+    "/alertmuting/{id}/unmute": {
+      "put": {
+        "tags": [
+          "Unmute Single Muting Rule"
+        ],
+        "summary": "Ends the active muting period for a muting rule",
+        "description": "Ends the active muting period for a muting rule\n",
+        "x-description": "Ends the muting period that's currently active for a muting rule\nand updates the stop time to the current server time.\n\nThis operation works with muting rules for detectors you create\nusing the UI as well as detectors you create using the API\n(v2 detectors).\n\nNote: In some cases, Splunk Observability Cloud may send notifications during a muting period.\nTo learn more, see the section\n[Mute alert notifications](https://docs.splunk.com/observability/en/alerts-detectors-notifications/mute-notifications.html)\nin the user documentation.\n",
+        "operationId": "Unmute Single Muting Rule",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token.\n",
+            "x-description": "Authentication token.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the muting rule you want to unmute\n",
+            "x-description": "The ID of a muting rule\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successfully unmuted an alert\n",
+            "headers": {
+              "Content-Type": {
+                "description": "Always  `\"application/json\"`\n",
+                "x-description": "Format of the response body. Always `\"application/json\"`.\n",
+                "schema": {
+                  "type": "string",
+                  "default": "application/json"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertMutingRule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team": {
+      "get": {
+        "tags": [
+          "Retrieve Teams by Name"
+        ],
+        "summary": "Retrieves teams using a name search",
+        "description": "Retrieves teams using a name search\n",
+        "x-description": "Retrieves one or more team objects, based on a name specified in the\nquery parameters.\n\nNote: Splunk Observability Cloud returns a maximum of 10,000 teams for the specified name pattern, even if your organization contains more than 10,000. To learn more, see the\n[Considerations for retrieve operations](https://dev.splunk.com/observability/docs/apibasics/retrieve_data_basics#Considerations-for-retrieve-operations) section in the developer guide.\n",
+        "operationId": "Retrieve Teams by Name",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token\n",
+            "x-description": "Authentication token\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return\n",
+            "x-description": "Maximum number of team objects to return. The default is 20, and \nthe API uses this value if you specify an invalid value.\n",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Index in result set at which the API should start returning results\n",
+            "x-description": "0-based index in the result set where the API should start\nreturning team objects.\n",
+            "schema": {
+              "type": "number",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Team name filter\n",
+            "x-description": "A search pattern for the value of the `name` property of a team\nobject. You can use any ASCII character in the string,  and \nthe API matches the pattern to any part of the name property. For\nexample, `name=Sig` matches the following team names:\n\n* `\"SignalFlow\"`\n* `\"SignedMetrics\"`\n* `\"Insignia\"`\n\nThe following conditions cause the API to match any value of\nthe `name` property:\n\n* String of length 0\n* Omitting the `name` parameter from the query\n",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "Property on which the API should sort results\n",
+            "x-description": "Team object property that the API should sort results on.\n\nPrepend a `-` character to the property name to sort in descending order. If you want to apply `order_by` to non-custom property fields like `timestamp`, prepend the field with ``sf_``. For example: `order_by=-sf_timestamp`.            \n",
+            "schema": {
+              "type": "string",
+              "default": "lastUpdated"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Success\n\nNote: The API returns `200` even if the query doesn't match any\nobjects. In this case, the response object is empty.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Results\n",
+                  "x-description": "Query results, in the form of a JSON object\n",
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "description": "Number of results in the result set\n",
+                      "x-description": "Number of team objects that matched the provided search\ncriteria.\n\nNote: This value is a count of the total\nnumber of objects in the result set. The number of objects\nthat the system returns is affected by the `limit` and\n`offset` query parameters. In summary:\n\n* `count`: Size of result set\n* number of returned objects:\n\n  * (`limit` - `offset`) >= `count`: `count`\n  * (`limit` - `offset`) < `count`: `limit` - `offset`\n",
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "results": {
+                      "description": "List of teams\n",
+                      "x-description": "List of team objects that the system returns as the result\nof the request. The number and location of the objects\nwithin the result set depend on the query parameters you\nspecify in the request. To learn more, see the top-level\ndescription of the API and the description of the `count`\nresponse property\n",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TeamResponseBody"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Create Single Team"
+        ],
+        "summary": "Creates a team",
+        "description": "Creates a team\n",
+        "x-description": "Creates the team specified by the properties in the request body\n",
+        "operationId": "Create Single Team",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always  `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always  `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Team properties\n",
+          "x-description": "Properties that the API uses to create the team object\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful creation of a team\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/team/{tid}": {
+      "get": {
+        "tags": [
+          "Retrieve Team Using ID"
+        ],
+        "summary": "Retrieves the team specified in the {tid} path parameter",
+        "description": "Retrieves a team\n",
+        "x-description": "Retrieves the team name and team members for the team specified by the\n`id` path parameter.\n",
+        "operationId": "Retrieve Team Using ID",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token\n",
+            "x-description": "Authentication token\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful retrieval of team information for the specified team. The\nresponse object contains the team name and an array of IDs for the\nteam members.\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid team ID\n",
+            "x-description": "Request failed because the API couldn't find the specified team ID.\nThe response object contains the string “Unable to find the given\nteam.”\n"
+          }
+        }
+      },
+      "put": {
+        "summary": "Updates the team specified in the {tid} path parameter",
+        "tags": [
+          "Update Team"
+        ],
+        "operationId": "Update Team",
+        "description": "Updates a team\n",
+        "x-description": "Updates the team object specified by the `{tid}` path parameter\n",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always  `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always  `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "requestBody": {
+          "description": "Request body\n",
+          "x-description": "An object containing the properties you want to update in the team\nobject. You must specify the `name` property; all other properties are\noptional.\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success\n",
+            "x-description": "Successful team object update\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseBody"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Delete Team"
+        ],
+        "operationId": "Delete Team",
+        "summary": "Deletes the team specified in the {tid} path parameter",
+        "description": "Deletes a team\n",
+        "x-description": "Deletes a team from the organization, based on the team's ID specified\nby the `{tid}` path parameter.\n",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content\n",
+            "x-description": "No Content. Successful deletion of the specified team object. The system doesn't\nreturn a response object.\n"
+          }
+        }
+      }
+    },
+    "/team/{tid}/members": {
+      "put": {
+        "tags": [
+          "Add Team Member List"
+        ],
+        "operationId": "Add Team Member List",
+        "summary": "Adds team members",
+        "description": "Adds new members to the team specified by the `{tid}` path parameter.\n",
+        "x-description": "Adds new members to the team specified by the `{tid}` path parameter. \n\nThis endpoint doesn't overwrite existing team members.\n",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always  `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always  `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "requestBody": {
+          "description": "List of team members to add\n",
+          "x-description": "List of team members to add to the team specified by the `{tid}`\npath parameter\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "description": "List of one or more Splunk Observability Cloud-assigned user IDs to add to the team\n",
+                    "x-description": "List of one or more Splunk Observability Cloud-assigned user IDs to add to the team,\nin the form of a JSON array of strings\n",
+                    "type": "array",
+                    "items": {
+                      "description": "User ID of the team member to add\n",
+                      "x-description": "User ID of a team member to add to the team\n",
+                      "type": "string"
+                    },
+                    "example": [
+                      "XxXXxXXXXXX",
+                      "YyYYyYYYYYY",
+                      "ZzZZzZZZZZZ"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content\n",
+            "x-description": "No Content. Successful update. The system doesn't return a response body.\n"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Delete Team Members"
+        ],
+        "operationId": "Delete Team Members List",
+        "summary": "Deletes one or more members from a team",
+        "description": "Deletes one or more members from the team specified by the {tid} path parameter\n",
+        "x-description": "Deletes one or more team members from the team specified by the {tid} path parameter\n\nNote: This method takes a request body containing the user IDs of the members you want to delete.\n",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Always  `\"application/json\"`\n",
+            "x-description": "Format of the request body. Always  `\"application/json\"`.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "requestBody": {
+          "description": "List of members to delete, in the form of a JSON object containing a JSON array\n",
+          "x-description": "List of members to delete, in the form of a JSON object that contains a list of user IDs to delete.\nThe list has the form of a JSON array.\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "members": {
+                    "description": "List of members\n",
+                    "x-description": "List of members to remove from the team, in the form of a JSON array of\nstrings containing user IDs\n",
+                    "type": "array",
+                    "items": {
+                      "description": "Organization user ID of a user you want to remove from the team\n",
+                      "x-description": "Organization user ID of a user you want to remove from the team\n",
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "members": [
+                    "XxXXxXXXXXX",
+                    "YyYYyYYYYYY",
+                    "ZzZZzZZZZZZ"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content\n",
+            "x-description": "No Content. Successful deletion of the specified members from the team. The system doesn't\nreturn a response object.\n"
+          },
+          "403": {
+            "description": "Forbidden\n",
+            "x-description": "Forbidden. The authentication token is associated with a user who's\nnot an administrator.\n"
+          }
+        }
+      }
+    },
+    "/team/{tid}/member/{uid}": {
+      "put": {
+        "summary": "Updates the team specified by {tid} by adding the user specified by {uid}\n",
+        "tags": [
+          "Update Team Membership using User Id"
+        ],
+        "operationId": "Update Team Membership User Id",
+        "description": "Updates a team by adding a user by ID\n",
+        "x-description": "Updates the team specified by the `{tid}` path parameter by adding the user\nspecified by the `{uid}` path parameter.\nNotes:\n\n  * Although this is a PUT method, it doesn't have overwrite semantics. Instead, the\n    specified user is added to the existing team without any other updates.\n  * This method doesn't have a request body.\n",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "User ID\n",
+            "x-description": "ID, assigned by Splunk Observability Cloud, for a user you want\nto add to the team specified by {tid}\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content.\n",
+            "x-description": "No Content. Successful update. The system doesn't return a response body.\n"
+          },
+          "403": {
+            "description": "Forbidden\n",
+            "x-description": "Forbidden. The authentication token is associated with a user who's\nnot an administrator.\n"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes the user specified by {uid} from the team specified by {tid}\n",
+        "tags": [
+          "Delete User from Team using User Id"
+        ],
+        "operationId": "Delete Team User User Id",
+        "description": "Deletes a user from a team\n",
+        "x-description": "Deletes the user specifed by the `{uid}` path parameter from the\nteam specified by the `{tid}` path parameter\n",
+        "parameters": [
+          {
+            "name": "X-SF-TOKEN",
+            "in": "header",
+            "description": "Authentication token associated with an admin user\n",
+            "x-description": "Authentication token. Must be a session token (User API access token)\nfor an administrator.\n",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "tid",
+            "in": "path",
+            "description": "Team ID\n",
+            "x-description": "ID of an existing team\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "allowEmptyValue": false
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "description": "User ID\n",
+            "x-description": "ID, assigned by Splunk Observability Cloud, for a user you want\nto add to the team specified by {tid}\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content.\n",
+            "x-description": "No Content. Successful deletion of the specified user. The system doesn't\nreturn a response object.\n"
+          },
+          "400": {
+            "description": "Bad Request\n",
+            "x-description": "Bad Request. The user specified by `{uid}` is not a member of\nthe team specified by `{tid}`\n"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlertMutingFilter": {
+        "description": "Muting filter for a rule\n",
+        "x-description": "Single muting filter for a rule, in the form of a JSON\nobject. Specifies the dimension or custom property to filter on, the\nvalue or values to match, and a boolean value that controls the match semantics.\n\nThe filter mutes an alert based on the following:\n\n* NOT = false: Value of `property` EQ `propertyValue`\n* NOT = true: Value of `property` NE `propertyValue`\n\nIf `propertyValue` is an array, then the filter mutes an alert based on\nthe following:\n\n* NOT = false: Value of `property` matches any element of `propertyValue`\n* NOT = true: Value of `property` matches none of the elements of `propertyValue`\n",
+        "type": "object",
+        "properties": {
+          "NOT": {
+            "description": "Controls the filter matching\n",
+            "x-description": "Flag that controls the filter semantics. If `true`, the filter\ndoes a not equals comparison. Otherwise, the filter does an\nequals comparison. The default is `false`.\n",
+            "type": "boolean",
+            "default": false
+          },
+          "property": {
+            "description": "Property that detectors are monitoring for anomalies\n",
+            "x-description": "Name (key) of a dimension or custom property that one or more detectors\nare monitoring for anomalies. The filter compares the value of `property`\nto the value or values of `propertyValue`.\n",
+            "type": "string"
+          },
+          "propertyValue": {
+            "description": "Value that Splunk Observability Cloud compares to the value of `property`\n",
+            "x-description": "Value that the API compares to the value of `property`.\n",
+            "anyOf": [
+              {
+                "title": "Boolean",
+                "description": "Boolean value\n",
+                "x-description": "Boolean value\n",
+                "type": "boolean"
+              },
+              {
+                "title": "Integer or Float",
+                "description": "Number\n",
+                "x-description": "Integer or floating point number\n",
+                "type": "number"
+              },
+              {
+                "title": "String",
+                "description": "string\n",
+                "x-description": "String value\n",
+                "type": "string"
+              },
+              {
+                "title": "Array",
+                "description": "Array\n",
+                "x-description": "List of numbers, strings, or booleans, as a JSON array. You can\nspecify multiple types in the same array.\n",
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "example": "[\n  {\n    \"NOT\": false,\n    \"property\": \"aws_availability_zone\",\n    \"propertyValue\": \"us-east-1a\"\n  },\n  {\n    \"NOT\": true,\n    \"property\": \"cpu.utilization\",\n    \"propertyValue\": 10.7\n  },\n  {\n    \"NOT\": false,\n    \"property\": \"aws_availability_zone\",\n    \"propertyValue\":\n      [\n        \"us-east-2a\",\n        \"us-west-1a\",\n        \"emea-west-2a\"\n      ]\n  }\n]\n"
+      },
+      "AlertMutingRule": {
+        "description": "Properties of a muting rule\n",
+        "x-description": "Properties of a muting rule, in the form of a JSON object.\nNote: You can't create or update properties marked read-only. You\nreceive read-only properties in response bodies for the following:\n\n*  GET `/alertmuting`\n*  POST `/alertmuting`\n*  GET `/alertmuting/{id}`\n*  PUT `/alertmuting/{id}`\n\nThe response body for this request contains a string representation of\nany non-string values you specify for `propertyValue`.\n",
+        "type": "object",
+        "properties": {
+          "created": {
+            "$ref": "#/components/schemas/Created"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Creator"
+          },
+          "description": {
+            "description": "Description of the muting rule\n",
+            "x-description": "Description of the muting rule. It is best practice to provide a descriptive reason for the muting rule.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false
+          },
+          "filters": {
+            "description": "List of muting filters for this rule\n",
+            "x-description": "List of muting filters for this rule, in the form of a JSON\narray. Each array element specifies a single filter.\n\nA muting filter JSON specifies the following:\n\n* `property`: The dimension or custom property to compare to\n  `propertyValue`\n* `propertyValue`: A number, string, or array\n* `NOT`: A flag that controls the comparison.\n\nA filter mutes an alert based on the following:\n\n* NOT = false: value of `property` EQ `propertyValue`\n* NOT = true: value of `property` NE `propertyValue`\n\nIf `propertyValue` is an array, then the filter mutes an alert based on\nthe following:\n\n* NOT = false: value of `property` matches any element of\n `propertyValue`\n* NOT = true: value of `property` matches none of the elements of\n `propertyValue`\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlertMutingFilter"
+            }
+          },
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "lastUpdated": {
+            "$ref": "#/components/schemas/LastUpdated"
+          },
+          "lastUpdatedBy": {
+            "$ref": "#/components/schemas/LastUpdatedBy"
+          },
+          "recurrence": {
+            "$ref": "#/components/schemas/recurrence"
+          },
+          "linkedTeams": {
+            "$ref": "#/components/schemas/LinkedTeams"
+          },
+          "sendAlertsOnceMutingPeriodHasEnded": {
+            "$ref": "#/components/schemas/SendAlertsOnceMutingPeriodHasEnded"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/StartTime"
+          },
+          "stopTime": {
+            "$ref": "#/components/schemas/StopTime"
+          }
+        }
+      },
+      "IncidentClearRule": {
+        "description": "Single rule that clears an incident\n",
+        "x-description": "Single clear incident rule, in the form of a JSON object. A rule selects\nincidents by comparing a signal property to one or more values. If\nSplunk Observability Cloud finds a match, it it clears the incidents that the signal triggered.\n\nThe `NOT` property tells the API to reverse the rule results:\n\n* `NOT` is false: Rule matches if the property is equal to any of the specified values\n* `NOT` is true: Rule matches if the property is equal to none\n   of the specified values or if the property doesn't exist\n",
+        "type": "object",
+        "properties": {
+          "NOT": {
+            "description": "Controls the filter comparison\n",
+            "x-description": "Flag that controls the rule results. If `true`, the filter\ndoes a not equals comparison. Otherwise, the filter does an\nequals comparison. The default is `false`.\n",
+            "type": "boolean",
+            "default": false
+          },
+          "property": {
+            "description": "Property of the signal that triggered an alert\n",
+            "x-description": "Dimension or custom property name (key) of a signal\nor signals that triggered an incident, in the form of a JSON string\n",
+            "type": "string",
+            "minLength": 1
+          },
+          "propertyValue": {
+            "description": "List of values that Splunk Observability Cloud compares to the value of `property`\n",
+            "x-description": "List of values that the API compares to the value of `property`, in\nthe form of a JSON array. Each element can be a JSON number, string,\nor boolean.\n",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "boolean"
+                }
+              ]
+            }
+          }
+        },
+        "example": "{\n  \"NOT\": false,\n  \"property\": \"aws_availability_zone\",\n  \"propertyValue\": [\n    \"us-east-1a\"\n  ]\n}\n"
+      },
+      "IncidentClearRules": {
+        "description": "Rules that identify incidents you want to clear\n",
+        "x-description": "Rules that identify one or more incidents you want to clear.\n",
+        "type": "object",
+        "properties": {
+          "filters": {
+            "description": "List of rules that identify incidents\n",
+            "x-description": "List of rules that identify one or more incidents, in the form\nof a JSON array. Each array element specifies a single rule.\n",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/IncidentClearRule"
+            }
+          }
+        },
+        "example": "filters: [\n{\n  \"NOT\": false,\n  \"property\": \"aws_availability_zone\",\n  \"propertyValue\": [\n    \"us-east-1a\"\n  ]\n},\n{\n  \"NOT\": true,\n  \"property\": \"demo_test_host\",\n  \"propertyValue\": [ true ]\n}\n]\n"
+      },
+      "Active": {
+        "description": "Flag that indicates if the incident is ongoing\n",
+        "x-description": "Flag that indicates if the incident is still ongoing (\"active\").\nThis property is read-only.\n",
+        "type": "boolean",
+        "readOnly": true
+      },
+      "AnomalyState": {
+        "description": "Indicates the current state of an event or incident\n",
+        "x-description": "Describes the current anomaly state of an event or incident, as a\nenumerated string that describes the current signal status compared\nto its expected state. This property is read only.\n\nThe possible values are:\n\n* `\"ANOMALOUS\"`: For this signal, the detector detected an\n  anomaly, triggered an alert, generated an alert event, and sent a notification.\n* `\"MANUALLY_RESOLVED\"`: User resolved the incident in the UI or by\n  calling PUT `/incident/{id}/clear`.\n* `\"OK\"`: Splunk Observability Cloud detected that the anomaly had cleared and issued a\n  clear event for the incident.\n* `\"STOPPED\"`: User updated the detector and restarted the detector job\n",
+        "type": "string",
+        "enum": [
+          "ANOMALOUS",
+          "MANUALLY_RESOLVED",
+          "OK",
+          "STOPPED"
+        ],
+        "readOnly": true
+      },
+      "Count": {
+        "title": "Count of matched muting rules",
+        "description": "Number of muting rules in the result set\n",
+        "x-description": "Number of muting rules that match the search criteria.\nThis property is read-only.\n\nNote: Count is not the same as the number of objects returned\nin the response body:\n\n* `sizeOf(results)`: Size of the array returned in the response body.\n* `count`: Number of rules that match the search criteria\n",
+        "type": "integer",
+        "format": "int64",
+        "readOnly": true
+      },
+      "Created": {
+        "title": "Creation time",
+        "type": "integer",
+        "format": "int64",
+        "description": "Muting rule creation timestamp, in *nix time in milliseconds. Set by system.\n",
+        "x-description": "The time the muting rule was created, in *nix time in milliseconds.\n\nThis property is read-only; it's always set by the system.\n",
+        "example": 1556825430000,
+        "readOnly": true
+      },
+      "Creator": {
+        "title": "Creator user ID",
+        "description": "User ID of muting rule creator\n",
+        "x-description": "User ID of the muting rule creator.\nThis property is read-only; it's always set by the system.\n",
+        "type": "string",
+        "example": "AAXYAAAAAZ3",
+        "readOnly": true
+      },
+      "DetectLabel": {
+        "description": "Publish object label that generated the event\n",
+        "x-description": "The label of the SignalFlow program for the detector that generated\nan event or the events in an incident.\nThis property is read-only.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "DetectorId": {
+        "description": "ID of the detector that generated the event\n",
+        "x-description": "The ID of the detector that generated an\nevent or events in an incident\nThis property is read-only.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "Dimensions": {
+        "description": "Dimensions that matched the detector rule for a triggered event\n",
+        "x-description": "The dimension names and values that matched the detector rule that\ntriggered the event\nThis property is read-only.\n",
+        "type": "object",
+        "readOnly": true
+      },
+      "Duration": {
+        "title": "Duration of the incident",
+        "description": "Duration of the incident in milliseconds\n",
+        "x-description": "Duration of the entire incident in milliseconds. If the incident isn't\ncleared yet, the value is `null`.\nThis property is read-only; it's always set by the system.\n",
+        "type": "integer",
+        "format": "int64",
+        "readOnly": true
+      },
+      "EventId": {
+        "description": "ID of the event. Set by system.\n",
+        "x-description": "The event ID. This property is read-only; it's\nalways set by the system.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "Fragment": {
+        "description": "SignalFlow code fragment that generated the value for a triggered event\n",
+        "x-description": "Code that computed a `value` property that triggered an event, in the\nform of a JSON string containing a fragment of SignalFlow code.\nThis property is read-only.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "Id": {
+        "title": "Muting rule ID",
+        "description": "ID of a muting rule. Set by system.\n",
+        "x-description": "ID of a muting rule.\nThis property is read-only; it's always set by the system.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "IncidentId": {
+        "description": "ID of an incident. Set by system.\n",
+        "x-description": "The ID of an incident.\nThis property is read-only.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "LastUpdated": {
+        "title": "Muting rule last updated time",
+        "description": "Time that the muting rule was last updated, as a *nix time in milliseconds\n",
+        "x-description": "The last time the muting rule was last updated, in *nix time in milliseconds.\n\nThis property is read-only; it's always set by the system.\n",
+        "type": "integer",
+        "format": "int64",
+        "example": 1557689430000,
+        "readOnly": true
+      },
+      "LastUpdatedBy": {
+        "title": "ID of user who last updated the muting rule",
+        "description": "ID of the user who last updated the muting rule\n",
+        "x-description": "The ID of the last user who updated the\nmuting rule. If Splunk Observability Cloud made the last update, the value is\n`\"AAAAAAAAAA\"`. This property is read-only; it's always set by the system.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "LinkedTeams": {
+        "title": "IDs of teams linked to the detector that created the incident.",
+        "description": "IDs of teams linked to the detector that created the incident. If the incident is created by a detector that is not linked to a team, the value is `null`. This is a JSON array of strings, where each string is a team ID. This property is read-only; it's always set by the system. For information about how to link detectors to teams, see [Detectors linked to teams](https://quickdraw.splunk.com/redirect/?product=Observability&location=devdocs.getincidents.byteamid&version=current).\n",
+        "x-description": "IDs of teams linked to the detector that created the incident. If the incident is created by a detector that is not linked to a team, the value is `null`. This is a JSON array of strings, where each string is a team ID. This property is read-only; it's always set by the system. For information about how to link detectors to teams, see [Detectors linked to teams](https://quickdraw.splunk.com/redirect/?product=Observability&location=devdocs.getincidents.byteamid&version=current).\n",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "readOnly": true,
+        "example": [
+          "AbcdEf1ABCD",
+          "FO1Vq3ABXYZ"
+        ]
+      },
+      "Name": {
+        "title": "Detector name (displayed)",
+        "description": "Detector name\n",
+        "x-description": "Displayed name of the detector in the UI dashboard. When you retrieve\nevents or incidents, this property contains the name of the associated detector.\n",
+        "type": "string",
+        "minLength": 1,
+        "readOnly": false,
+        "writeOnly": false
+      },
+      "recurrence": {
+        "description": "Recurrence period of the muting rule\n",
+        "x-description": "Recurrence period of the muting rule. Recurrence can be daily, weekly,\nor custom, based on the number of days or weeks you provide. Note that\nthe recurrence period must be larger than the muting duration.\n",
+        "type": "object",
+        "properties": {
+          "unit": {
+            "description": "Unit of the period. Can be days (`d`) or weeks (`w`)",
+            "x-description": "Unit of the period. Can be days (`d`) or weeks (`w`).",
+            "example": "d",
+            "type": "string",
+            "enum": [
+              "d",
+              "w"
+            ]
+          },
+          "value": {
+            "description": "Amount of time, expressed as an integer applicable to the unit\n",
+            "x-description": "Amount of time, expressed as an integer applicable to the unit.\n",
+            "example": 2,
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "SendAlertsOnceMutingPeriodHasEnded": {
+        "description": "Controls notifications after the muting period ends\n",
+        "x-description": "Controls notifications after the muting period ends.\nTo learn more, see the section [Mute alert notifications](https://docs.splunk.com/observability/en/alerts-detectors-notifications/mute-notifications.html)\nin the user documentation.\n",
+        "type": "boolean",
+        "default": true,
+        "example": true,
+        "readOnly": false
+      },
+      "Severity": {
+        "description": "Severity of event or incident\n",
+        "x-description": "The severity of an event or an incident. Set this value in a detector. For the `/incident` endpoint, this property is read-only.\n",
+        "type": "string",
+        "readOnly": true,
+        "format": "Capitalized",
+        "enum": [
+          "Critical",
+          "Major",
+          "Minor",
+          "Warning",
+          "Info"
+        ]
+      },
+      "StartTime": {
+        "description": "Starting timestamp of a muting rule, in *nix time in milliseconds\n",
+        "x-description": "Starting time of a muting rule, in *nix time in milliseconds. If not specified,\ndefaults to the current time. read/write.\n",
+        "type": "integer",
+        "format": "int64",
+        "minimum": 0,
+        "readOnly": false,
+        "writeOnly": false
+      },
+      "StopTime": {
+        "description": "Ending timestamp of a muting rule, in *nix time in milliseconds\n",
+        "x-description": "Stop time of a muting rule, in *nix time in milliseconds. If set to 0, detectors\nthat match this rule are muted indefinitely. The default value is 0.\nread/write\n",
+        "type": "integer",
+        "format": "int64",
+        "minimum": 0,
+        "default": 0,
+        "readOnly": false,
+        "writeOnly": false
+      },
+      "TimeStamp": {
+        "description": "Event occurrence timestamp, in *nix time in milliseconds\n",
+        "x-description": "Timestamp for the time that the event occurred, in *nix time in milliseconds.\n\nThis property is read-only.\n",
+        "type": "integer",
+        "format": "int64",
+        "readOnly": true,
+        "example": 1557484230000
+      },
+      "Value": {
+        "description": "Value that matched a detector rule and triggered an alert or clear\n",
+        "x-description": "The value that matched the detector rule, thus triggering an\nalert event or clear event. This property is read-only.\n",
+        "type": "number",
+        "readOnly": true
+      },
+      "IncidentEventSource": {
+        "description": "Value that matched a detector rule and triggered an incident\n",
+        "x-description": "A value that matched a detector rule and triggered an alert event or\nclear event\n",
+        "type": "object",
+        "properties": {
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          },
+          "fragment": {
+            "$ref": "#/components/schemas/Fragment"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          }
+        }
+      },
+      "IncidentEvent": {
+        "description": "Event data for an event associated with an incident\n",
+        "x-description": "Event data for an event associated with an incident\n",
+        "type": "object",
+        "properties": {
+          "anomalyState": {
+            "$ref": "#/components/schemas/AnomalyState"
+          },
+          "detectLabel": {
+            "$ref": "#/components/schemas/DetectLabel"
+          },
+          "detectorId": {
+            "$ref": "#/components/schemas/DetectorId"
+          },
+          "detectorName": {
+            "$ref": "#/components/schemas/Name"
+          },
+          "event_annotations": {
+            "description": "Reserved for internal use\n",
+            "x-description": "Reserved for internal use.\nThis property is read-only; it's always set by the system.\n",
+            "type": "object",
+            "readOnly": true
+          },
+          "id": {
+            "$ref": "#/components/schemas/EventId"
+          },
+          "incidentId": {
+            "$ref": "#/components/schemas/IncidentId"
+          },
+          "inputs": {
+            "description": "List of input sources that triggered this event\n",
+            "x-description": "The list of input sources that the detector used in the rule\nthat triggered this event.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IncidentEventSource"
+            }
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "timestamp": {
+            "$ref": "#/components/schemas/TimeStamp"
+          }
+        }
+      },
+      "RetrieveAlertMutingRulesResponse": {
+        "description": "Properties of the notification muting rule retrieval object\n",
+        "x-description": "Response body for GET `/alertmuting`, in the form of a JSON object.\n",
+        "type": "object",
+        "properties": {
+          "count": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "results": {
+            "description": "List of muting rules\n",
+            "x-description": "Query results, in the form of a JSON array of\nobjects. Each element is a muting rule.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlertMutingRule"
+            }
+          }
+        }
+      },
+      "RetrieveIncidentResponse": {
+        "description": "Properties of a single retrieved incident\n",
+        "x-description": "The properties of a single incident\n",
+        "type": "object",
+        "properties": {
+          "active": {
+            "$ref": "#/components/schemas/Active"
+          },
+          "anomalyState": {
+            "$ref": "#/components/schemas/AnomalyState"
+          },
+          "detectLabel": {
+            "$ref": "#/components/schemas/DetectLabel"
+          },
+          "detectorId": {
+            "$ref": "#/components/schemas/DetectorId"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/Duration"
+          },
+          "events": {
+            "description": "List of event objects for this incident\n",
+            "x-description": "Array that contains the event objects for this incident\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IncidentEvent"
+            }
+          },
+          "incidentId": {
+            "$ref": "#/components/schemas/IncidentId"
+          },
+          "linkedTeams": {
+            "$ref": "#/components/schemas/LinkedTeams"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          }
+        }
+      },
+      "RetrieveIncidentResponses": {
+        "description": "List of incidents returned by a query retrieval\n",
+        "x-description": "List of incidents returned by a search, in the form of a JSON array.\nThe `results` property contains a list of incident objects.\n",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/RetrieveIncidentResponse"
+        }
+      },
+      "TeamId": {
+        "description": "ID of a team\n",
+        "x-description": "ID for the team. This field is read-only, and the system always sets the value.\n",
+        "type": "string",
+        "readOnly": true
+      },
+      "TeamName": {
+        "description": "Team name\n",
+        "x-description": "Name or label for the team.\nNote: Only administrators can update this property.\n",
+        "type": "string"
+      },
+      "TeamDescription": {
+        "description": "Team description\n",
+        "x-description": "Text that provides extended information about the team. \nNote: Only team members and administrators can update this property.\n",
+        "type": "string"
+      },
+      "TeamMembersArray": {
+        "description": "List of user IDs that belong to a team\n",
+        "x-description": "List of user IDs that belong to this team. \nNote: Only team members and administrators can add or delete user IDs from this property.\n",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "example": [
+          "XxXXxXXXXXX",
+          "YyYYyYYYYYY",
+          "ZzZZzZZZZZZ"
+        ]
+      },
+      "NotificationDestination": {
+        "description": "Notification service\n",
+        "x-description": "Individual notification service\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AmazonEventBridgeNotification"
+          },
+          {
+            "$ref": "#/components/schemas/BigPandaNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/EmailNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/JiraNotification"
+          },
+          {
+            "$ref": "#/components/schemas/MSTeamsNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/OpsgenieNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/PagerDutyNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/ServiceNowNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/SlackNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/TeamEmailNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/TeamNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/VictorOpsNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/WebhookNotificationObject"
+          },
+          {
+            "$ref": "#/components/schemas/XMattersNotificationObject"
+          }
+        ]
+      },
+      "Created": {
+        "title": "Team creation timestamp",
+        "type": "integer",
+        "format": "int64",
+        "description": "Team creation time, in *nix format. This field is read-only, and the system always sets the value.\n",
+        "x-description": "The time the team was created, in *nix time in milliseconds.\nThis field is read-only, and the system always sets the value.\n",
+        "example": 1557534630000,
+        "readOnly": true
+      },
+      "Creator": {
+        "title": "Team creator user ID",
+        "description": "User ID of team creator. This field is read-only, and the system always sets the value.\n",
+        "x-description": "This field is read-only, and the system always sets the value.\n",
+        "type": "string",
+        "readOnly": true,
+        "example": "XxXxxXXXXXX"
+      },
+      "LastUpdated": {
+        "title": "Team last updated time",
+        "description": "Team last updated time, in *nix format. This field is read-only, and the system always sets the value.\n",
+        "x-description": "The last time the team was updated, in *nix time in milliseconds.\nThis field is read-only, and the system always sets the value.\n",
+        "type": "integer",
+        "format": "int64",
+        "example": 1557707430000,
+        "readOnly": true
+      },
+      "LastUpdatedBy": {
+        "title": "Team last updated ID",
+        "description": "ID of user who last updated the chart. This field is read-only, and the system always sets the value.\n",
+        "x-description": "The organization ID of the last person who updated the chart. If the\nlast update was done by the system, the value is the string literal\n\"AAAAAAAAAA\". This field is read-only, and the system always sets the value.\n",
+        "type": "string",
+        "readOnly": true,
+        "example": "YyYyyYYYYYY"
+      },
+      "TeamNotificationLists": {
+        "description": "Team notification policy\n",
+        "x-description": "Team notification policy, in the form of a set of notification service\nlists that Splunk Observability Cloud uses to send alert messages for an alerting rule or org token\nthreshold. Each list has the form of a JSON array of objects.\n\nAlerting rules specify a severity, and Splunk Observability Cloud uses the team\nnotification policy for that severity when it sends a message. You can\nspecify a list of notification services for each severity.\n\nTo send email notifications:\n\n* The team must already exist.\n* For one or more individual users, use `\"type\": \"Email\"`.\n* For a single team, use `\"type\": \"TeamEmail\"`.\n* For multiple teams, use multiple list objects, each with `\"type\": \"TeamEmail\"` and the team ID.\n\nNote: Only team members and administrators can update this list.\n",
+        "type": "object",
+        "properties": {
+          "default": {
+            "description": "Notification services to use for undefined alerts\n",
+            "x-description": "List of notification services to use for undefined alerts\ncategory. You can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          },
+          "critical": {
+            "description": "Notification services to use for critical alerts\n",
+            "x-description": "List of notification services to use for critical alerts.\nYou can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          },
+          "warning": {
+            "description": "Notification services to use for warning alerts\n",
+            "x-description": "List of notification services to use for warning alerts.\nYou can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          },
+          "major": {
+            "description": "Notification services to use for major alerts\n",
+            "x-description": "List of notification services to use for major alerts.\nYou can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          },
+          "minor": {
+            "description": "Notification services to use for minor alerts\n",
+            "x-description": "List of notification services to use for minor alerts.\nYou can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          },
+          "info": {
+            "description": "Notification services to use for information alerts\n",
+            "x-description": "List of notification destinations to use for information alerts.\nYou can specify a single notification service or a list.\n",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDestination"
+            }
+          }
+        }
+      },
+      "AmazonEventBridgeNotification": {
+        "title": "Amazon EventBridge Notification",
+        "description": "Properties of an Amazon EventBridge notification integration\n",
+        "x-description": "Specifies the properties needed to send a notification using\nan existing Amazon EventBridge-to-Splunk Observability Cloud integration\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"AmazonEventBridge\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Amazon EventBridge as the notification system, set `\"type\": \"AmazonEventBridge\"`.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false,
+            "example": "AmazonEventBridge"
+          },
+          "credentialId": {
+            "description": "Amazon EventBridge integration ID\n",
+            "x-description": "Amazon EventBridge integration identifier, which Splunk Observability Cloud assigns\nwhen you add the integration. Use the UI or the Integrations API\nto find the value of `credentialId`.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false
+          }
+        }
+      },
+      "BigPandaNotificationObject": {
+        "title": "BigPanda Notification",
+        "description": "Properties of a BigPanda notification service integration\n",
+        "x-description": "Notification properties for an alert sent via BigPanda\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"BigPanda\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select BigPanda as the notification system, set `\"type\": \"BigPanda\"`.\n",
+            "type": "string",
+            "example": "BigPanda"
+          },
+          "credentialId": {
+            "description": "BigPanda integration ID\n",
+            "x-description": "The ID of the integration profile for BigPanda. Use the\nIntegrations API to get the credential ID for your BigPanda\nintegration.\n",
+            "type": "string"
+          }
+        }
+      },
+      "EmailNotificationObject": {
+        "title": "Email Notification",
+        "description": "Email notification properties\n",
+        "x-description": "Notification properties for an alert sent via email\n",
+        "type": "object",
+        "required": [
+          "type",
+          "email"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Email\"`\n",
+            "x-description": "Tells Splunk Observability Cloud to send the notification as an email. Set `\"type\": \"Email\"`.\n",
+            "type": "string",
+            "example": "Email"
+          },
+          "email": {
+            "description": "Destination email address\n",
+            "x-description": "Destination address for the notification email. Splunk Observability Cloud doesn't\nvalidate this address, so you must ensure it's correct before you\nuse it. Splunk Observability Cloud may not store invalid values, and it may try to\nsend notification email that doesn't have an address. In either\ncase, the notification won't be delivered.\n",
+            "type": "string",
+            "example": "info@example.com"
+          }
+        }
+      },
+      "JiraNotification": {
+        "title": "Jira Cloud or Jira Server Notification",
+        "description": "Properties of a Jira notification service integration\n",
+        "x-description": "Properties of a notification sent via a Jira Cloud or \nJira Server integration, in the form of a JSON object.\nThese notifications take the form of a new Jira ticket whose\nproperties are specified in the Jira integration object.\nTo learn more, see the documentation for the Jira integration in the\nIntegrations REST API reference.\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Jira\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Jira Cloud or Jira Server as the notification system, set `\"type\": \"Jira\"`.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false,
+            "example": "Jira"
+          },
+          "credentialId": {
+            "description": "Jira integration ID\n",
+            "x-description": "Jira integration identifier, which Splunk Observability Cloud assigns when you add\nthe integration. Use the UI or the Integrations API to find the\nvalue of `credentialId`.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false
+          }
+        }
+      },
+      "MSTeamsNotificationObject": {
+        "title": "Microsoft Teams Notification",
+        "description": "Properties of a Microsoft Teams notification service integration\n",
+        "x-description": "Notification properties for an alert sent using the Microsoft Teams integration\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Office365\"` (backwards compatibility)\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Microsoft Teams as the notification system, set `\"type\": \"Office365\"`.\nSplunk Observability Cloud uses this value for backwards compatibility.\n",
+            "type": "string",
+            "example": "Office365"
+          },
+          "credentialId": {
+            "description": "Microsoft Teams integration ID\n",
+            "x-description": "The ID of the integration profile for Microsoft Teams. Use the\nIntegrations API to get the credential ID for your Microsoft Teams\nintegration.\n",
+            "type": "string"
+          }
+        }
+      },
+      "OpsgenieNotificationObject": {
+        "title": "Opsgenie Notification",
+        "description": "Notification properties for an Opsgenie notification integration\n",
+        "x-description": "Notification properties for an alert sent via Opsgenie.\n",
+        "type": "object",
+        "required": [
+          "credentialId",
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Opsgenie\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Opsgenie as the notification system, set `\"type\": \"Opsgenie\"`.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false,
+            "example": "Opsgenie"
+          },
+          "credentialId": {
+            "description": "Opsgenie integration ID\n",
+            "x-description": "Opsgenie integration identifier, which Splunk Observability Cloud assigns when you add\nthe integration\n",
+            "type": "string"
+          },
+          "credentialName": {
+            "description": "Opsgenie credential name\n",
+            "x-description": "Descriptive name of the Opsgenie credential, which you assign when\nyou add the integration\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false,
+            "example": "My Opsgenie Integration"
+          },
+          "responderName": {
+            "description": "Responder you created in Opsgenie\n",
+            "x-description": "Name of a responder you created in Opsgenie. Notifications you\nsend using the Opsgenie integration go to this responder.\n\nIf you specify `responderName`, you don't have to specify \n`responderId`. If you specify neither, Opsgenie uses the defaults\nfor your Opsgenie account.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false
+          },
+          "responderId": {
+            "description": "ID of a responder you created in Opsgenie\n",
+            "x-description": "ID of a responder you created in Opsgenie. Notifications you\nsend using the Opsgenie integration go to this responder.\n\nIf you specify `responderId`, you don't have to specify \n`responderName`. If you specify neither, Opsgenie uses the\ndefaults for your Opsgenie account.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false
+          },
+          "responderType": {
+            "description": "Always `\"Team\"`\n",
+            "x-description": "Opsgenie responder type. The only valid value is ``\"Team\"``.\n",
+            "type": "string",
+            "readOnly": false,
+            "writeOnly": false,
+            "example": "Team"
+          }
+        }
+      },
+      "PagerDutyNotificationObject": {
+        "title": "PagerDuty Notification",
+        "description": "Properties of a PagerDuty notification service integration\n",
+        "x-description": "Notification properties for an alert sent via PagerDuty\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"PagerDuty\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select PagerDuty as the notification system, set `\"type\": \"PagerDuty\"`.\n",
+            "type": "string",
+            "example": "PagerDuty"
+          },
+          "credentialId": {
+            "description": "PagerDuty integration ID\n",
+            "x-description": "ID of the PagerDuty integration\n",
+            "type": "string"
+          }
+        }
+      },
+      "ServiceNowNotificationObject": {
+        "title": "ServiceNow Notification",
+        "description": "Properties of a ServiceNow notification service integration\n",
+        "x-description": "Notification properties for an alert sent via ServiceNow\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"ServiceNow\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select ServiceNow as the notification system, set `\"type\": \"ServiceNow\"`.\n",
+            "type": "string",
+            "example": "ServiceNow"
+          },
+          "credentialId": {
+            "description": "ServiceNow integration ID\n",
+            "x-description": "ID of the ServiceNow integration\n",
+            "type": "string"
+          }
+        }
+      },
+      "SlackNotificationObject": {
+        "title": "Slack Notification",
+        "description": "Properties of a Slack notification service integration\n",
+        "x-description": "Notification properties for an alert sent via Slack\n",
+        "type": "object",
+        "required": [
+          "type",
+          "channel",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Slack\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Slack as the notification system, set `\"type\": \"Slack\"`.\n",
+            "type": "string",
+            "example": "Slack"
+          },
+          "channel": {
+            "description": "Target channel for the Slack notification\n",
+            "x-description": "The name of the Slack channel in which to display the notification.\nOmit the leading \"#\" symbol. For example, specify\n\"#critical-notifications\" as \"critical-notifications\".\n",
+            "type": "string",
+            "example": "channel-notifications"
+          },
+          "credentialId": {
+            "description": "Slack integration ID\n",
+            "x-description": "ID of the Slack integration\n",
+            "type": "string",
+            "example": "Slack"
+          }
+        }
+      },
+      "TeamEmailNotificationObject": {
+        "title": "Team Email Notification",
+        "description": "Properties of a team email notification\n",
+        "x-description": "Team email notification service properties. When you use `\"TeamEmail\"`,\nSplunk Observability Cloud sends the alert message to each member of the team. The\nmember email address is the same as the one used to invite the member to\nthe organization.\n",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"TeamEmail\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To send an email notification to each member of an Splunk Observability Cloud team,\nset `\"type\": \"TeamEmail\"`.\n",
+            "type": "string",
+            "example": "TeamEmail"
+          },
+          "team": {
+            "description": "Team ID\n",
+            "x-description": "The ID of the team whose members should receive the\nnotification. Splunk Observability Cloud sends the alert message to each member of\nthe team, using the email address used to invite the member to the\norganization\n",
+            "type": "string",
+            "example": "XXxXXXXXXX0"
+          }
+        }
+      },
+      "TeamNotificationObject": {
+        "title": "Team Notification",
+        "description": "Properties of a team notification\n",
+        "x-description": "Team notification service properties. When you use `\"Team\"`, Splunk Observability Cloud\nuses the notification policy of the specified team to send alert messages. You can\nspecify different notification services for different alert severities, and\nyou can also specify multiple services for a severity level.\n",
+        "type": "object",
+        "required": [
+          "type",
+          "team"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Team\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To use the notification policy of a team to send notification messages, set `\"type\": \"Team\"`.\n",
+            "type": "string",
+            "example": "Team"
+          },
+          "team": {
+            "description": "Team ID\n",
+            "x-description": "A team ID. When you use `\"Team\"`, Splunk Observability Cloud uses\nthe team's notification policy to send alert messages. You can\nspecify different notification services for different alert\nseverities, and you can also specify multiple services for a\nseverity level.\n",
+            "type": "string",
+            "example": "DevOps"
+          }
+        }
+      },
+      "VictorOpsNotificationObject": {
+        "title": "Splunk On-Call Notification",
+        "description": "Properties of a Splunk On-Call notification service integration\n",
+        "x-description": "Notification properties for an alert sent via Splunk On-Call\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId",
+          "routingKey"
+        ],
+        "properties": {
+          "type": {
+            "description": "Properties of a Splunk On-Call notification service integration\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select Splunk On-Call as the notification system, set `\"type\": \"VictorOps\"`;\nSplunk Observability Cloud uses VictorOps as the `\"type\"` value to ensure backwards compatibility.\n",
+            "type": "string",
+            "example": "VictorOps"
+          },
+          "credentialId": {
+            "description": "Splunk On-Call integration ID\n",
+            "x-description": "Splunk Observability Cloud ID of the Splunk On-Call integration\n",
+            "type": "string"
+          },
+          "routingKey": {
+            "description": "Routing key you set in Splunk On-Call\n",
+            "x-description": "Indicates the routing key used to determine how to process the \nnotification message. This key specifies where the notification is\nposted and how related alerts are escalated. For more information, refer to the\nVictorOps knowlegebase.\n",
+            "type": "string"
+          }
+        }
+      },
+      "WebhookNotificationObject": {
+        "title": "Webhook URL Notification",
+        "description": "Properties of a Webhook notification service integration\n",
+        "x-description": "Notification properties for an alert sent via a Webhook\n",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"Webhook\"`\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To use a Webhook as the notification system, set `\"type\": \"Webhook\"`.\n",
+            "type": "string",
+            "example": "Webhook"
+          },
+          "credentialId": {
+            "description": "Webhook integration ID\n",
+            "x-description": "Webhook integration ID\n",
+            "type": "string"
+          },
+          "secret": {
+            "description": "Secret key that identifies the Webhook\n",
+            "x-description": "A secret value that identifies the Webhook integration to use when \nsending notifications. This value also indicates that the \nnotification has permission to use the integration. If\n`credentialId` is set, this property is ignored.\n",
+            "type": "string"
+          },
+          "url": {
+            "description": "Webhook URL\n",
+            "x-description": "The URL of a Webhook integration. You must provide the mechanism for\nprocessing notifications sent to the URL and routing them to the\nproper chat or incident management system. If `credentialId` is set,\nthis property is ignored.\n",
+            "type": "string",
+            "example": "https://www.example.com/webhook"
+          }
+        }
+      },
+      "XMattersNotificationObject": {
+        "title": "xMatters Notification",
+        "description": "Properties of a xMatters notification service integration\n",
+        "x-description": "Notification properties for an alert sent via xMatters\n",
+        "type": "object",
+        "required": [
+          "type",
+          "credentialId"
+        ],
+        "properties": {
+          "type": {
+            "description": "Always `\"xMatters\"` (with a capital \"X\")\n",
+            "x-description": "Tells Splunk Observability Cloud which system it should use to send the\nnotification. To select xMatters as the notification system, set `\"type\": \"XMatters\"` using a\ncapital \"X\" as the first letter.\n",
+            "type": "string",
+            "example": "XMatters"
+          },
+          "credentialId": {
+            "description": "xMatters integration ID\n",
+            "x-description": "xMatters integration ID\n",
+            "type": "string"
+          }
+        }
+      },
+      "TeamResponseBody": {
+        "description": "Response body returned by POST, GET, and PUT requests\n",
+        "x-description": "The response body returned by the following method/endpoint operations:\n\n* `GET /team`\n* `POST /team`\n* `GET /team/{tid}`\n* `PUT /team/{tid}`\n",
+        "type": "object",
+        "properties": {
+          "created": {
+            "$ref": "#/components/schemas/Created"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Creator"
+          },
+          "description": {
+            "$ref": "#/components/schemas/TeamDescription"
+          },
+          "id": {
+            "$ref": "#/components/schemas/TeamId"
+          },
+          "lastUpdated": {
+            "$ref": "#/components/schemas/LastUpdated"
+          },
+          "lastUpdatedBy": {
+            "$ref": "#/components/schemas/LastUpdatedBy"
+          },
+          "members": {
+            "$ref": "#/components/schemas/TeamMembersArray"
+          },
+          "name": {
+            "$ref": "#/components/schemas/TeamName"
+          },
+          "notificationLists": {
+            "$ref": "#/components/schemas/TeamNotificationLists"
+          }
+        }
+      },
+      "TeamRequestBody": {
+        "description": "Request body\n",
+        "x-description": "The request body sent by the following method/endpoint operations:\n\n* `POST /team`\n* `PUT /team/{tid}`\n",
+        "type": "object",
+        "properties": {
+          "description": {
+            "$ref": "#/components/schemas/TeamDescription"
+          },
+          "members": {
+            "$ref": "#/components/schemas/TeamMembersArray"
+          },
+          "name": {
+            "$ref": "#/components/schemas/TeamName"
+          },
+          "notificationLists": {
+            "$ref": "#/components/schemas/TeamNotificationLists"
+          }
+        }
+      }
+    }
+  }
+}

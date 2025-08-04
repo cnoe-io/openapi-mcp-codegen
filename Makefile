@@ -82,7 +82,7 @@ uv-sync: setup-venv
 generate-splunk: uv-sync
 	@echo "Generating code for Splunk example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/splunk/openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/splunk/openapi.json --output-dir examples/splunk/mcp_server --enhance-docstring-with-llm --generate-agent
 
 # This rule allows passing arguments to the run target
 %:
