@@ -831,7 +831,7 @@ class MCPGenerator:
     """
     logger.info("Generating .env.example")
     output_path = os.path.join(self.output_dir, '.env.example')
-    self.render_template('env.tpl', output_path)
+    self.render_template('env.tpl', output_path, mcp_name=self.mcp_name)
 
   def generate_readme(self):
     """
@@ -985,6 +985,7 @@ class MCPGenerator:
     if self.generate_agent_flag:
         self.generate_agent()
     self.generate_init_files()
-    self.generate_env()
+    if not self.generate_agent_flag:
+        self.generate_env()
     self.generate_readme()
     logger.info("MCP code generation completed")

@@ -352,7 +352,6 @@ def generate_eval_suite(
     yaml_cases = []
     for idx, (tool_name, prompt_variants, outs, trajs) in enumerate( zip(tool_names, all_variants_out, outs_list, trajs_list) ):
         for j, (p, ans, tr) in enumerate(zip(prompt_variants, outs, trajs)):
-            print(tr)
             yaml_cases.append(
                 {
                     "id": f"tc_{idx}_{j}",
