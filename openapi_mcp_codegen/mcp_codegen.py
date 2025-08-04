@@ -574,7 +574,7 @@ class MCPGenerator:
       os.makedirs(agent_dir, exist_ok=True)
 
       from pathlib import Path  # add at top of file if not already imported
-      abs_uri = Path(self.output_dir).resolve().as_uri()              # absolute file URI of MCP project
+      _ = Path(self.output_dir).resolve().as_uri()              # absolute file URI of MCP project
 
       file_header_kwargs = self.get_file_header_kwargs()
 
