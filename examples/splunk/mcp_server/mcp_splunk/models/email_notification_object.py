@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Emailnotificationobject(BaseModel):
-    """Email notification properties"""
+  """Email notification properties"""
 
 
 class EmailnotificationobjectResponse(APIResponse):
-    """Response model for Emailnotificationobject"""
+  """Response model for Emailnotificationobject"""
 
-    data: Optional[Emailnotificationobject] = None
+  data: Optional[Emailnotificationobject] = None
 
 
 class EmailnotificationobjectListResponse(APIResponse):
-    """List response model for Emailnotificationobject"""
+  """List response model for Emailnotificationobject"""
 
-    data: List[Emailnotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Emailnotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

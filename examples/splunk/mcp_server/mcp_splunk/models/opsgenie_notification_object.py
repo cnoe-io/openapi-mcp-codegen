@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Opsgenienotificationobject(BaseModel):
-    """Notification properties for an Opsgenie notification integration"""
+  """Notification properties for an Opsgenie notification integration"""
 
 
 class OpsgenienotificationobjectResponse(APIResponse):
-    """Response model for Opsgenienotificationobject"""
+  """Response model for Opsgenienotificationobject"""
 
-    data: Optional[Opsgenienotificationobject] = None
+  data: Optional[Opsgenienotificationobject] = None
 
 
 class OpsgenienotificationobjectListResponse(APIResponse):
-    """List response model for Opsgenienotificationobject"""
+  """List response model for Opsgenienotificationobject"""
 
-    data: List[Opsgenienotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Opsgenienotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

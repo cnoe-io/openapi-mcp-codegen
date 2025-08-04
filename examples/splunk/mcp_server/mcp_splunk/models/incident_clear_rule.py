@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Incidentclearrule(BaseModel):
-    """Single rule that clears an incident"""
+  """Single rule that clears an incident"""
 
 
 class IncidentclearruleResponse(APIResponse):
-    """Response model for Incidentclearrule"""
+  """Response model for Incidentclearrule"""
 
-    data: Optional[Incidentclearrule] = None
+  data: Optional[Incidentclearrule] = None
 
 
 class IncidentclearruleListResponse(APIResponse):
-    """List response model for Incidentclearrule"""
+  """List response model for Incidentclearrule"""
 
-    data: List[Incidentclearrule] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Incidentclearrule] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

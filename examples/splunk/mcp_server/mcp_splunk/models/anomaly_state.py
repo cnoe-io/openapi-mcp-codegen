@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Anomalystate(BaseModel):
-    """Indicates the current state of an event or incident"""
+  """Indicates the current state of an event or incident"""
 
 
 class AnomalystateResponse(APIResponse):
-    """Response model for Anomalystate"""
+  """Response model for Anomalystate"""
 
-    data: Optional[Anomalystate] = None
+  data: Optional[Anomalystate] = None
 
 
 class AnomalystateListResponse(APIResponse):
-    """List response model for Anomalystate"""
+  """List response model for Anomalystate"""
 
-    data: List[Anomalystate] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Anomalystate] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

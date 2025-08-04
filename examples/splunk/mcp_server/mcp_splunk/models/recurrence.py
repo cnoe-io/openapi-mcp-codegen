@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Recurrence(BaseModel):
-    """Recurrence period of the muting rule"""
+  """Recurrence period of the muting rule"""
 
 
 class RecurrenceResponse(APIResponse):
-    """Response model for Recurrence"""
+  """Response model for Recurrence"""
 
-    data: Optional[Recurrence] = None
+  data: Optional[Recurrence] = None
 
 
 class RecurrenceListResponse(APIResponse):
-    """List response model for Recurrence"""
+  """List response model for Recurrence"""
 
-    data: List[Recurrence] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Recurrence] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

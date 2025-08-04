@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Teamnotificationlists(BaseModel):
-    """Team notification policy"""
+  """Team notification policy"""
 
 
 class TeamnotificationlistsResponse(APIResponse):
-    """Response model for Teamnotificationlists"""
+  """Response model for Teamnotificationlists"""
 
-    data: Optional[Teamnotificationlists] = None
+  data: Optional[Teamnotificationlists] = None
 
 
 class TeamnotificationlistsListResponse(APIResponse):
-    """List response model for Teamnotificationlists"""
+  """List response model for Teamnotificationlists"""
 
-    data: List[Teamnotificationlists] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Teamnotificationlists] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

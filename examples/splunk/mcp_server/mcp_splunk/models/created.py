@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Created(BaseModel):
-    """Team creation time, in *nix format. This field is read-only, and the system always sets the value."""
+  """Team creation time, in *nix format. This field is read-only, and the system always sets the value."""
 
 
 class CreatedResponse(APIResponse):
-    """Response model for Created"""
+  """Response model for Created"""
 
-    data: Optional[Created] = None
+  data: Optional[Created] = None
 
 
 class CreatedListResponse(APIResponse):
-    """List response model for Created"""
+  """List response model for Created"""
 
-    data: List[Created] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Created] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

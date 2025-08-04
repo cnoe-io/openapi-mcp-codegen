@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Msteamsnotificationobject(BaseModel):
-    """Properties of a Microsoft Teams notification service integration"""
+  """Properties of a Microsoft Teams notification service integration"""
 
 
 class MsteamsnotificationobjectResponse(APIResponse):
-    """Response model for Msteamsnotificationobject"""
+  """Response model for Msteamsnotificationobject"""
 
-    data: Optional[Msteamsnotificationobject] = None
+  data: Optional[Msteamsnotificationobject] = None
 
 
 class MsteamsnotificationobjectListResponse(APIResponse):
-    """List response model for Msteamsnotificationobject"""
+  """List response model for Msteamsnotificationobject"""
 
-    data: List[Msteamsnotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Msteamsnotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

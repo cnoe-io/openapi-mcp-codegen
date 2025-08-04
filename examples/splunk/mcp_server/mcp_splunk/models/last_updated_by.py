@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Lastupdatedby(BaseModel):
-    """ID of user who last updated the chart. This field is read-only, and the system always sets the value."""
+  """ID of user who last updated the chart. This field is read-only, and the system always sets the value."""
 
 
 class LastupdatedbyResponse(APIResponse):
-    """Response model for Lastupdatedby"""
+  """Response model for Lastupdatedby"""
 
-    data: Optional[Lastupdatedby] = None
+  data: Optional[Lastupdatedby] = None
 
 
 class LastupdatedbyListResponse(APIResponse):
-    """List response model for Lastupdatedby"""
+  """List response model for Lastupdatedby"""
 
-    data: List[Lastupdatedby] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Lastupdatedby] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

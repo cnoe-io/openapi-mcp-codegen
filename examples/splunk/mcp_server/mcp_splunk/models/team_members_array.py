@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Teammembersarray(BaseModel):
-    """List of user IDs that belong to a team"""
+  """List of user IDs that belong to a team"""
 
 
 class TeammembersarrayResponse(APIResponse):
-    """Response model for Teammembersarray"""
+  """Response model for Teammembersarray"""
 
-    data: Optional[Teammembersarray] = None
+  data: Optional[Teammembersarray] = None
 
 
 class TeammembersarrayListResponse(APIResponse):
-    """List response model for Teammembersarray"""
+  """List response model for Teammembersarray"""
 
-    data: List[Teammembersarray] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Teammembersarray] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

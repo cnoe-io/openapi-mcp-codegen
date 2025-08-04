@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Webhooknotificationobject(BaseModel):
-    """Properties of a Webhook notification service integration"""
+  """Properties of a Webhook notification service integration"""
 
 
 class WebhooknotificationobjectResponse(APIResponse):
-    """Response model for Webhooknotificationobject"""
+  """Response model for Webhooknotificationobject"""
 
-    data: Optional[Webhooknotificationobject] = None
+  data: Optional[Webhooknotificationobject] = None
 
 
 class WebhooknotificationobjectListResponse(APIResponse):
-    """List response model for Webhooknotificationobject"""
+  """List response model for Webhooknotificationobject"""
 
-    data: List[Webhooknotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Webhooknotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

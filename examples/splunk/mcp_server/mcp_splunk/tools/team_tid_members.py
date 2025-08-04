@@ -14,64 +14,66 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def add__team__member__list(path_tid: str, body_members: List[str] = None) -> Any:
-    '''
-    Adds new members to a specified team.
+  '''
+  Adds new members to a specified team.
 
-    Args:
-        path_tid (str): The unique identifier of the team to which members will be added.
-        body_members (List[str], optional): A list of one or more Splunk Observability Cloud-assigned user IDs to add to the team. Defaults to None.
+  Args:
+      path_tid (str): The unique identifier of the team to which members will be added.
+      body_members (List[str], optional): A list of one or more Splunk Observability Cloud-assigned user IDs to add to the team. Defaults to None.
 
-    Returns:
-        Any: The JSON response from the API call containing the result of the add operation.
+  Returns:
+      Any: The JSON response from the API call containing the result of the add operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making PUT request to /team/{tid}/members")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making PUT request to /team/{tid}/members")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_members is not None:
-        flat_body["members"] = body_members
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  if body_members is not None:
+    flat_body["members"] = body_members
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}/members", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}/members", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def delete__team__members__list(path_tid: str, body_members: List[str] = None) -> Any:
-    '''
-    Deletes one or more members from a team.
+  '''
+  Deletes one or more members from a team.
 
-    Args:
-        path_tid (str): The unique identifier of the team from which members will be removed.
-        body_members (List[str], optional): A list of member identifiers to be deleted from the team. Defaults to None.
+  Deletes one or more members from the team specified by the `path_tid` parameter.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the delete operation.
+  Args:
+      path_tid (str): The unique identifier of the team from which members will be removed.
+      body_members (List[str], optional): A list of member identifiers to be deleted from the team. Defaults to None.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making DELETE request to /team/{tid}/members")
+  Returns:
+      Any: The JSON response from the API call, typically indicating the result of the deletion operation.
 
-    params = {}
-    data = {}
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making DELETE request to /team/{tid}/members")
 
-    flat_body = {}
-    if body_members is not None:
-        flat_body["members"] = body_members
-    data = assemble_nested_body(flat_body)
+  params = {}
+  data = {}
 
-    success, response = await make_api_request(f"/team/{path_tid}/members", method="DELETE", params=params, data=data)
+  flat_body = {}
+  if body_members is not None:
+    flat_body["members"] = body_members
+  data = assemble_nested_body(flat_body)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  success, response = await make_api_request(f"/team/{path_tid}/members", method="DELETE", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

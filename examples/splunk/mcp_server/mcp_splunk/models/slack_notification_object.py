@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Slacknotificationobject(BaseModel):
-    """Properties of a Slack notification service integration"""
+  """Properties of a Slack notification service integration"""
 
 
 class SlacknotificationobjectResponse(APIResponse):
-    """Response model for Slacknotificationobject"""
+  """Response model for Slacknotificationobject"""
 
-    data: Optional[Slacknotificationobject] = None
+  data: Optional[Slacknotificationobject] = None
 
 
 class SlacknotificationobjectListResponse(APIResponse):
-    """List response model for Slacknotificationobject"""
+  """List response model for Slacknotificationobject"""
 
-    data: List[Slacknotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Slacknotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

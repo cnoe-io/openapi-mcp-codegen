@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Starttime(BaseModel):
-    """Starting timestamp of a muting rule, in *nix time in milliseconds"""
+  """Starting timestamp of a muting rule, in *nix time in milliseconds"""
 
 
 class StarttimeResponse(APIResponse):
-    """Response model for Starttime"""
+  """Response model for Starttime"""
 
-    data: Optional[Starttime] = None
+  data: Optional[Starttime] = None
 
 
 class StarttimeListResponse(APIResponse):
-    """List response model for Starttime"""
+  """List response model for Starttime"""
 
-    data: List[Starttime] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Starttime] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

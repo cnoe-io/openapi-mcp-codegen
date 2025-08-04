@@ -14,60 +14,60 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def update__team__membership__user__id(path_tid: str, path_uid: str) -> Any:
-    '''
-    Updates a team by adding a user by ID.
+  '''
+  Updates a team by adding a user by ID.
 
-    Args:
-        path_tid (str): The unique identifier of the team to update.
-        path_uid (str): The unique identifier of the user to add to the team.
+  Args:
+      path_tid (str): The unique identifier of the team to update.
+      path_uid (str): The unique identifier of the user to add to the team.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the operation.
+  Returns:
+      Any: The JSON response from the API call indicating the result of the operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making PUT request to /team/{tid}/member/{uid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making PUT request to /team/{tid}/member/{uid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}/member/{path_uid}", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}/member/{path_uid}", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def delete__team__user__user__id(path_tid: str, path_uid: str) -> Any:
-    '''
-    Deletes a user from a team.
+  '''
+  Deletes a user from a team.
 
-    Args:
-        path_tid (str): The unique identifier of the team from which the user will be removed.
-        path_uid (str): The unique identifier of the user to be deleted from the team.
+  Args:
+      path_tid (str): The unique identifier of the team from which the user will be removed.
+      path_uid (str): The unique identifier of the user to be deleted from the team.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the delete operation.
+  Returns:
+      Any: The JSON response from the API call indicating the result of the delete operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making DELETE request to /team/{tid}/member/{uid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making DELETE request to /team/{tid}/member/{uid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}/member/{path_uid}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}/member/{path_uid}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

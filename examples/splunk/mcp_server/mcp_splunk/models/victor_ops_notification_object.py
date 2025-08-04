@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Victoropsnotificationobject(BaseModel):
-    """Properties of a Splunk On-Call notification service integration"""
+  """Properties of a Splunk On-Call notification service integration"""
 
 
 class VictoropsnotificationobjectResponse(APIResponse):
-    """Response model for Victoropsnotificationobject"""
+  """Response model for Victoropsnotificationobject"""
 
-    data: Optional[Victoropsnotificationobject] = None
+  data: Optional[Victoropsnotificationobject] = None
 
 
 class VictoropsnotificationobjectListResponse(APIResponse):
-    """List response model for Victoropsnotificationobject"""
+  """List response model for Victoropsnotificationobject"""
 
-    data: List[Victoropsnotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Victoropsnotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

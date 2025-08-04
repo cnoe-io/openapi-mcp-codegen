@@ -1,6 +1,6 @@
 # Makefile
 
-.PHONY: build setup-venv activate-venv install run run-acp run-client langgraph-dev help
+.PHONY: build setup-venv activate-venv install run add-copyright-license-headers lint ruff-fix generate generate-petstore generate-argocd generate-splunk uv-sync cz-changelog test release help
 
 add-copyright-license-headers:
 	@echo "Adding copyright license headers..."
@@ -98,26 +98,7 @@ cz-changelog: setup-venv
 	@echo "======================================="
 	. .venv/bin/activate && cz bump --changelog
 
-# test_Makefile
-
-.PHONY: test test-venv
-
-test-venv:
-	@echo "======================================="
-	@echo " Setting up test virtual environment   "
-	@echo "======================================="
-	@if [ ! -d ".venv" ]; then \
-		python3 -m venv .venv; \
-		echo "Test virtual environment created."; \
-	else \
-		echo "Test virtual environment already exists."; \
-	fi
-	@echo "======================================="
-	@echo " Installing test dependencies         "
-	@echo "======================================="
-	. .venv/bin/activate && pip install -U pip pytest
-
-test: test-venv
+test: setup-venv
 	@echo "======================================="
 	@echo " Running pytest on tests directory     "
 	@echo "======================================="

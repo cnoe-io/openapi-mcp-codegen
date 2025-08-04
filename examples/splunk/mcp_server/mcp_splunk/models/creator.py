@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Creator(BaseModel):
-    """User ID of team creator. This field is read-only, and the system always sets the value."""
+  """User ID of team creator. This field is read-only, and the system always sets the value."""
 
 
 class CreatorResponse(APIResponse):
-    """Response model for Creator"""
+  """Response model for Creator"""
 
-    data: Optional[Creator] = None
+  data: Optional[Creator] = None
 
 
 class CreatorListResponse(APIResponse):
-    """List response model for Creator"""
+  """List response model for Creator"""
 
-    data: List[Creator] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Creator] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

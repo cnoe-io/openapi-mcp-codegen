@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Active(BaseModel):
-    """Flag that indicates if the incident is ongoing"""
+  """Flag that indicates if the incident is ongoing"""
 
 
 class ActiveResponse(APIResponse):
-    """Response model for Active"""
+  """Response model for Active"""
 
-    data: Optional[Active] = None
+  data: Optional[Active] = None
 
 
 class ActiveListResponse(APIResponse):
-    """List response model for Active"""
+  """List response model for Active"""
 
-    data: List[Active] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Active] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

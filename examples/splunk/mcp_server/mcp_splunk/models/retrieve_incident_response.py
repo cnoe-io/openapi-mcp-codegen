@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Retrieveincidentresponse(BaseModel):
-    """Properties of a single retrieved incident"""
+  """Properties of a single retrieved incident"""
 
 
 class RetrieveincidentresponseResponse(APIResponse):
-    """Response model for Retrieveincidentresponse"""
+  """Response model for Retrieveincidentresponse"""
 
-    data: Optional[Retrieveincidentresponse] = None
+  data: Optional[Retrieveincidentresponse] = None
 
 
 class RetrieveincidentresponseListResponse(APIResponse):
-    """List response model for Retrieveincidentresponse"""
+  """List response model for Retrieveincidentresponse"""
 
-    data: List[Retrieveincidentresponse] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Retrieveincidentresponse] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

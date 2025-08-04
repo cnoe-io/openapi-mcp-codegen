@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Xmattersnotificationobject(BaseModel):
-    """Properties of a xMatters notification service integration"""
+  """Properties of a xMatters notification service integration"""
 
 
 class XmattersnotificationobjectResponse(APIResponse):
-    """Response model for Xmattersnotificationobject"""
+  """Response model for Xmattersnotificationobject"""
 
-    data: Optional[Xmattersnotificationobject] = None
+  data: Optional[Xmattersnotificationobject] = None
 
 
 class XmattersnotificationobjectListResponse(APIResponse):
-    """List response model for Xmattersnotificationobject"""
+  """List response model for Xmattersnotificationobject"""
 
-    data: List[Xmattersnotificationobject] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Xmattersnotificationobject] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

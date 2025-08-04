@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Notificationdestination(BaseModel):
-    """Notification service"""
+  """Notification service"""
 
 
 class NotificationdestinationResponse(APIResponse):
-    """Response model for Notificationdestination"""
+  """Response model for Notificationdestination"""
 
-    data: Optional[Notificationdestination] = None
+  data: Optional[Notificationdestination] = None
 
 
 class NotificationdestinationListResponse(APIResponse):
-    """List response model for Notificationdestination"""
+  """List response model for Notificationdestination"""
 
-    data: List[Notificationdestination] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Notificationdestination] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

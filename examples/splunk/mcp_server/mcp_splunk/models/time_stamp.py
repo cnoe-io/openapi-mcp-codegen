@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Timestamp(BaseModel):
-    """Event occurrence timestamp, in *nix time in milliseconds"""
+  """Event occurrence timestamp, in *nix time in milliseconds"""
 
 
 class TimestampResponse(APIResponse):
-    """Response model for Timestamp"""
+  """Response model for Timestamp"""
 
-    data: Optional[Timestamp] = None
+  data: Optional[Timestamp] = None
 
 
 class TimestampListResponse(APIResponse):
-    """List response model for Timestamp"""
+  """List response model for Timestamp"""
 
-    data: List[Timestamp] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Timestamp] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

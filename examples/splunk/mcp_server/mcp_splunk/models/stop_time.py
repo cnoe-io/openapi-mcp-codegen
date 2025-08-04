@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Stoptime(BaseModel):
-    """Ending timestamp of a muting rule, in *nix time in milliseconds"""
+  """Ending timestamp of a muting rule, in *nix time in milliseconds"""
 
 
 class StoptimeResponse(APIResponse):
-    """Response model for Stoptime"""
+  """Response model for Stoptime"""
 
-    data: Optional[Stoptime] = None
+  data: Optional[Stoptime] = None
 
 
 class StoptimeListResponse(APIResponse):
-    """List response model for Stoptime"""
+  """List response model for Stoptime"""
 
-    data: List[Stoptime] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Stoptime] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

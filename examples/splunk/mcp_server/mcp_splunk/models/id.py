@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Id(BaseModel):
-    """ID of a muting rule. Set by system."""
+  """ID of a muting rule. Set by system."""
 
 
 class IdResponse(APIResponse):
-    """Response model for Id"""
+  """Response model for Id"""
 
-    data: Optional[Id] = None
+  data: Optional[Id] = None
 
 
 class IdListResponse(APIResponse):
-    """List response model for Id"""
+  """List response model for Id"""
 
-    data: List[Id] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Id] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

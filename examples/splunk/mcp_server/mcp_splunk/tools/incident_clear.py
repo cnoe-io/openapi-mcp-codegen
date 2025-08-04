@@ -14,31 +14,31 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def clear__incidents(body_filters: List[str] = None) -> Any:
-    '''
-    Clears specified incidents based on provided filters.
+  '''
+  Clears specified incidents based on provided filters.
 
-    Args:
-        body_filters (List[str], optional): List of rules that identify incidents to be cleared. Defaults to None.
+  Args:
+      body_filters (List[str], optional): List of rules that identify incidents to be cleared. Defaults to None.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the clear operation.
+  Returns:
+      Any: The JSON response from the API call indicating the result of the clear operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making PUT request to /incident/clear")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making PUT request to /incident/clear")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_filters is not None:
-        flat_body["filters"] = body_filters
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  if body_filters is not None:
+    flat_body["filters"] = body_filters
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/incident/clear", method="PUT", params=params, data=data)
+  success, response = await make_api_request("/incident/clear", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

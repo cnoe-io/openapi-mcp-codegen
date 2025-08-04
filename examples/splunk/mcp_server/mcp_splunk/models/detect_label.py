@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Detectlabel(BaseModel):
-    """Publish object label that generated the event"""
+  """Publish object label that generated the event"""
 
 
 class DetectlabelResponse(APIResponse):
-    """Response model for Detectlabel"""
+  """Response model for Detectlabel"""
 
-    data: Optional[Detectlabel] = None
+  data: Optional[Detectlabel] = None
 
 
 class DetectlabelListResponse(APIResponse):
-    """List response model for Detectlabel"""
+  """List response model for Detectlabel"""
 
-    data: List[Detectlabel] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Detectlabel] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

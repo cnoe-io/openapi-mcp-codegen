@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Alertmutingrule(BaseModel):
-    """Properties of a muting rule"""
+  """Properties of a muting rule"""
 
 
 class AlertmutingruleResponse(APIResponse):
-    """Response model for Alertmutingrule"""
+  """Response model for Alertmutingrule"""
 
-    data: Optional[Alertmutingrule] = None
+  data: Optional[Alertmutingrule] = None
 
 
 class AlertmutingruleListResponse(APIResponse):
-    """List response model for Alertmutingrule"""
+  """List response model for Alertmutingrule"""
 
-    data: List[Alertmutingrule] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Alertmutingrule] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

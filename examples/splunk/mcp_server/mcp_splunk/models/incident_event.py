@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Incidentevent(BaseModel):
-    """Event data for an event associated with an incident"""
+  """Event data for an event associated with an incident"""
 
 
 class IncidenteventResponse(APIResponse):
-    """Response model for Incidentevent"""
+  """Response model for Incidentevent"""
 
-    data: Optional[Incidentevent] = None
+  data: Optional[Incidentevent] = None
 
 
 class IncidenteventListResponse(APIResponse):
-    """List response model for Incidentevent"""
+  """List response model for Incidentevent"""
 
-    data: List[Incidentevent] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Incidentevent] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

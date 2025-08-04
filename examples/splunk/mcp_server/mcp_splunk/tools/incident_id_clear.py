@@ -14,29 +14,29 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def clear__single__incident(path_id: str) -> Any:
-    '''
-    Clears a specific incident identified by the provided incident ID.
+  '''
+  Clears a specific incident identified by the provided incident ID.
 
-    Args:
-        path_id (str): The unique identifier of the incident to be cleared.
+  Args:
+      path_id (str): The unique identifier of the incident to clear.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the clear operation.
+  Returns:
+      Any: The JSON response from the API call indicating the result of the clear operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making PUT request to /incident/{id}/clear")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making PUT request to /incident/{id}/clear")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/incident/{path_id}/clear", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/incident/{path_id}/clear", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

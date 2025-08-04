@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Detectorid(BaseModel):
-    """ID of the detector that generated the event"""
+  """ID of the detector that generated the event"""
 
 
 class DetectoridResponse(APIResponse):
-    """Response model for Detectorid"""
+  """Response model for Detectorid"""
 
-    data: Optional[Detectorid] = None
+  data: Optional[Detectorid] = None
 
 
 class DetectoridListResponse(APIResponse):
-    """List response model for Detectorid"""
+  """List response model for Detectorid"""
 
-    data: List[Detectorid] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Detectorid] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

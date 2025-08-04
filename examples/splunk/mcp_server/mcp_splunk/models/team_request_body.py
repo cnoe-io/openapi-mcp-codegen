@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Teamrequestbody(BaseModel):
-    """Request body"""
+  """Request body"""
 
 
 class TeamrequestbodyResponse(APIResponse):
-    """Response model for Teamrequestbody"""
+  """Response model for Teamrequestbody"""
 
-    data: Optional[Teamrequestbody] = None
+  data: Optional[Teamrequestbody] = None
 
 
 class TeamrequestbodyListResponse(APIResponse):
-    """List response model for Teamrequestbody"""
+  """List response model for Teamrequestbody"""
 
-    data: List[Teamrequestbody] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Teamrequestbody] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

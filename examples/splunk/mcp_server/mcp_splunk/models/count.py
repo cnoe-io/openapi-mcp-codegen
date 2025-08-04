@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Count(BaseModel):
-    """Number of muting rules in the result set"""
+  """Number of muting rules in the result set"""
 
 
 class CountResponse(APIResponse):
-    """Response model for Count"""
+  """Response model for Count"""
 
-    data: Optional[Count] = None
+  data: Optional[Count] = None
 
 
 class CountListResponse(APIResponse):
-    """List response model for Count"""
+  """List response model for Count"""
 
-    data: List[Count] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Count] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None

@@ -14,125 +14,125 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def retrieve__team__using_id(path_tid: str) -> Any:
-    '''
-    Retrieves a team by its unique team ID.
+  '''
+  Retrieves a team by its unique team ID.
 
-    Args:
-        path_tid (str): The unique identifier of the team to retrieve.
+  Args:
+      path_tid (str): The unique identifier of the team to retrieve.
 
-    Returns:
-        Any: The JSON response containing the team details if the request is successful.
+  Returns:
+      Any: The JSON response containing the team details if the request is successful.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making GET request to /team/{tid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making GET request to /team/{tid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}", method="GET", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def update__team(
-    path_tid: str,
-    body_description: str = None,
-    body_members: List[str] = None,
-    body_name: str = None,
-    body_notificationLists_default: List[str] = None,
-    body_notificationLists_critical: List[str] = None,
-    body_notificationLists_warning: List[str] = None,
-    body_notificationLists_major: List[str] = None,
-    body_notificationLists_minor: List[str] = None,
-    body_notificationLists_info: List[str] = None,
+  path_tid: str,
+  body_description: str = None,
+  body_members: List[str] = None,
+  body_name: str = None,
+  body_notificationLists_default: List[str] = None,
+  body_notificationLists_critical: List[str] = None,
+  body_notificationLists_warning: List[str] = None,
+  body_notificationLists_major: List[str] = None,
+  body_notificationLists_minor: List[str] = None,
+  body_notificationLists_info: List[str] = None,
 ) -> Any:
-    '''
-    Updates the team specified by the given team ID.
+  '''
+  Updates the team specified by the given team ID.
 
-    Args:
-        path_tid (str): The unique identifier of the team to update.
-        body_description (str, optional): The new description for the team. Defaults to None.
-        body_members (List[str], optional): List of user IDs to assign as team members. Defaults to None.
-        body_name (str, optional): The new name for the team. Defaults to None.
-        body_notificationLists_default (List[str], optional): Notification services to use for undefined alerts. Defaults to None.
-        body_notificationLists_critical (List[str], optional): Notification services to use for critical alerts. Defaults to None.
-        body_notificationLists_warning (List[str], optional): Notification services to use for warning alerts. Defaults to None.
-        body_notificationLists_major (List[str], optional): Notification services to use for major alerts. Defaults to None.
-        body_notificationLists_minor (List[str], optional): Notification services to use for minor alerts. Defaults to None.
-        body_notificationLists_info (List[str], optional): Notification services to use for informational alerts. Defaults to None.
+  Args:
+      path_tid (str): The unique identifier of the team to update.
+      body_description (str, optional): The new description for the team. Defaults to None.
+      body_members (List[str], optional): List of user IDs to assign as team members. Defaults to None.
+      body_name (str, optional): The new name for the team. Defaults to None.
+      body_notificationLists_default (List[str], optional): Notification services to use for undefined alerts. Defaults to None.
+      body_notificationLists_critical (List[str], optional): Notification services to use for critical alerts. Defaults to None.
+      body_notificationLists_warning (List[str], optional): Notification services to use for warning alerts. Defaults to None.
+      body_notificationLists_major (List[str], optional): Notification services to use for major alerts. Defaults to None.
+      body_notificationLists_minor (List[str], optional): Notification services to use for minor alerts. Defaults to None.
+      body_notificationLists_info (List[str], optional): Notification services to use for informational alerts. Defaults to None.
 
-    Returns:
-        Any: The JSON response from the API call containing the updated team information or an error message.
+  Returns:
+      Any: The JSON response from the API call containing the updated team information or an error message.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making PUT request to /team/{tid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making PUT request to /team/{tid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_description is not None:
-        flat_body["description"] = body_description
-    if body_members is not None:
-        flat_body["members"] = body_members
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_notificationLists_default is not None:
-        flat_body["notificationLists_default"] = body_notificationLists_default
-    if body_notificationLists_critical is not None:
-        flat_body["notificationLists_critical"] = body_notificationLists_critical
-    if body_notificationLists_warning is not None:
-        flat_body["notificationLists_warning"] = body_notificationLists_warning
-    if body_notificationLists_major is not None:
-        flat_body["notificationLists_major"] = body_notificationLists_major
-    if body_notificationLists_minor is not None:
-        flat_body["notificationLists_minor"] = body_notificationLists_minor
-    if body_notificationLists_info is not None:
-        flat_body["notificationLists_info"] = body_notificationLists_info
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  if body_description is not None:
+    flat_body["description"] = body_description
+  if body_members is not None:
+    flat_body["members"] = body_members
+  if body_name is not None:
+    flat_body["name"] = body_name
+  if body_notificationLists_default is not None:
+    flat_body["notificationLists_default"] = body_notificationLists_default
+  if body_notificationLists_critical is not None:
+    flat_body["notificationLists_critical"] = body_notificationLists_critical
+  if body_notificationLists_warning is not None:
+    flat_body["notificationLists_warning"] = body_notificationLists_warning
+  if body_notificationLists_major is not None:
+    flat_body["notificationLists_major"] = body_notificationLists_major
+  if body_notificationLists_minor is not None:
+    flat_body["notificationLists_minor"] = body_notificationLists_minor
+  if body_notificationLists_info is not None:
+    flat_body["notificationLists_info"] = body_notificationLists_info
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def delete__team(path_tid: str) -> Any:
-    '''
-    Deletes a team specified by the team ID.
+  '''
+  Deletes a team specified by the team ID.
 
-    Args:
-        path_tid (str): The unique identifier of the team to be deleted.
+  Args:
+      path_tid (str): The unique identifier of the team to be deleted.
 
-    Returns:
-        Any: The JSON response from the API call indicating the result of the delete operation.
+  Returns:
+      Any: The JSON response from the API call indicating the result of the delete operation.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making DELETE request to /team/{tid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  '''
+  logger.debug("Making DELETE request to /team/{tid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/team/{path_tid}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

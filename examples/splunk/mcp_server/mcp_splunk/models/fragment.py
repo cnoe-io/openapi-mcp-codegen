@@ -10,17 +10,17 @@ from .base import APIResponse, PaginationInfo
 
 
 class Fragment(BaseModel):
-    """SignalFlow code fragment that generated the value for a triggered event"""
+  """SignalFlow code fragment that generated the value for a triggered event"""
 
 
 class FragmentResponse(APIResponse):
-    """Response model for Fragment"""
+  """Response model for Fragment"""
 
-    data: Optional[Fragment] = None
+  data: Optional[Fragment] = None
 
 
 class FragmentListResponse(APIResponse):
-    """List response model for Fragment"""
+  """List response model for Fragment"""
 
-    data: List[Fragment] = Field(default_factory=list)
-    pagination: Optional[PaginationInfo] = None
+  data: List[Fragment] = Field(default_factory=list)
+  pagination: Optional[PaginationInfo] = None
