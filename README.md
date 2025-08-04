@@ -70,7 +70,7 @@ Use the `--enhance-docstring-with-llm` flag if you want to improve generated doc
 To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
 
 ```bash
-pipx run --spec git+https://github.com/cnoe-io/openapi-mcp-codegen.git@main openapi_mcp_codegen \
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
   --spec-file examples/petstore/openapi_petstore.json \
   --output-dir examples/petstore/mcp_server \
   --generate-agent \
