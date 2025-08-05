@@ -14,6 +14,22 @@
 
 This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specifications, creating Python packages that can be used by AI assistants to interact with APIs. The core architecture transforms OpenAPI specs into structured MCP servers with tools, models, and client code.
 
+
+## ✨ Features
+
+- ⚡ **Automatic MCP server generation** from OpenAPI specs
+- 📝 Supports **JSON** and **YAML** formats
+- 🔍 **Auto-detects** spec file type (`.json`, `.yaml`, `.yml`)
+- 🛠️ **Tool modules** for each API endpoint
+- 🤖 **API client code** generation
+- 📋 **Logging** & **error handling** setup
+- ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
+- 📚 **Comprehensive documentation** generation
+- 🤖 **Enhanced Docstrings via LLM** integration
+- 🚀 **`--generate-agent` flag** – additionally produces a LangGraph
+  React agent (with A2A server, Makefile, README and .env.example)
+  alongside the generated MCP server.
+
 ## Key Architecture Components
 
 ### Core Generation Flow
@@ -31,18 +47,61 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 
 ## Essential Development Workflows
 
+### 📦 Requirements
+
+- 🐍 Python **3.13+**
+- ⚡ [uv](https://docs.astral.sh/uv/getting-started/installation/)
+
+**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
+
+### Run without cloning repo
+
+
+#### Run from a stable tag
+
+
+```bash
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git@stable openapi_mcp_codegen \
+  --spec-file examples/petstore/openapi_petstore.json \
+  --output-dir examples/petstore/mcp_server \
+  --generate-agent
+```
+
+#### 📌 Optional: Run from main branch
+
+```bash
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+  --spec-file examples/petstore/openapi_petstore.json \
+  --output-dir examples/petstore/mcp_server \
+  --generate-agent
+```
+
 ### Local Development Commands
 
 ```bash
+# Setup venv
+uv venv && source .venv/bin/activate
+
 # Initial setup (requires uv CLI)
 uv sync
+```
+#### Run without options
 
+```
 # Generate MCP server from spec
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output>
+```
 
+#### Run with option to enhance docstring using LLMs
+
+```
 # Generate with LLM-enhanced docstrings (requires LLM env vars)
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --enhance-docstring-with-llm
+```
 
+#### Run with option to generate a2a agent
+
+```
 # Generate with agent wrapper (creates LangGraph React agent + A2A server)
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --generate-agent
 ```
@@ -57,22 +116,39 @@ make test               # Run pytest suite
 make lint               # Run ruff linting
 ```
 
-### Testing Generated Servers
+### Testing Generated Petstore MCP Server
 
-Generated servers include A2A (Agent-to-Agent) capabilities when using `--generate-agent`:
+#### Start Petstore Mockserver
 
-```bash
-cd examples/petstore/mcp_server
-cp .env.example .env    # Configure API credentials
-make run-a2a           # Start A2A server
-make run-a2a-client    # Launch Docker chat client
+```
+cd examples/petstore
 ```
 
-## MCP Inspector Tool
+```
+uv run python petstore_mock_server.py
+```
+
+_In a new terminal from the root of the git repo_
+
+```
+cd examples/petstore/mcp_server
+```
+
+```
+export PETSTORE_API_URL=http://0.0.0.0:10000
+export PETSTORE_TOKEN=foo
+export MCP_MODE=http
+``
+
+```
+uv run python mcp_petstore/server.py
+```
+
+#### MCP Inspector Tool
 
 The **MCP Inspector** is a utility for inspecting and debugging MCP servers. It provides a visual interface to explore generated tools, models, and APIs.
 
-### Installation
+##### Installation
 
 To install the MCP Inspector, use the following command:
 
@@ -80,7 +156,7 @@ To install the MCP Inspector, use the following command:
 npx @modelcontextprotocol/inspector
 ```
 
-### Usage
+##### Usage
 
 Run the inspector in your project directory to analyze the generated MCP server:
 
@@ -95,6 +171,17 @@ This will launch a web-based interface where you can:
 - Test API endpoints directly from the interface
 
 For more details, visit the [MCP Inspector Documentation](https://modelcontextprotocol.io/legacy/tools/inspector).
+
+
+### Testing Generated Agent
+Generated servers include A2A (Agent-to-Agent) capabilities when using `--generate-agent`:
+
+```bash
+cd examples/petstore/mcp_server
+cp .env.example .env    # Configure API credentials
+make run-a2a           # Start A2A server
+make run-a2a-client    # Launch Docker chat client
+```
 
 ## Project-Specific Conventions
 
