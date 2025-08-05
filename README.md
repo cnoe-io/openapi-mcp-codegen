@@ -138,6 +138,8 @@ cd examples/petstore/mcp_server
 export PETSTORE_API_URL=http://0.0.0.0:10000
 export PETSTORE_TOKEN=foo
 export MCP_MODE=http
+export MCP_HOST=localhost
+export MCP_PORT=8000
 ``
 
 ```

@@ -64,10 +64,10 @@ def main():
   logging.info(f"Agent name: {AGENT_NAME}")
 
   # Create server instance
-  if MCP_MODE == "SSE":
+  if MCP_MODE.lower() in ["sse", "http"]:
     mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
   else:
-    mcp = FastMCP("PETSTORE MCP Server")
+    mcp = FastMCP("{{ mcp_name | upper }} MCP Server")
 
   # Register pet tools
 

@@ -13,7 +13,7 @@ allowing large language models and AI assistants to interact with the service.
 import logging
 import os
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 {% for module in modules %}
 from {{ mcp_package }}mcp_{{ mcp_name }}.tools import {{ module }}
@@ -40,7 +40,7 @@ def main():
     logging.info(f"Agent name: {AGENT_NAME}")
 
     # Create server instance
-    if MCP_MODE == "SSE":
+    if MCP_MODE in ["SSE", "HTTP"]:
       mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
     else:
       mcp = FastMCP("{{ mcp_name | upper }} MCP Server")
