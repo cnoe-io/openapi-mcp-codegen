@@ -14,32 +14,39 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def retrieve__team__using_id(path_tid: str) -> Any:
-    '''
-    Retrieves a team by its unique team ID.
+  '''
+  Retrieves a team by its unique team ID.
 
-    Args:
-        path_tid (str): The unique identifier of the team to retrieve.
+  Args:
+    path_tid (str): The unique identifier of the team to retrieve.
 
-    Returns:
-        Any: The JSON response containing the team details if the request is successful.
+  Returns:
+    Any: The JSON response containing the team details if the request is successful.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    '''
-    logger.debug("Making GET request to /team/{tid}")
+  Raises:
+    Exception: If the API request fails or returns an error.
+  '''
+  logger.info("Making GET request to /team/{tid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/team/{path_tid}", method="GET", params=params, data=data)
+  logger.info(f"Request URL: /team/{path_tid}")
+  logger.info(f"Request method: GET")
+  logger.info(f"Request params: {params}")
+  logger.info(f"Request body: {data}")
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  success, response = await make_api_request(f"/team/{path_tid}", method="GET", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+
+  logger.info(f"Response: {response}")
+  return response
 
 
 async def update__team(

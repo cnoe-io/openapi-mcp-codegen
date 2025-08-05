@@ -68,6 +68,34 @@ make run-a2a           # Start A2A server
 make run-a2a-client    # Launch Docker chat client
 ```
 
+## MCP Inspector Tool
+
+The **MCP Inspector** is a utility for inspecting and debugging MCP servers. It provides a visual interface to explore generated tools, models, and APIs.
+
+### Installation
+
+To install the MCP Inspector, use the following command:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+### Usage
+
+Run the inspector in your project directory to analyze the generated MCP server:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+This will launch a web-based interface where you can:
+
+- Explore available tools and their operations
+- Inspect generated models and their schemas
+- Test API endpoints directly from the interface
+
+For more details, visit the [MCP Inspector Documentation](https://modelcontextprotocol.io/legacy/tools/inspector).
+
 ## Project-Specific Conventions
 
 ### Configuration Files

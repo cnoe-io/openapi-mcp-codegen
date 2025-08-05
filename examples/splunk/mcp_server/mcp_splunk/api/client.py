@@ -58,10 +58,12 @@ async def make_api_request(
     Returns:
         Tuple of (success, data) where data is either the response JSON or an error dict
     """
-    logger.debug(f"Making {method} request to {path}")
+    logger.info('*'*50)
+    logger.info(f"Making {method} request to {path}")
+    logger.info('*'*50)
 
     if not token:
-        logger.debug("No token provided, using default token")
+        logger.info("No token provided, using default token")
         token = API_TOKEN
 
     if not token:
@@ -75,14 +77,14 @@ async def make_api_request(
         headers_dict = {"X-SF-TOKEN": "{token}", "Accept": "application/json"}
         headers = {key: value.format(token=token) for key, value in headers_dict.items()}
 
-        logger.debug("Request headers prepared (Authorization header masked)")
+        logger.info("Request headers prepared (Authorization header masked)")
         logger.debug(f"Request parameters: {params}")
         if data:
-            logger.debug(f"Request data: {data}")
+            logger.info(f"Request data: {data}")
 
         async with httpx.AsyncClient(timeout=timeout) as client:
             url = f"{API_URL}{path}"
-            logger.debug(f"Full request URL: {url}")
+            logger.info(f"Full request URL: {url}")
 
             method_map = {
                 "GET": client.get,
