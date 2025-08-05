@@ -13,7 +13,7 @@ allowing large language models and AI assistants to interact with the service.
 import logging
 import os
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 
 from mcp_petstore.tools import pet
