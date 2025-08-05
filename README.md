@@ -106,6 +106,42 @@ uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --enhan
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --generate-agent
 ```
 
+#### ▶️  Generate agent **with evaluation scaffolding**
+
+```bash
+uv run openapi_mcp_codegen \
+  --spec-file <spec.json> \
+  --output-dir <output-dir> \
+  --generate-agent \
+  --generate-eval          # ← NEW
+```
+
+The extra flag adds:
+
+1. `eval_mode.py` – an interactive script that lets you chat with each tool, mark tests as _done_ or _skipped_ and stores the traces in `eval/dataset.yaml`.
+2. `eval/evaluate_agent.py` – a LangSmith-powered benchmark that replays the dataset and uploads the scores (trajectory-accuracy, correctness, hallucination).
+
+End-to-end workflow:
+
+1. **Generate** the agent with `--generate-eval`
+2. **Build a dataset:**
+
+   ```bash
+   cd <output-dir>
+   uv run python eval_mode.py
+   # … interactively exercise the tools …
+   ```
+
+   This produces / updates `eval/dataset.yaml`.
+
+3. **Run the evaluation suite:**
+
+   ```bash
+   uv run python eval/evaluate_agent.py
+   ```
+
+   Results appear in your LangSmith dashboard (set `LANGCHAIN_API_KEY` etc.).
+
 ### Makefile Shortcuts
 
 ```bash

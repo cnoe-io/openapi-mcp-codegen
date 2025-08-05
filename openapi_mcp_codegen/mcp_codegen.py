@@ -11,6 +11,11 @@ import concurrent.futures
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, Any
 import subprocess
+import itertools
+
+from cnoe_agent_utils import LLMFactory
+from langchain_core.messages import SystemMessage
+import textwrap
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -103,7 +108,8 @@ class MCPGenerator:
       dry_run: bool = False,
       enhance_docstring_with_llm: bool = False,
       enhance_docstring_with_llm_openapi: bool = False,
-      generate_agent: bool = False):
+      generate_agent: bool = False,
+      generate_eval: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -129,6 +135,7 @@ class MCPGenerator:
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
     self.generate_agent_flag = generate_agent
+    self.generate_eval = generate_eval
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -174,6 +181,15 @@ class MCPGenerator:
     Returns:
       str: Corresponding Python type.
     """
+    # Resolve component references so nested / referenced enums are visible
+    if "$ref" in prop:
+        prop = self._resolve_ref(prop["$ref"]) or {}
+    # Enumerations -------------------------------------------------------
+    if prop.get("enum"):
+        enum_vals = prop["enum"]
+        # Produce Literal["opt1", "opt2"]  (or ints, bools, …)
+        literal_items = ", ".join(repr(v) for v in enum_vals)
+        return f"Literal[{literal_items}]"
     t = prop.get("type", "string")
     if t == "integer":
       return "int"
@@ -355,7 +371,7 @@ class MCPGenerator:
     logger.info("Generating models")
     schemas = self.spec.get('components', {}).get('schemas', {})
     for schema_name, schema in schemas.items():
-      model_name = ''.join(word.capitalize() for word in re.split(r'[_\-]+', schema_name))
+      model_name = ''.join(word.capitalize() for word in re.split(r'[_\-]+', schema_name)).replace('.', '')
       fields = []
       required_fields = schema.get('required', [])
       for prop_name, prop in schema.get('properties', {}).items():
@@ -410,10 +426,16 @@ class MCPGenerator:
       for method, op in ops.items():
         if method.upper() not in ["GET", "POST", "PUT", "DELETE"]:
           continue
+        # Merge path-item level parameters with operation-level parameters
+        path_level_params = ops.get("parameters", [])  # may be absent
+        op_level_params   = op.get("parameters", [])   # may be absent
+        all_params: list = list(
+            itertools.chain(path_level_params, op_level_params)
+        )
         params = []
         # Holds parameter details for documentation
         params_infos = []
-        for p in op.get("parameters", []):
+        for p in all_params:
           # Resolve parameter reference if the parameter itself is a $ref
           if "$ref" in p:
               p = self._resolve_ref(p["$ref"])
@@ -464,9 +486,19 @@ class MCPGenerator:
                   params_infos.append(info)
         if "requestBody" in op:
             request_body = op["requestBody"]
+            # Resolve component-level requestBodies references
+            if isinstance(request_body, dict) and "$ref" in request_body:
+                request_body = self._resolve_ref(request_body["$ref"]) or {}
+
+            # At this point request_body must be the expanded object with “content”
             content = request_body.get("content", {})
-            if "application/json" in content:
-                schema = content["application/json"].get("schema", {})
+            # Prefer JSON but fall back to the first available media type
+            media = (
+                content.get("application/json")
+                or next(iter(content.values()), {})
+            )
+            schema = media.get("schema", {})
+            if schema:
                 body_params = self._extract_body_params(schema, prefix="body")
                 for sig, info in body_params:
                     params.append(sig)
@@ -478,7 +510,7 @@ class MCPGenerator:
 
         # Compute formatted_path by replacing each path placeholder with one that uses the resolved ref name prefixed with "path_"
         formatted_path = path
-        for p in op.get("parameters", []):
+        for p in all_params:
             # Resolve the parameter if it uses a $ref
             if "$ref" in p:
                 p = self._resolve_ref(p["$ref"])
@@ -572,17 +604,87 @@ class MCPGenerator:
       agent_dir = self.output_dir            # render directly into target dir
       logger.debug(f"Agent directory (output dir): {agent_dir}")
       os.makedirs(agent_dir, exist_ok=True)
+      server_pkg = os.path.basename(self.src_output_dir) # e.g. "mcp_komodor"
 
       from pathlib import Path  # add at top of file if not already imported
       _ = Path(self.output_dir).resolve().as_uri()              # absolute file URI of MCP project
 
       file_header_kwargs = self.get_file_header_kwargs()
 
+      # Pass the generate_eval flag to all agent-level templates
+      generate_eval = self.generate_eval
+
+      # --------------------------------------------------- build system prompt via LLM
+      tool_docs = []
+      for path, ops in self.spec.get("paths", {}).items():
+          for method, op in ops.items():
+              if method.upper() not in {"GET", "POST", "PUT", "DELETE"}:
+                  continue
+              t_name = camel_to_snake(op.get("operationId") or f"{method}_{path.strip('/')}")
+              desc   = (op.get("description") or op.get("summary") or "").strip()
+              tool_docs.append(f"- {t_name}: {desc}")
+
+      tools_text = "\n".join(tool_docs) if tool_docs else "<no tools>"
+
+      llm = LLMFactory().get_llm()
+      sys_req = SystemMessage(
+          content=(
+              f"Write the SYSTEM prompt for a {self.mcp_name} assistant that "
+              "can call the following tools:\n"
+              f"{tools_text}\n\n"
+              "Explain the general capabilities of the agent. "
+              "Keep the prompt concise and actionable."
+          )
+      )
+      try:
+          system_prompt = llm.invoke([sys_req]).content.strip()
+      except Exception as e:                          # fallback if LLM unavailable
+          logger.warning(f"LLM failed to generate system prompt: {e}. Using stub.")
+          system_prompt = textwrap.dedent(
+              f"""\
+              You are an expert assistant for the {self.mcp_name} API.
+              You can call the following tools:\n{tools_text}\n
+              When a tool is appropriate, reply ONLY with the JSON payload.
+              Otherwise, answer normally."""
+          ).strip()
+
+      # Build two dependency blocks and concatenate conditionally
+      base_deps = """
+    "a2a-sdk==0.2.8",
+    "httpx==0.28.1",
+    "agntcy-acp>=1.3.2",
+    "click>=8.2.0",
+    "langchain-anthropic>=0.3.13",
+    "langchain-core>=0.3.60",
+    "langchain-google-genai>=2.1.4",
+    "langchain-mcp-adapters>=0.1.9",
+    "langchain-openai>=0.3.17",
+    "langchain>=0.3.27",
+    "langgraph>=0.4.5",
+    "uv",
+    "rich (>=14.0.0,<15.0.0)",
+    "sseclient (>=0.0.27,<0.0.28)",
+    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+      """
+
+      eval_deps = """
+    "pytest>=8.3.5",
+    "openevals>=0.0.6",
+    "agentevals>=0.0.7",
+    "langsmith>=0.3.32",
+    "tabulate>=0.9.0",
+      """
+
+      agent_dependencies = base_deps + (eval_deps if self.generate_eval else "")
+
       logger.info("Rendering agent/agent.py template")
       self.render_template(
           "agent/agent.tpl",
           os.path.join(agent_dir, "agent.py"),
-          mcp_name=self.mcp_name,
+          mcp_name=self.mcp_name,          # keep for env-var prefixes
+          server_pkg=server_pkg,           # ← NEW
+          generate_eval=generate_eval,
+          system_prompt=system_prompt,     # << NEW
           **file_header_kwargs,
       )
 
@@ -592,6 +694,7 @@ class MCPGenerator:
           "agent/Makefile.tpl",
           os.path.join(agent_dir, "Makefile"),
           mcp_name=self.mcp_name,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
@@ -601,8 +704,10 @@ class MCPGenerator:
           "agent/README.tpl",
           os.path.join(agent_dir, "README.md"),
           mcp_name=self.mcp_name,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
+
 
       # Render eval_mode.py
       logger.info("Rendering agent/eval_mode.py")
@@ -622,36 +727,11 @@ class MCPGenerator:
           mcp_name=self.mcp_name,
           **file_header_kwargs,
       )
-
       logger.info("Formatting agent/agent.py with Ruff")
       self.run_ruff_lint(os.path.join(agent_dir, "agent.py"))
 
       # ---------------------------------------------------------------- pyproject.toml
       logger.info("Rendering agent/pyproject.toml")
-      agent_dependencies = self.config.get(
-          "agent_poetry_dependencies",
-          """
-    "a2a-sdk==0.2.8",
-    "httpx==0.28.1",
-    "agntcy-acp>=1.3.2",
-    "click>=8.2.0",
-    "langchain-anthropic>=0.3.13",
-    "langchain-core>=0.3.60",
-    "langchain-google-genai>=2.1.4",
-    "langchain-mcp-adapters>=0.1.0",
-    "langchain-openai>=0.3.17",
-    "langgraph>=0.4.5",
-    "pytest>=8.3.5",
-    "tabulate>=0.9.0",
-    "uv",
-    "rich (>=14.0.0,<15.0.0)",
-    "sseclient (>=0.0.27,<0.0.28)",
-    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
-    "python-dotenv>=1.0.0",
-    "fastmcp>=2.11.1",
-          """,
-      )
-      combined_dependencies = agent_dependencies
       self.render_template(
           "agent/pyproject.tpl",
           os.path.join(agent_dir, "pyproject.toml"),
@@ -664,12 +744,24 @@ class MCPGenerator:
           author=self.config.get("author", "CNOE Contributors"),
           email=self.config.get("email", "auto@example.com"),
           license=self.config.get("license", "Apache-2.0"),
-          poetry_dependencies=combined_dependencies,
+          poetry_dependencies=agent_dependencies,
+          generate_eval=generate_eval,
           **file_header_kwargs,
       )
 
       # generate A2A server
       self._generate_a2a_server(agent_dir)
+
+      # If generate_eval is True, build the eval directory here
+      if self.generate_eval:
+          logger.info("Generating evaluation code inside agent eval dir")
+          eval_dir = os.path.join(agent_dir, "eval")
+          os.makedirs(eval_dir, exist_ok=True)
+          self.render_template(
+              "agent/evaluate_agent.tpl",
+              os.path.join(eval_dir, "evaluate_agent.py"),
+              mcp_name=self.mcp_name,
+          )
 
       logger.info("Agent wrapper generation completed")
 
@@ -805,15 +897,38 @@ class MCPGenerator:
       """
       if "$ref" in schema:
           schema = self._resolve_ref(schema["$ref"])
+      # Handle JSON-Schema composition keywords ---------------------------------
+      for key in ("allOf", "oneOf", "anyOf"):
+          if key in schema:
+              merged: list[tuple[str, dict]] = []
+              for subschema in schema[key]:
+                  if "$ref" in subschema:
+                      subschema = self._resolve_ref(subschema["$ref"])
+                  merged.extend(self._extract_body_params(subschema, prefix=prefix))
+              # Deduplicate identical signatures that may occur when the same
+              # property appears in multiple branches
+              seen: set[str] = set()
+              unique: list[tuple[str, dict]] = []
+              for sig, info in merged:
+                  if sig not in seen:
+                      unique.append((sig, info))
+                      seen.add(sig)
+              return unique
       params = []
       if schema.get("type") == "object" and "properties" in schema:
           required_fields = schema.get("required", [])
           params_info = []
           for prop_name, prop in schema["properties"].items():
-              # Compute a parameter name by appending with underscore
-              param_name = f"{prefix}_{prop_name}"
+              # Use “__” between nesting levels so that a single “_” inside a
+              # field name is preserved when we rebuild the JSON body later.
+              delim = "_" if prefix == "body" else "__"
+              param_name = f"{prefix}{delim}{prop_name}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
+                  # Use “__” between nesting levels so that a single “_” inside a
+                  # field name is preserved when we rebuild the JSON body later.
+                  delim = "_" if prefix == "body" else "__"
+                  param_name = f"{prefix}{delim}{prop_name}"
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
                       sub_params = self._extract_body_params(resolved_prop, prefix=param_name)
                       for sig, info in sub_params:
@@ -875,6 +990,7 @@ class MCPGenerator:
     if self.generate_agent_flag:
         self.generate_agent()
     self.generate_init_files()
-    self.generate_env()
+    if not self.generate_agent_flag:
+        self.generate_env()
     self.generate_readme()
     logger.info("MCP code generation completed")

@@ -18,3 +18,10 @@ run-a2a-eval-mode:
 # Convenience: clean Python cache/dist artefacts
 reset:
 	find . -type d \( -name '__pycache__' -o -name '*.egg-info' \) -print0 | xargs -0 rm -rf
+
+{% if generate_eval %}
+.PHONY: eval
+eval:
+	uv pip install -e . --upgrade
+	uv run python eval/evaluate_agent.py
+{% endif %}

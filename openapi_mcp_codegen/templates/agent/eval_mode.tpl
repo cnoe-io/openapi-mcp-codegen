@@ -14,6 +14,21 @@ from pathlib import Path
 from typing import Any, Dict
 from uuid import uuid4
 
+class SkipTool(Exception):
+    """Raised when the evaluator decides to skip the current tool."""
+
+class QuitEvaluation(Exception):
+    """Raised when the evaluator decides to quit the session."""
+
+def _in(prompt: str) -> str:
+    """Input wrapper that raises SkipTool on (s|skip) and QuitEvaluation on (q|quit)."""
+    val = input(prompt).strip()
+    if val.lower() in ("s", "skip"):
+        raise SkipTool
+    if val.lower() in ("q", "quit"):
+        raise QuitEvaluation
+    return val
+
 import yaml
 from agentevals.graph_trajectory.utils import extract_langgraph_trajectory_from_thread
 
@@ -66,13 +81,18 @@ def _prompt_for_query(
         if suggested_query:
             print(f"Suggested query: {suggested_query}")
 
-        inp = input(
-            "Enter a user query "
-            "(press Enter to accept suggestion, or (u)pdate strategy): "
-        ).strip()
+        try:
+            inp = _in(
+                "Enter a user query "
+                "(press Enter to accept suggestion, (u)pdate strategy, (s)kip or (q)uit): "
+            )
+        except SkipTool:
+            raise
+        except QuitEvaluation:
+            raise
 
         if inp.lower() in ("u", "update"):
-            strategy = input("Enter new evaluation strategy: ").strip()
+            strategy = _in("Enter new evaluation strategy (or (s)kip/(q)uit): ")
             suggested_query = _suggest_query(strategy)
             continue
 
@@ -89,9 +109,16 @@ async def _interactive_eval() -> None:
         dataset = yaml.safe_load(dataset_path.read_text()).get("tests") or []
 
     # Optional global evaluation strategy (can be updated later)
-    strategy = input(
-        "Optional global evaluation strategy (e.g. resource names) – press Enter to skip: "
-    ).strip()
+    try:
+        strategy = _in(
+            "Optional global evaluation strategy "
+            "(e.g. resource names) – press Enter, (s)kip or (q)uit: "
+        )
+    except SkipTool:
+        strategy = ""
+    except QuitEvaluation:
+        print("Exiting evaluation session.")
+        return
 
     # Create one LLM instance for all query suggestions
     llm = None
@@ -100,101 +127,171 @@ async def _interactive_eval() -> None:
     except Exception as e:
         logger.warning("LLM init failed: %s", e)
 
+    # ----------------------------------------------------- helper
+    def _mark_skipped(tn: str) -> None:
+        """Ensure exactly one {'tool': <tn>} entry exists for a skipped tool."""
+        # Find all existing *skipped* entries for this tool (len == 1 → skipped)
+        skip_idxs = [
+            i for i, t in enumerate(dataset)
+            if t.get("tool") == tn and len(t) == 1
+        ]
+
+        if skip_idxs:
+            # Keep the first, remove any further duplicates
+            for i in reversed(skip_idxs[1:]):
+                dataset.pop(i)
+        else:
+            # Only add a new skipped stub if none exists yet
+            dataset.append({"tool": tn})
+
+        # Persist + update bookkeeping
+        dataset_path.write_text(yaml.safe_dump({"tests": dataset}))
+        skipped_tools.add(tn)
+        if tn in remaining_tools:
+            remaining_tools.remove(tn)
+
     agent, tools = await create_agent()
     tool_map = {t.name: t for t in tools}
     all_tools = [t.name for t in tools]                          # full list
-    completed_tools = {t["tool"] for t in dataset}              # already-evaluated tools
-    remaining_tools = [t for t in all_tools if t not in completed_tools]
 
-    while True:
-        print("\nTools:")
-        for idx, tool in enumerate(all_tools, start=1):
-            marker = "(done)" if tool in completed_tools else ""
-            print(f"{idx}. {tool} {marker}")
-        # Prompt user – default is the next tool in the list
-        default_tool = remaining_tools[0] if remaining_tools else all_tools[0]
-        choice = input(
-            f"Select tool to evaluate [{default_tool}] (enter/number/(s)kip): "
-        ).strip()
-
-        if choice == "":
-            tool_name = default_tool
-        elif choice.lower() in ("s", "skip"):
-            if default_tool in remaining_tools:
-                remaining_tools.remove(default_tool)
-            continue
-        elif choice.isdigit():
-            idx = int(choice) - 1
-            if not (0 <= idx < len(all_tools)):
-                print("Invalid number, try again.")
-                continue
-            tool_name = all_tools[idx]
+    completed_tools: set[str] = set()
+    skipped_tools: set[str] = set()
+    for t in dataset:
+        if len(t.keys()) == 1 and "tool" in t:       # only “tool” → skipped entry
+            skipped_tools.add(t["tool"])
         else:
-            print("Invalid input, enter a number, press Enter for default, or 's' to skip.")
-            continue
+            completed_tools.add(t["tool"])
 
-        # ------------------------------------------------- dataset clash check
-        existing_idx: list[int] = [
-            i for i, t in enumerate(dataset) if t.get("tool") == tool_name
-        ]
-        replace_existing = False
-        if existing_idx:
-            choice = input(
-                f"{len(existing_idx)} existing test(s) for '{tool_name}' found – "
-                "(r)eplace or (a)dd as extra? [a]: "
-            ).strip().lower()
-            replace_existing = choice == "r"
+    remaining_tools = [t for t in all_tools if t not in completed_tools and t not in skipped_tools]
 
-        tool_desc = getattr(tool_map[tool_name], "description", "")
-        user_query, strategy = _prompt_for_query(tool_name, tool_desc, strategy, llm)
-
-        # Invoke the agent, show its response (or error), let the user decide to retry
-        success = False
+    try:
         while True:
-            # use a fresh thread-id so previous messages aren't reused
-            cfg = {"configurable": {"thread_id": str(uuid4())}}
-            print("Invoking agent, please wait …")
-            exc: Exception | None = None
+            print("\nTools:")
+            for idx, tool in enumerate(all_tools, start=1):
+                if tool in skipped_tools:
+                    marker = "(skipped)"
+                elif tool in completed_tools:
+                    marker = "(done)"
+                else:
+                    marker = ""
+                print(f"{idx}. {tool} {marker}")
+            # Prompt user – default is the next tool in the list
+            default_tool = remaining_tools[0] if remaining_tools else all_tools[0]
             try:
-                await agent.ainvoke({"messages": [{"role": "user", "content": user_query}]}, cfg)
-            except Exception as e:  # capture, but don't abort
-                exc = e
-
-            if exc:
-                print(f"\nInvocation raised an error:\n{exc}\n")
-            else:
-                # Show LLM/agent final response
-                state = agent.get_state(cfg)
-                output_msg = state.values.get("messages", [])[-1]
-                output_content = getattr(output_msg, "content", str(output_msg))
-                print("\nLLM response:\n")
-                print(output_content)
-                success = True
-
-            choice = input(
-                "Retry with different query (r) or continue to the next tool (enter)? "
-            ).strip().lower()
-            if choice == "r":
-                user_query, strategy = _prompt_for_query(tool_name, tool_desc, strategy, llm)
+                choice = _in(
+                    f"Select tool to evaluate [{default_tool}] "
+                    "(enter/number/(s)kip/(q)uit): "
+                )
+            except SkipTool:
+                _mark_skipped(default_tool)
                 continue
-            break
+            except QuitEvaluation:
+                raise
 
-        if success:
-            trajectory = extract_langgraph_trajectory_from_thread(agent, cfg)
-            if replace_existing:
-                for i in reversed(existing_idx):  # pop from the end to keep indices valid
-                    dataset.pop(i)
-            dataset.append({
-                "tool": tool_name,
-                "input": user_query,
-                "output": output_content,
-                "trajectory": trajectory,
-            })
-            dataset_path.write_text(yaml.safe_dump({"tests": dataset}))
-            print(f"Recorded trace for '{tool_name}'.\n")
-            completed_tools.add(tool_name)
-            if tool_name in remaining_tools:
-                remaining_tools.remove(tool_name)
+            if choice == "":
+                tool_name = default_tool
+            elif choice.lower() in ("s", "skip"):
+                _mark_skipped(default_tool)
+                continue
+            elif choice.isdigit():
+                idx = int(choice) - 1
+                if not (0 <= idx < len(all_tools)):
+                    print("Invalid number, try again.")
+                    continue
+                tool_name = all_tools[idx]
+            else:
+                print("Invalid input, enter a number, press Enter for default, or 's' to skip.")
+                continue
+
+            # ------------------------------------------------- dataset clash check
+            existing_idx: list[int] = [
+                i for i, t in enumerate(dataset) if t.get("tool") == tool_name
+            ]
+            replace_existing = False
+            if existing_idx:
+                try:
+                    choice = _in(
+                        f"{len(existing_idx)} existing test(s) for '{tool_name}' found – "
+                        "(r)eplace, (a)dd as extra, (s)kip or (q)uit? [a]: "
+                    ).lower()
+                    replace_existing = choice == "r"
+                except SkipTool:
+                    print("Skipped.\n")
+                    _mark_skipped(tool_name)
+                    continue
+                except QuitEvaluation:
+                    raise
+
+            tool_desc = getattr(tool_map[tool_name], "description", "")
+            try:
+                user_query, strategy = _prompt_for_query(tool_name, tool_desc, strategy, llm)
+            except SkipTool:
+                print("Skipped.\n")
+                _mark_skipped(tool_name)
+                continue
+            except QuitEvaluation:
+                raise
+
+            # Invoke the agent, show its response (or error), let the user decide to retry
+            success = False
+            while True:
+                # use a fresh thread-id so previous messages aren't reused
+                cfg = {"configurable": {"thread_id": str(uuid4())}}
+                print("Invoking agent, please wait …")
+                exc: Exception | None = None
+                try:
+                    await agent.ainvoke({"messages": [{"role": "user", "content": user_query}]}, cfg)
+                except Exception as e:  # capture, but don't abort
+                    exc = e
+
+                if exc:
+                    print(f"\nInvocation raised an error:\n{exc}\n")
+                else:
+                    # Show LLM/agent final response
+                    state = agent.get_state(cfg)
+                    output_msg = state.values.get("messages", [])[-1]
+                    output_content = getattr(output_msg, "content", str(output_msg))
+                    print("\nLLM response:\n")
+                    print(output_content)
+                    success = True
+
+                try:
+                    choice = _in(
+                        "Retry with different query (r), continue (enter), (s)kip or (q)uit: "
+                    ).lower()
+                except SkipTool:
+                    print("Skipped.\n")
+                    _mark_skipped(tool_name)
+                    success = False
+                    break          # exit retry loop, proceed to next tool
+                except QuitEvaluation:
+                    raise
+                if choice == "r":
+                    user_query, strategy = _prompt_for_query(tool_name, tool_desc, strategy, llm)
+                    continue
+                break
+
+            if success:
+                trajectory = extract_langgraph_trajectory_from_thread(agent, cfg)
+                if replace_existing:
+                    for i in reversed(existing_idx):  # pop from the end to keep indices valid
+                        dataset.pop(i)
+                dataset.append({
+                    "tool": tool_name,
+                    "input": user_query,
+                    "output": output_content,
+                    "trajectory": trajectory,
+                })
+                dataset_path.write_text(yaml.safe_dump({"tests": dataset}))
+                print(f"Recorded trace for '{tool_name}'.\n")
+                completed_tools.add(tool_name)
+                skipped_tools.discard(tool_name)
+                if tool_name in remaining_tools:
+                    remaining_tools.remove(tool_name)
+
+    except QuitEvaluation:
+        print("Exiting evaluation session.")
+        return
 
     print("Evaluation session finished.")
 

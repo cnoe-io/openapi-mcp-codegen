@@ -27,3 +27,21 @@ See `Makefile` for useful targets.
    ```
 
 Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools!
+
+{% if generate_eval %}
+## 📊 Evaluation
+
+1.  Enter **evaluation mode** to create or extend the test set  
+    ```bash
+    make run-a2a-eval-mode   # same as: uv run python eval_mode.py
+    ```
+    • Test each tool, update / skip as needed  
+    • Traces are stored in `eval/dataset.yaml`
+
+2.  Execute the automated benchmark (uploads to LangSmith)  
+    ```bash
+    make eval               # runs eval/evaluate_agent.py
+    ```
+
+Ensure `LANGCHAIN_API_KEY`, `LANGCHAIN_ENDPOINT` (or equivalent) are set before running `make eval`.
+{% endif %}

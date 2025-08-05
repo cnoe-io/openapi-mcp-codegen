@@ -56,6 +56,12 @@ def get_mcp_name(spec_path):
     help="Generate a LangGraph React-agent wrapper that uses the produced MCP server.",
 )
 @click.option(
+    "--generate-eval",
+    is_flag=True,
+    default=False,
+    help="Generate a module that evaluates the generated agent given eval/dataset.yaml.",
+)
+@click.option(
   "--dry-run",
   is_flag=True,
   default=False,
@@ -81,6 +87,7 @@ def main(
    enhance_docstring_with_llm,
    enhance_docstring_with_llm_openapi,
    generate_agent,
+   generate_eval,
 ):
   # Load environment variables from .env file if present
   env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
@@ -114,6 +121,7 @@ def main(
       enhance_docstring_with_llm=enhance_docstring_with_llm,
       enhance_docstring_with_llm_openapi=enhance_docstring_with_llm_openapi,
       generate_agent=generate_agent,
+      generate_eval=generate_eval,
   )
   generator.generate()
 
