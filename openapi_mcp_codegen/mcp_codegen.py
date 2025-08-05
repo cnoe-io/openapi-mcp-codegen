@@ -604,6 +604,16 @@ class MCPGenerator:
           **file_header_kwargs,
       )
 
+      # Render eval_mode.py
+      logger.info("Rendering agent/eval_mode.py")
+      self.render_template(
+          "agent/eval_mode.tpl",
+          os.path.join(agent_dir, "eval_mode.py"),
+          mcp_name=self.mcp_name,
+          **file_header_kwargs,
+      )
+      self.run_ruff_lint(os.path.join(agent_dir, "eval_mode.py"))
+
       # Render .env.example for the agent
       logger.info("Rendering agent/.env.example")
       self.render_template(
@@ -637,6 +647,8 @@ class MCPGenerator:
     "rich (>=14.0.0,<15.0.0)",
     "sseclient (>=0.0.27,<0.0.28)",
     "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+    "python-dotenv>=1.0.0",
+    "fastmcp>=2.11.1",
           """,
       )
       combined_dependencies = agent_dependencies

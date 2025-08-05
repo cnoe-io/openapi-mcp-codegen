@@ -11,12 +11,15 @@ import logging
 import os
 from pathlib import Path
 from typing import Any, Dict
+from dotenv import load_dotenv
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from cnoe_agent_utils import LLMFactory
+
+load_dotenv()          # makes values from .env available via os.getenv
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +33,7 @@ server_path = str(Path(spec.origin).resolve())
 async def create_agent(prompt: str | None = None, response_format=None):
     """
     Spin-up the MCP server as a subprocess via MultiServerMCPClient and build
-    a LangGraph React agent that has access to its tools.
+    and returns the LangGraph agent **and its tool list**.
     """
     memory = MemorySaver()
 
@@ -60,7 +63,7 @@ async def create_agent(prompt: str | None = None, response_format=None):
         prompt=prompt,
         response_format=response_format,
     )
-    return agent
+    return agent, tools  # also return raw tool list for evaluators
 
 
 # Convenience synchronous wrapper

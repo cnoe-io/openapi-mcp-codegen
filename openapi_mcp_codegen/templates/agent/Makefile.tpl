@@ -1,5 +1,5 @@
 # Makefile for {{ mcp_name | capitalize }} agent
-.PHONY: run-a2a run-a2a-client reset
+.PHONY: run-a2a run-a2a-client run-a2a-eval-mode reset
 
 # Starts the A2A server (expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
 run-a2a:  ## Install deps (via uv) and run the A2A server
@@ -9,6 +9,11 @@ run-a2a:  ## Install deps (via uv) and run the A2A server
 # Opens an interactive chat CLI wired to the locally-running A2A server
 run-a2a-client:
 	docker run -it --network=host ghcr.io/cnoe-io/agent-chat-cli:stable
+
+# Starts the agent in evaluation mode (creates/updates eval/dataset.yaml)
+run-a2a-eval-mode:
+	uv pip install -e . --upgrade
+	uv run python eval_mode.py
 
 # Convenience: clean Python cache/dist artefacts
 reset:
