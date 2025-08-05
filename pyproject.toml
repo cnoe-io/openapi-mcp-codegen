@@ -47,6 +47,7 @@ include = ["openapi_mcp_codegen/templates/**/*"]
 
 [tool.poetry.group.dev.dependencies]
 pip = "^25.1.1"
+commitizen = "^4.8.3"
 
 [dependency-groups]
 dev = [

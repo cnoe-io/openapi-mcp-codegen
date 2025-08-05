@@ -107,8 +107,7 @@ test: setup-venv
 
 ## ========== Release & Versioning ==========
 release: setup-venv  ## Bump version and create a release
-	@. .venv/bin/activate; poetry install
-	@. .venv/bin/activate; poetry add commitizen --dev
+	@. .venv/bin/activate; uv add commitizen --dev
 	@. .venv/bin/activate; git tag -d stable || echo "No stable tag found."
 	@. .venv/bin/activate; cz changelog
 	@git add CHANGELOG.md
