@@ -10,198 +10,115 @@
 
 ---
 
-Easily generate a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server from any OpenAPI specification!
+## Project Overview
 
-This tool helps you bootstrap new MCP servers for any API with an OpenAPI spec.
+This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specifications, creating Python packages that can be used by AI assistants to interact with APIs. The core architecture transforms OpenAPI specs into structured MCP servers with tools, models, and client code.
 
----
+## Key Architecture Components
 
-## ✨ Features
+### Core Generation Flow
 
-- ⚡ **Automatic MCP server generation** from OpenAPI specs
-- 📝 Supports **JSON** and **YAML** formats
-- 🔍 **Auto-detects** spec file type (`.json`, `.yaml`, `.yml`)
-- 🛠️ **Tool modules** for each API endpoint
-- 🤖 **API client code** generation
-- 📋 **Logging** & **error handling** setup
-- ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
-- 📚 **Comprehensive documentation** generation
-- 🤖 **Enhanced Docstrings via LLM** integration
-- 🚀 **`--generate-agent` flag** – additionally produces a LangGraph
-  React agent (with A2A server, Makefile, README and .env.example)
-  alongside the generated MCP server.
+- `openapi_mcp_codegen/mcp_codegen.py`: Main generator class that orchestrates code generation
+- `openapi_mcp_codegen/templates/`: Jinja2 templates for all generated components
+- Generated structure: `mcp_<service_name>/` with submodules for `api/`, `models/`, `tools/`, `server.py`
 
----
+### Template System Patterns
 
-## 📦 Requirements
+- Templates use `.tpl` extension and Jinja2 syntax
+- Generated files include copyright headers from `config.yaml`
+- Tool modules auto-generated from OpenAPI paths/operations
+- Models generated from OpenAPI schemas with Python type mapping
 
-- 🐍 Python **3.13+**
-- ⚡ [uv](https://docs.astral.sh/uv/getting-started/installation/)
+## Essential Development Workflows
 
----
+### Local Development Commands
 
-## ⚡ Quick Start with `uv` (Recommended)
-
-**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
-
-```
+```bash
+# Initial setup (requires uv CLI)
 uv sync
+
+# Generate MCP server from spec
+uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output>
+
+# Generate with LLM-enhanced docstrings (requires LLM env vars)
+uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --enhance-docstring-with-llm
+
+# Generate with agent wrapper (creates LangGraph React agent + A2A server)
+uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --generate-agent
 ```
 
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent
-```
-
-### 📌 Optional: Pin a release tag
-
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git@v0.1.0 openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent
-```
-
-### 🤖 Optional: Enhance Docstrings via LLM
-
-Use the `--enhance-docstring-with-llm` flag if you want to improve generated docstrings with an LLM. This option leverages your LLM provider's configuration via environment variables.
-To set up your LLM provider, refer to [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms).
-
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent \
-  --enhance-docstring-with-llm  # Optional: enhances docstrings using LLM (see guide)
-```
-
----
-
-## 🧑‍💻 Local Development
-
-Prefer to run locally or contribute?
-
-**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
-
-### 1. **Clone the repo:**
-
-```bash
-git clone https://github.com/cnoe-io/openapi-mcp-codegen
-cd openapi-mcp-codegen
-```
-
-### 2. **Install dependencies with Poetry:**
-
-```bash
-uv sync
-```
-
-### 3. **Run the generator:**
-
-- The generator will create code in a new directory called `mcp_<server-name>` in the directory you specify.
-- Follow the setup instructions printed by the generator.
-
-**Option 1:**
+### Makefile Shortcuts
 
 ```bash
 make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
+make generate-petstore  # Pre-configured petstore example
+make generate-splunk    # Pre-configured splunk example with agent
+make test               # Run pytest suite
+make lint               # Run ruff linting
 ```
 
-**Option 2:**
+### Testing Generated Servers
 
-```bash
-uv run openapi_mcp_codegen --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
-```
-
----
-
-## 🗂️ Generated MCP Server Structure
-
-```text
-mcp_petstore/
-├── mcp_petstore/
-│   ├── __init__.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │   └── client.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── [models].py
-│   ├── server.py
-│   ├── tools/
-│   │   ├── __init__.py
-│   │   └── [tools].py
-│   └── utils/
-│       └── __init__.py
-├── poetry.lock
-├── pyproject.toml
-└── README.md
-```
-
-### 🛠 Working with the generated agent
-
-When you run the generator with `--generate-agent`, the output directory
-also contains:
-
-* `agent.py` – LangGraph wrapper
-* `protocol_bindings/a2a_server/` – runnable A2A server
-* `Makefile`, `README.md`, `.env.example`
-
-Example:
+Generated servers include A2A (Agent-to-Agent) capabilities when using `--generate-agent`:
 
 ```bash
 cd examples/petstore/mcp_server
-cp .env.example .env         # add {{ MCP_NAME | upper }}_API_URL & TOKEN
-make run-a2a                 # start the A2A server
-
-# In another terminal:
-make run-a2a-client          # docker chat client
+cp .env.example .env    # Configure API credentials
+make run-a2a           # Start A2A server
+make run-a2a-client    # Launch Docker chat client
 ```
 
----
+## Project-Specific Conventions
 
-## 🛠️ Customization
+### Configuration Files
 
-- ✏️ Modify generated tool modules in `tools/`
-- 🧩 Add custom models in `models/`
-- 🔌 Extend the API client in `api/client.py`
-- 🛠️ Add utility functions in `utils/`
+- Each example requires `config.yaml` with metadata (title, author, dependencies)
+- Generated `pyproject.toml` includes MCP-specific dependencies
+- `.env.example` templates include service-specific environment variables
 
----
+### Code Generation Patterns
 
-## 👥 Maintainers
+- Operation IDs become Python function names (snake_case conversion)
+- OpenAPI parameters map to function arguments with type hints
+- Generated tools follow pattern: `async def operation_id(params) -> Any`
+- API client uses `httpx` with configurable base URLs and headers
 
-See [MAINTAINERS.md](MAINTAINERS.md)
+### LLM Integration
 
----
+- Optional docstring enhancement via `cnoe-agent-utils` LLMFactory
+- Supports multiple LLM providers (OpenAI, Anthropic, Google Gemini)
+- Uses LangChain for LLM interactions and prompt templating
 
-## 🤝 Contributing
+## Integration Points
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+### External Dependencies
 
----
+- **MCP Protocol**: Uses `mcp>=1.9.0` for FastMCP server implementation
+- **uv Package Manager**: Required for dependency management and execution
+- **Jinja2**: Template engine for code generation
+- **Ruff**: Code formatting and linting (auto-applied to generated code)
 
-## 📄 License
+### Generated Component Structure
 
-[Apache 2.0](LICENSE)
+```
+mcp_<service>/
+├── api/client.py          # HTTP client with auth headers
+├── models/               # Pydantic models from OpenAPI schemas
+├── tools/               # One module per OpenAPI path
+├── server.py           # FastMCP server entry point
+└── agent.py           # LangGraph wrapper (if --generate-agent)
+```
 
----
+## Key Files for Understanding
 
-## 🔒 Security
+- `openapi_mcp_codegen/mcp_codegen.py`: Core generation logic and template rendering
+- `openapi_mcp_codegen/templates/`: Template structure mirrors output structure
+- `examples/petstore/`: Complete working example with OpenAPI spec and config
+- `tests/test_mcp_codegen.py`: Integration tests showing expected generation flow
 
-If you discover a security vulnerability, please see our [SECURITY.md](SECURITY.md) for responsible disclosure guidelines.
+## Common Debugging Patterns
 
----
-
-## 🧑‍💼 Code of Conduct
-
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
-
----
-
-## 🙏 Acknowledgements
-
-- [MCP on PyPI](https://pypi.org/project/mcp/), the official [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) Python package
-- Uses [uv](https://github.com/astral-sh/uv)
+- Generated code includes extensive logging via Python's logging module
+- Ruff auto-formatting applied to all generated Python files
+- Template variables accessible via Jinja2 context in `render_template()`
+- Use `--dry-run` flag to preview generation without writing files

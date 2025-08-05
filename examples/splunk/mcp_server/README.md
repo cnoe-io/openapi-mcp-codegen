@@ -10,9 +10,9 @@ The server acts as a wrapper over the agent's async call loop and translates sta
 
 ## 📄 Overview
 
-- **Description**: Generated MCP server
-- **Version**: 1.0.0
-- **Author**: CNOE Contributors
+- **Description**: Splunk MCP Server
+- **Version**: 0.1.0
+- **Author**: Sri Aradhyula
 
 ---
 
