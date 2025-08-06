@@ -60,12 +60,12 @@ async def _run_agent(agent, prompt: str):
     traj = extract_langgraph_trajectory_from_thread(agent, cfg)
     # collect assistant texts from the LangGraph trajectory itself
     outputs: list[str] = []
-    for step in traj.get("results", []):
+    for step in traj["outputs"]["results"]:
         for msg in step.get("messages", []):
             if msg.get("role") == "assistant":
                 outputs.append(msg.get("content", ""))
     logger.debug("Received %d assistant messages", len(outputs))
-    return traj, outputs
+    return traj, "\n".join(outputs)
 
 def load_dataset() -> List[Dict]:
     """
@@ -125,22 +125,20 @@ async def metric_graph_traj_accuracy(run: Run, example: Example):
 
 async def metric_correctness(run: Run, example: Example):
     ref_out = _ref(example, "ref_out")
-    score = CORR(
+    return CORR(
         inputs=example.inputs["prompt"],
         outputs=run.outputs["outputs"],
         reference_outputs=ref_out
-    )["score"]
-    return {"key": "correctness", "score": score}
+    )
 
 async def metric_hallucination(run: Run, example: Example):
     ref_out = _ref(example, "ref_out")
-    score = HALLU(
+    return HALLU(
         inputs=example.inputs["prompt"],
         outputs=run.outputs["outputs"],
         context="",
-        reference_outputs=ref_out
-    )["score"]
-    return {"key": "hallucination", "score": score}
+        reference_outputs=ref_out,
+    )
 
 async def main():
     logger.info("=== Agent evaluation started ===")

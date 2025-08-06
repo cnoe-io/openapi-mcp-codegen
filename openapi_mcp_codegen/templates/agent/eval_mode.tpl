@@ -14,6 +14,22 @@ from pathlib import Path
 from typing import Any, Dict
 from uuid import uuid4
 
+import yaml
+from agentevals.graph_trajectory.utils import extract_langgraph_trajectory_from_thread
+
+from agent import create_agent
+
+from cnoe_agent_utils import LLMFactory
+from langchain_core.messages import SystemMessage, HumanMessage
+
+from dotenv import load_dotenv
+
+from rich import print as rprint, box
+
+load_dotenv()
+
+logger = logging.getLogger(__name__)
+
 class SkipTool(Exception):
     """Raised when the evaluator decides to skip the current tool."""
 
@@ -29,16 +45,6 @@ def _in(prompt: str) -> str:
         raise QuitEvaluation
     return val
 
-import yaml
-from agentevals.graph_trajectory.utils import extract_langgraph_trajectory_from_thread
-
-from agent import create_agent
-
-from cnoe_agent_utils import LLMFactory
-from langchain_core.messages import SystemMessage, HumanMessage
-
-logger = logging.getLogger(__name__)
-
 
 def _prompt_for_query(
     tool_name: str,
@@ -52,8 +58,8 @@ def _prompt_for_query(
     """
     # Print context
     if tool_desc:
-        print(f"\nDescription: {tool_desc}")
-    print(f"Using strategy: '{strategy or 'None'}'")
+        rprint(f"[bold magenta]\\nDescription:[/] {tool_desc}")
+    rprint(f"[bold yellow]Using strategy:[/] '{strategy or 'None'}'")
 
     def _suggest_query(cur_strategy: str) -> str:
         if not llm:
@@ -79,7 +85,7 @@ def _prompt_for_query(
 
     while True:
         if suggested_query:
-            print(f"Suggested query: {suggested_query}")
+            rprint(f"[cyan]Suggested query:[/] {suggested_query}")
 
         try:
             inp = _in(
@@ -166,15 +172,15 @@ async def _interactive_eval() -> None:
 
     try:
         while True:
-            print("\nTools:")
+            rprint("\n[bold green]Tools:[/]")
             for idx, tool in enumerate(all_tools, start=1):
                 if tool in skipped_tools:
-                    marker = "(skipped)"
+                    marker = "[red](skipped)[/]"
                 elif tool in completed_tools:
-                    marker = "(done)"
+                    marker = "[green](done)[/]"
                 else:
                     marker = ""
-                print(f"{idx}. {tool} {marker}")
+                rprint(f"{idx}. {tool} {marker}")
             # Prompt user – default is the next tool in the list
             default_tool = remaining_tools[0] if remaining_tools else all_tools[0]
             try:
@@ -196,11 +202,11 @@ async def _interactive_eval() -> None:
             elif choice.isdigit():
                 idx = int(choice) - 1
                 if not (0 <= idx < len(all_tools)):
-                    print("Invalid number, try again.")
+                    rprint("[red]Invalid number, try again.[/]")
                     continue
                 tool_name = all_tools[idx]
             else:
-                print("Invalid input, enter a number, press Enter for default, or 's' to skip.")
+                rprint("[red]Invalid input, enter a number, press Enter for default, or 's' to skip.[/]")
                 continue
 
             # ------------------------------------------------- dataset clash check
@@ -216,7 +222,7 @@ async def _interactive_eval() -> None:
                     ).lower()
                     replace_existing = choice == "r"
                 except SkipTool:
-                    print("Skipped.\n")
+                    rprint("[yellow]Skipped.[/]\n")
                     _mark_skipped(tool_name)
                     continue
                 except QuitEvaluation:
@@ -226,7 +232,7 @@ async def _interactive_eval() -> None:
             try:
                 user_query, strategy = _prompt_for_query(tool_name, tool_desc, strategy, llm)
             except SkipTool:
-                print("Skipped.\n")
+                rprint("[yellow]Skipped.[/]\n")
                 _mark_skipped(tool_name)
                 continue
             except QuitEvaluation:
@@ -237,7 +243,7 @@ async def _interactive_eval() -> None:
             while True:
                 # use a fresh thread-id so previous messages aren't reused
                 cfg = {"configurable": {"thread_id": str(uuid4())}}
-                print("Invoking agent, please wait …")
+                rprint("[blue]Invoking agent, please wait …[/]")
                 exc: Exception | None = None
                 try:
                     await agent.ainvoke({"messages": [{"role": "user", "content": user_query}]}, cfg)
@@ -245,14 +251,14 @@ async def _interactive_eval() -> None:
                     exc = e
 
                 if exc:
-                    print(f"\nInvocation raised an error:\n{exc}\n")
+                    rprint(f"\n[red]Invocation raised an error:[/]\n{exc}\n")
                 else:
                     # Show LLM/agent final response
                     state = agent.get_state(cfg)
                     output_msg = state.values.get("messages", [])[-1]
                     output_content = getattr(output_msg, "content", str(output_msg))
-                    print("\nLLM response:\n")
-                    print(output_content)
+                    rprint("\n[bold green]LLM response:[/]\n")
+                    rprint(output_content)
                     success = True
 
                 try:
@@ -260,7 +266,7 @@ async def _interactive_eval() -> None:
                         "Retry with different query (r), continue (enter), (s)kip or (q)uit: "
                     ).lower()
                 except SkipTool:
-                    print("Skipped.\n")
+                    rprint("[yellow]Skipped.[/]\n")
                     _mark_skipped(tool_name)
                     success = False
                     break          # exit retry loop, proceed to next tool
@@ -283,7 +289,7 @@ async def _interactive_eval() -> None:
                     "trajectory": trajectory,
                 })
                 dataset_path.write_text(yaml.safe_dump({"tests": dataset}))
-                print(f"Recorded trace for '{tool_name}'.\n")
+                rprint(f"[green]Recorded trace for '{tool_name}'.[/]\n")
                 completed_tools.add(tool_name)
                 skipped_tools.discard(tool_name)
                 if tool_name in remaining_tools:
@@ -293,7 +299,7 @@ async def _interactive_eval() -> None:
         print("Exiting evaluation session.")
         return
 
-    print("Evaluation session finished.")
+    rprint("[bold green]Evaluation session finished.[/]")
 
 
 def main() -> None:  # pragma: no cover

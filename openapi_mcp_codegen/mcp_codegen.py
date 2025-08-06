@@ -109,7 +109,8 @@ class MCPGenerator:
       enhance_docstring_with_llm: bool = False,
       enhance_docstring_with_llm_openapi: bool = False,
       generate_agent: bool = False,
-      generate_eval: bool = False):
+      generate_eval: bool = False,
+      generate_system_prompt: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -136,6 +137,7 @@ class MCPGenerator:
     self.tools_map = {}
     self.generate_agent_flag = generate_agent
     self.generate_eval = generate_eval
+    self.generate_system_prompt = generate_system_prompt
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -614,7 +616,7 @@ class MCPGenerator:
       # Pass the generate_eval flag to all agent-level templates
       generate_eval = self.generate_eval
 
-      # --------------------------------------------------- build system prompt via LLM
+      # ------------------------- build SYSTEM prompt
       tool_docs = []
       for path, ops in self.spec.get("paths", {}).items():
           for method, op in ops.items():
@@ -626,27 +628,33 @@ class MCPGenerator:
 
       tools_text = "\n".join(tool_docs) if tool_docs else "<no tools>"
 
-      llm = LLMFactory().get_llm()
-      sys_req = SystemMessage(
-          content=(
-              f"Write the SYSTEM prompt for a {self.mcp_name} assistant that "
-              "can call the following tools:\n"
-              f"{tools_text}\n\n"
-              "Explain the general capabilities of the agent. "
-              "Keep the prompt concise and actionable."
-          )
-      )
-      try:
-          system_prompt = llm.invoke([sys_req]).content.strip()
-      except Exception as e:                          # fallback if LLM unavailable
-          logger.warning(f"LLM failed to generate system prompt: {e}. Using stub.")
-          system_prompt = textwrap.dedent(
-              f"""\
-              You are an expert assistant for the {self.mcp_name} API.
-              You can call the following tools:\n{tools_text}\n
-              When a tool is appropriate, reply ONLY with the JSON payload.
-              Otherwise, answer normally."""
-          ).strip()
+      fallback_prompt = textwrap.dedent(
+          f"""\
+          You are an expert assistant for the {self.mcp_name} API.
+          You can call the following tools:
+          {tools_text}
+
+          When a tool is appropriate, reply ONLY with the JSON payload;
+          otherwise, answer normally."""
+      ).strip()
+
+      if self.generate_system_prompt:
+          try:
+              llm = LLMFactory().get_llm()
+              sys_req = SystemMessage(
+                  content=(
+                      f"Write the SYSTEM prompt for a {self.mcp_name} assistant that "
+                      f"can call the following tools:\n{tools_text}\n\n"
+                      "Explain the general capabilities of the agent. "
+                      "Keep the prompt concise and actionable."
+                  )
+              )
+              system_prompt = llm.invoke([sys_req]).content.strip()
+          except Exception as e:  # noqa: BLE001
+              logger.warning("LLM failed to generate system prompt: %s – using stub.", e)
+              system_prompt = fallback_prompt
+      else:
+          system_prompt = fallback_prompt
 
       # Build two dependency blocks and concatenate conditionally
       base_deps = """

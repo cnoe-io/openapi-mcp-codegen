@@ -15,6 +15,11 @@ See `Makefile` for useful targets.
    $EDITOR .env
    ```
 
+> NOTE  
+> If the agent was generated with `--generate-system-prompt` (or any
+> docstring-enhancement flag) you must export your LLM credentials, e.g.  
+> `export OPENAI_API_KEY=…`, `export ANTHROPIC_API_KEY=…`.
+
 2.  In one terminal, start the A2A server  
    ```bash
    make run-a2a
