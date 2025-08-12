@@ -55,8 +55,7 @@ mcp_<service>/
 ├── api/client.py
 ├── models/
 ├── tools/
-├── server.py
-└── agent.py            # if --generate-agent (top-level agent wrapper)
+└── server.py
 
 # When --generate-agent is used (rendered into <output-dir>):
 protocol_bindings/a2a_server/
@@ -67,6 +66,7 @@ protocol_bindings/a2a_server/
 └── state.py
 Makefile
 README.md               # agent README
+agent.py                # agent creation code
 .env.example
 
 # When --generate-eval is also used:
@@ -110,13 +110,6 @@ uv sync
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output>
 ```
 
-#### Run with option to generate a2a agent
-
-```
-# Generate with agent wrapper (creates LangGraph React agent + A2A server)
-uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --generate-agent
-```
-
 ## CLI Options
 
 - --generate-agent
@@ -132,39 +125,24 @@ uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --gener
 - --enhance-docstring-with-llm, --enhance-docstring-with-llm-openapi
   - Optionally rewrites tool docstrings using an LLM (the latter also embeds OpenAPI snippets)
 
-### Generate agent with evaluation scaffolding (—generate-eval)
-
-```bash
-uv run openapi_mcp_codegen \
-  --spec-file <spec.json> \
-  --output-dir <output-dir> \
-  --generate-agent \
-  --generate-eval          # ← adds eval scaffolding
-  # optionally:
-  --generate-system-prompt
-```
-
-The extra flag adds:
-
-1. `eval_mode.py` – an interactive script that lets you chat with each tool, mark tests as done or skipped and stores the traces in `eval/dataset.yaml`.
-2. `eval/evaluate_agent.py` – a LangSmith-powered benchmark that replays the dataset and uploads the scores (trajectory-accuracy, correctness, hallucination).
+## Evaluation
 
 End-to-end workflow:
 
-1. Generate with --generate-eval (optionally add --generate-system-prompt)
+1. Generate with --generate-agent and --generate-eval (optionally add --generate-system-prompt)
    ```bash
    cd <output-dir>
    ```
 2. Build a dataset:
    ```bash
-   uv run python eval_mode.py
+   make run-a2a-eval-mode
    # … interactively exercise the tools …
    ```
    This produces / updates `eval/dataset.yaml`.
 
 3. Run the evaluation suite:
    ```bash
-   uv run python eval/evaluate_agent.py
+   make eval
    ```
    Results appear in your LangSmith dashboard (set `LANGCHAIN_API_KEY` etc.).
 
@@ -265,17 +243,6 @@ make run-a2a-client    # Launch Docker chat client
 - uv Package Manager: Required for dependency management and execution
 - Jinja2: Template engine for code generation
 - Ruff: Code formatting and linting (auto-applied to generated code)
-
-### Generated Component Structure
-
-```
-mcp_<service>/
-├── api/client.py          # HTTP client with auth headers
-├── models/               # Pydantic models from OpenAPI schemas
-├── tools/               # One module per OpenAPI path
-├── server.py           # FastMCP server entry point
-└── agent.py           # LangGraph wrapper (if --generate-agent)
-```
 
 ## Key Files for Understanding
 
