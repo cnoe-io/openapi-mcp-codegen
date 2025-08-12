@@ -5,6 +5,7 @@ import asyncio
 import logging
 import os
 from typing import AsyncIterable, Any, Dict
+from dotenv import load_dotenv
 
 from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
@@ -21,13 +22,15 @@ memory = MemorySaver()
 
 async def _bootstrap_langgraph_agent():
     """Launch the generated MCP server via MultiServerMCPClient and return a LangGraph React agent."""
+    load_dotenv()
     token = os.getenv("{{ mcp_name | upper }}_TOKEN")
     api_url = os.getenv("{{ mcp_name | upper }}_API_URL")
     if not token or not api_url:
         raise EnvironmentError("Both {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN must be set")
 
     from agent import create_agent  # noqa: E402
-    return await create_agent()
+    agent, _ = await create_agent()
+    return agent
 
 
 class {{ mcp_name | capitalize }}Agent:

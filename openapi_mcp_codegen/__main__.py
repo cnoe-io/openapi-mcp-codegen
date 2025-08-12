@@ -56,6 +56,19 @@ def get_mcp_name(spec_path):
     help="Generate a LangGraph React-agent wrapper that uses the produced MCP server.",
 )
 @click.option(
+    "--generate-eval",
+    is_flag=True,
+    default=False,
+    help="Generate a module that evaluates the generated agent given eval/dataset.yaml.",
+)
+@click.option(
+    "--generate-system-prompt",
+    is_flag=True,
+    default=False,
+    help="Generate the SYSTEM prompt for the agent using an LLM "
+         "(requires LLM env vars such as OPENAI_API_KEY, ANTHROPIC_API_KEY, …).",
+)
+@click.option(
   "--dry-run",
   is_flag=True,
   default=False,
@@ -81,6 +94,8 @@ def main(
    enhance_docstring_with_llm,
    enhance_docstring_with_llm_openapi,
    generate_agent,
+   generate_eval,
+   generate_system_prompt,
 ):
   # Load environment variables from .env file if present
   env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
@@ -114,6 +129,8 @@ def main(
       enhance_docstring_with_llm=enhance_docstring_with_llm,
       enhance_docstring_with_llm_openapi=enhance_docstring_with_llm_openapi,
       generate_agent=generate_agent,
+      generate_eval=generate_eval,
+      generate_system_prompt=generate_system_prompt,
   )
   generator.generate()
 

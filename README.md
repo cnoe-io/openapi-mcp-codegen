@@ -8,66 +8,83 @@
 [![Unit Tests](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/unittest.yaml/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/unittest.yaml)
 [![Dependabot Updates](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/cnoe-io/openapi-mcp-codegen/actions/workflows/dependabot/dependabot-updates)
 
----
-
-## Project Overview
+## Overview
 
 This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specifications, creating Python packages that can be used by AI assistants to interact with APIs. The core architecture transforms OpenAPI specs into structured MCP servers with tools, models, and client code.
 
+## Quick Start
+
+- Install uv
+- Generate server (and optionally agent/eval):
+  ```bash
+  uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+    --spec-file examples/petstore/openapi_petstore.json \
+    --output-dir examples/petstore/mcp_server \
+    --generate-agent \
+    --generate-eval \
+    --generate-system-prompt
+  ```
 
 ## ✨ Features
 
-- ⚡ **Automatic MCP server generation** from OpenAPI specs
-- 📝 Supports **JSON** and **YAML** formats
-- 🔍 **Auto-detects** spec file type (`.json`, `.yaml`, `.yml`)
-- 🛠️ **Tool modules** for each API endpoint
-- 🤖 **API client code** generation
-- 📋 **Logging** & **error handling** setup
-- ⚙️ **Configuration files** (`pyproject.toml`, `.env.example`)
-- 📚 **Comprehensive documentation** generation
-- 🤖 **Enhanced Docstrings via LLM** integration
-- 🚀 **`--generate-agent` flag** – additionally produces a LangGraph
+- ⚡ Automatic MCP server generation from OpenAPI specs
+- 📝 Supports JSON and YAML formats
+- 🔍 Auto-detects spec file type (`.json`, `.yaml`, `.yml`)
+- 🛠️ Tool modules for each API endpoint
+- 🤖 API client code generation
+- 📋 Logging & error handling setup
+- ⚙️ Configuration files (`pyproject.toml`, `.env.example`)
+- 📚 Comprehensive documentation generation
+- 🚀 --generate-agent flag – additionally produces a LangGraph
   React agent (with A2A server, Makefile, README and .env.example)
   alongside the generated MCP server.
+- 📊 --generate-eval: adds interactive eval mode and automated evaluation suite
+- 🧠 --generate-system-prompt: generates a SYSTEM prompt for the agent using your configured LLM
 
-## Key Architecture Components
+## How It Works
 
-### Core Generation Flow
+- You provide an OpenAPI spec (JSON or YAML).
+- The generator parses paths, operations, and schemas, then renders Jinja2 templates into a structured Python MCP server.
+- Optionally, it generates an accompanying LangGraph agent and A2A server wrapper that can call the generated MCP tools.
+- With evaluation enabled, it scaffolds interactive dataset building and a LangSmith-powered evaluation suite.
 
-- `openapi_mcp_codegen/mcp_codegen.py`: Main generator class that orchestrates code generation
-- `openapi_mcp_codegen/templates/`: Jinja2 templates for all generated components
-- Generated structure: `mcp_<service_name>/` with submodules for `api/`, `models/`, `tools/`, `server.py`
+## Generated Structure
 
-### Template System Patterns
+```
+mcp_<service>/
+├── api/client.py
+├── models/
+├── tools/
+└── server.py
 
-- Templates use `.tpl` extension and Jinja2 syntax
-- Generated files include copyright headers from `config.yaml`
-- Tool modules auto-generated from OpenAPI paths/operations
-- Models generated from OpenAPI schemas with Python type mapping
+# When --generate-agent is used (rendered into <output-dir>):
+protocol_bindings/a2a_server/
+├── __main__.py
+├── agent.py
+├── agent_executor.py
+├── helpers.py
+└── state.py
+Makefile
+README.md               # agent README
+agent.py                # agent creation code
+.env.example
 
-## Essential Development Workflows
-
-### 📦 Requirements
-
-- 🐍 Python **3.13+**
-- ⚡ [uv](https://docs.astral.sh/uv/getting-started/installation/)
-
-**Note:** Install uv first: https://docs.astral.sh/uv/getting-started/installation/
-
-### Run without cloning repo
-
-
-#### Run from a stable tag
-
-
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git@stable openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent
+# When --generate-eval is also used:
+eval/
+├── evaluate_agent.py
+eval_mode.py
 ```
 
-#### 📌 Optional: Run from main branch
+## Development
+
+### Requirements
+
+- 🐍 Python 3.13+
+- ⚡ uv (https://docs.astral.sh/uv/getting-started/installation/)
+
+Note: Install uv first: https://docs.astral.sh/uv/getting-started/installation/
+
+### Run without cloning the repo
 
 ```bash
 uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
@@ -85,6 +102,7 @@ uv venv && source .venv/bin/activate
 # Initial setup (requires uv CLI)
 uv sync
 ```
+
 #### Run without options
 
 ```
@@ -92,31 +110,43 @@ uv sync
 uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output>
 ```
 
-#### Run with option to enhance docstring using LLMs
+## CLI Options
 
-```
-# Generate with LLM-enhanced docstrings (requires LLM env vars)
-uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --enhance-docstring-with-llm
-```
+- --generate-agent
+  - Produces a LangGraph React agent that wraps the generated MCP server
+  - Includes A2A server, Makefile, README, and .env.example
+- --generate-eval
+  - Adds:
+    - eval_mode.py (interactive dataset builder that stores traces in eval/dataset.yaml)
+    - eval/evaluate_agent.py (LangSmith-powered evaluation using correctness, hallucination, and trajectory accuracy)
+- --generate-system-prompt
+  - Uses your configured LLM to create a SYSTEM prompt tailored to the generated tools
+  - Falls back to a concise default if LLM fails/unavailable
+- --enhance-docstring-with-llm, --enhance-docstring-with-llm-openapi
+  - Optionally rewrites tool docstrings using an LLM (the latter also embeds OpenAPI snippets)
 
-#### Run with option to generate a2a agent
+## Evaluation
 
-```
-# Generate with agent wrapper (creates LangGraph React agent + A2A server)
-uv run openapi_mcp_codegen --spec-file <spec.json> --output-dir <output> --generate-agent
-```
+End-to-end workflow:
 
-### Makefile Shortcuts
+1. Generate with --generate-agent and --generate-eval (optionally add --generate-system-prompt)
+   ```bash
+   cd <output-dir>
+   ```
+2. Build a dataset:
+   ```bash
+   make run-a2a-eval-mode
+   # … interactively exercise the tools …
+   ```
+   This produces / updates `eval/dataset.yaml`.
 
-```bash
-make generate -- --spec-file examples/petstore/openapi_petstore.json --output-dir examples/petstore/mcp_server
-make generate-petstore  # Pre-configured petstore example
-make generate-splunk    # Pre-configured splunk example with agent
-make test               # Run pytest suite
-make lint               # Run ruff linting
-```
+3. Run the evaluation suite:
+   ```bash
+   make eval
+   ```
+   Results appear in your LangSmith dashboard (set `LANGCHAIN_API_KEY` etc.).
 
-### Testing Generated Petstore MCP Server
+## Example: Petstore MCP Server
 
 #### Start Petstore Mockserver
 
@@ -128,7 +158,7 @@ cd examples/petstore
 uv run python petstore_mock_server.py
 ```
 
-_In a new terminal from the root of the git repo_
+In a new terminal from the root of the git repo:
 
 ```
 cd examples/petstore/mcp_server
@@ -146,19 +176,17 @@ export MCP_PORT=8000
 uv run python mcp_petstore/server.py
 ```
 
-#### MCP Inspector Tool
+### MCP Inspector Tool
 
-The **MCP Inspector** is a utility for inspecting and debugging MCP servers. It provides a visual interface to explore generated tools, models, and APIs.
+The MCP Inspector is a utility for inspecting and debugging MCP servers. It provides a visual interface to explore generated tools, models, and APIs.
 
-##### Installation
-
-To install the MCP Inspector, use the following command:
+#### Installation
 
 ```bash
 npx @modelcontextprotocol/inspector
 ```
 
-##### Usage
+#### Usage
 
 Run the inspector in your project directory to analyze the generated MCP server:
 
@@ -172,10 +200,11 @@ This will launch a web-based interface where you can:
 - Inspect generated models and their schemas
 - Test API endpoints directly from the interface
 
-For more details, visit the [MCP Inspector Documentation](https://modelcontextprotocol.io/legacy/tools/inspector).
+For more details, visit the MCP Inspector Documentation:
+https://modelcontextprotocol.io/legacy/tools/inspector
 
+## Example: Generated Agent (A2A)
 
-### Testing Generated Agent
 Generated servers include A2A (Agent-to-Agent) capabilities when using `--generate-agent`:
 
 ```bash
@@ -202,29 +231,18 @@ make run-a2a-client    # Launch Docker chat client
 
 ### LLM Integration
 
-- Optional docstring enhancement via `cnoe-agent-utils` LLMFactory
-- Supports multiple LLM providers (OpenAI, Anthropic, Google Gemini)
-- Uses LangChain for LLM interactions and prompt templating
+- --generate-system-prompt will use your configured LLM to craft a SYSTEM prompt.
+- --enhance-docstring-with-llm and --enhance-docstring-with-llm-openapi optionally rewrite tool docstrings with richer content.
+- Ensure appropriate LLM credentials are exported (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY, or provider-specific keys).
 
 ## Integration Points
 
 ### External Dependencies
 
-- **MCP Protocol**: Uses `mcp>=1.9.0` for FastMCP server implementation
-- **uv Package Manager**: Required for dependency management and execution
-- **Jinja2**: Template engine for code generation
-- **Ruff**: Code formatting and linting (auto-applied to generated code)
-
-### Generated Component Structure
-
-```
-mcp_<service>/
-├── api/client.py          # HTTP client with auth headers
-├── models/               # Pydantic models from OpenAPI schemas
-├── tools/               # One module per OpenAPI path
-├── server.py           # FastMCP server entry point
-└── agent.py           # LangGraph wrapper (if --generate-agent)
-```
+- MCP Protocol: Uses `mcp>=1.9.0` for FastMCP server implementation
+- uv Package Manager: Required for dependency management and execution
+- Jinja2: Template engine for code generation
+- Ruff: Code formatting and linting (auto-applied to generated code)
 
 ## Key Files for Understanding
 
