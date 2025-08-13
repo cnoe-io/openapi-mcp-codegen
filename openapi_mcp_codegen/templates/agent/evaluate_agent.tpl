@@ -34,7 +34,7 @@ try:
     from agent import create_agent, DEFAULT_SYSTEM_PROMPT
 except ImportError:
     from {{ mcp_name }}.agent import create_agent, DEFAULT_SYSTEM_PROMPT
-DATASET = Path(__file__).with_name("dataset.yaml")
+DEFAULT_DATASET = Path(__file__).with_name("dataset.yaml")
 
 _AGENT = None
 
@@ -57,7 +57,7 @@ async def _run_agent(agent, prompt: str):
     logger.debug("Received %d assistant messages", len(outputs))
     return traj, "\n".join(outputs)
 
-def load_dataset() -> List[Dict]:
+def load_dataset(ds_path: Path) -> List[Dict]:
     """
     Read eval/dataset.yaml created by eval_mode.py.
 
@@ -69,8 +69,8 @@ def load_dataset() -> List[Dict]:
           trajectory: <list of messages>
         - tool: <name>          # skipped tools have only this key
     """
-    logger.info("Loading dataset from %s", DATASET)
-    with open(DATASET, encoding="utf-8") as fp:
+    logger.info("Loading dataset from %s", ds_path)
+    with open(ds_path, encoding="utf-8") as fp:
         raw = yaml.safe_load(fp) or {}
 
     tests = raw.get("tests", []) or []
@@ -149,7 +149,13 @@ async def main():
             init_span.update_trace(tags=["{{ mcp_name }}-eval"])
     except Exception:
         pass
-    cases = load_dataset()
+    # --------------------------------------------------------- dataset selection prompt
+    try:
+        ds_input = input(f"Path to dataset YAML [default: {DEFAULT_DATASET}]: ").strip()
+    except Exception:
+        ds_input = ""
+    dataset_path = (Path(ds_input).expanduser().resolve() if ds_input else DEFAULT_DATASET)
+    cases = load_dataset(dataset_path)
     global _AGENT
     logger.info("Bootstrapping agent instance …")
     _AGENT, _ = await create_agent(prompt=DEFAULT_SYSTEM_PROMPT)
