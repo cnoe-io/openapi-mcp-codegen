@@ -9,12 +9,14 @@ from dotenv import load_dotenv
 
 from langchain_core.messages import AIMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
+from langchain_core.callbacks import BaseCallbackHandler
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 from .state import AgentState, InputState, Message, MsgType
 from cnoe_agent_utils import LLMFactory
+from langfuse import get_client
 
 logger = logging.getLogger(__name__)
 memory = MemorySaver()
@@ -30,17 +32,42 @@ async def _bootstrap_langgraph_agent():
 
     from agent import create_agent  # noqa: E402
     agent, _ = await create_agent()
+    try:
+        get_client().update_current_trace(tags=["{{ mcp_name }}-a2a"])
+    except Exception:
+        pass
     return agent
 
 
 class {{ mcp_name | capitalize }}Agent:
     """A thin streaming wrapper that adapts the LangGraph agent to the A2A protocol."""
 
-    async def stream(self, query: str, session_id: str) -> AsyncIterable[Dict[str, Any]]:
+    async def stream(
+        self,
+        query: str,
+        session_id: str,
+        callbacks: list[BaseCallbackHandler] | None = None,
+    ) -> AsyncIterable[Dict[str, Any]]:
         agent = await _bootstrap_langgraph_agent()
         cfg: RunnableConfig = {"configurable": {"thread_id": session_id}}
 
-        async for item in agent.astream({"messages": [("user", query)]}, cfg, stream_mode="values"):
+        lf = get_client()
+
+        async def _async_gen():
+            with lf.start_as_current_span(name="{{ mcp_name }}-query", input={"query": query}) as root_span:
+                async for item in agent.astream(
+                    {"messages": [("user", query)]},
+                    {**cfg, "callbacks": callbacks or []},
+                    stream_mode="values",
+                ):
+                    yield item
+                state = agent.get_state(cfg)
+                output_msg = state.values.get("messages", [])[-1]
+                root_span.update_trace(output={"response": getattr(output_msg, "content", str(output_msg))})
+
+        agen = _async_gen()
+
+        async for item in agen:
             msg = item["messages"][-1]
             if isinstance(msg, AIMessage) and msg.tool_calls:
                 yield {"is_task_complete": False, "require_user_input": False, "content": "Calling tools..."}

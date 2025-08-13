@@ -50,3 +50,30 @@ Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools
 
 Ensure `LANGCHAIN_API_KEY`, `LANGCHAIN_ENDPOINT` (or equivalent) are set before running `make eval`.
 {% endif %}
+
+## 🔎 Observability with Langfuse
+
+This agent is instrumented with the Langfuse v3 Python SDK (OTEL-based) for tracing LLM calls, tool usage, and agent steps.
+
+Setup locally:
+
+- Option A: Docker Compose (recommended)
+  - Follow https://langfuse.com/docs/deployment/self-host to run Langfuse locally (default UI/API on http://localhost:3000)
+- Option B: Cloud
+  - Create a project on https://cloud.langfuse.com and obtain public/secret keys.
+
+Configure the agent:
+
+- Copy .env.example to .env
+- Set:
+  - LANGFUSE_PUBLIC_KEY=...
+  - LANGFUSE_SECRET_KEY=...
+  - LANGFUSE_HOST=http://localhost:3000  (or your cloud region URL)
+  - LANGFUSE_TRACING_ENABLED=True
+  - optionally LANGFUSE_DEBUG=True for verbose logs
+
+Run the agent/A2A server as usual (make run-a2a). Visit Langfuse UI to see traces per request, including nested LLM/tool spans.
+
+Notes:
+- Ensure Langfuse platform version >= 3.63.0 for v3 SDK.
+- Short-lived scripts call get_client().flush() automatically in some code paths; if you add your own scripts, call flush() or shutdown() before exit.

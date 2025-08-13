@@ -21,6 +21,7 @@ from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from cnoe_agent_utils import LLMFactory
+from langfuse import get_client
 
 load_dotenv()          # makes values from .env available via os.getenv
 
@@ -76,6 +77,8 @@ async def create_agent(prompt: str | None = None, response_format=None):
         }
     )
     mcp_tools = await client.get_tools()
+    lf = get_client()
+    lf.update_current_trace(tags=["{{ mcp_name }}-agent"])
     tools = mcp_tools + [get_current_time]
     agent = create_react_agent(
         LLMFactory().get_llm(),
@@ -89,4 +92,9 @@ async def create_agent(prompt: str | None = None, response_format=None):
 
 # Convenience synchronous wrapper
 def create_agent_sync(prompt: str | None = None, response_format=None):
-    return asyncio.run(create_agent(prompt, response_format))
+    agent, tools = asyncio.run(create_agent(prompt, response_format))
+    try:
+        get_client().flush()
+    except Exception:
+        pass
+    return agent, tools

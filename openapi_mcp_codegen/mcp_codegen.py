@@ -667,6 +667,7 @@ class MCPGenerator:
     "langchain-google-genai>=2.1.4",
     "langchain-mcp-adapters>=0.1.9",
     "langchain-openai>=0.3.17",
+    "langfuse>=3.2.0",
     "langchain>=0.3.27",
     "langgraph>=0.4.5",
     "uv",
@@ -1000,5 +1001,6 @@ class MCPGenerator:
     self.generate_init_files()
     if not self.generate_agent_flag:
         self.generate_env()
-    self.generate_readme()
+    if not self.generate_agent_flag:
+        self.generate_readme()
     logger.info("MCP code generation completed")

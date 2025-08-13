@@ -30,7 +30,7 @@ class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
         if context.current_task is None:
             await event_queue.enqueue_event(task)
 
-        async for event in self.agent.stream(query, task.contextId):
+        async for event in self.agent.stream(query, task.contextId, callbacks=None):
             if event["is_task_complete"]:
                 await event_queue.enqueue_event(
                     TaskArtifactUpdateEvent(

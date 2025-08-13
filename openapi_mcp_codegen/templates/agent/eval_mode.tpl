@@ -25,6 +25,7 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from dotenv import load_dotenv
 
 from rich import print as rprint, box
+from langfuse import get_client
 
 load_dotenv()
 
@@ -156,6 +157,10 @@ async def _interactive_eval() -> None:
         if tn in remaining_tools:
             remaining_tools.remove(tn)
 
+    try:
+        get_client().update_current_trace(tags=["{{ mcp_name }}-eval-mode"])
+    except Exception:
+        pass
     agent, tools = await create_agent()
     tool_map = {t.name: t for t in tools}
     all_tools = [t.name for t in tools]                          # full list
