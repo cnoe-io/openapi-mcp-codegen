@@ -157,7 +157,7 @@ async def main():
     # -------------------------------------------------------------- Langfuse dataset + runs
     lf = get_client()
     dataset_name = "{{ mcp_name }}_agent_eval"
-    run_name = "{{ mcp_name }}_agent_eval_run"
+    run_name = f"{{ mcp_name }}_agent_eval_run_{uuid.uuid4().hex[:8]}"
 
     try:
         dataset = lf.get_dataset(name=dataset_name)
