@@ -40,6 +40,9 @@ mcp_server/
 ---
 
 ## 🚀 Running the MCP Server
+{% if a2a_proxy %}
+Note: This codebase was generated with --with-a2a-proxy. The agent includes a WebSocket upstream server intended to run behind the external a2a-proxy service, which translates A2A requests into upstream WebSocket messages.
+{% endif %}
 
 Make sure dependencies are installed and environment variables are configured. Then run:
 

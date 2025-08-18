@@ -17,6 +17,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from .state import AgentState, InputState, Message, MsgType
 from cnoe_agent_utils import LLMFactory
 from langfuse import get_client
+from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
 
 logger = logging.getLogger(__name__)
 memory = MemorySaver()
@@ -52,12 +53,22 @@ class {{ mcp_name | capitalize }}Agent:
         cfg: RunnableConfig = {"configurable": {"thread_id": session_id}}
 
         lf = get_client()
+        lf_handler = None
+        try:
+            lf_handler = LangfuseCallbackHandler()
+        except Exception:
+            pass
 
         async def _async_gen():
-            with lf.start_as_current_span(name="{{ mcp_name }}-query", input={"query": query}) as root_span:
+            with lf.start_as_current_span(
+                name="{{ mcp_name }}-query",
+                input={"query": query, "session_id": session_id},
+            ) as root_span:
+                # Tag the trace and set session id
+                root_span.update_trace(tags=["{{ mcp_name }}-a2a"], session_id=session_id)
                 async for item in agent.astream(
                     {"messages": [("user", query)]},
-                    {**cfg, "callbacks": callbacks or []},
+                    {**cfg, "callbacks": ([lf_handler] if lf_handler else [])},
                     stream_mode="values",
                 ):
                     yield item

@@ -26,7 +26,11 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.poetry.scripts]
+{% if a2a_proxy %}
+agent_{{ mcp_name }}_proxy = "protocol_bindings.ws_proxy:main"
+{% else %}
 agent_{{ mcp_name }}_a2a = "protocol_bindings.a2a_server:main"
+{% endif %}
 
 [tool.ruff]
 line-length = 140

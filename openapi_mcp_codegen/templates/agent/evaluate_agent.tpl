@@ -44,16 +44,29 @@ HALLU   = create_llm_as_judge(prompt=HALLUCINATION_PROMPT, feedback_key="halluci
 async def _run_agent(agent, prompt: str):
     logger.debug("Invoking agent for prompt: %s", prompt)
     cfg = {"configurable": {"thread_id": uuid.uuid4().hex}}
-    # invoke with user prompt
-    await agent.ainvoke({"messages": [{"role": "user", "content": prompt}]}, config=cfg)
-    # extract graph trajectory for later judging
-    traj = extract_langgraph_trajectory_from_thread(agent, cfg)
-    # collect assistant texts from the LangGraph trajectory itself
-    outputs: list[str] = []
-    for step in traj["outputs"]["results"]:
-        for msg in step.get("messages", []):
-            if msg.get("role") == "assistant":
-                outputs.append(msg.get("content", ""))
+    lf_handler = None
+    try:
+        lf_handler = LangfuseCallbackHandler()
+    except Exception:
+        pass
+    langfuse = get_client()
+    with langfuse.start_as_current_span(
+        name="{{ mcp_name }}-predict",
+        input={"prompt": prompt},
+    ) as span:
+        await agent.ainvoke(
+            {"messages": [{"role": "user", "content": prompt}]},
+            config={**cfg, "callbacks": ([lf_handler] if lf_handler else [])},
+        )
+        # extract graph trajectory for later judging
+        traj = extract_langgraph_trajectory_from_thread(agent, cfg)
+        # collect assistant texts from the LangGraph trajectory itself
+        outputs: list[str] = []
+        for step in traj["outputs"]["results"]:
+            for msg in step.get("messages", []):
+                if msg.get("role") == "assistant":
+                    outputs.append(msg.get("content", ""))
+        span.update_trace(output={"outputs": "\n".join(outputs)})
     logger.debug("Received %d assistant messages", len(outputs))
     return traj, "\n".join(outputs)
 

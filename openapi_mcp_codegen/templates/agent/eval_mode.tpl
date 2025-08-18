@@ -26,6 +26,7 @@ from dotenv import load_dotenv
 
 from rich import print as rprint, box
 from langfuse import get_client
+from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
 
 load_dotenv()
 
@@ -373,8 +374,22 @@ async def _interactive_eval() -> None:
                 cfg = {"configurable": {"thread_id": str(uuid4())}}
                 rprint("[blue]Invoking agent, please wait …[/]")
                 exc: Exception | None = None
+                langfuse = get_client()
+                lf_handler = None
                 try:
-                    await agent.ainvoke({"messages": [{"role": "user", "content": user_query}]}, cfg)
+                    lf_handler = LangfuseCallbackHandler()
+                except Exception:
+                    pass
+                try:
+                    with langfuse.start_as_current_span(
+                        name="{{ mcp_name }}-eval-invoke",
+                        input={"query": user_query, "tool": tool_name},
+                    ) as span:
+                        span.update_trace(tags=["{{ mcp_name }}-eval"], session_id=cfg["configurable"]["thread_id"])
+                        await agent.ainvoke(
+                            {"messages": [{"role": "user", "content": user_query}]},
+                            {**cfg, "callbacks": ([lf_handler] if lf_handler else [])},
+                        )
                 except Exception as e:  # capture, but don't abort
                     exc = e
 
@@ -402,6 +417,10 @@ async def _interactive_eval() -> None:
                     combined_output = output_content
                     if tool_outputs:
                         combined_output = combined_output + "\n\n" + "\n\n".join(tool_outputs)
+                    try:
+                        span.update_trace(output={"response": combined_output})  # type: ignore[name-defined]
+                    except Exception:
+                        pass
 
                     rprint("\n[bold green]LLM response (including tool outputs):[/]\n")
                     rprint(combined_output)
