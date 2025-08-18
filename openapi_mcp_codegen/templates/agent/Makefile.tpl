@@ -11,7 +11,7 @@ run-with-proxy:  ## Install deps (via uv) and run the WebSocket proxy
 	uv pip install -e . --upgrade
 	uv run python -m protocol_bindings.ws_proxy --host 0.0.0.0 --port $${PORT:-8000}
 {% else %}
-# Starts the A2A server (expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
+# Starts the A2A HTTP server (expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
 run-a2a:  ## Install deps (via uv) and run the A2A server
 	uv pip install -e . --upgrade
 	uv run python -m protocol_bindings.a2a_server --host 0.0.0.0 --port $${PORT:-8000}

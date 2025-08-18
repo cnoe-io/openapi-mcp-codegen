@@ -660,8 +660,8 @@ class MCPGenerator:
 
       # Build two dependency blocks and concatenate conditionally
       base_deps = """
-    "a2a-sdk==0.2.8",
-    "httpx==0.28.1",
+    "a2a-sdk>=0.2",
+    "httpx>=0.28",
     "agntcy-acp>=1.3.2",
     "click>=8.2.0",
     "langchain-anthropic>=0.3.13",
@@ -675,7 +675,7 @@ class MCPGenerator:
     "uv",
     "rich (>=14.0.0,<15.0.0)",
     "sseclient (>=0.0.27,<0.0.28)",
-    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+    "cnoe-agent-utils>=0.3",
       """
 
       eval_deps = """

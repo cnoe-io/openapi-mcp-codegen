@@ -30,6 +30,11 @@ See `Makefile` for useful targets.
    ```bash
    make run-a2a
    ```
+
+   - This server exposes:
+     - AgentCard at /.well-known/agent.json describing capabilities/skills
+     - A2A endpoints handled by DefaultRequestHandler and backed by InMemoryTaskStore
+   - The executor streams status updates while tools run and emits a final artifact on completion.
 {% else %}
 2.  In one terminal, start the WS proxy  
    ```bash

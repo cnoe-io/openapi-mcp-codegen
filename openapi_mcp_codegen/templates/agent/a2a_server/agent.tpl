@@ -1,5 +1,9 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
-"""{{ mcp_name | capitalize }} LangGraph agent wrapper used by the A2A server."""
+"""{{ mcp_name | capitalize }} LangGraph agent wrapper used by the A2A server.
+
+  This class adapts the LangGraph agent to the A2A streaming protocol by emitting
+  generic status updates during tool use and a final completion message.
+  """
 
 import asyncio
 import logging
@@ -81,13 +85,33 @@ class {{ mcp_name | capitalize }}Agent:
         async for item in agen:
             msg = item["messages"][-1]
             if isinstance(msg, AIMessage) and msg.tool_calls:
-                yield {"is_task_complete": False, "require_user_input": False, "content": "Calling tools..."}
+                yield {
+                    "is_task_complete": False,
+                    "require_user_input": False,
+                    "content": "Looking up required data via tools...",
+                }
             elif isinstance(msg, ToolMessage):
-                yield {"is_task_complete": False, "require_user_input": False, "content": "Processing tool output..."}
+                yield {
+                    "is_task_complete": False,
+                    "require_user_input": False,
+                    "content": "Processing tool output...",
+                }
 
-        # Final response
+        # Final response or input-required guard
         state = agent.get_state(cfg)
         output_msg = state.values.get("messages", [])[-1]
+
+        # If the final assistant message asks for clarification, request user input
+        final_text = getattr(output_msg, "content", str(output_msg)) or ""
+        if isinstance(output_msg, AIMessage) and any(
+            kw in final_text.lower() for kw in ["please provide", "need more info", "could you clarify"]
+        ):
+            yield {
+                "is_task_complete": False,
+                "require_user_input": True,
+                "content": final_text,
+            }
+            return
         yield {
             "is_task_complete": True,
             "require_user_input": False,

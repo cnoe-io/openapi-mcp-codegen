@@ -1,6 +1,10 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
 """Launch an A2A HTTP server exposing the {{ mcp_name | capitalize }} agent."""
 
+from cnoe_agent_utils.tracing import disable_a2a_tracing
+
+disable_a2a_tracing()  # Or import automatically disables A2A
+
 import click
 import uvicorn
 import httpx
@@ -8,7 +12,11 @@ import httpx
 from dotenv import load_dotenv
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
-from a2a.server.tasks import InMemoryPushNotifier, InMemoryTaskStore
+from a2a.server.tasks import (
+    BasePushNotificationSender,
+    InMemoryPushNotificationConfigStore,
+    InMemoryTaskStore,
+)
 from a2a.types import (
     AgentCapabilities,
     AgentCard,
@@ -18,11 +26,14 @@ from a2a.types import (
 from .agent_executor import {{ mcp_name | capitalize }}AgentExecutor
 
 load_dotenv()
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def _get_agent_card(host: str, port: int) -> AgentCard:
     """Return a minimal AgentCard for the generated agent."""
-    capabilities = AgentCapabilities(streaming=True, pushNotifications=True)
+    capabilities = AgentCapabilities(streaming=True, push_notifications=True)
     skill = AgentSkill(
         id="{{ mcp_name }}",
         name="{{ mcp_name | capitalize }} Tools",
@@ -44,16 +55,25 @@ def _get_agent_card(host: str, port: int) -> AgentCard:
 
 @click.command()
 @click.option("--host", default="0.0.0.0", help="Bind address")
-@click.option("--port", default=11000, help="Port to serve on")
+@click.option("--port", default=10000, help="Port to serve on")
 def main(host: str, port: int) -> None:
-    httpx_client = httpx.AsyncClient
-    handler = DefaultRequestHandler(
+    httpx_client = httpx.AsyncClient()
+    push_config_store = InMemoryPushNotificationConfigStore()
+    push_sender = BasePushNotificationSender(
+        httpx_client=httpx_client,
+        config_store=push_config_store,
+    )
+    request_handler = DefaultRequestHandler(
         agent_executor={{ mcp_name | capitalize }}AgentExecutor(),
         task_store=InMemoryTaskStore(),
-push_notifier=InMemoryPushNotifier(httpx_client),
+        push_config_store=push_config_store,
+        push_sender=push_sender,
     )
-    app = A2AStarletteApplication(_get_agent_card(host, port), http_handler=handler).build()
-    uvicorn.run(app, host=host, port=port)
+    server = A2AStarletteApplication(
+        agent_card=_get_agent_card(host, port),
+        http_handler=request_handler,
+    )
+    uvicorn.run(server.build(), host=host, port=port)
 
 
 if __name__ == "__main__":
