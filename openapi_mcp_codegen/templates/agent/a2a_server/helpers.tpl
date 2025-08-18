@@ -1,6 +1,10 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
 """Helper functions for mapping agent responses to A2A events."""
 
+from cnoe_agent_utils.tracing import disable_a2a_tracing
+
+disable_a2a_tracing()  # Or import automatically disables A2A
+
 from datetime import datetime
 from typing import Any, Dict, List
 from uuid import uuid4

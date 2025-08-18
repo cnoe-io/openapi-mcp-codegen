@@ -1,20 +1,37 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
-"""AgentExecutor implementation that connects the {{ mcp_name | capitalize }} agent to A2A."""
+"""AgentExecutor implementation that connects the {{ mcp_name | capitalize }} agent to A2A.
 
+  Streams intermediate status updates while tools run and emits a final artifact
+  when the agent completes. Uses DefaultRequestHandler + InMemoryTaskStore.
+  """
+
+import logging
 from typing_extensions import override
-from typing import Any, Dict, AsyncIterable
+
+from cnoe_agent_utils.tracing import disable_a2a_tracing
+disable_a2a_tracing()  # Or import automatically disables A2A
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
-from a2a.server.events.event_queue import EventQueue
+from a2a.server.events import EventQueue
+from a2a.server.tasks import TaskUpdater
 from a2a.types import (
-    TaskArtifactUpdateEvent,
+    InternalError,
+    InvalidParamsError,
+    Part,
     TaskState,
-    TaskStatus,
-    TaskStatusUpdateEvent,
+    TextPart,
+    UnsupportedOperationError,
 )
-from a2a.utils import new_agent_text_message, new_task, new_text_artifact
+from a2a.utils import (
+    new_agent_text_message,
+    new_task,
+)
+from a2a.utils.errors import ServerError
 
 from .agent import {{ mcp_name | capitalize }}Agent
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
@@ -25,49 +42,56 @@ class {{ mcp_name | capitalize }}AgentExecutor(AgentExecutor):
 
     @override
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+        error = self._validate_request(context)
+        if error:
+            raise ServerError(error=InvalidParamsError())
+
         query = context.get_user_input()
-        task = context.current_task or new_task(context.message)
-        if context.current_task is None:
+        task = context.current_task
+        if not task:
+            task = new_task(context.message)  # type: ignore
             await event_queue.enqueue_event(task)
 
-        async for event in self.agent.stream(query, task.contextId):
-            if event["is_task_complete"]:
-                await event_queue.enqueue_event(
-                    TaskArtifactUpdateEvent(
-                        append=False,
-                        contextId=task.contextId,
-                        taskId=task.id,
-                        lastChunk=True,
-                        artifact=new_text_artifact(
-                            name="result",
-                            description="Agent response",
-                            text=event["content"],
+        updater = TaskUpdater(event_queue, task.id, task.context_id)
+        try:
+            async for item in self.agent.stream(query, task.context_id, callbacks=None):
+                is_task_complete = item["is_task_complete"]
+                require_user_input = item["require_user_input"]
+
+                if not is_task_complete and not require_user_input:
+                    await updater.update_status(
+                        TaskState.working,
+                        new_agent_text_message(
+                            item["content"],
+                            task.context_id,
+                            task.id,
                         ),
                     )
-                )
-                await event_queue.enqueue_event(
-                    TaskStatusUpdateEvent(
+                elif require_user_input:
+                    await updater.update_status(
+                        TaskState.input_required,
+                        new_agent_text_message(
+                            item["content"],
+                            task.context_id,
+                            task.id,
+                        ),
                         final=True,
-                        contextId=task.contextId,
-                        taskId=task.id,
-                        status=TaskStatus(state=TaskState.completed),
                     )
-                )
-            else:
-                await event_queue.enqueue_event(
-                    TaskStatusUpdateEvent(
-                        final=False,
-                        contextId=task.contextId,
-                        taskId=task.id,
-                        status=TaskStatus(
-                            state=TaskState.working,
-                            message=new_agent_text_message(
-                                event["content"], task.contextId, task.id
-                            ),
-                        ),
+                    break
+                else:
+                    await updater.add_artifact(
+                        [Part(root=TextPart(text=item["content"]))],
+                        name="result",
                     )
-                )
+                    await updater.complete()
+                    break
+        except Exception as e:
+            logger.error(f"An error occurred while streaming the response: {e}")
+            raise ServerError(error=InternalError()) from e
+
+    def _validate_request(self, context: RequestContext) -> bool:
+        return False
 
     @override
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:  # noqa: D401
-        raise Exception("cancel not supported")
+        raise ServerError(error=UnsupportedOperationError())

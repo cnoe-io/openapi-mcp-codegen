@@ -38,6 +38,7 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - 🚀 --generate-agent flag – additionally produces a LangGraph
   React agent (with A2A server, Makefile, README and .env.example)
   alongside the generated MCP server.
+- Optional: --with-a2a-proxy — generate a minimal WebSocket upstream server for use behind the external “a2a-proxy” (deploy the proxy separately to expose an A2A HTTP API)
 - 📊 --generate-eval: adds interactive eval mode and automated evaluation suite
 - 🧠 --generate-system-prompt: generates a SYSTEM prompt for the agent using your configured LLM
 
@@ -46,6 +47,8 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - You provide an OpenAPI spec (JSON or YAML).
 - The generator parses paths, operations, and schemas, then renders Jinja2 templates into a structured Python MCP server.
 - Optionally, it generates an accompanying LangGraph agent and A2A server wrapper that can call the generated MCP tools.
+
+Note: If you pass --with-a2a-proxy with --generate-agent, the generator adds a WebSocket upstream server instead of an A2A HTTP server. You must deploy the external “a2a-proxy” and point it to the WS upstream (ws://host:port) to expose the A2A JSON-RPC/SSE API.
 - With evaluation enabled, it scaffolds interactive dataset building and a LangSmith-powered evaluation suite.
 
 ## Generated Structure
@@ -213,6 +216,13 @@ cp .env.example .env    # Configure API credentials
 make run-a2a           # Start A2A server
 make run-a2a-client    # Launch Docker chat client
 ```
+
+Or, if you generated with --with-a2a-proxy:
+
+- Start the WS upstream in the generated agent directory:
+  make run-with-proxy
+- Deploy and run the external a2a-proxy, configured to connect to ws://localhost:8000
+- Point A2A clients to the proxy’s /a2a/v1 endpoint
 
 ## Project-Specific Conventions
 

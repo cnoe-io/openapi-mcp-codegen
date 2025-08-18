@@ -69,6 +69,12 @@ def get_mcp_name(spec_path):
          "(requires LLM env vars such as OPENAI_API_KEY, ANTHROPIC_API_KEY, …).",
 )
 @click.option(
+      "--with-a2a-proxy",
+      is_flag=True,
+      default=False,
+      help="Also generate a minimal WebSocket upstream server; deploy the external a2a-proxy to expose an A2A HTTP API.",
+  )
+@click.option(
   "--dry-run",
   is_flag=True,
   default=False,
@@ -96,6 +102,7 @@ def main(
    generate_agent,
    generate_eval,
    generate_system_prompt,
+   with_a2a_proxy,
 ):
   # Load environment variables from .env file if present
   env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
@@ -131,6 +138,7 @@ def main(
       generate_agent=generate_agent,
       generate_eval=generate_eval,
       generate_system_prompt=generate_system_prompt,
+      with_a2a_proxy=with_a2a_proxy,
   )
   generator.generate()
 

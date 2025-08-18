@@ -110,7 +110,8 @@ class MCPGenerator:
       enhance_docstring_with_llm_openapi: bool = False,
       generate_agent: bool = False,
       generate_eval: bool = False,
-      generate_system_prompt: bool = False):
+      generate_system_prompt: bool = False,
+      with_a2a_proxy: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -138,6 +139,7 @@ class MCPGenerator:
     self.generate_agent_flag = generate_agent
     self.generate_eval = generate_eval
     self.generate_system_prompt = generate_system_prompt
+    self.with_a2a_proxy = with_a2a_proxy
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -658,8 +660,8 @@ class MCPGenerator:
 
       # Build two dependency blocks and concatenate conditionally
       base_deps = """
-    "a2a-sdk==0.2.8",
-    "httpx==0.28.1",
+    "a2a-sdk>=0.2",
+    "httpx>=0.28",
     "agntcy-acp>=1.3.2",
     "click>=8.2.0",
     "langchain-anthropic>=0.3.13",
@@ -667,12 +669,13 @@ class MCPGenerator:
     "langchain-google-genai>=2.1.4",
     "langchain-mcp-adapters>=0.1.9",
     "langchain-openai>=0.3.17",
+    "langfuse>=3.2.0",
     "langchain>=0.3.27",
     "langgraph>=0.4.5",
     "uv",
     "rich (>=14.0.0,<15.0.0)",
     "sseclient (>=0.0.27,<0.0.28)",
-    "cnoe-agent-utils (>=0.1.3,<0.2.0)",
+    "cnoe-agent-utils>=0.3",
       """
 
       eval_deps = """
@@ -684,6 +687,8 @@ class MCPGenerator:
       """
 
       agent_dependencies = base_deps + (eval_deps if self.generate_eval else "")
+      if self.with_a2a_proxy:
+          agent_dependencies += '\n    "websockets>=12.0",\n'
 
       logger.info("Rendering agent/agent.py template")
       self.render_template(
@@ -703,6 +708,7 @@ class MCPGenerator:
           os.path.join(agent_dir, "Makefile"),
           mcp_name=self.mcp_name,
           generate_eval=generate_eval,
+          a2a_proxy=self.with_a2a_proxy,
           **file_header_kwargs,
       )
 
@@ -713,6 +719,7 @@ class MCPGenerator:
           os.path.join(agent_dir, "README.md"),
           mcp_name=self.mcp_name,
           generate_eval=generate_eval,
+          a2a_proxy=self.with_a2a_proxy,
           **file_header_kwargs,
       )
 
@@ -754,11 +761,15 @@ class MCPGenerator:
           license=self.config.get("license", "Apache-2.0"),
           poetry_dependencies=agent_dependencies,
           generate_eval=generate_eval,
+          a2a_proxy=self.with_a2a_proxy,
           **file_header_kwargs,
       )
 
-      # generate A2A server
-      self._generate_a2a_server(agent_dir)
+      # generate server (A2A or WebSocket proxy)
+      if self.with_a2a_proxy:
+          self._generate_ws_proxy(agent_dir)
+      else:
+          self._generate_a2a_server(agent_dir)
 
       # If generate_eval is True, build the eval directory here
       if self.generate_eval:
@@ -861,6 +872,7 @@ class MCPGenerator:
       mcp_description=self.config.get('description', 'Generated MCP server'),
       mcp_version=self.config.get('version', '1.0.0'),
       mcp_author=self.config.get('author', 'CNOE Contributors'),
+      a2a_proxy=self.with_a2a_proxy,
     )
 
   def generate_init_files(self):
@@ -1000,5 +1012,36 @@ class MCPGenerator:
     self.generate_init_files()
     if not self.generate_agent_flag:
         self.generate_env()
-    self.generate_readme()
+    if not self.generate_agent_flag:
+        self.generate_readme()
     logger.info("MCP code generation completed")
+  # ---------------------------------------------------------------- WebSocket proxy
+  def _generate_ws_proxy(self, agent_dir: str) -> None:
+      logger.info("Generating WebSocket proxy server")
+      ws_dir = os.path.join(agent_dir, "protocol_bindings", "ws_proxy")
+      os.makedirs(ws_dir, exist_ok=True)
+      fh = self.get_file_header_kwargs()
+
+      # __init__.py
+      self.render_template("init_empty.tpl", os.path.join(ws_dir, "__init__.py"), **fh)
+      self.run_ruff_lint(os.path.join(ws_dir, "__init__.py"))
+
+      # server.py
+      self.render_template(
+          "agent/ws_proxy/server.tpl",
+          os.path.join(ws_dir, "server.py"),
+          mcp_name=self.mcp_name,
+          **fh,
+      )
+      self.run_ruff_lint(os.path.join(ws_dir, "server.py"))
+
+      # __main__.py
+      self.render_template(
+          "agent/ws_proxy/__main__.tpl",
+          os.path.join(ws_dir, "__main__.py"),
+          mcp_name=self.mcp_name,
+          **fh,
+      )
+      self.run_ruff_lint(os.path.join(ws_dir, "__main__.py"))
+
+      logger.info("WebSocket proxy generation completed")
