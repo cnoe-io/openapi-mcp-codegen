@@ -6,7 +6,7 @@
 {% endif %}
 
 {% if a2a_proxy %}
-# Starts the WebSocket JSON-RPC upstream server (to be consumed by the external a2a-proxy; expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
+# Starts the WebSocket JSON-RPC upstream server used by the external “a2a-proxy” (set {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN)
 run-with-proxy:  ## Install deps (via uv) and run the WebSocket proxy
 	uv pip install -e . --upgrade
 	uv run python -m protocol_bindings.ws_proxy --host 0.0.0.0 --port $${PORT:-8000}

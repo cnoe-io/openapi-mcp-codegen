@@ -1,5 +1,5 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
-"""CLI entry-point launching the {{ mcp_name | capitalize }} WebSocket proxy."""
+"""CLI entry-point launching the {{ mcp_name | capitalize }} WebSocket upstream (for external a2a-proxy)."""
 import click
 from .server import main as _run
 

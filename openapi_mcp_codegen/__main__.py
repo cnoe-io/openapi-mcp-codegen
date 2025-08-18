@@ -72,7 +72,7 @@ def get_mcp_name(spec_path):
       "--with-a2a-proxy",
       is_flag=True,
       default=False,
-      help="Also generate a minimal WebSocket upstream server to be used behind the external a2a-proxy.",
+      help="Also generate a minimal WebSocket upstream server; deploy the external a2a-proxy to expose an A2A HTTP API.",
   )
 @click.option(
   "--dry-run",

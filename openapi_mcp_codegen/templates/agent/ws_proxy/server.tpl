@@ -53,7 +53,7 @@ async def handle_ws(websocket):
         pass
 
     with lf.start_as_current_span(
-        name="{{ mcp_name }}-ws-request",
+        name="{{ mcp_name }}-query",
         input={"query": query, "context_id": context_id},
     ) as root_span:
         root_span.update_trace(tags=["{{ mcp_name }}-ws-proxy"], session_id=context_id)
