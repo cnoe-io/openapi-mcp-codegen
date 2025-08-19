@@ -109,8 +109,12 @@ flowchart TD
     D[Petstore MCP Server]
     E[Petstore API Server]
   end
-  A --> B --> C
-  C --> D --> E
+  A --> B
+  B --> C
+  C -.-> D
+  D -.-> C
+  D -.-> E
+  E -.-> D
 ```
 
 The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
