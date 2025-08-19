@@ -25,7 +25,6 @@ dependencies = [
     "langchain-openai>=0.3.18,<0.4.0",
     "langchain-anthropic>=0.3.14,<0.4.0",
     "langchain-google-genai>=2.1.5,<3.0.0",
-    "langchain[core]>=0.3.25,<0.4.0",
     "langchain-core>=0.3.62,<0.4.0",
     "fastapi>=0.115.14,<0.116.0",
     "httpx>=0.24.0",

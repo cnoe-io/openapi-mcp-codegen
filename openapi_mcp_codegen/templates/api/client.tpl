@@ -19,7 +19,7 @@ if not API_TOKEN:
     raise ValueError("{{ mcp_name | upper }}_TOKEN environment variable is not set.")
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_{{ mcp_name }}")
 
 from typing import Dict, Any   # (if not already imported)

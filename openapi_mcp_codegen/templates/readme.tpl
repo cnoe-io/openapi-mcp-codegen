@@ -40,9 +40,6 @@ mcp_server/
 ---
 
 ## 🚀 Running the MCP Server
-{% if a2a_proxy %}
-Note: Generated with --with-a2a-proxy. The agent includes a WebSocket upstream server intended to run behind an external “a2a-proxy” that translates A2A requests (JSON-RPC/SSE) into upstream WebSocket frames. Deploy the proxy and configure it to connect to ws://localhost:8000, then direct A2A clients to the proxy’s /a2a/v1.
-{% endif %}
 
 Make sure dependencies are installed and environment variables are configured. Then run:
 

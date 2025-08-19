@@ -21,16 +21,11 @@ See `Makefile` for useful targets.
 
 ## 🏃‍♂️ Getting Started
 
-1.  Copy the environment template and fill in your credentials  
-   ```bash
+1.  Copy the environment template and fill in your credentials including [LLM values](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms)
+```bash
    cp .env.example .env
    $EDITOR .env
    ```
-
-> NOTE  
-> If the agent was generated with `--generate-system-prompt` (or any
-> docstring-enhancement flag) you must export your LLM credentials, e.g.  
-> `export OPENAI_API_KEY=…`, `export ANTHROPIC_API_KEY=…`.
 
 {% if not a2a_proxy %}
 2.  In one terminal, start the A2A server  
@@ -77,7 +72,7 @@ Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools
     • Test each tool, update / skip as needed  
     • Traces are stored in `eval/dataset.yaml`
 
-2.  Execute the automated benchmark (uploads to LangSmith)  
+2.  Execute the automated benchmark (uploads to LangFuse)
     ```bash
     make eval               # runs eval/evaluate_agent.py
     ```
