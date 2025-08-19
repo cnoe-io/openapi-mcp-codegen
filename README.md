@@ -90,7 +90,15 @@ uv sync
 - **--enhance-docstring-with-llm**
   - Optionally rewrites tool docstrings using an LLM
 
-## Example: Petstore MCP Server
+## Generated Architecture
+
+![agent diagram](./static/agent_diagram.png)
+
+The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
+
+## Example: Petstore A2A LangGraph agent + MCP Server
+
+
 
 1. Generate the agent + evals
 
