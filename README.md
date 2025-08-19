@@ -19,10 +19,9 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
   ```bash
   uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
     --spec-file examples/petstore/openapi_petstore.json \
-    --output-dir examples/petstore/mcp_server \
+    --output-dir examples/petstore \
     --generate-agent \
-    --generate-eval \
-    --generate-system-prompt
+    --generate-eval
   ```
 
 ## ✨ Features
@@ -48,23 +47,6 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - Also supports tracing and evaluation using [LangFuse](https://github.com/langfuse/langfuse)
 
 ## Development
-
-### Requirements
-
-- 🐍 Python 3.13+
-- ⚡ uv (https://docs.astral.sh/uv/getting-started/installation/)
-
-Note: Install uv first: https://docs.astral.sh/uv/getting-started/installation/
-
-### Run without cloning the repo
-
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent \
-  --generate-eval
-```
 
 ### Local Development Commands
 
@@ -92,7 +74,30 @@ uv sync
 
 ## Generated Architecture
 
-![agent diagram](./static/agent_diagram.png)
+## 🏗️ Architecture
+
+```mermaid
+flowchart TD
+  subgraph Client Layer
+    A[User Client A2A]
+  end
+  subgraph Agent Transport Layer
+    B[Google A2A]
+  end
+  subgraph Agent Framework Layer
+    C[LangGraph ReAct Agent]
+  end
+  subgraph Tools/MCP Layer
+    D[Petstore MCP Server]
+    E[Petstore API Server]
+  end
+  A --> B
+  B --> C
+  C -.-> D
+  D -.-> C
+  D -.-> E
+  E -.-> D
+```
 
 The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
 
