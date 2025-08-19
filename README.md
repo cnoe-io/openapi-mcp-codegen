@@ -143,7 +143,7 @@ cd examples/petstore
 make run-a2a-client
 ```
 
-You now have an agent and client deployed and can see tracing in LangFuse (http://localhost:3000) if enabled. Follow the next steps to evaluate your agent:
+You now have an agent and client deployed, e.g. ask `List my available pets`. You can see tracing in LangFuse (http://localhost:3000) if enabled. Follow the next steps to evaluate your agent:
 
 6. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
 
