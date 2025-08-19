@@ -92,7 +92,26 @@ uv sync
 
 ## Generated Architecture
 
-![agent diagram](./static/agent_diagram.png)
+## 🏗️ Architecture
+
+```mermaid
+flowchart TD
+  subgraph Client Layer
+    A[User Client A2A]
+  end
+  subgraph Agent Transport Layer
+    B[Google A2A]
+  end
+  subgraph Agent Framework Layer
+    C[LangGraph ReAct Agent]
+  end
+  subgraph Tools/MCP Layer
+    D[Petstore MCP Server]
+    E[Petstore API Server]
+  end
+  A --> B --> C
+  C --> D --> E
+```
 
 The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
 
