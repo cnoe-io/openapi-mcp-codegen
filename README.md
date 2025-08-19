@@ -19,10 +19,9 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
   ```bash
   uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
     --spec-file examples/petstore/openapi_petstore.json \
-    --output-dir examples/petstore/mcp_server \
+    --output-dir examples/petstore \
     --generate-agent \
-    --generate-eval \
-    --generate-system-prompt
+    --generate-eval
   ```
 
 ## ✨ Features
@@ -48,23 +47,6 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - Also supports tracing and evaluation using [LangFuse](https://github.com/langfuse/langfuse)
 
 ## Development
-
-### Requirements
-
-- 🐍 Python 3.13+
-- ⚡ uv (https://docs.astral.sh/uv/getting-started/installation/)
-
-Note: Install uv first: https://docs.astral.sh/uv/getting-started/installation/
-
-### Run without cloning the repo
-
-```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server \
-  --generate-agent \
-  --generate-eval
-```
 
 ### Local Development Commands
 
