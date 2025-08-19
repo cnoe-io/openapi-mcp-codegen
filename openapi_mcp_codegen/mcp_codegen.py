@@ -676,6 +676,7 @@ class MCPGenerator:
     "rich (>=14.0.0,<15.0.0)",
     "sseclient (>=0.0.27,<0.0.28)",
     "cnoe-agent-utils>=0.3",
+    "fastmcp>=2.11.1",
       """
 
       eval_deps = """
@@ -724,15 +725,16 @@ class MCPGenerator:
       )
 
 
-      # Render eval_mode.py
-      logger.info("Rendering agent/eval_mode.py")
-      self.render_template(
-          "agent/eval_mode.tpl",
-          os.path.join(agent_dir, "eval_mode.py"),
-          mcp_name=self.mcp_name,
-          **file_header_kwargs,
-      )
-      self.run_ruff_lint(os.path.join(agent_dir, "eval_mode.py"))
+      if self.generate_eval:
+          # Render eval_mode.py
+          logger.info("Rendering agent/eval_mode.py")
+          self.render_template(
+              "agent/eval_mode.tpl",
+              os.path.join(agent_dir, "eval_mode.py"),
+              mcp_name=self.mcp_name,
+              **file_header_kwargs,
+          )
+          self.run_ruff_lint(os.path.join(agent_dir, "eval_mode.py"))
 
       # Render .env.example for the agent
       logger.info("Rendering agent/.env.example")

@@ -1,0 +1,36 @@
+tests:
+- input: Update pet rex with ID 1 to have status sold
+  output: 'The pet "Rex" with ID 1 has been successfully updated to have the status
+    "sold."
+
+
+    {"error":"API request failed: 405"}
+
+
+    {"id":1,"name":"Rex","category":{"id":1,"name":"Dog"},"photoUrls":["rex.jpg"],"tags":[{"id":1,"name":"friendly"}],"status":"available"}
+
+
+    {"id":1,"name":"Rex","photoUrls":["rex.jpg"],"category":{"id":1,"name":"Dog"},"status":"sold"}'
+  tool: update_pet
+  trajectory:
+    inputs:
+    - __start__:
+        messages:
+        - content: Update pet rex with ID 1 to have status sold
+          role: user
+    outputs:
+      inputs: []
+      results:
+      - messages:
+        - content: The pet "Rex" with ID 1 has been successfully updated to have the
+            status "sold."
+          role: assistant
+      steps:
+      - - __start__
+        - agent
+        - tools
+        - agent
+        - tools
+        - agent
+        - tools
+        - agent

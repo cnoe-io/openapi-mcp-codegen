@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from {{ mcp_server_base_package }}mcp_{{ mcp_name }}.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 {% for func in functions %}
