@@ -62,7 +62,6 @@ generate: uv-sync
 	@set +a; [ -f .env ] && . .env || true
 	. .venv/bin/activate && uv run python -m openapi_mcp_codegen $(filter-out $@,$(MAKECMDGOALS))
 
-
 generate-petstore: uv-sync
 	@echo "Generating code for Petstore example..."
 	@echo "Sourcing .env with set +a"
@@ -78,6 +77,11 @@ uv-sync: setup-venv
 	@echo "Running uv sync..."
 	@echo "Sourcing .env with set +a"
 	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv sync
+
+generate-backstage: uv-sync
+	@echo "Generating code for Backstage example..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/backstage/openapi.yaml --output-dir examples/backstage/mcp_server --enhance-docstring-with-llm --generate-agent
 
 generate-splunk: uv-sync
 	@echo "Generating code for Splunk example..."

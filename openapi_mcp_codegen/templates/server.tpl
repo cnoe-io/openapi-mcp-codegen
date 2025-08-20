@@ -36,14 +36,14 @@ def main():
     logging.info(f"Starting MCP server in {MCP_MODE} mode on {MCP_HOST}:{MCP_PORT}")
 
     # Get agent name from environment variables
-    AGENT_NAME = os.getenv("AGENT_NAME", "{{ mcp_name | upper }} Agent")
-    logging.info(f"Agent name: {AGENT_NAME}")
+    SERVER_NAME = os.getenv("SERVER_NAME") or os.getenv("AGENT_NAME") or "{{ mcp_name | upper }}"
+    logging.info(f"MCP Server name: {SERVER_NAME}")
 
     # Create server instance
-    if MCP_MODE in ["SSE", "HTTP"]:
-      mcp = FastMCP(f"{AGENT_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
+    if MCP_MODE.lower() in ["sse", "http"]:
+        mcp = FastMCP(f"{SERVER_NAME} MCP Server", host=MCP_HOST, port=MCP_PORT)
     else:
-      mcp = FastMCP("{{ mcp_name | upper }} MCP Server")
+        mcp = FastMCP(f"{SERVER_NAME} MCP Server")
 
 {% for module, ops in registrations.items() %}
     # Register {{ module }} tools
@@ -52,7 +52,7 @@ def main():
 {% endfor %}{% endfor %}
 
     # Run the MCP server
-    mcp.run(transport=MCP_MODE)
+    mcp.run(transport=MCP_MODE.lower())
 
 if __name__ == "__main__":
     main()
