@@ -32,6 +32,16 @@ See `Makefile` for useful targets.
    ```bash
    make run-a2a
    ```
+{% if enable_slim and not a2a_proxy %}
+- To run HTTP A2A and SLIM bridge side-by-side using Docker Compose:
+  ```bash
+  make run-a2a-and-slim
+  ```
+  Environment:
+  - SLIM_ENDPOINT=http://localhost:46357
+  - PORT=8000 (HTTP A2A)
+  - SLIM_PORT=8001 (container process for SLIM bridge)
+{% endif %}
 
    - This server exposes:
      - AgentCard at /.well-known/agent.json describing capabilities/skills

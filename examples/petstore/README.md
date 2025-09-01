@@ -50,7 +50,7 @@ Follow the on-screen prompts to chat with your Petstore tools!
     • Test each tool, update / skip as needed  
     • Traces are stored in `eval/dataset.yaml`
 
-2.  Execute the automated benchmark (uploads to LangFuse)  
+2.  Execute the automated benchmark (uploads to LangFuse)
     ```bash
     make eval               # runs eval/evaluate_agent.py
     ```

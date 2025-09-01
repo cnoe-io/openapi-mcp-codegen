@@ -1,6 +1,6 @@
 # Building a Komodor Agent (with A2A, LangGraph, MCP and Langfuse for Evaluation)
 
-At Outshift by Cisco we use [Komodor](https://komodor.com/) to simplify our cluster management at scale. Komodor provides an AI assistant, Klaudia, that specializes in root-cause analysis (RCA). This guide shows how to use the [OpenAPI → MCP code generator](https://github.com/cnoe-io/openapi-mcp-codegen) to build an A2A-enabled LangGraph ReAct agent that calls Klaudia and Komodor APIs through MCP. The agent also ships an **eval-mode** that is used to collect a *golden dataset* to run evaluations with results & tracing uploaded to [Langfuse](https://langfuse.com/).
+At Outshift by Cisco we use [Komodor](https://komodor.com/) to simplify our cluster management at scale. Komodor provides an AI assistant, Klaudia, that specializes in root-cause analysis (RCA). This guide shows how to use the [OpenAPI → MCP code generator](https://github.com/cnoe-io/openapi-mcp-codegen) to build an A2A-enabled LangGraph ReAct agent that calls Klaudia and Komodor APIs through MCP. The agent also ships an **eval-mode** that is used to collect a **golden dataset** to run evaluations with results & tracing uploaded to [Langfuse](https://langfuse.com/).
 
 ## Overview
 
@@ -16,36 +16,29 @@ We will:
 - `uv` installed
 - Komodor OpenAPI spec ([access here](https://api.komodor.com/api/docs/doc.json))
 - LLM provider credentials (OpenAI, Azure OpenAI, etc.)
+- [Docker](https://www.docker.com/get-started/) (for running the A2A client)
 - Optional: [Langfuse deployed locally](https://langfuse.com/self-hosting/docker-compose) or accessible remotely
-- Optional: [Docker](https://www.docker.com/get-started/) (for running the A2A inspector or related tooling)
 
 ## Quick Start
 
 ```bash
 mkdir komodor_agent
 cd komodor_agent
+# Configure the Komodor client auth headers
+echo "headers:\n  X-API-KEY: \"{token}\"" >> config.yaml
+# Get the Komodor OpenAPI spec
 curl -s https://api.komodor.com/api/docs/doc.json > komodor_api.yaml
+# Generate the agent and eval code
 uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file path/to/komodor_openapi.json \
+  --spec-file komodor_api.yaml \
   --output-dir . \
   --generate-agent \
   --generate-eval
 ```
 
-## Feature Highlights
-
-- Automatic MCP server generation from Komodor OpenAPI spec
-- Tool modules for each Komodor endpoint with typed parameters
-- Generated API client using httpx
-- Generated LangGraph React agent with A2A server for easy client integration
-- Eval-mode for building a high-quality golden dataset
-- Evaluation pipeline with correctness, hallucination, and trajectory accuracy
-- Optional docstring enhancement via LLM to improve developer ergonomics
-- Optional Langfuse tracing and evaluation dashboards
-
 ## Architecture
 
-The generated architecture looks like this for Komodor:
+The generated architecture looks like this for the Komodor agent:
 
 ```mermaid
 flowchart TD
@@ -70,27 +63,34 @@ flowchart TD
   E -.-> D
 ```
 
-## Environment Configuration
+## Running the agent
 
-Set your LLM and Komodor environment variables. The exact names of API_URL/TOKEN will depend on the generated package (e.g., MCP package name like mcp_komodor). Adjust as needed.
+### Setup environment variables
+
+Follow [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms/) to setting up your LLM provider environment variables, then with your Komodor ([optionally Langfuse](https://langfuse.com/faq/all/where-are-langfuse-api-keys)) API keys:
 
 ```bash
-# LLM config
-export LLM_PROVIDER=openai
-export OPENAI_API_KEY=<your_openai_api_key>
-export OPENAI_ENDPOINT=https://api.openai.com/v1
-export OPENAI_MODEL_NAME=gpt-4o-mini
-
-# Komodor API config (example; align with your generated client)
 export KOMODOR_API_URL=https://api.komodor.com
-export KOMODOR_API_TOKEN=<your_komodor_token>
-
-# Optional: Langfuse (observability)
-export LANGFUSE_PUBLIC_KEY=pk-lf-<public-key>
-export LANGFUSE_SECRET_KEY=sk-lf-<secret-key>
+export KOMODOR_TOKEN=<your-komodor-api-key>
+# If you deployed Langfuse locally:
 export LANGFUSE_HOST=http://localhost:3000
-export LANGFUSE_TRACING_ENABLED=True
+export LANGFUSE_PUBLIC_KEY=<your-langfuse-public-key>
+export LANGFUSE_SECRET_KEY=<your-langfuse-secret-key>
 ```
+
+### Run the agent and client
+
+```bash
+make run-a2a
+```
+
+Then in a separate terminal:
+
+```bash
+make run-a2a-client
+```
+
+Now you're able to interact with your agent! Ask a query like "What clusters do I have?"
 
 ## 1) Generate and Run an A2A-enabled Agent
 

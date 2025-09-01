@@ -21,7 +21,8 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
     --spec-file examples/petstore/openapi_petstore.json \
     --output-dir examples/petstore \
     --generate-agent \
-    --generate-eval
+    --generate-eval \
+    --enable-slim    # optional: serve A2A over SLIM transport
   ```
 
 ## ✨ Features
@@ -38,6 +39,7 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
   alongside the generated MCP server.
 - 📊 **--generate-eval**: adds interactive eval mode and automated evaluation suite
 - 🧠 **--generate-system-prompt**: generates a SYSTEM prompt for the agent using your configured LLM
+- 🔌 **--enable-slim**: run the generated agent’s A2A server over SLIM transport (requires agntcy_app_sdk and a running SLIM data plane)
 
 ## How It Works
 
@@ -45,6 +47,19 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - The generator parses paths, operations, and schemas, then renders Jinja2 templates into a structured Python MCP server.
 - Optionally, it generates an accompanying LangGraph agent and A2A server wrapper that can call the generated MCP tools.
 - Also supports tracing and evaluation using [LangFuse](https://github.com/langfuse/langfuse)
+
+## SLIM Support
+
+- Use `--enable-slim` to make the generated A2A server run over the SLIM transport instead of binding an HTTP port.
+- Prerequisites:
+  - SLIM data plane running; follow https://docs.agntcy.org/messaging/slim-howto/
+  - Python dependency: `agntcy-app-sdk` (auto-added to agent dependencies when you use `--enable-slim`)
+- Runtime:
+  - The A2A server is bridged via `AgntcyFactory` from `agntcy_app_sdk.factory`
+  - Set `SLIM_ENDPOINT` to your SLIM data-plane endpoint (default: `http://localhost:46357`)
+  - The same Makefile target `make run-a2a` still applies; when built with `--enable-slim` it connects over SLIM instead of hosting HTTP locally
+- Reference:
+  - SLIM Core: https://docs.agntcy.org/messaging/slim-core/
 
 ## Development
 
@@ -71,6 +86,9 @@ uv sync
   - Uses your configured LLM to create a SYSTEM prompt tailored to the generated tools
 - **--enhance-docstring-with-llm**
   - Optionally rewrites tool docstrings using an LLM
+- **--enable-slim**
+  - Bridges the generated A2A Starlette application to SLIM via AgntcyFactory.
+  - Requires agntcy_app_sdk and a running SLIM data plane; configure SLIM_ENDPOINT (default http://localhost:46357).
 
 ## Generated Architecture
 
@@ -149,6 +167,8 @@ uv run python petstore_mock_server.py
 cd examples/petstore
 make run-a2a
 ```
+
+Note: If you generated with `--enable-slim`, `make run-a2a` will start the A2A server over SLIM. Ensure a SLIM data plane is reachable at `SLIM_ENDPOINT` (default `http://localhost:46357`).
 
 5. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
 ```

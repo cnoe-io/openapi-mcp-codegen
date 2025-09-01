@@ -75,6 +75,12 @@ def get_mcp_name(spec_path):
       help="Also generate a minimal WebSocket upstream server; deploy the external a2a-proxy to expose an A2A HTTP API.",
   )
 @click.option(
+      "--enable-slim",
+      is_flag=True,
+      default=False,
+      help="Enable SLIM transport for the agent A2A server (requires agntcy_app_sdk).",
+  )
+@click.option(
   "--dry-run",
   is_flag=True,
   default=False,
@@ -103,6 +109,7 @@ def main(
    generate_eval,
    generate_system_prompt,
    with_a2a_proxy,
+   enable_slim,
 ):
   # Load environment variables from .env file if present
   env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
@@ -139,6 +146,7 @@ def main(
       generate_eval=generate_eval,
       generate_system_prompt=generate_system_prompt,
       with_a2a_proxy=with_a2a_proxy,
+      enable_slim=enable_slim,
   )
   generator.generate()
 
