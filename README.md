@@ -117,7 +117,7 @@ flowchart TD
   E -.-> D
 ```
 
-The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
+The generated architecture includes an MCP server in STDIO mode and two built-in utility tools: get_current_time and iso8601_to_unix.
 
 ## Example: Petstore A2A LangGraph agent + MCP Server
 

@@ -24,10 +24,11 @@ run-a2a:  ## Install deps (via uv) and run the A2A server
 .PHONY: run-a2a-and-slim
 run-a2a-and-slim:
 	@if [ ! -f docker-compose.yml ]; then echo "docker-compose.yml not found. Ensure this agent was generated with --enable-slim."; exit 1; fi
+	docker build -t agent_{{ mcp_name }}:latest .
 	SLIM_ENDPOINT=$${SLIM_ENDPOINT:-http://localhost:46357} \
 	A2A_PORT=$${PORT:-8000} \
 	SLIM_A2A_PORT=$${SLIM_PORT:-8001} \
-	docker compose up --build
+	docker compose up
 {% endif %}
 {% endif %}
 

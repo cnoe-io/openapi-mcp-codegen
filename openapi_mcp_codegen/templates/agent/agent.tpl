@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict
 from dotenv import load_dotenv
 
-from datetime import datetime
+from datetime import datetime, timezone
 from langchain_core.tools import tool
 
 from langchain_core.runnables import RunnableConfig
@@ -43,6 +43,34 @@ def get_current_time() -> str:
     return datetime.now().isoformat()
 
 
+@tool
+def iso8601_to_unix(iso_str: str) -> str:
+    """
+    Convert an ISO-8601 datetime string to a Unix timestamp (seconds since epoch).
+    If no timezone is present, assume UTC.
+    """
+    s = iso_str.strip()
+    # Support common variations: with/without 'Z', with offset, with space instead of 'T'
+    # Normalize space to 'T' to help fromisoformat
+    if " " in s and "T" not in s:
+        s = s.replace(" ", "T")
+
+    # Handle trailing 'Z' (UTC)
+    if s.endswith("Z"):
+        s = s[:-1] + "+00:00"
+
+    try:
+        dt = datetime.fromisoformat(s)
+    except ValueError:
+        # Fallback: try parsing without separators or with milliseconds
+        raise ValueError(f"Invalid ISO-8601 datetime string: {iso_str}")
+
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+
+    return str(int(dt.timestamp()))
+
+
 async def create_agent(prompt: str | None = None, response_format=None):
     """
     Spin-up the MCP server as a subprocess via MultiServerMCPClient and build
@@ -68,13 +96,7 @@ async def create_agent(prompt: str | None = None, response_format=None):
                     "{{ mcp_name | upper }}_TOKEN": api_token,
                 },
                 "transport": "stdio",
-            },
-            # Utility MCP
-            "unix_timestamps_mcp": {
-                "command": "npx",
-                "args": ["-y", "github:Ivor/unix-timestamps-mcp"],
-                "transport": "stdio",
-            },
+            }
         }
     )
     mcp_tools = await client.get_tools()
@@ -82,7 +104,7 @@ async def create_agent(prompt: str | None = None, response_format=None):
         get_client().update_current_trace(tags=["{{ mcp_name }}-agent"])
     except Exception:
         pass
-    tools = mcp_tools + [get_current_time]
+    tools = mcp_tools + [get_current_time, iso8601_to_unix]
     # Attach Langfuse callback handler so LangChain/LLM/tool calls are traced
     try:
         get_client().update_current_trace(tags=["{{ mcp_name }}-agent"])
