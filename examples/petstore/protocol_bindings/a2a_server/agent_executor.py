@@ -87,7 +87,26 @@ class PetstoreAgentExecutor(AgentExecutor):
           await updater.complete()
           break
     except Exception as e:
-      logger.error(f"An error occurred while streaming the response: {e}")
+      # Log full traceback and execution context
+      logger.error(
+        "Streaming error (context_id=%s, task_id=%s): %s (%s)",
+        getattr(task, "context_id", None),
+        getattr(task, "id", None),
+        str(e),
+        e.__class__.__name__,
+        exc_info=True,
+      )
+      # If this is an ExceptionGroup (e.g., from asyncio.TaskGroup), log nested exceptions too
+      sub_excs = getattr(e, "exceptions", None)
+      if isinstance(sub_excs, (list, tuple)):
+        for idx, sub in enumerate(sub_excs):
+          logger.error(
+            "  └─ sub-exception[%d]: %s (%s)",
+            idx,
+            str(sub),
+            sub.__class__.__name__,
+            exc_info=True,
+          )
       raise ServerError(error=InternalError()) from e
 
   def _validate_request(self, context: RequestContext) -> bool:

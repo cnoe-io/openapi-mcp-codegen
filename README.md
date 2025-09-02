@@ -176,8 +176,11 @@ This creates a new dataset in LangFuse and triggers an evaluation run.
 
 ### Extension: SLIM
 
+This section requires `host.docker.internal` to be accessible. See [this GitHub issue](https://github.com/docker/for-mac/issues/7332) if you encounter any problems.
+
 10. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
 ```
+export PETSTORE_API_URL=http://host.docker.internal:10000  # Needed so that the MCP server can talk to the mock API server running on the host
 make run-a2a-and-slim
 ```
 This docker-compose:
