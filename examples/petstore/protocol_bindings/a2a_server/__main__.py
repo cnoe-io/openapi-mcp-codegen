@@ -81,11 +81,7 @@ async def _run_slim(host: str, port: int) -> None:
   server = _build_server(host, port)
   factory = AgntcyFactory()
   SLIM_ENDPOINT = os.getenv("SLIM_ENDPOINT", "http://localhost:46357")
-  transport = factory.create_transport(
-    "SLIM",
-    endpoint=SLIM_ENDPOINT,
-    name="default/default/petstore-agent",
-  )
+  transport = factory.create_transport("SLIM", endpoint=SLIM_ENDPOINT, name="default/default/petstore-agent")
   print("Transport created successfully.")
   bridge = factory.create_bridge(server, transport=transport)
   print("Bridge created successfully. Starting the bridge.")

@@ -35,10 +35,10 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - 📚 Comprehensive documentation generation
 - 🚀 **--generate-agent** flag – additionally produces a LangGraph
   React agent (with A2A server, Makefile, README and .env.example)
-  alongside the generated MCP server.
+  alongside the generated MCP server
 - 📊 **--generate-eval**: adds interactive eval mode and automated evaluation suite
 - 🧠 **--generate-system-prompt**: generates a SYSTEM prompt for the agent using your configured LLM
-- 🔌 Optional [SLIM](https://github.com/agntcy/slim) transport support is available (see Experimental section).
+- 🔌 Optional [SLIM](https://github.com/agntcy/slim) transport support is available (see Experimental section)
 
 ## How It Works
 
@@ -138,7 +138,7 @@ export LANGFUSE_HOST=http://localhost:3000
 export LANGFUSE_TRACING_ENABLED=True
 ```
 
-5. Go to the agent directory and run the mock server.
+4. Go to the agent directory and run the mock server.
 
 ```
 cd examples/petstore
@@ -146,14 +146,14 @@ uv pip install "fastapi>=0.116"
 uv run python petstore_mock_server.py
 ```
 
-6. In a new terminal from the root of the git repo:
+5. In a new terminal from the root of the git repo:
 
 ```
 cd examples/petstore
 make run-a2a
 ```
 
-7. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
+6. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
 ```
 cd examples/petstore
 make run-a2a-client
@@ -161,13 +161,13 @@ make run-a2a-client
 
 You now have an agent and client deployed, e.g. ask `List my available pets`. You can see tracing in LangFuse (http://localhost:3000) if enabled. Follow the next steps to evaluate your agent:
 
-8. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
+7. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
 
 ```
 make run-a2a-eval-mode
 ```
 
-9. Once you are done building the dataset, launch the evaluation:
+8. Once you are done building the dataset, launch the evaluation:
 ```
 make eval
 ```
@@ -178,17 +178,17 @@ This creates a new dataset in LangFuse and triggers an evaluation run.
 
 This section requires `host.docker.internal` to be accessible. See [this GitHub issue](https://github.com/docker/for-mac/issues/7332) if you encounter any problems.
 
-10. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
+9. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
 ```
 export PETSTORE_API_URL=http://host.docker.internal:10000  # Needed so that the MCP server can talk to the mock API server running on the host
 make run-a2a-and-slim
 ```
 This docker-compose:
-- builds the agent image and runs two containers: one A2A over HTTP and one A2A bridged to SLIM,
+- Runs two containers: one A2A over HTTP and one A2A bridged to SLIM,
 - starts a slim-dataplane service defined in slim-config.yaml,
 - wires Langfuse into both containers (assuming `host.docker.internal` is accessible, alternatively add the langfuse components to the generate docker-compose file and update the `LANGFUSE_HOST` environment variable to `http://langfuse-web:3000`).
 
-To connect to the SLIM-bridged agent from the client in a new terminal run:
+10. To connect to the SLIM-bridged agent from the client in a new terminal run:
 ```
 make run-slim-client
 ```
