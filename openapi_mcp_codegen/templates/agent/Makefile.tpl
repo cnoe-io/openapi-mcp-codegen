@@ -29,6 +29,14 @@ run-a2a-and-slim:
 	A2A_PORT=$${PORT:-8000} \
 	SLIM_A2A_PORT=$${SLIM_PORT:-8001} \
 	docker compose up
+
+.PHONY: run-slim-client
+run-slim-client:
+	docker run -it --network=host \
+		-e AGENT_CHAT_PROTOCOL=slim \
+		-e SLIM_ENDPOINT=$${SLIM_ENDPOINT:-http://0.0.0.0:46357} \
+		-e SLIM_REMOTE_CARD=$${SLIM_REMOTE_CARD:-http://0.0.0.0:8000/.well-known/agent.json} \
+		ghcr.io/cnoe-io/agent-chat-cli:stable
 {% endif %}
 {% endif %}
 
