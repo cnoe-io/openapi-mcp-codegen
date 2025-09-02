@@ -1,12 +1,14 @@
-# Building a Komodor Agent (with A2A, LangGraph, MCP and Langfuse for Evaluation)
+# Building a Komodor Agent (with A2A, SLIM, LangGraph, MCP and Langfuse for Evaluation)
 
-At Outshift by Cisco we use [Komodor](https://komodor.com/) to simplify our cluster management at scale. Komodor provides an AI assistant, Klaudia, that specializes in root-cause analysis (RCA). This guide shows how to use the [OpenAPI → MCP code generator](https://github.com/cnoe-io/openapi-mcp-codegen) to build an A2A-enabled LangGraph ReAct agent that calls Klaudia and Komodor APIs through MCP. The agent also ships an **eval-mode** that is used to collect a **golden dataset** to run evaluations with results & tracing uploaded to [Langfuse](https://langfuse.com/).
+At Outshift by Cisco we use Komodor to simplify our cluster management at scale. Komodor provides an AI assistant, Klaudia, that specializes in root-cause analysis (RCA). This guide shows how to use the OpenAPI → MCP code generator to build an A2A-enabled LangGraph ReAct agent that calls Klaudia and Komodor APIs through MCP. Optionally, you can enable the SLIM transport from AGNTCY (https://agntcy.org/) for secure low-latency interactive messaging (see SLIM Core: https://docs.agntcy.org/messaging/slim-core/). The agent also ships an eval-mode used to collect a golden dataset to run evaluations with results & tracing uploaded to Langfuse.
 
 ## Overview
 
 We will:
+
 - Generate an MCP server from Komodor’s OpenAPI spec
 - Generate a LangGraph React agent with A2A bindings
+- Optionally enable SLIM transport via AGNTCY for low-latency messaging
 - Optionally enable tracing/observability with Langfuse
 - Build a golden dataset of expected requests/responses using **eval-mode**
 - Run automated evaluation and upload results to Langfuse
@@ -16,7 +18,7 @@ We will:
 - `uv` installed
 - Komodor OpenAPI spec ([access here](https://api.komodor.com/api/docs/doc.json))
 - LLM provider credentials (OpenAI, Azure OpenAI, etc.)
-- [Docker](https://www.docker.com/get-started/) (for running the A2A client)
+- [Docker](https://www.docker.com/get-started/) (for running the A2A client and SLIM agents)
 - Optional: [Langfuse deployed locally](https://langfuse.com/self-hosting/docker-compose) or accessible remotely
 
 ## Quick Start
@@ -33,7 +35,8 @@ uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_co
   --spec-file komodor_api.yaml \
   --output-dir . \
   --generate-agent \
-  --generate-eval
+  --generate-eval \
+  --enable-slim
 ```
 
 ## Architecture
@@ -42,32 +45,50 @@ The generated architecture looks like this for the Komodor agent:
 
 ```mermaid
 flowchart TD
+  %% Client side
   subgraph Client Layer
-    A[User Client A2A]
+    A[A2A Client]
   end
+
+  %% Transport/Messaging
+  subgraph Messaging Layer
+    S[SLIM Dataplane]
+  end
+
+  %% A2A Server
   subgraph Agent Transport Layer
-    B[Google A2A]
+    B[A2A Server]
   end
+
+  %% Agent Framework
   subgraph Agent Framework Layer
     C[LangGraph ReAct Agent]
   end
+
+  %% Tools/MCP and external API
   subgraph Tools/MCP Layer
     D[Komodor MCP Server]
-    E[Komodor API]
+    E[Komodor API (HTTPS)]
   end
-  A --> B
+
+  %% Edges
+  A -- A2A over SLIM --> S
+  S -- A2A over SLIM --> B
   B --> C
-  C -.-> D
-  D -.-> C
-  D -.-> E
-  E -.-> D
+  C -. STDIO .-> D
+  D -. HTTPS .-> E
+  E -. HTTPS response .-> D
+  D -. STDIO .-> C
 ```
 
 ## Running the agent
 
+Placeholder for GIF: running the agent with SLIM enabled  
+[GIF: Insert screen capture showing make run-a2a-and-slim and make run-slim-client]
+
 ### Setup environment variables
 
-Follow [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms/) to setting up your LLM provider environment variables, then with your Komodor ([optionally Langfuse](https://langfuse.com/faq/all/where-are-langfuse-api-keys)) API keys:
+Follow [this guide](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms/) to setting up your LLM provider environment variables, then with your Komodor ([optionally Langfuse](https://langfuse.com/faq/all/where-are-langfuse-api-keys)) API keys: You do not need any host.docker.internal configuration here since Komodor is an external service.
 
 ```bash
 export KOMODOR_API_URL=https://api.komodor.com
@@ -94,7 +115,7 @@ Now you're able to interact with your agent! Ask a query like "What clusters do 
 
 ## 1) Generate and Run an A2A-enabled Agent
 
-- Run the generator (as shown in Quick Start).
+- Run the generator (as shown in Quick Start). The command includes --enable-slim to generate SLIM transport support and a docker-compose file.
 - Start any required mock or dev server for the Komodor API if applicable, or point to a real environment.
 - Launch the generated A2A agent server.
 - Use an A2A client (or A2A Inspector) to send queries like: “Run RCA on namespace X for service Y” or “Explain the incident timeline for deployment Z.”
@@ -159,6 +180,28 @@ This will:
 - Execute each dataset case through the agent  
 - Upload results and metrics to Langfuse for analysis  
 
+## 4) Run the agent over SLIM and use the SLIM client
+
+If you generated with --enable-slim, you can run the A2A server bridged to SLIM (AGNTCY). Because Komodor is an external API, you don’t need host.docker.internal in your environment. Ensure your Komodor configuration is set:
+
+```bash
+export KOMODOR_API_URL=https://api.komodor.com
+export KOMODOR_TOKEN=<your-komodor-api-key>
+```
+
+Start the SLIM stack (A2A over HTTP + A2A bridged to SLIM + slim-dataplane via docker-compose):
+```bash
+make run-a2a-and-slim
+```
+
+In a separate terminal, connect using the SLIM client:
+```bash
+make run-slim-client
+```
+
+Placeholder for GIF: running the agent with SLIM enabled  
+[GIF: Insert screen capture showing make run-a2a-and-slim and make run-slim-client]
+
 ## Tips and Conventions
 
 - Operation IDs in the Komodor OpenAPI spec become Python function names (snake_case)
@@ -167,6 +210,7 @@ This will:
 - Use --dry-run to preview generation
 - Use --enhance-docstring-with-llm to improve tool docstrings
 - If you enable --generate-system-prompt, the generator crafts a SYSTEM prompt tailored to the generated Komodor tools and endpoints
+- Use --enable-slim to generate an A2A server bridged through AGNTCY SLIM; use make run-a2a-and-slim and make run-slim-client to run and connect over SLIM.
 
 ## Troubleshooting
 
@@ -175,6 +219,7 @@ This will:
 - Verify A2A server is reachable (e.g., curl http://localhost:8000/.well-known/agent.json)
 - If using Langfuse, verify keys/host and that LANGFUSE_TRACING_ENABLED=True
 - For A2A Inspector, follow its setup and point it to your agent URL
+- For SLIM transport, ensure docker-compose brings up slim-dataplane and the SLIM-bridged agent. No host.docker.internal is required for Komodor since it’s external.
 
 ## Next Steps
 
