@@ -45,40 +45,23 @@ The generated architecture looks like this for the Komodor agent:
 
 ```mermaid
 flowchart TD
-  %% Client side
-  subgraph Client Layer
-    A[A2A Client]
+  subgraph A2A over SLIM
+    A[User Client A2A]
+    B[Google A2A]
+    A --> B
   end
-
-  %% Transport/Messaging
-  subgraph Messaging Layer
-    S[SLIM Dataplane]
-  end
-
-  %% A2A Server
-  subgraph Agent Transport Layer
-    B[A2A Server]
-  end
-
-  %% Agent Framework
   subgraph Agent Framework Layer
     C[LangGraph ReAct Agent]
   end
-
-  %% Tools/MCP and external API
   subgraph Tools/MCP Layer
     D[Komodor MCP Server]
-    E[Komodor API (HTTPS)]
+    E[Komodor API]
   end
-
-  %% Edges
-  A -- A2A over SLIM --> S
-  S -- A2A over SLIM --> B
   B --> C
-  C -. STDIO .-> D
-  D -. HTTPS .-> E
-  E -. HTTPS response .-> D
-  D -. STDIO .-> C
+  C -.-> D
+  D -.-> C
+  D -.-> E
+  E -.-> D
 ```
 
 ## Running the agent
