@@ -2,7 +2,11 @@
 {% if a2a_proxy %}
 .PHONY: run-with-proxy reset
 {% else %}
+{% if enable_slim %}
+.PHONY: run-a2a run-a2a-and-slim run-a2a-client reset
+{% else %}
 .PHONY: run-a2a run-a2a-client reset
+{% endif %}
 {% endif %}
 
 {% if a2a_proxy %}
@@ -15,6 +19,25 @@ run-with-proxy:  ## Install deps (via uv) and run the WebSocket proxy
 run-a2a:  ## Install deps (via uv) and run the A2A server
 	uv pip install -e . --upgrade
 	uv run python -m protocol_bindings.a2a_server --host 127.0.0.1 --port $${PORT:-8000}
+{% if enable_slim %}
+# Run HTTP A2A and SLIM bridge side-by-side via Docker Compose
+.PHONY: run-a2a-and-slim
+run-a2a-and-slim:
+	@if [ ! -f docker-compose.yml ]; then echo "docker-compose.yml not found. Ensure this agent was generated with --enable-slim."; exit 1; fi
+	docker build -t agent_{{ mcp_name }}:latest .
+	SLIM_ENDPOINT=$${SLIM_ENDPOINT:-http://localhost:46357} \
+	A2A_PORT=$${PORT:-8000} \
+	SLIM_A2A_PORT=$${SLIM_PORT:-8001} \
+	docker compose up
+
+.PHONY: run-slim-client
+run-slim-client:
+	docker run -it --network=host \
+		-e AGENT_CHAT_PROTOCOL=slim \
+		-e SLIM_ENDPOINT=$${SLIM_ENDPOINT:-http://0.0.0.0:46357} \
+		-e SLIM_REMOTE_CARD=$${SLIM_REMOTE_CARD:-http://0.0.0.0:8000/.well-known/agent.json} \
+		ghcr.io/cnoe-io/agent-chat-cli:stable
+{% endif %}
 {% endif %}
 
 {% if not a2a_proxy %}

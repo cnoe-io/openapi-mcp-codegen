@@ -35,9 +35,10 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - 📚 Comprehensive documentation generation
 - 🚀 **--generate-agent** flag – additionally produces a LangGraph
   React agent (with A2A server, Makefile, README and .env.example)
-  alongside the generated MCP server.
+  alongside the generated MCP server
 - 📊 **--generate-eval**: adds interactive eval mode and automated evaluation suite
 - 🧠 **--generate-system-prompt**: generates a SYSTEM prompt for the agent using your configured LLM
+- 🔌 Optional [SLIM](https://github.com/agntcy/slim) transport support is available (see Experimental section)
 
 ## How It Works
 
@@ -71,6 +72,8 @@ uv sync
   - Uses your configured LLM to create a SYSTEM prompt tailored to the generated tools
 - **--enhance-docstring-with-llm**
   - Optionally rewrites tool docstrings using an LLM
+- **--enable-slim**
+  - Bridges the generated A2A Starlette application to SLIM via AgntcyFactory and generates a docker-compose file to bring up the services
 
 ## Generated Architecture
 
@@ -99,7 +102,7 @@ flowchart TD
   E -.-> D
 ```
 
-The generated architecture includes an MCP server in STDIO mode and a couple of additional helper MCP tools `unix_timestamps_mcp` and `get_current_time`.
+The generated architecture includes an MCP server in STDIO mode and two built-in utility tools: get_current_time and iso8601_to_unix.
 
 ## Example: Petstore A2A LangGraph agent + MCP Server
 
@@ -143,14 +146,14 @@ uv pip install "fastapi>=0.116"
 uv run python petstore_mock_server.py
 ```
 
-4. In a new terminal from the root of the git repo:
+5. In a new terminal from the root of the git repo:
 
 ```
 cd examples/petstore
 make run-a2a
 ```
 
-5. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
+6. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
 ```
 cd examples/petstore
 make run-a2a-client
@@ -158,20 +161,39 @@ make run-a2a-client
 
 You now have an agent and client deployed, e.g. ask `List my available pets`. You can see tracing in LangFuse (http://localhost:3000) if enabled. Follow the next steps to evaluate your agent:
 
-6. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
+7. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
 
 ```
 make run-a2a-eval-mode
 ```
 
-7. Once you are done building the dataset, launch the evaluation:
+8. Once you are done building the dataset, launch the evaluation:
 ```
 make eval
 ```
 
 This creates a new dataset in LangFuse and triggers an evaluation run.
 
-### A2A Inspector Tool
+### Extension: SLIM
+
+This section requires `host.docker.internal` to be accessible. See [this GitHub issue](https://github.com/docker/for-mac/issues/7332) if you encounter any problems.
+
+9. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
+```
+export PETSTORE_API_URL=http://host.docker.internal:10000  # Needed so that the MCP server can talk to the mock API server running on the host
+make run-a2a-and-slim
+```
+This docker-compose:
+- Runs two containers: one A2A over HTTP and one A2A bridged to SLIM,
+- starts a slim-dataplane service defined in slim-config.yaml,
+- wires Langfuse into both containers (assuming `host.docker.internal` is accessible, alternatively add the langfuse components to the generate docker-compose file and update the `LANGFUSE_HOST` environment variable to `http://langfuse-web:3000`).
+
+10. To connect to the SLIM-bridged agent from the client in a new terminal run:
+```
+make run-slim-client
+```
+
+## A2A Inspector Tool
 
 The A2A Inspector is a utility for inspecting and debugging A2A servers. It provides a visual interface to explore agent cards and invoke the agent. Follow the instructions [on the project page](https://github.com/a2aproject/a2a-inspector) to build and run the inspector, which should be available at localhost:8080. You can then connect to the agent running on `localhost:8000/.well-known/agent.json`.
 
@@ -208,11 +230,28 @@ The A2A Inspector is a utility for inspecting and debugging A2A servers. It prov
 
 ## Experimental
 
-- --with-a2a-proxy (experimental)
-  - Generates a minimal WebSocket upstream server intended to sit behind an external [a2a-proxy](https://github.com/artdroz/a2a-proxy).
-  - Deploy the external a2a-proxy separately and configure it to connect to the WS upstream (ws://host:port). The proxy exposes an A2A HTTP API (e.g., /a2a/v1) for clients.
-  - When combined with --generate-agent, a Makefile target may be provided (e.g. `make run-with-proxy`) to start the WS upstream locally.
-  - This pathway is experimental and subject to change. Use for evaluation and prototyping only.
+### SLIM Support
+
+Use **--enable-slim** to build an agent that can run its A2A server over the SLIM transport.
+
+- When generated with `--enable-slim`, docker-compose also brings up a `slim-dataplane` service and connects the agent over SLIM.
+- The agent A2A server runs over SLIM via `AgntcyFactory`.
+- Use `make run-a2a-and-slim` to start both HTTP A2A and the SLIM bridge stack, including the `slim-dataplane`.
+- To connect to the SLIM-bridged agent from the client:
+  ```
+  make run-slim-client
+  ```
+- Reference:
+  - SLIM Core: https://docs.agntcy.org/messaging/slim-core/
+
+### A2A proxy
+
+**--with-a2a-proxy** flag
+
+- Generates a minimal WebSocket upstream server intended to sit behind an external [a2a-proxy](https://github.com/artdroz/a2a-proxy).
+- Deploy the external a2a-proxy separately and configure it to connect to the WS upstream (ws://host:port). The proxy exposes an A2A HTTP API (e.g., /a2a/v1) for clients.
+- When combined with --generate-agent, a Makefile target may be provided (e.g. `make run-with-proxy`) to start the WS upstream locally.
+- This pathway is experimental and subject to change. Use for evaluation and prototyping only.
 
 ## Common Debugging Patterns
 

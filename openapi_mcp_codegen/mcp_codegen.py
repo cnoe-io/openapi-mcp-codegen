@@ -111,7 +111,8 @@ class MCPGenerator:
       generate_agent: bool = False,
       generate_eval: bool = False,
       generate_system_prompt: bool = False,
-      with_a2a_proxy: bool = False):
+      with_a2a_proxy: bool = False,
+      enable_slim: bool = False):
     """
     Initialize the MCPGenerator with paths and configuration.
 
@@ -132,7 +133,7 @@ class MCPGenerator:
     with open(config_path, encoding='utf-8') as f:
       self.config = yaml.safe_load(f)
     self.spec = self._load_spec()
-    self.mcp_name = self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
+    self.mcp_name = self.config.get('mcp_name') or self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
     self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
@@ -140,6 +141,7 @@ class MCPGenerator:
     self.generate_eval = generate_eval
     self.generate_system_prompt = generate_system_prompt
     self.with_a2a_proxy = with_a2a_proxy
+    self.enable_slim = enable_slim
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -688,6 +690,8 @@ class MCPGenerator:
       """
 
       agent_dependencies = base_deps + (eval_deps if self.generate_eval else "")
+      if self.enable_slim:
+          agent_dependencies += '    "agntcy-app-sdk>=0.1.0",\n'
       if self.with_a2a_proxy:
           agent_dependencies += '\n    "websockets>=12.0",\n'
 
@@ -710,6 +714,7 @@ class MCPGenerator:
           mcp_name=self.mcp_name,
           generate_eval=generate_eval,
           a2a_proxy=self.with_a2a_proxy,
+          enable_slim=self.enable_slim,
           **file_header_kwargs,
       )
 
@@ -723,6 +728,31 @@ class MCPGenerator:
           a2a_proxy=self.with_a2a_proxy,
           **file_header_kwargs,
       )
+
+      # Render Dockerfile for containerized runs
+      logger.info("Rendering agent/Dockerfile")
+      self.render_template(
+          "agent/Dockerfile.tpl",
+          os.path.join(agent_dir, "Dockerfile"),
+          mcp_name=self.mcp_name,
+          enable_slim=self.enable_slim,
+          **file_header_kwargs,
+      )
+
+      # -------------------- docker-compose (only when SLIM enabled)
+      if self.enable_slim:
+          logger.info("Rendering agent/docker-compose.yml")
+          self.render_template(
+              "agent/docker-compose.tpl",
+              os.path.join(agent_dir, "docker-compose.yml"),
+              mcp_name=self.mcp_name,
+          )
+          logger.info("Rendering agent/slim-config.yaml")
+          self.render_template(
+              "agent/slim-config.yaml.tpl",
+              os.path.join(agent_dir, "slim-config.yaml"),
+              mcp_name=self.mcp_name,
+          )
 
 
       if self.generate_eval:
@@ -817,7 +847,13 @@ class MCPGenerator:
       self.render_template("agent/a2a_server/agent_executor.tpl", os.path.join(a2a_dir, "agent_executor.py"), mcp_name=self.mcp_name, **fh)
 
       logger.info("Rendering __main__.py")
-      self.render_template("agent/a2a_server/__main__.tpl", os.path.join(a2a_dir, "__main__.py"), mcp_name=self.mcp_name, **fh)
+      self.render_template(
+          "agent/a2a_server/__main__.tpl",
+          os.path.join(a2a_dir, "__main__.py"),
+          mcp_name=self.mcp_name,
+          enable_slim=self.enable_slim,
+          **fh,
+      )
 
       # Ruff format
       for file in ["state.py", "helpers.py", "agent.py", "agent_executor.py", "__main__.py"]:

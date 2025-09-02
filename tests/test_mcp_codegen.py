@@ -49,6 +49,13 @@ def test_generator_init(setup_env):
     assert "info" in gen.spec
     assert gen.config["author"]
 
+def test_enable_slim_flag_wiring(setup_env):
+    """
+    Verify that the `enable_slim` flag is properly wired into MCPGenerator.
+    """
+    gen = MCPGenerator(**setup_env, generate_agent=True, enable_slim=True)
+    assert getattr(gen, "enable_slim") is True
+
 def test_camel_to_snake():
     from openapi_mcp_codegen.mcp_codegen import camel_to_snake
     assert camel_to_snake("CamelCase") == "camel_case"
@@ -202,10 +209,67 @@ def test_generate_pyproject(setup_env):
     gen.generate_pyproject()
     assert os.path.exists(os.path.join(setup_env["output_dir"], "pyproject.toml"))
 
+def test_agent_pyproject_includes_slim_dep(tmp_path, setup_env):
+    """
+    Ensure that agntcy-app-sdk is added as a dependency when SLIM is enabled.
+    """
+    out = tmp_path / "agent_slim_out"
+    out.mkdir()
+    cfg = {**setup_env, "output_dir": str(out)}
+    gen = MCPGenerator(**cfg, generate_agent=True, enable_slim=True)
+    # Minimal generation steps (skip full `generate()` to keep runtime low)
+    gen.generate_api_client()
+    gen.generate_model_base()
+    gen.generate_models()
+    gen.generate_tool_modules()
+    gen.generate_server()
+    gen.generate_pyproject()
+    gen.generate_agent()
+    pyproj = (out / "pyproject.toml").read_text()
+    assert "agntcy-app-sdk" in pyproj
+
 def test_generate_init_files(setup_env):
     gen = MCPGenerator(**setup_env)
     gen.generate_init_files()
     assert os.path.exists(os.path.join(setup_env["output_dir"], "__init__.py"))
+
+def test_a2a_main_tpl_slim_branch(tmp_path, setup_env):
+    """
+    Validate that the generated A2A server __main__.py switches implementation
+    depending on the `enable_slim` flag.
+    """
+    # ------------- SLIM enabled
+    out = tmp_path / "a2a_slim_out"
+    out.mkdir()
+    cfg1 = {**setup_env, "output_dir": str(out)}
+    gen1 = MCPGenerator(**cfg1, generate_agent=True, enable_slim=True)
+    gen1.generate_api_client()
+    gen1.generate_model_base()
+    gen1.generate_models()
+    gen1.generate_tool_modules()
+    gen1.generate_server()
+    gen1.generate_pyproject()
+    gen1.generate_agent()
+    main_py_1 = (out / "protocol_bindings" / "a2a_server" / "__main__.py").read_text()
+    assert "AgntcyFactory" in main_py_1
+    assert ("create_transport(\"SLIM\"" in main_py_1) or ("create_transport('SLIM'" in main_py_1)
+    assert "asyncio" in main_py_1 and ("await bridge.start" in main_py_1 or "asyncio" in main_py_1)
+
+    # ------------- SLIM disabled
+    out2 = tmp_path / "a2a_http_out"
+    out2.mkdir()
+    cfg2 = {**setup_env, "output_dir": str(out2)}
+    gen2 = MCPGenerator(**cfg2, generate_agent=True, enable_slim=False)
+    gen2.generate_api_client()
+    gen2.generate_model_base()
+    gen2.generate_models()
+    gen2.generate_tool_modules()
+    gen2.generate_server()
+    gen2.generate_pyproject()
+    gen2.generate_agent()
+    main_py_2 = (out2 / "protocol_bindings" / "a2a_server" / "__main__.py").read_text()
+    assert "uvicorn.run" in main_py_2
+    assert "AgntcyFactory" not in main_py_2
 
 def test_tool_parameter_descriptions(setup_env):
     from openapi_mcp_codegen.mcp_codegen import MCPGenerator
@@ -278,3 +342,31 @@ def test_query_parameter_without_schema(setup_env):
 
     # Verify that the query parameter "example" is declared with type "int" as extracted from the parameter object.
     assert "param_example: int" in content, "Expected query parameter type to be int in the generated function signature"
+
+def test_cli_accepts_enable_slim(monkeypatch, tmp_path):
+    """
+    Smoke test that the CLI accepts --enable-slim and finishes successfully.
+    """
+    from click.testing import CliRunner
+    from openapi_mcp_codegen.__main__ import main
+
+    runner = CliRunner()
+    spec = tmp_path / "spec.yaml"
+    spec.write_text("info:\n  title: Test\npaths: {}\ncomponents: {}\n")
+    cfg = tmp_path / "config.yaml"
+    cfg.write_text("mcp_name: test\nfile_headers:\n  copyright: ''\n")
+    out = tmp_path / "cli_out"
+
+    result = runner.invoke(
+        main,
+        [
+            "--spec-file",
+            str(spec),
+            "--output-dir",
+            str(out),
+            "--generate-agent",
+            "--enable-slim",
+        ],
+    )
+    # Ensure command exits cleanly
+    assert result.exit_code == 0, result.output

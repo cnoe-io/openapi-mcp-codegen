@@ -22,6 +22,7 @@ See `Makefile` for useful targets.
    make run-a2a
    ```
 
+
    - This server exposes:
      - AgentCard at /.well-known/agent.json describing capabilities/skills
      - A2A endpoints handled by DefaultRequestHandler and backed by InMemoryTaskStore
@@ -50,7 +51,7 @@ Follow the on-screen prompts to chat with your Petstore tools!
     • Test each tool, update / skip as needed  
     • Traces are stored in `eval/dataset.yaml`
 
-2.  Execute the automated benchmark (uploads to LangFuse)  
+2.  Execute the automated benchmark (uploads to LangFuse)
     ```bash
     make eval               # runs eval/evaluate_agent.py
     ```
