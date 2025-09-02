@@ -138,7 +138,7 @@ export LANGFUSE_HOST=http://localhost:3000
 export LANGFUSE_TRACING_ENABLED=True
 ```
 
-4. Go to the agent directory and run the mock server.
+4. Go to the agent directory and run the mock server:
 
 ```
 cd examples/petstore
