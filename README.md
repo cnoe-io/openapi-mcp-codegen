@@ -45,7 +45,7 @@ This tool generates **Model Context Protocol (MCP) servers** from OpenAPI specif
 - You provide an OpenAPI spec (JSON or YAML).
 - The generator parses paths, operations, and schemas, then renders Jinja2 templates into a structured Python MCP server.
 - Optionally, it generates an accompanying LangGraph agent and A2A server wrapper that can call the generated MCP tools.
-- Also supports tracing and evaluation using [LangFuse](https://github.com/langfuse/langfuse)
+- Also supports tracing and evaluation using [LangFuse](https://github.com/langfuse/langfuse).
 
 ## Development
 
