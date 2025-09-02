@@ -22,6 +22,7 @@ See `Makefile` for useful targets.
    make run-a2a
    ```
 
+
    - This server exposes:
      - AgentCard at /.well-known/agent.json describing capabilities/skills
      - A2A endpoints handled by DefaultRequestHandler and backed by InMemoryTaskStore

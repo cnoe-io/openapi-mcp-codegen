@@ -8,6 +8,7 @@ disable_a2a_tracing()  # Or import automatically disables A2A
 import asyncio
 import os
 import click
+import uvicorn
 import httpx
 from agntcy_app_sdk.factory import AgntcyFactory
 
@@ -76,12 +77,15 @@ def _build_server(host: str, port: int):
 
 
 async def _run_slim(host: str, port: int) -> None:
-  # Run A2A server over SLIM transport
-  # https://docs.agntcy.org/messaging/slim-core/
+  # Run A2A server over SLIM transport (HTTP will run via docker-compose)
   server = _build_server(host, port)
   factory = AgntcyFactory()
   SLIM_ENDPOINT = os.getenv("SLIM_ENDPOINT", "http://localhost:46357")
-  transport = factory.create_transport("SLIM", endpoint=SLIM_ENDPOINT)
+  transport = factory.create_transport(
+    "SLIM",
+    endpoint=SLIM_ENDPOINT,
+    name="default/default/petstore-agent",
+  )
   print("Transport created successfully.")
   bridge = factory.create_bridge(server, transport=transport)
   print("Bridge created successfully. Starting the bridge.")
@@ -91,8 +95,19 @@ async def _run_slim(host: str, port: int) -> None:
 @click.command()
 @click.option("--host", default="0.0.0.0", help="Bind address")
 @click.option("--port", default=10000, help="Port to serve on")
-def main(host: str, port: int) -> None:
-  asyncio.run(_run_slim(host, port))
+@click.option(
+  "--enable-slim",
+  "slim",
+  is_flag=True,
+  default=False,
+  help="Enable SLIM transport instead of HTTP.",
+)
+def main(host: str, port: int, slim: bool) -> None:
+  if slim:
+    asyncio.run(_run_slim(host, port))
+  else:
+    server = _build_server(host, port)
+    uvicorn.run(server.build(), host=host, port=port)
 
 
 if __name__ == "__main__":
