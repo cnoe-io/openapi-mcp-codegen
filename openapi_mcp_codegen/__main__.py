@@ -151,12 +151,7 @@ def main(
   generator.generate()
 
   print(f"🎉 Generated MCP server in {output_dir}")
-  print("\n🚀 Next steps:")
-  print(f"\n1️⃣ Navigate to the generated directory: `cd {mcp_name}`")
-  print("\n2️⃣ Copy the example environment file: `cp .env.example .env`")
-  print("\n3️⃣ ✏️ Edit `.env` with your API credentials")
-  print("\n4️⃣ 📦 Install dependencies: `poetry install`")
-  print("\n5️⃣ ▶️ Start the server: `poetry run python -m server`\n")
+  print("\n🚀 See the README.md to continue")
 
 if __name__ == '__main__':
     main()
