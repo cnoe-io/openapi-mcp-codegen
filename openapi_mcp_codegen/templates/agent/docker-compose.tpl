@@ -14,6 +14,7 @@ services:
       - LANGFUSE_HOST=http://host.docker.internal:3000
       - PYTHONUNBUFFERED=1
       - LANGFUSE_TRACING_ENABLED=${LANGFUSE_TRACING_ENABLED}
+    env_file: .env
     ports:
       - "${A2A_PORT:-8000}:${A2A_PORT:-8000}"
   {{ mcp_name }}-slim:
@@ -30,7 +31,7 @@ services:
       - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
       - LANGFUSE_HOST=http://host.docker.internal:3000
       - LANGFUSE_TRACING_ENABLED=${LANGFUSE_TRACING_ENABLED}
-
+    env_file: .env
     depends_on:
       - slim-dataplane
 

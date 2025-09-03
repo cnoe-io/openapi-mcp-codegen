@@ -120,40 +120,45 @@ uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_co
 
 2. Configure your agent + LLM (see [LLM provider docs](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms))
 ```
-export LLM_PROVIDER=openai
-export OPENAI_API_KEY=<your_openai_api_key>
-export OPENAI_ENDPOINT=https://api.openai.com/v1
-export OPENAI_MODEL_NAME=gpt-5
+cat > .env << 'EOF'
+# Petstore API
+PETSTORE_API_URL=http://0.0.0.0:10000
+PETSTORE_TOKEN=foo
 
-export PETSTORE_API_URL=http://0.0.0.0:10000
-export PETSTORE_TOKEN=foo
+# LLM provider (configure per your provider)
+LLM_PROVIDER=openai
+OPENAI_API_KEY=<your-openai-api-key>
+OPENAI_ENDPOINT=https://api.openai.com/v1
+OPENAI_MODEL_NAME=gpt-5
+
+# Langfuse (optional)
+LANGFUSE_HOST=http://localhost:3000
+LANGFUSE_PUBLIC_KEY=<your-langfuse-public-key>
+LANGFUSE_SECRET_KEY=<your-langfuse-secret-key>
+EOF
 ```
 
-3. Optionally, [deploy LangFuse](https://langfuse.com/self-hosting/docker-compose) and add the configuration
-```
-# Langfuse (observability) configuration
-export LANGFUSE_PUBLIC_KEY=pk-lf-<public-key>
-export LANGFUSE_SECRET_KEY=sk-lf-<secret-key>
-export LANGFUSE_HOST=http://localhost:3000
-export LANGFUSE_TRACING_ENABLED=True
+Also export the variables into your shell:
+```bash
+# Exports each line of the .env ignoring lines starting with #
+export $(grep -v '^#' .env | xargs)
 ```
 
-4. Go to the agent directory and run the mock server:
+3. Go to the agent directory and run the mock server:
 
 ```
 cd examples/petstore
-uv pip install "fastapi>=0.116"
 uv run python petstore_mock_server.py
 ```
 
-5. In a new terminal from the root of the git repo:
+4. In a new terminal from the root of the git repo:
 
 ```
 cd examples/petstore
 make run-a2a
 ```
 
-6. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
+5. In a new terminal from the root of the git repo ([install Docker first](https://www.docker.com/get-started/)):
 ```
 cd examples/petstore
 make run-a2a-client
@@ -161,13 +166,13 @@ make run-a2a-client
 
 You now have an agent and client deployed, e.g. ask `List my available pets`. You can see tracing in LangFuse (http://localhost:3000) if enabled. Follow the next steps to evaluate your agent:
 
-7. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
+6. In a new terminal start the agent in eval mode. This will output the list of tools and prompt you to evaluate each one and build the dataset in `eval/dataset.yaml`
 
 ```
 make run-a2a-eval-mode
 ```
 
-8. Once you are done building the dataset, launch the evaluation:
+7. Once you are done building the dataset, launch the evaluation:
 ```
 make eval
 ```
@@ -178,7 +183,7 @@ This creates a new dataset in LangFuse and triggers an evaluation run.
 
 This section requires `host.docker.internal` to be accessible. See [this GitHub issue](https://github.com/docker/for-mac/issues/7332) if you encounter any problems.
 
-9. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
+8. If you generated with **--enable-slim**, you can also run the A2A server over SLIM and auto-start a local SLIM dataplane via docker-compose:
 ```
 export PETSTORE_API_URL=http://host.docker.internal:10000  # Needed so that the MCP server can talk to the mock API server running on the host
 make run-a2a-and-slim
@@ -188,7 +193,7 @@ This docker-compose:
 - starts a slim-dataplane service defined in slim-config.yaml,
 - wires Langfuse into both containers (assuming `host.docker.internal` is accessible, alternatively add the langfuse components to the generate docker-compose file and update the `LANGFUSE_HOST` environment variable to `http://langfuse-web:3000`).
 
-10. To connect to the SLIM-bridged agent from the client in a new terminal run:
+9. To connect to the SLIM-bridged agent from the client in a new terminal run:
 ```
 make run-slim-client
 ```
