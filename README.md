@@ -118,7 +118,7 @@ uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_co
   --generate-eval
 ```
 
-2. Configure your agent + LLM (see [LLM provider docs](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms))
+2. Configure your agent + LLM (see [LLM provider docs](https://cnoe-io.github.io/ai-platform-engineering/getting-started/docker-compose/configure-llms)) and Langfuse docs on [deploying using docker-compose](https://langfuse.com/self-hosting/deployment/docker-compose) and [creating API keys](https://langfuse.com/faq/all/where-are-langfuse-api-keys).
 ```
 cat > .env << 'EOF'
 # Petstore API
