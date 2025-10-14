@@ -32,6 +32,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "uvicorn>=0.35.0",
     "fastmcp>=2.11.1",
+    "jsonpath-ng>=1.7.0",
 ]
 
 [project.scripts]
