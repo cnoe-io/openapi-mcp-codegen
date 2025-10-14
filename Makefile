@@ -71,7 +71,12 @@ generate-petstore: uv-sync
 generate-argocd: setup-venv install
 	@echo "Generating code for ArgoCD example..."
 	@echo "Sourcing .env with set +a"
-	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --enhance-docstring-with-llm
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/argocd/openapi_argocd.json --output-dir examples/argocd/mcp_server --generate-agent
+
+generate-argo-workflows: setup-venv install
+	@echo "Generating code for Argo Workflows example..."
+	@echo "Sourcing .env with set +a"
+	@set +a; [ -f .env ] && . .env || true; . .venv/bin/activate && uv run python -m openapi_mcp_codegen --spec-file examples/argo-workflows/openapi_argo_workflows.json --output-dir examples/argo-workflows/mcp_server --generate-agent
 
 uv-sync: setup-venv
 	@echo "Running uv sync..."
