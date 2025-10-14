@@ -25,7 +25,10 @@ def camel_to_snake(name):
     if name.isupper():
         return "_".join(name).lower()
     s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    s2 = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    # Replace multiple underscores with a single underscore
+    s3 = re.sub(r'_+', '_', s2)
+    return s3
 
 class MCPGenerator:
   """
@@ -133,7 +136,14 @@ class MCPGenerator:
     with open(config_path, encoding='utf-8') as f:
       self.config = yaml.safe_load(f)
     self.spec = self._load_spec()
-    self.mcp_name = self.config.get('mcp_name') or self.spec.get('info', {}).get('title', 'generated_mcp').lower().replace(' ', '_mcp')
+    # Get MCP name from config (title or mcp_name) or fall back to spec title
+    raw_name = (
+        self.config.get('title') or 
+        self.config.get('mcp_name') or 
+        self.spec.get('info', {}).get('title', 'generated_mcp')
+    )
+    # Sanitize: lowercase, replace spaces and hyphens with underscores
+    self.mcp_name = raw_name.lower().replace(' ', '_').replace('-', '_')
     self.src_output_dir = os.path.join(self.output_dir, f'mcp_{self.mcp_name}')
     os.makedirs(self.src_output_dir, exist_ok=True)
     self.tools_map = {}
@@ -947,22 +957,88 @@ class MCPGenerator:
               break
       return resolved if resolved is not None else {}
 
-  def _extract_body_params(self, schema: Dict[str, Any], prefix: str = "body") -> list:
+  def _count_nested_params(self, schema: Dict[str, Any]) -> int:
+      """
+      Count total number of nested parameters in a schema.
+
+      Args:
+          schema: OpenAPI schema
+
+      Returns:
+          Total parameter count
+      """
+      if not isinstance(schema, dict):
+          return 0
+
+      if "$ref" in schema:
+          schema = self._resolve_ref(schema["$ref"])
+
+      count = 0
+      if schema.get("type") == "object" and "properties" in schema:
+          properties = schema.get("properties", {})
+          for prop_name, prop in properties.items():
+              count += 1  # Count this property
+              if prop.get("type") == "object" and "properties" in prop:
+                  # Recursively count nested properties
+                  count += self._count_nested_params(prop)
+
+      return count
+
+  def _extract_body_params(self, schema: Dict[str, Any], prefix: str = "body", max_params: int = 10) -> list:
       """
       Recursively extract parameters from a request body schema.
       Each parameter name is prefixed so that nested properties are flattened.
+      If schema has > max_params nested properties, returns a single Dict parameter.
       Returns a list of tuples: (signature_string, {name, type, description})
       """
       if "$ref" in schema:
           schema = self._resolve_ref(schema["$ref"])
+
+      # Check if schema is too complex - use dict mode if so
+      param_count = self._count_nested_params(schema)
+      if param_count > max_params:
+          logger.info(f"Body schema has {param_count} nested params (limit: {max_params}), using dict mode for {prefix}")
+          sig = f"{prefix}: Dict[str, Any] = None"
+          desc = schema.get("description", "")
+          if not desc:
+              desc = f"Request body as dictionary. Contains {param_count} nested properties. See OpenAPI schema for detailed structure."
+          info = {
+              "name": prefix,
+              "type": "Dict[str, Any]",
+              "description": desc
+          }
+          return [(sig, info)]
+
       # Handle JSON-Schema composition keywords ---------------------------------
       for key in ("allOf", "oneOf", "anyOf"):
           if key in schema:
+              # First, count total params across all subschemas to check if we should use dict mode
+              total_count = 0
+              for subschema in schema[key]:
+                  if "$ref" in subschema:
+                      subschema = self._resolve_ref(subschema["$ref"])
+                  total_count += self._count_nested_params(subschema)
+
+              # If total exceeds limit, use dict mode
+              if total_count > max_params:
+                  logger.info(f"Composition schema ({key}) has {total_count} total nested params (limit: {max_params}), using dict mode for {prefix}")
+                  sig = f"{prefix}: Dict[str, Any] = None"
+                  desc = schema.get("description", "")
+                  if not desc:
+                      desc = f"Request body as dictionary. Contains {total_count} nested properties across {len(schema[key])} {key} branches. See OpenAPI schema for detailed structure."
+                  info = {
+                      "name": prefix,
+                      "type": "Dict[str, Any]",
+                      "description": desc
+                  }
+                  return [(sig, info)]
+
+              # Otherwise, extract params normally
               merged: list[tuple[str, dict]] = []
               for subschema in schema[key]:
                   if "$ref" in subschema:
                       subschema = self._resolve_ref(subschema["$ref"])
-                  merged.extend(self._extract_body_params(subschema, prefix=prefix))
+                  merged.extend(self._extract_body_params(subschema, prefix=prefix, max_params=max_params))
               # Deduplicate identical signatures that may occur when the same
               # property appears in multiple branches
               seen: set[str] = set()
