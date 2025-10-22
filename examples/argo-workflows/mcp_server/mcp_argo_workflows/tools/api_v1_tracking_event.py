@@ -13,37 +13,33 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def info_service_collect_event(body_name: str = None) -> Any:
-    """
-    Perform an operation on event
+async def info_service_collect_event() -> Any:
+  """
+  Perform an operation on event
 
-    OpenAPI Description:
-        Perform an operation on event Use when: when initializing new resources based on user requirements. Required: body
+  OpenAPI Description:
+      Creates a tracking event. Use when: logging user actions or system events for analytics or monitoring purposes.
 
-    Args:
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
+  Args:
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/tracking/event")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/tracking/event")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/tracking/event", method="POST", params=params, data=data)
+  success, response = await make_api_request("/api/v1/tracking/event", method="POST", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

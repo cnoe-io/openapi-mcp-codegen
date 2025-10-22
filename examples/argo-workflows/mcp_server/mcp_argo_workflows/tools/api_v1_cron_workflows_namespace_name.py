@@ -5,7 +5,7 @@
 """Tools for /api/v1/cron-workflows/{namespace}/{name} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,257 +14,190 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None) -> Any:
-    """
-    Retrieve cron-workflows information
+  """
+  Retrieve cron-workflows information
 
-    OpenAPI Description:
-        Retrieve cron-workflows information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name
+  OpenAPI Description:
+      Retrieves details of a specific cron workflow. Use when: checking current configuration or investigating issues with scheduled tasks.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate the cron workflow"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): Specifies the cron workflow to retrieve in the given namespace.
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+      param_getOptions_resourceVersion (str): Specify resource version to retrieve specific state (optional)
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/cron-workflows/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/cron-workflows/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(
-        f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="GET", params=params, data=data
+  if param_getOptions_resourceVersion is not None:
+    params["getOptions_resourceVersion"] = (
+      str(param_getOptions_resourceVersion).lower()
+      if isinstance(param_getOptions_resourceVersion, bool)
+      else param_getOptions_resourceVersion
     )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="GET", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
-async def cron_workflow_service_update_cron_workflow(
-    path_namespace: str,
-    path_name: str,
-    body_cronWorkflow__apiVersion: str = None,
-    body_cronWorkflow__kind: str = None,
-    body_cronWorkflow__metadata: Dict[str, Any] = None,
-    body_cronWorkflow__spec: Dict[str, Any] = None,
-    body_cronWorkflow__status__active: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__conditions: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__failed: int = None,
-    body_cronWorkflow__status__lastScheduledTime: str = None,
-    body_cronWorkflow__status__phase: str = None,
-    body_cronWorkflow__status__succeeded: int = None,
-    body_name: str = None,
-    body_namespace: str = None,
-) -> Any:
-    """
-    Update or replace a cron-workflows
+async def cron_workflow_service_update_cron_workflow(path_namespace: str, path_name: str) -> Any:
+  """
+  Update or replace a cron-workflows
 
-    OpenAPI Description:
-        Update or replace a cron-workflows Use when: when modifying existing resource configurations or properties. Required: namespace, name, body
+  OpenAPI Description:
+      Updates cron workflow configuration. Use when: modifying schedule or settings of an existing cron workflow.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to target for the cron workflow operation"
 
-        path_name (str): DEPRECATED: This field is ignored.
-
-        body_cronWorkflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
-
-        body_cronWorkflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-
-        body_cronWorkflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-
-        body_cronWorkflow__spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
-
-        body_cronWorkflow__status__active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
-
-        body_cronWorkflow__status__conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
-
-        body_cronWorkflow__status__failed (int): v3.6 and after: Failed counts how many times child workflows failed
-
-        body_cronWorkflow__status__lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
-
-        body_cronWorkflow__status__phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
-
-        body_cronWorkflow__status__succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
-
-        body_name (str): DEPRECATED: This field is ignored.
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
+      path_name (str): Unique name of the cron workflow to update
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/cron-workflows/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/cron-workflows/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_cronWorkflow__apiVersion is not None:
-        flat_body["cronWorkflow__apiVersion"] = body_cronWorkflow__apiVersion
-    if body_cronWorkflow__kind is not None:
-        flat_body["cronWorkflow__kind"] = body_cronWorkflow__kind
-    if body_cronWorkflow__metadata is not None:
-        flat_body["cronWorkflow__metadata"] = body_cronWorkflow__metadata
-    if body_cronWorkflow__spec is not None:
-        flat_body["cronWorkflow__spec"] = body_cronWorkflow__spec
-    if body_cronWorkflow__status__active is not None:
-        flat_body["cronWorkflow__status__active"] = body_cronWorkflow__status__active
-    if body_cronWorkflow__status__conditions is not None:
-        flat_body["cronWorkflow__status__conditions"] = body_cronWorkflow__status__conditions
-    if body_cronWorkflow__status__failed is not None:
-        flat_body["cronWorkflow__status__failed"] = body_cronWorkflow__status__failed
-    if body_cronWorkflow__status__lastScheduledTime is not None:
-        flat_body["cronWorkflow__status__lastScheduledTime"] = body_cronWorkflow__status__lastScheduledTime
-    if body_cronWorkflow__status__phase is not None:
-        flat_body["cronWorkflow__status__phase"] = body_cronWorkflow__status__phase
-    if body_cronWorkflow__status__succeeded is not None:
-        flat_body["cronWorkflow__status__succeeded"] = body_cronWorkflow__status__succeeded
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="PUT", params=params, data=data
-    )
+  success, response = await make_api_request(f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def cron_workflow_service_delete_cron_workflow(
-    path_namespace: str,
-    path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+  path_namespace: str,
+  path_name: str,
+  param_deleteOptions_gracePeriodSeconds: int = None,
+  param_deleteOptions_preconditions_uid: str = None,
+  param_deleteOptions_preconditions_resourceVersion: str = None,
+  param_deleteOptions_orphanDependents: bool = False,
+  param_deleteOptions_propagationPolicy: str = None,
+  param_deleteOptions_dryRun: str = None,
+  param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: str = None,
 ) -> Any:
-    """
-    Delete a cron-workflows
+  """
+  Delete a cron-workflows
 
-    OpenAPI Description:
-        Delete a cron-workflows Use when: when cleaning up resources that are no longer needed. Required: namespace, name
+  OpenAPI Description:
+      Deletes a cron workflow by name and namespace. Use when: removing outdated or unnecessary scheduled tasks to free up resources.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace of the cron workflow to delete"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): Specifies the cron workflow to delete within the namespace.
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+      param_deleteOptions_gracePeriodSeconds (int): Specifies delay in seconds before deletion; use for graceful shutdown.
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+      param_deleteOptions_preconditions_uid (str): "UID to ensure deletion only if it matches the target resource"
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+      param_deleteOptions_preconditions_resourceVersion (str): "Ensure deletion only if resource version matches specified value"
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+      param_deleteOptions_orphanDependents (bool): Control orphan resource deletion; use PropagationPolicy instead.
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+      param_deleteOptions_propagationPolicy (str): Specifies garbage collection method (e.g., "Foreground", "Background")
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+      param_deleteOptions_dryRun (str): Simulate deletion without saving changes (e.g., ["All"]).
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+      param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (str): Ignore store read errors for unsafe deletion when true
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/cron-workflows/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/cron-workflows/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
-        )
-
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
-        )
-
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
-        )
-
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
-        )
-
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
-        )
-
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
-        )
-
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(
-        f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="DELETE", params=params, data=data
+  if param_deleteOptions_gracePeriodSeconds is not None:
+    params["deleteOptions_gracePeriodSeconds"] = (
+      str(param_deleteOptions_gracePeriodSeconds).lower()
+      if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
+      else param_deleteOptions_gracePeriodSeconds
     )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if param_deleteOptions_preconditions_uid is not None:
+    params["deleteOptions_preconditions_uid"] = (
+      str(param_deleteOptions_preconditions_uid).lower()
+      if isinstance(param_deleteOptions_preconditions_uid, bool)
+      else param_deleteOptions_preconditions_uid
+    )
+
+  if param_deleteOptions_preconditions_resourceVersion is not None:
+    params["deleteOptions_preconditions_resourceVersion"] = (
+      str(param_deleteOptions_preconditions_resourceVersion).lower()
+      if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
+      else param_deleteOptions_preconditions_resourceVersion
+    )
+
+  if param_deleteOptions_orphanDependents is not None:
+    params["deleteOptions_orphanDependents"] = (
+      str(param_deleteOptions_orphanDependents).lower()
+      if isinstance(param_deleteOptions_orphanDependents, bool)
+      else param_deleteOptions_orphanDependents
+    )
+
+  if param_deleteOptions_propagationPolicy is not None:
+    params["deleteOptions_propagationPolicy"] = (
+      str(param_deleteOptions_propagationPolicy).lower()
+      if isinstance(param_deleteOptions_propagationPolicy, bool)
+      else param_deleteOptions_propagationPolicy
+    )
+
+  if param_deleteOptions_dryRun is not None:
+    params["deleteOptions_dryRun"] = (
+      str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    )
+
+  if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
+    params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
+      str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
+      if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
+      else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    )
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(
+    f"/api/v1/cron-workflows/{path_namespace}/{path_name}", method="DELETE", params=params, data=data
+  )
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

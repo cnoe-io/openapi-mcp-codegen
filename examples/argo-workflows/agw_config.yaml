@@ -1,0 +1,20 @@
+binds:
+- port: 3002
+  listeners:
+  - routes:
+    - policies:
+        cors:
+          allowOrigins:
+            - "*"
+          allowHeaders:
+            - "*"
+      backends:
+      - mcp:
+          targets:
+          - name: openapi
+            openapi:
+              schema:
+                file: openapi.json
+              host: localhost
+              port: 8080
+              path: /

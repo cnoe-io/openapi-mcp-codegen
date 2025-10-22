@@ -5,7 +5,7 @@
 """Tools for /api/v1/sensors/{namespace} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,237 +14,160 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sensor_service_list_sensors(
-    path_namespace: str,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
+  path_namespace: str,
+  param_listOptions_labelSelector: str = None,
+  param_listOptions_fieldSelector: str = None,
+  param_listOptions_watch: bool = False,
+  param_listOptions_allowWatchBookmarks: bool = False,
+  param_listOptions_resourceVersion: str = None,
+  param_listOptions_resourceVersionMatch: str = None,
+  param_listOptions_timeoutSeconds: int = None,
+  param_listOptions_limit: int = None,
+  param_listOptions_continue: str = None,
+  param_listOptions_sendInitialEvents: str = None,
 ) -> Any:
-    """
-    Retrieve details of a specific sensors
+  """
+  Retrieve details of a specific sensors
 
-    OpenAPI Description:
-        Retrieve details of a specific sensors Use when: when you need to discover available resources or check what exists. Required: namespace
+  OpenAPI Description:
+      Lists all sensors in a namespace with optional filters. Use when: discovering available sensors or monitoring sensor status.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to scope sensor retrieval"
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+      param_listOptions_labelSelector (str): "Filter sensors by labels (e.g., type=temperature)"
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+      param_listOptions_fieldSelector (str): Criteria to filter results by field values (e.g., status=active)
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+      param_listOptions_watch (bool): Enable streaming updates for resource changes when true
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+      param_listOptions_allowWatchBookmarks (bool): Enable bookmark events in watch mode when true
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+      param_listOptions_resourceVersion (str): "Specify resource version to filter results for consistency"
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+      param_listOptions_resourceVersionMatch (str): Controls resource version matching for list calls (e.g., exact, notOlderThan)
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+      param_listOptions_timeoutSeconds (int): Maximum time to wait for response in seconds (use to prevent long waits)
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+      param_listOptions_limit (int): "Maximum sensors to return (use for pagination)"
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+      param_listOptions_continue (str): Pagination token for next page of results
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
-
-
-    Returns:
-        Any: The JSON response from the API call.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/sensors/{namespace}")
-
-    params = {}
-    data = {}
-
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
-        )
-
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
-        )
-
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
-        )
-
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
-        )
-
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
-        )
-
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
-        )
-
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
-        )
-
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
-        )
-
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
-        )
-
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}", method="GET", params=params, data=data)
-
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+      param_listOptions_sendInitialEvents (str): "Send initial events with watch stream when true"
 
 
-async def sensor_service_create_sensor(
-    path_namespace: str,
-    body_createOptions__dryRun: List[str] = None,
-    body_createOptions__fieldManager: str = None,
-    body_createOptions__fieldValidation: str = None,
-    body_namespace: str = None,
-    body_sensor__metadata: Dict[str, Any] = None,
-    body_sensor__spec__dependencies: List[Dict[str, Any]] = None,
-    body_sensor__spec__errorOnFailedRound: bool = None,
-    body_sensor__spec__eventBusName: str = None,
-    body_sensor__spec__loggingFields: Dict[str, Any] = None,
-    body_sensor__spec__replicas: int = None,
-    body_sensor__spec__revisionHistoryLimit: int = None,
-    body_sensor__spec__template: Dict[str, Any] = None,
-    body_sensor__spec__triggers: List[Dict[str, Any]] = None,
-    body_sensor__status__status__conditions: List[Dict[str, Any]] = None,
-) -> Any:
-    """
-        Create a new sensors
+  Returns:
+      Any: The JSON response from the API call.
 
-        OpenAPI Description:
-            Create a new sensors Use when: when initializing new resources based on user requirements. Required: namespace, body
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/sensors/{namespace}")
 
-        Args:
+  params = {}
+  data = {}
 
-            path_namespace (str): Kubernetes namespace to scope the operation
+  if param_listOptions_labelSelector is not None:
+    params["listOptions_labelSelector"] = (
+      str(param_listOptions_labelSelector).lower() if isinstance(param_listOptions_labelSelector, bool) else param_listOptions_labelSelector
+    )
 
-            body_createOptions__dryRun (List[str]): OpenAPI parameter corresponding to 'body_createOptions__dryRun'
+  if param_listOptions_fieldSelector is not None:
+    params["listOptions_fieldSelector"] = (
+      str(param_listOptions_fieldSelector).lower() if isinstance(param_listOptions_fieldSelector, bool) else param_listOptions_fieldSelector
+    )
 
-            body_createOptions__fieldManager (str): OpenAPI parameter corresponding to 'body_createOptions__fieldManager'
+  if param_listOptions_watch is not None:
+    params["listOptions_watch"] = (
+      str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    )
 
-            body_createOptions__fieldValidation (str): OpenAPI parameter corresponding to 'body_createOptions__fieldValidation'
+  if param_listOptions_allowWatchBookmarks is not None:
+    params["listOptions_allowWatchBookmarks"] = (
+      str(param_listOptions_allowWatchBookmarks).lower()
+      if isinstance(param_listOptions_allowWatchBookmarks, bool)
+      else param_listOptions_allowWatchBookmarks
+    )
 
-            body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
+  if param_listOptions_resourceVersion is not None:
+    params["listOptions_resourceVersion"] = (
+      str(param_listOptions_resourceVersion).lower()
+      if isinstance(param_listOptions_resourceVersion, bool)
+      else param_listOptions_resourceVersion
+    )
 
-            body_sensor__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+  if param_listOptions_resourceVersionMatch is not None:
+    params["listOptions_resourceVersionMatch"] = (
+      str(param_listOptions_resourceVersionMatch).lower()
+      if isinstance(param_listOptions_resourceVersionMatch, bool)
+      else param_listOptions_resourceVersionMatch
+    )
 
-            body_sensor__spec__dependencies (List[Dict[str, Any]]): Dependencies is a list of the events that this sensor is dependent on.
+  if param_listOptions_timeoutSeconds is not None:
+    params["listOptions_timeoutSeconds"] = (
+      str(param_listOptions_timeoutSeconds).lower()
+      if isinstance(param_listOptions_timeoutSeconds, bool)
+      else param_listOptions_timeoutSeconds
+    )
 
-            body_sensor__spec__errorOnFailedRound (bool): ErrorOnFailedRound if set to true, marks sensor state as `error` if the previous trigger round fails.
-    Once sensor state is set to `error`, no further triggers will be processed.
+  if param_listOptions_limit is not None:
+    params["listOptions_limit"] = (
+      str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    )
 
-            body_sensor__spec__eventBusName (str): OpenAPI parameter corresponding to 'body_sensor__spec__eventBusName'
+  if param_listOptions_continue is not None:
+    params["listOptions_continue"] = (
+      str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    )
 
-            body_sensor__spec__loggingFields (Dict[str, Any]): OpenAPI parameter corresponding to 'body_sensor__spec__loggingFields'
+  if param_listOptions_sendInitialEvents is not None:
+    params["listOptions_sendInitialEvents"] = (
+      str(param_listOptions_sendInitialEvents).lower()
+      if isinstance(param_listOptions_sendInitialEvents, bool)
+      else param_listOptions_sendInitialEvents
+    )
 
-            body_sensor__spec__replicas (int): OpenAPI parameter corresponding to 'body_sensor__spec__replicas'
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-            body_sensor__spec__revisionHistoryLimit (int): OpenAPI parameter corresponding to 'body_sensor__spec__revisionHistoryLimit'
+  success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}", method="GET", params=params, data=data)
 
-            body_sensor__spec__template (Dict[str, Any]): Request body as dictionary. Contains 11 nested properties. See OpenAPI schema for detailed structure.
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
-            body_sensor__spec__triggers (List[Dict[str, Any]]): Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.
 
-            body_sensor__status__status__conditions (List[Dict[str, Any]]): OpenAPI parameter corresponding to 'body_sensor__status__status__conditions'
+async def sensor_service_create_sensor(path_namespace: str) -> Any:
+  """
+  Create a new sensors
+
+  OpenAPI Description:
+      Creates a new sensor in the specified namespace. Use when: adding a new sensor for monitoring or data collection tasks.
+
+  Args:
+
+      path_namespace (str): "Kubernetes namespace to target for sensor creation"
 
 
-        Returns:
-            Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-        Raises:
-            Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/sensors/{namespace}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/sensors/{namespace}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_createOptions__dryRun is not None:
-        flat_body["createOptions__dryRun"] = body_createOptions__dryRun
-    if body_createOptions__fieldManager is not None:
-        flat_body["createOptions__fieldManager"] = body_createOptions__fieldManager
-    if body_createOptions__fieldValidation is not None:
-        flat_body["createOptions__fieldValidation"] = body_createOptions__fieldValidation
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_sensor__metadata is not None:
-        flat_body["sensor__metadata"] = body_sensor__metadata
-    if body_sensor__spec__dependencies is not None:
-        flat_body["sensor__spec__dependencies"] = body_sensor__spec__dependencies
-    if body_sensor__spec__errorOnFailedRound is not None:
-        flat_body["sensor__spec__errorOnFailedRound"] = body_sensor__spec__errorOnFailedRound
-    if body_sensor__spec__eventBusName is not None:
-        flat_body["sensor__spec__eventBusName"] = body_sensor__spec__eventBusName
-    if body_sensor__spec__loggingFields is not None:
-        flat_body["sensor__spec__loggingFields"] = body_sensor__spec__loggingFields
-    if body_sensor__spec__replicas is not None:
-        flat_body["sensor__spec__replicas"] = body_sensor__spec__replicas
-    if body_sensor__spec__revisionHistoryLimit is not None:
-        flat_body["sensor__spec__revisionHistoryLimit"] = body_sensor__spec__revisionHistoryLimit
-    if body_sensor__spec__template is not None:
-        flat_body["sensor__spec__template"] = body_sensor__spec__template
-    if body_sensor__spec__triggers is not None:
-        flat_body["sensor__spec__triggers"] = body_sensor__spec__triggers
-    if body_sensor__status__status__conditions is not None:
-        flat_body["sensor__status__status__conditions"] = body_sensor__status__status__conditions
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}", method="POST", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}", method="POST", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

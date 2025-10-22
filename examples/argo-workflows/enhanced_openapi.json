@@ -5,17 +5,11 @@
   "produces": [
     "application/json"
   ],
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "swagger": "2.0",
   "info": {
     "description": "Argo Workflows is an open source container-native workflow engine for orchestrating parallel jobs on Kubernetes. For more information, please see https://argo-workflows.readthedocs.io/en/latest/",
     "title": "Argo_workflows",
     "version": "VERSION"
   },
-  "host": "localhost:2746",
   "paths": {
     "/api/v1/archived-workflows": {
       "get": {
@@ -26,77 +20,113 @@
         "parameters": [
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter workflows by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "\"Field criteria to filter results (e.g., status=completed)\"",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter archived workflows\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for results in seconds (e.g., 30)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum archived workflows to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for retrieving next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namePrefix",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "\"Filter workflows starting with this prefix (e.g., 'test-')\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namespace",
             "in": "query",
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to filter archived workflows\"",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -113,7 +143,7 @@
             }
           }
         },
-        "description": "List or query archived-workflows Use when: when you need to discover available resources or check what exists",
+        "description": "Lists all archived workflows with optional filters. Use when: discovering past workflows or monitoring historical data.",
         "summary": "List or query archived-workflows"
       }
     },
@@ -128,7 +158,10 @@
             "type": "string",
             "name": "namespace",
             "in": "query",
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to filter archived workflows\"",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -145,7 +178,7 @@
             }
           }
         },
-        "description": "List or query archived-workflows-label-keys Use when: when you need to discover available resources or check what exists",
+        "description": "Lists all label keys for archived workflows. Use when: discovering available labels for filtering or categorizing archived workflows.",
         "summary": "List or query archived-workflows-label-keys"
       }
     },
@@ -158,71 +191,104 @@
         "parameters": [
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter results by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by specific fields (e.g., status=completed)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter results for consistency\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for response in seconds (e.g., 30)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum archived workflows to return (e.g., 100)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namespace",
             "in": "query",
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to filter archived workflows\"",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -239,7 +305,7 @@
             }
           }
         },
-        "description": "List or query archived-workflows-label-values Use when: when you need to discover available resources or check what exists",
+        "description": "Lists label values of archived workflows. Use when: filtering or categorizing archived workflows based on specific labels.",
         "summary": "List or query archived-workflows-label-values"
       }
     },
@@ -255,19 +321,28 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier of archived workflow to retrieve",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namespace",
             "in": "query",
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to filter archived workflows\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "query",
-            "description": "Name of the resource to operate on"
+            "description": "Workflow name to filter archived results (optional)",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -284,7 +359,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific archived-workflows Use when: when you have a specific resource identifier and need its current details. Required: uid",
+        "description": "Retrieves details of an archived workflow by UID. Use when: investigating past workflow executions or reviewing historical data.",
         "summary": "Retrieve details of a specific archived-workflows"
       },
       "delete": {
@@ -298,13 +373,19 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "\"Unique identifier of archived workflow to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namespace",
             "in": "query",
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope the deletion operation\"",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -321,7 +402,7 @@
             }
           }
         },
-        "description": "Delete a archived-workflows Use when: when cleaning up resources that are no longer needed. Required: uid",
+        "description": "Deletes an archived workflow by UID. Use when: removing outdated or unnecessary archived workflows to free up storage or maintain organization.",
         "summary": "Delete a archived-workflows"
       }
     },
@@ -337,16 +418,10 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Unique identifier of the archived workflow to resubmit",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.ResubmitArchivedWorkflowRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -363,7 +438,7 @@
             }
           }
         },
-        "description": "Update or replace a resubmit Use when: when modifying existing resource configurations or properties. Required: uid, body",
+        "description": "Resubmits an archived workflow by UID. Use when: needing to rerun a completed or failed workflow for further analysis or correction.",
         "summary": "Update or replace a resubmit"
       }
     },
@@ -379,16 +454,10 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Unique identifier of the archived workflow to retry",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.RetryArchivedWorkflowRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -405,7 +474,7 @@
             }
           }
         },
-        "description": "Update or replace a retry Use when: when modifying existing resource configurations or properties. Required: uid, body",
+        "description": "Retries an archived workflow by UID. Use when: attempting to rerun a previously completed or failed workflow for further analysis or correction.",
         "summary": "Update or replace a retry"
       }
     },
@@ -418,65 +487,95 @@
         "parameters": [
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter templates by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "\"Request bookmark events in watch mode when true\"",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter results for consistency. Use for version-specific queries.",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for response in seconds (use to prevent long waits)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum templates to return (e.g., 100). Use for pagination.\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "\"Send initial events with watch stream when true\"",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -493,7 +592,7 @@
             }
           }
         },
-        "description": "List or query cluster-workflow-templates Use when: when you need to discover available resources or check what exists",
+        "description": "Lists all cluster workflow templates with optional filters. Use when: discovering available templates or monitoring changes in cluster workflows.",
         "summary": "List or query cluster-workflow-templates"
       },
       "post": {
@@ -501,17 +600,7 @@
           "ClusterWorkflowTemplateService"
         ],
         "operationId": "ClusterWorkflowTemplateService_CreateClusterWorkflowTemplate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.ClusterWorkflowTemplateCreateRequest"
-            },
-            "description": "Required string parameter"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -526,7 +615,7 @@
             }
           }
         },
-        "description": "Create a new cluster-workflow-templates Use when: when initializing new resources based on user requirements. Required: body",
+        "description": "Creates a new cluster workflow template. Use when: setting up reusable workflows for cluster-wide automation tasks.",
         "summary": "Create a new cluster-workflow-templates"
       }
     },
@@ -536,17 +625,7 @@
           "ClusterWorkflowTemplateService"
         ],
         "operationId": "ClusterWorkflowTemplateService_LintClusterWorkflowTemplate",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.ClusterWorkflowTemplateLintRequest"
-            },
-            "description": "Required string parameter"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -561,7 +640,7 @@
             }
           }
         },
-        "description": "Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: body",
+        "description": "Validates a cluster workflow template. Use when: checking for errors or ensuring template correctness before deployment.",
         "summary": "Perform an operation on lint"
       }
     },
@@ -577,13 +656,19 @@
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the workflow template to retrieve by its unique name.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specifies resource version to retrieve; use for consistency across requests.",
             "name": "getOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -600,7 +685,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific cluster-workflow-templates Use when: when you have a specific resource identifier and need its current details. Required: name",
+        "description": "Retrieves details of a specific cluster workflow template. Use when: checking template configuration or verifying current settings.",
         "summary": "Retrieve details of a specific cluster-workflow-templates"
       },
       "put": {
@@ -611,19 +696,13 @@
         "parameters": [
           {
             "type": "string",
-            "description": "DEPRECATED: This field is ignored.",
+            "description": "Unique name of the cluster workflow template to update",
             "name": "name",
             "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.ClusterWorkflowTemplateUpdateRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -640,7 +719,7 @@
             }
           }
         },
-        "description": "Update or replace a cluster-workflow-templates Use when: when modifying existing resource configurations or properties. Required: name, body",
+        "description": "Updates a cluster workflow template by name. Use when: modifying existing template configurations or updating workflow parameters.",
         "summary": "Update or replace a cluster-workflow-templates"
       },
       "delete": {
@@ -654,38 +733,56 @@
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Cluster workflow template name to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if it matches the target resource\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "\"Resource version to ensure deletion only if it matches\"",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "Control orphan resource deletion; use PropagationPolicy instead.",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Specifies garbage collection method (e.g., \"Foreground\", \"Background\")",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -693,15 +790,21 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Simulate deletion without actual changes (e.g., [\"All\"]).",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "Allow unsafe deletion if store read error occurs",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -718,7 +821,7 @@
             }
           }
         },
-        "description": "Delete a cluster-workflow-templates Use when: when cleaning up resources that are no longer needed. Required: name",
+        "description": "Deletes a cluster workflow template by name. Use when: removing outdated or unnecessary templates to maintain a clean environment.",
         "summary": "Delete a cluster-workflow-templates"
       }
     },
@@ -734,69 +837,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope the cron workflow retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter workflows by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Stream real-time resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode for progress tracking",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter results for consistency. Use for version-specific data.",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for response in seconds (use to prevent long waits)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum cron workflows to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -813,7 +949,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific cron-workflows Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists all cron workflows in a namespace. Use when: discovering scheduled workflows or monitoring cron job configurations.",
         "summary": "Retrieve details of a specific cron-workflows"
       },
       "post": {
@@ -827,16 +963,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to scope the cron workflow operation\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.CreateCronWorkflowRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -853,7 +983,7 @@
             }
           }
         },
-        "description": "Create a new cron-workflows Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Creates a new cron workflow in the specified namespace. Use when: scheduling recurring automated tasks or batch processes.",
         "summary": "Create a new cron-workflows"
       }
     },
@@ -869,16 +999,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to scope the cron workflow linting operation\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.LintCronWorkflowRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -895,7 +1019,7 @@
             }
           }
         },
-        "description": "Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Validates a cron workflow in the specified namespace. Use when: checking for syntax errors or configuration issues before deployment.",
         "summary": "Perform an operation on lint"
       }
     },
@@ -911,20 +1035,29 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the cron workflow\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the cron workflow to retrieve in the given namespace.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to retrieve specific state (optional)",
             "name": "getOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -941,7 +1074,7 @@
             }
           }
         },
-        "description": "Retrieve cron-workflows information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name",
+        "description": "Retrieves details of a specific cron workflow. Use when: checking current configuration or investigating issues with scheduled tasks.",
         "summary": "Retrieve cron-workflows information"
       },
       "put": {
@@ -955,23 +1088,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for the cron workflow operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "DEPRECATED: This field is ignored.",
+            "description": "Unique name of the cron workflow to update",
             "name": "name",
             "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.UpdateCronWorkflowRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -988,7 +1118,7 @@
             }
           }
         },
-        "description": "Update or replace a cron-workflows Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Updates cron workflow configuration. Use when: modifying schedule or settings of an existing cron workflow.",
         "summary": "Update or replace a cron-workflows"
       },
       "delete": {
@@ -1002,45 +1132,66 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace of the cron workflow to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the cron workflow to delete within the namespace.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if it matches the target resource\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "\"Ensure deletion only if resource version matches specified value\"",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "Control orphan resource deletion; use PropagationPolicy instead.",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Specifies garbage collection method (e.g., \"Foreground\", \"Background\")",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -1048,15 +1199,21 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Simulate deletion without saving changes (e.g., [\"All\"]).",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "Ignore store read errors for unsafe deletion when true",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1073,7 +1230,7 @@
             }
           }
         },
-        "description": "Delete a cron-workflows Use when: when cleaning up resources that are no longer needed. Required: namespace, name",
+        "description": "Deletes a cron workflow by name and namespace. Use when: removing outdated or unnecessary scheduled tasks to free up resources.",
         "summary": "Delete a cron-workflows"
       }
     },
@@ -1089,23 +1246,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for the cron workflow operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Name of the cron workflow to resume in the specified namespace\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.CronWorkflowResumeRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1122,7 +1276,7 @@
             }
           }
         },
-        "description": "Update or replace a resume Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Resumes a paused cron workflow. Use when: restarting scheduled tasks after a pause or interruption.",
         "summary": "Update or replace a resume"
       }
     },
@@ -1138,23 +1292,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for the operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Specifies the cron workflow to suspend in the given namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.CronWorkflowSuspendRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1171,7 +1322,7 @@
             }
           }
         },
-        "description": "Update or replace a suspend Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Suspends a cron workflow. Use when: pausing scheduled executions temporarily without deleting the workflow.",
         "summary": "Update or replace a suspend"
       }
     },
@@ -1187,69 +1338,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to retrieve event sources from\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter event sources by labels (e.g., type=webhook)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., metadata.name=my-event)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "\"Request bookmark events in watch mode when true\"",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter events (e.g., '12345')\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Specifies max duration in seconds for list/watch call; use to prevent long waits.",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum event sources to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "\"Send initial events with watch stream when true\"",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1266,7 +1450,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific event-sources Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists all event sources in a namespace. Use when: discovering available event sources or monitoring changes in a specific namespace.",
         "summary": "Retrieve details of a specific event-sources"
       },
       "post": {
@@ -1280,16 +1464,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to create the event source in\"",
             "schema": {
-              "$ref": "#/definitions/eventsource.CreateEventSourceRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1306,7 +1484,7 @@
             }
           }
         },
-        "description": "Create a new event-sources Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Creates a new event source in the specified namespace. Use when: setting up a new event source for monitoring or triggering workflows.",
         "summary": "Create a new event-sources"
       }
     },
@@ -1322,14 +1500,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the event source\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Event source name to retrieve details\"",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1346,7 +1530,7 @@
             }
           }
         },
-        "description": "Retrieve event-sources information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name",
+        "description": "Retrieves details of a specific event source. Use when: checking current configuration or investigating issues with event source setup.",
         "summary": "Retrieve event-sources information"
       },
       "put": {
@@ -1360,23 +1544,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the event source\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Unique name of the event source to update in the specified namespace.",
             "schema": {
-              "$ref": "#/definitions/eventsource.UpdateEventSourceRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1393,7 +1574,7 @@
             }
           }
         },
-        "description": "Update or replace a event-sources Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Updates event source configuration. Use when: modifying event source settings or updating parameters in a specific namespace.",
         "summary": "Update or replace a event-sources"
       },
       "delete": {
@@ -1407,45 +1588,66 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace of the event source to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Event source name to delete in specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if resource matches this identifier\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "\"Ensure deletion only if resource version matches specified value\"",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "Control orphaning of dependents when deleting (use PropagationPolicy instead)",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Specifies garbage collection method (e.g., \"Foreground\", \"Background\")",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -1453,15 +1655,21 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Simulate deletion without actual changes (e.g., [\"All\"]).",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "\"Allow unsafe deletion if store read error occurs\"",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1478,7 +1686,7 @@
             }
           }
         },
-        "description": "Delete a event-sources Use when: when cleaning up resources that are no longer needed. Required: namespace, name",
+        "description": "Deletes an event source. Use when: removing outdated or unnecessary event sources to clean up resources.",
         "summary": "Delete a event-sources"
       }
     },
@@ -1491,25 +1699,22 @@
         "parameters": [
           {
             "type": "string",
-            "description": "The namespace for the io.argoproj.workflow.v1alpha1. This can be empty if the cl...",
+            "description": "\"Kubernetes namespace to scope the event operation\"",
             "name": "namespace",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Optional discriminator for the io.argoproj.workflow.v1alpha1. This should almost...",
+            "description": "Unique event identifier for specific workflow context",
             "name": "discriminator",
             "in": "path",
-            "required": true
-          },
-          {
-            "description": "The event itself can be any data.",
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.Item"
+              "type": "string"
             }
           }
         ],
@@ -1527,7 +1732,7 @@
             }
           }
         },
-        "description": "Perform an operation on events Use when: when initializing new resources based on user requirements. Required: namespace, discriminator, body",
+        "description": "Creates an event in the specified namespace. Use when: logging a new event or triggering actions based on specific conditions.",
         "summary": "Perform an operation on events"
       }
     },
@@ -1551,7 +1756,7 @@
             }
           }
         },
-        "description": "List or query info",
+        "description": "Retrieves system information. Use when: needing an overview of the current system status or configuration.",
         "summary": "List or query info"
       }
     },
@@ -1567,69 +1772,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope sensor retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "\"Filter sensors by labels (e.g., type=temperature)\"",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter results for consistency\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for response in seconds (use to prevent long waits)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum sensors to return (use for pagination)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "\"Send initial events with watch stream when true\"",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1646,7 +1884,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific sensors Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists all sensors in a namespace with optional filters. Use when: discovering available sensors or monitoring sensor status.",
         "summary": "Retrieve details of a specific sensors"
       },
       "post": {
@@ -1660,16 +1898,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to target for sensor creation\"",
             "schema": {
-              "$ref": "#/definitions/sensor.CreateSensorRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1686,7 +1918,7 @@
             }
           }
         },
-        "description": "Create a new sensors Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Creates a new sensor in the specified namespace. Use when: adding a new sensor for monitoring or data collection tasks.",
         "summary": "Create a new sensors"
       }
     },
@@ -1702,20 +1934,29 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the sensor\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Sensor name to retrieve details from specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specifies resource version to retrieve; use for consistency across requests.",
             "name": "getOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1732,7 +1973,7 @@
             }
           }
         },
-        "description": "Retrieve sensors information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name",
+        "description": "Retrieves details of a specific sensor. Use when: checking sensor configuration or investigating sensor-related issues.",
         "summary": "Retrieve sensors information"
       },
       "put": {
@@ -1746,23 +1987,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the sensor for update\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Sensor name to update in the specified namespace",
             "schema": {
-              "$ref": "#/definitions/sensor.UpdateSensorRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1779,7 +2017,7 @@
             }
           }
         },
-        "description": "Update or replace a sensors Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Updates sensor configuration. Use when: modifying sensor settings or updating sensor details in a specific namespace.",
         "summary": "Update or replace a sensors"
       },
       "delete": {
@@ -1793,45 +2031,66 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace of the sensor to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Sensor name to delete within the specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if it matches the target sensor's UID\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "\"Delete only if resource version matches specified value\"",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "\"Delete without affecting dependents when true (deprecated)\"",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Controls garbage collection method (e.g., \"Foreground\", \"Background\") during deletion.",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -1839,15 +2098,21 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Simulate deletion without actual changes (e.g., [\"All\"]).",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "Ignore read errors for unsafe deletion when true",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1864,7 +2129,7 @@
             }
           }
         },
-        "description": "Delete a sensors Use when: when cleaning up resources that are no longer needed. Required: namespace, name",
+        "description": "Deletes a sensor by name and namespace. Use when: removing obsolete or unwanted sensors from the system.",
         "summary": "Delete a sensors"
       }
     },
@@ -1880,69 +2145,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope event source retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter results by labels (e.g., type=event,source=external)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter events (e.g., \"12345\")",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, not older)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for results in seconds (e.g., 30)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum event sources to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "\"Send initial events with watch stream when true\"",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1968,7 +2266,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific event-sources. Required: namespace",
+        "description": "Watches event sources in a namespace. Use when: monitoring changes or updates to event sources in real-time.",
         "summary": "Retrieve details of a specific event-sources"
       }
     },
@@ -1984,102 +2282,150 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to retrieve event source logs\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries for this event source.",
+            "description": "Filter logs by event source name (optional)",
             "name": "name",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries for this event source type (e.g. `webhook`).",
+            "description": "Specifies event source type to filter logs (e.g., webhook)",
             "name": "eventSourceType",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries for this event name (e.g. `example`).",
+            "description": "Filter logs by specific event name (e.g., \"example\") to narrow results.",
             "name": "eventName",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries where `msg` matches this regular expression.",
+            "description": "Filter logs by message matching this regex pattern (e.g., error.*)",
             "name": "grep",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "The container for which to stream logs. Defaults to only container if there is o...",
+            "description": "Specifies container to stream logs from; use if pod has multiple containers.",
             "name": "podLogOptions.container",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Follow the log stream of the pod. Defaults to false. +optional.",
+            "description": "Stream live pod logs when true; default is false. Use for real-time monitoring.",
             "name": "podLogOptions.follow",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "Return previous terminated container logs. Defaults to false. +optional.",
+            "description": "Return logs from previous container if true; use for terminated containers.",
             "name": "podLogOptions.previous",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "A relative time in seconds before the current time from which to show logs. If t...",
+            "description": "Specifies log start time in seconds before now; use for recent logs.",
             "name": "podLogOptions.sinceSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be fr...",
+            "description": "Specify logs from this UTC time onward (format: seconds since 1970-01-01).",
             "name": "podLogOptions.sinceTime.seconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Non-negative fractions of a second at nanosecond resolution. Negative second val...",
+            "description": "Specifies nanoseconds for log retrieval start time. Use for precise time filtering.",
             "name": "podLogOptions.sinceTime.nanos",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line ...",
+            "description": "Add timestamps to log lines when true (default: false)",
             "name": "podLogOptions.timestamps",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of lines from the end of the logs to show. If not specified, ...",
+            "description": "Specifies number of log lines from end to display; use for recent log insights.",
             "name": "podLogOptions.tailLines",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of bytes to read from the server before terminating the log o...",
+            "description": "Specifies max bytes of log to retrieve; use to limit log size.",
             "name": "podLogOptions.limitBytes",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the...",
+            "description": "Skip TLS verification for backend when true (use cautiously)",
             "name": "podLogOptions.insecureSkipTLSVerifyBackend",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Specify which container log stream to return to the client. Acceptable values ar...",
+            "description": "Specifies log stream type: \"All\", \"Stdout\". Use to filter container log output.",
             "name": "podLogOptions.stream",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -2105,7 +2451,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific logs Use when: for debugging issues or understanding resource behavior. Required: namespace",
+        "description": "Streams logs for event sources in a namespace. Use when: monitoring event source activity or debugging issues with specific events.",
         "summary": "Retrieve details of a specific logs"
       }
     },
@@ -2121,69 +2467,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope event retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter events by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "\"Enable bookmark events in watch streams when true\"",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter events from that point onward.",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for events in seconds (e.g., 30)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum events to return (e.g., 100). Use to limit response size.\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for retrieving next set of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2209,7 +2588,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific events. Required: namespace",
+        "description": "Streams events in a namespace. Use when: monitoring real-time changes or tracking specific events in workflows.",
         "summary": "Retrieve details of a specific events"
       }
     },
@@ -2225,69 +2604,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope sensor retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter sensors by labels (e.g., type=temperature)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch streams when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter results for consistency\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for results in seconds (use to prevent long waits)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum sensors to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2313,7 +2725,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific sensors. Required: namespace",
+        "description": "Watches sensor updates in a namespace. Use when: monitoring real-time changes or tracking sensor status in a specific namespace.",
         "summary": "Retrieve details of a specific sensors"
       }
     },
@@ -2329,96 +2741,141 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to retrieve sensor logs from\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries for this sensor name.",
+            "description": "Filter logs by sensor name (e.g., temperature)",
             "name": "name",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "optional - only return entries for this trigger.",
+            "description": "Filter logs by specific trigger name (e.g., \"sensor-start\")",
             "name": "triggerName",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "option - only return entries where `msg` contains this regular expressions.",
+            "description": "Filter logs by regex match in 'msg' field (e.g., error, warning)",
             "name": "grep",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "The container for which to stream logs. Defaults to only container if there is o...",
+            "description": "Specifies container to stream logs from; use if pod has multiple containers.",
             "name": "podLogOptions.container",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Follow the log stream of the pod. Defaults to false. +optional.",
+            "description": "Enable real-time log streaming when true (default: false)",
             "name": "podLogOptions.follow",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "Return previous terminated container logs. Defaults to false. +optional.",
+            "description": "Return logs from previous container if true; use for terminated containers.",
             "name": "podLogOptions.previous",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "A relative time in seconds before the current time from which to show logs. If t...",
+            "description": "Specifies logs from seconds ago; use for recent activity analysis.",
             "name": "podLogOptions.sinceSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be fr...",
+            "description": "Specifies log start time in seconds since Unix epoch for filtering logs.",
             "name": "podLogOptions.sinceTime.seconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Non-negative fractions of a second at nanosecond resolution. Negative second val...",
+            "description": "Specifies nanoseconds for log start time; use for precise time filtering.",
             "name": "podLogOptions.sinceTime.nanos",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line ...",
+            "description": "Add timestamps to log lines when true (default: false)",
             "name": "podLogOptions.timestamps",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of lines from the end of the logs to show. If not specified, ...",
+            "description": "Specifies number of log lines from end to display. Use for recent log insights.",
             "name": "podLogOptions.tailLines",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of bytes to read from the server before terminating the log o...",
+            "description": "Specifies max bytes to read from logs; use to limit log size.",
             "name": "podLogOptions.limitBytes",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the...",
+            "description": "Skip TLS verification for backend when true (use cautiously)",
             "name": "podLogOptions.insecureSkipTLSVerifyBackend",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Specify which container log stream to return to the client. Acceptable values ar...",
+            "description": "Specifies log stream type: \"All\", \"Stdout\". Use to filter container log output.",
             "name": "podLogOptions.stream",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -2444,7 +2901,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific logs Use when: for debugging issues or understanding resource behavior. Required: namespace",
+        "description": "Streams sensor logs in a namespace. Use when: monitoring sensor activity, debugging issues, or analyzing specific events with filters.",
         "summary": "Retrieve details of a specific logs"
       }
     },
@@ -2454,17 +2911,7 @@
           "InfoService"
         ],
         "operationId": "InfoService_CollectEvent",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.CollectEventRequest"
-            },
-            "description": "Required string parameter"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2479,7 +2926,7 @@
             }
           }
         },
-        "description": "Perform an operation on event Use when: when initializing new resources based on user requirements. Required: body",
+        "description": "Creates a tracking event. Use when: logging user actions or system events for analytics or monitoring purposes.",
         "summary": "Perform an operation on event"
       }
     },
@@ -2503,7 +2950,7 @@
             }
           }
         },
-        "description": "List or query userinfo",
+        "description": "Retrieves current user information. Use when: confirming user identity or checking user details for personalization.",
         "summary": "List or query userinfo"
       }
     },
@@ -2527,7 +2974,7 @@
             }
           }
         },
-        "description": "List or query version",
+        "description": "Retrieves the current API version. Use when: checking compatibility or ensuring you're using the latest features.",
         "summary": "List or query version"
       }
     },
@@ -2543,69 +2990,102 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope the workflow event binding operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "\"Filter results by label (e.g., app=nginx) to narrow search\"",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "Criteria to filter results by field values (e.g., status=active)",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode when true",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter results for consistency. Use for version-specific queries.",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Specifies max wait time in seconds for list/watch call; use to prevent long waits.",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "Specifies max results to return; use to limit response size.",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "\"Send initial events with watch stream when true\"",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2622,7 +3102,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific workflow-event-bindings Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists workflow event bindings in a namespace. Use when: discovering event bindings or monitoring changes in a specific namespace.",
         "summary": "Retrieve details of a specific workflow-event-bindings"
       }
     },
@@ -2638,75 +3118,111 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope the workflow events retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter results by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "\"Field criteria to filter results (e.g., status=active)\"",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "\"Request bookmark events in watch mode when true\"",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter events (e.g., \"12345\")",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "\"Match criteria for resource version in list calls (e.g., exact, notOlderThan)\"",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Maximum time to wait for results in seconds (e.g., 30)",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum workflow events to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "fields",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "Specify fields to include in results (e.g., name,status)",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2732,7 +3248,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific workflow-events. Required: namespace",
+        "description": "Streams workflow events in a namespace. Use when: monitoring real-time changes or tracking workflow activity.",
         "summary": "Retrieve details of a specific workflow-events"
       }
     },
@@ -2748,75 +3264,111 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate workflow templates\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "namePattern",
             "in": "query",
-            "description": "Name of the resource to operate on"
+            "description": "Pattern to match workflow template names (e.g., \"template-*\")",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter results by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "\"Field criteria to filter results (e.g., status=active)\"",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Enable streaming updates for resource changes when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode for progress tracking.",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "\"Specify resource version to filter results for consistency\"",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, notOlderThan)",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "\"Maximum time to wait for results in seconds\"",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "Specifies max workflow templates to return (e.g., limit=10)",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events in watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2833,7 +3385,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific workflow-templates Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists workflow templates in a namespace. Use when: discovering available templates or monitoring changes with filters.",
         "summary": "Retrieve details of a specific workflow-templates"
       },
       "post": {
@@ -2847,16 +3399,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to target for workflow template operations\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowTemplateCreateRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2873,7 +3419,7 @@
             }
           }
         },
-        "description": "Create a new workflow-templates Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Creates a new workflow template in the specified namespace. Use when: setting up reusable workflows for automation or standardizing processes.",
         "summary": "Create a new workflow-templates"
       }
     },
@@ -2889,16 +3435,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to scope the linting operation\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowTemplateLintRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2915,7 +3455,7 @@
             }
           }
         },
-        "description": "Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Validates a workflow template in a namespace. Use when: checking for errors or ensuring template correctness before deployment.",
         "summary": "Perform an operation on lint"
       }
     },
@@ -2931,20 +3471,29 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow template\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Workflow template name to retrieve in specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to retrieve specific state (optional)",
             "name": "getOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2961,7 +3510,7 @@
             }
           }
         },
-        "description": "Retrieve workflow-templates information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name",
+        "description": "Retrieves details of a specific workflow template. Use when: checking template configuration or verifying template existence in a namespace.",
         "summary": "Retrieve workflow-templates information"
       },
       "put": {
@@ -2975,23 +3524,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow template\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "DEPRECATED: This field is ignored.",
+            "description": "Unique name of the workflow template to update",
             "name": "name",
             "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowTemplateUpdateRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3008,7 +3554,7 @@
             }
           }
         },
-        "description": "Update or replace a workflow-templates Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Updates a workflow template by name. Use when: modifying an existing template's configuration or settings.",
         "summary": "Update or replace a workflow-templates"
       },
       "delete": {
@@ -3022,45 +3568,66 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow template to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Workflow template name to delete in specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if it matches the target resource\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "Specify resource version to ensure deletion of specific template version.",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "Control orphaning of dependents when deleting (use PropagationPolicy instead)",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Specifies garbage collection method (e.g., 'Foreground', 'Background') when deleting.",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -3068,15 +3635,21 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Simulate deletion without actual changes (e.g., [\"All\"]).",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "Ignore read errors for unsafe deletion when true",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3093,7 +3666,7 @@
             }
           }
         },
-        "description": "Delete a workflow-templates Use when: when cleaning up resources that are no longer needed. Required: namespace, name",
+        "description": "Deletes a workflow template. Use when: removing outdated or unused templates to free up resources or maintain organization.",
         "summary": "Delete a workflow-templates"
       }
     },
@@ -3109,93 +3682,138 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to scope the workflow retrieval\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their labels. Defaults to...",
+            "description": "Criteria to filter workflows by labels (e.g., app=nginx)",
             "name": "listOptions.labelSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "A selector to restrict the list of returned objects by their fields. Defaults to...",
+            "description": "\"Field criteria to filter results (e.g., status=active)\"",
             "name": "listOptions.fieldSelector",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Watch for changes to the described resources and return them as a stream of add,...",
+            "description": "Stream real-time resource updates when true",
             "name": "listOptions.watch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "allowWatchBookmarks requests watch events with type \"BOOKMARK\". Servers that do ...",
+            "description": "Enable bookmark events in watch mode for progress tracking",
             "name": "listOptions.allowWatchBookmarks",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to filter results (e.g., \"12345\")",
             "name": "listOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersionMatch determines how resourceVersion is applied to list calls. It...",
+            "description": "Controls resource version matching for list calls (e.g., exact, not older). Use for consistency.",
             "name": "listOptions.resourceVersionMatch",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Timeout for the list/watch call. This limits the duration of the call, regardles...",
+            "description": "Specifies max wait time in seconds for list/watch call. Use to prevent long waits.",
             "name": "listOptions.timeoutSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "limit is a maximum number of responses to return for a list call. If more items ...",
+            "description": "\"Maximum workflows to return (default: 50)\"",
             "name": "listOptions.limit",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "The continue option should be set when retrieving more results from the server. ...",
+            "description": "Pagination token for next page of results",
             "name": "listOptions.continue",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "`sendInitialEvents=true` may be set together with `watch=true`. In that case, th...",
+            "description": "Send initial events with watch stream when true",
             "name": "listOptions.sendInitialEvents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Fields to be included or excluded in the response. e.g. \"items.spec,items.status...",
+            "description": "Specifies fields to include/exclude in response (e.g., \"items.spec,-items.status\")",
             "name": "fields",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Filter type used for name filtering. Exact | Contains | Prefix. Default to Exact.",
+            "description": "Specifies name match type: Exact, Contains, or Prefix. Default is Exact.",
             "name": "nameFilter",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "createdAfter",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "Filter workflows created after this date (e.g., 2023-01-01)",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "finishedBefore",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "Specify end time to filter workflows completed before this date/time.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3212,7 +3830,7 @@
             }
           }
         },
-        "description": "Retrieve details of a specific workflows Use when: when you need to discover available resources or check what exists. Required: namespace",
+        "description": "Lists all workflows in a namespace with optional filters. Use when: discovering available workflows or monitoring active runs within a specific namespace.",
         "summary": "Retrieve details of a specific workflows"
       },
       "post": {
@@ -3226,16 +3844,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Kubernetes namespace to target for workflow operations",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowCreateRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3252,7 +3864,7 @@
             }
           }
         },
-        "description": "Create a new workflows Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Creates a new workflow in the specified namespace. Use when: starting a new automated process or task sequence.",
         "summary": "Create a new workflows"
       }
     },
@@ -3268,16 +3880,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "\"Kubernetes namespace to scope the linting operation\"",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowLintRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3294,7 +3900,7 @@
             }
           }
         },
-        "description": "Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Validates a workflow for errors in a given namespace. Use when: checking workflow syntax or configuration before execution.",
         "summary": "Perform an operation on lint"
       }
     },
@@ -3310,16 +3916,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Specifies the Kubernetes namespace for the workflow submission.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowSubmitRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3336,7 +3936,7 @@
             }
           }
         },
-        "description": "Perform an operation on submit Use when: when initializing new resources based on user requirements. Required: namespace, body",
+        "description": "Submits a new workflow for execution. Use when: initiating a workflow process in a specified namespace.",
         "summary": "Perform an operation on submit"
       }
     },
@@ -3352,26 +3952,38 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Workflow name to retrieve details from the specified namespace.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "resourceVersion sets a constraint on what resource versions a request may be ser...",
+            "description": "Specify resource version to retrieve specific state (optional)",
             "name": "getOptions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Fields to be included or excluded in the response. e.g. \"spec,status.phase\", \"-status.nodes\".",
+            "description": "Specify fields to include/exclude in response (e.g., \"spec,status.phase\", \"-status.nodes\").",
             "name": "fields",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3388,7 +4000,7 @@
             }
           }
         },
-        "description": "Retrieve workflows information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name",
+        "description": "Retrieves details of a specific workflow by name. Use when: checking current status or investigating issues with a particular workflow.",
         "summary": "Retrieve workflows information"
       },
       "delete": {
@@ -3402,45 +4014,66 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace of the workflow to delete\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Workflow name to delete in specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "The duration in seconds before the object should be deleted. Value must be non-n...",
+            "description": "Specifies delay in seconds before deletion; use for graceful shutdown.",
             "name": "deleteOptions.gracePeriodSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target UID. +optional.",
+            "description": "\"UID to ensure deletion only if it matches the target resource\"",
             "name": "deleteOptions.preconditions.uid",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "Specifies the target ResourceVersion +optional.",
+            "description": "\"Ensure deletion only if resource version matches specified value\"",
             "name": "deleteOptions.preconditions.resourceVersion",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...",
+            "description": "Control orphaning of dependents when deleting (use PropagationPolicy instead)",
             "name": "deleteOptions.orphanDependents",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Whether and how garbage collection will be performed. Either this field or Orpha...",
+            "description": "Specifies garbage collection method (e.g., \"Foreground\", \"Background\")",
             "name": "deleteOptions.propagationPolicy",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "array",
@@ -3448,21 +4081,30 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "When present, indicates that modifications should not be persisted. An invalid o...",
+            "description": "Specifies simulation mode; no changes are saved. Use to test deletion effects.",
             "name": "deleteOptions.dryRun",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "if set to true, it will trigger an unsafe deletion of the resource in case the n...",
+            "description": "Ignore store read errors for unsafe deletion when true",
             "name": "deleteOptions.ignoreStoreReadErrorWithClusterBreakingPotential",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
             "name": "force",
             "in": "query",
-            "description": "Optional boolean parameter"
+            "description": "Force deletion even if workflow is running when true",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -3479,7 +4121,7 @@
             }
           }
         },
-        "description": "Delete a workflows Use when: when cleaning up resources that are no longer needed. Required: namespace, name",
+        "description": "Deletes a specific workflow. Use when: removing outdated or unnecessary workflows to free up resources or clean up the system.",
         "summary": "Delete a workflows"
       }
     },
@@ -3495,103 +4137,151 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow logs\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Workflow name to retrieve logs for specific workflow",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "podName",
             "in": "query",
-            "description": "Name of the resource to operate on"
+            "description": "Specify pod name to retrieve logs for a specific pod within the workflow.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "The container for which to stream logs. Defaults to only container if there is o...",
+            "description": "Specifies container to stream logs from; use if multiple containers exist.",
             "name": "logOptions.container",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Follow the log stream of the pod. Defaults to false. +optional.",
+            "description": "Stream real-time pod logs when true (default: false)",
             "name": "logOptions.follow",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "Return previous terminated container logs. Defaults to false. +optional.",
+            "description": "\"Retrieve logs from previous container run when true\"",
             "name": "logOptions.previous",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "A relative time in seconds before the current time from which to show logs. If t...",
+            "description": "Specifies logs from seconds ago; use for recent log retrieval.",
             "name": "logOptions.sinceSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be fr...",
+            "description": "Specifies start time in seconds since epoch for log retrieval",
             "name": "logOptions.sinceTime.seconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Non-negative fractions of a second at nanosecond resolution. Negative second val...",
+            "description": "Specifies nanoseconds for precise log start time filtering. Use with sinceTime.",
             "name": "logOptions.sinceTime.nanos",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line ...",
+            "description": "Add timestamps to log lines when true (default: false)",
             "name": "logOptions.timestamps",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of lines from the end of the logs to show. If not specified, ...",
+            "description": "Specifies number of log lines from end to display; use for recent log insights.",
             "name": "logOptions.tailLines",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of bytes to read from the server before terminating the log o...",
+            "description": "Specifies max bytes to read from logs; use to limit data size.",
             "name": "logOptions.limitBytes",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the...",
+            "description": "Skip TLS verification for backend when true (use for testing or debugging)",
             "name": "logOptions.insecureSkipTLSVerifyBackend",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Specify which container log stream to return to the client. Acceptable values ar...",
+            "description": "Specifies log stream type: \"All\", \"Stdout\", or \"Stderr\" for container logs.",
             "name": "logOptions.stream",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "name": "grep",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "Filter logs by matching text pattern (e.g., \"error\")",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "selector",
             "in": "query",
-            "description": "Filter to narrow results based on labels or fields"
+            "description": "Criteria to filter logs (e.g., pod=frontend,container=nginx)",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3617,7 +4307,7 @@
             }
           }
         },
-        "description": "Retrieve log information Use when: for debugging issues or understanding resource behavior. Required: namespace, name",
+        "description": "Retrieves logs for a specific workflow. Use when: debugging workflow execution or investigating issues with specific pods or containers.",
         "summary": "Retrieve log information"
       }
     },
@@ -3633,23 +4323,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace for the workflow to resubmit\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Workflow name to resubmit in the specified namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowResubmitRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3666,7 +4353,7 @@
             }
           }
         },
-        "description": "Update or replace a resubmit Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Resubmits a workflow by name. Use when: retrying a failed workflow or reprocessing with the same configuration.",
         "summary": "Update or replace a resubmit"
       }
     },
@@ -3682,23 +4369,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for the workflow operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Specifies the workflow name to resume in the given namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowResumeRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3715,7 +4399,7 @@
             }
           }
         },
-        "description": "Update or replace a resume Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Resumes a paused workflow. Use when: continuing a workflow that was previously halted or paused.",
         "summary": "Update or replace a resume"
       }
     },
@@ -3731,23 +4415,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for workflow retry\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Workflow name to retry in the specified namespace",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowRetryRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3764,7 +4445,7 @@
             }
           }
         },
-        "description": "Update or replace a retry Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Retries a failed workflow. Use when: attempting to rerun a workflow after a failure to achieve successful completion.",
         "summary": "Update or replace a retry"
       }
     },
@@ -3780,23 +4461,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for the workflow operation\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Specifies the workflow name to update in the given namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowSetRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3813,7 +4491,7 @@
             }
           }
         },
-        "description": "Update or replace a set Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Updates workflow settings by name and namespace. Use when: modifying workflow configuration or adjusting parameters for specific tasks.",
         "summary": "Update or replace a set"
       }
     },
@@ -3829,23 +4507,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow to stop\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Workflow name to stop in the specified namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowStopRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3862,7 +4537,7 @@
             }
           }
         },
-        "description": "Update or replace a stop Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Stops a running workflow by name. Use when: halting a process or preventing further execution in a specific namespace.",
         "summary": "Update or replace a stop"
       }
     },
@@ -3878,23 +4553,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for suspending the workflow\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Workflow name to suspend in the specified namespace",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowSuspendRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3911,7 +4583,7 @@
             }
           }
         },
-        "description": "Update or replace a suspend Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Suspends a specific workflow. Use when: pausing a workflow temporarily for maintenance or issue resolution.",
         "summary": "Update or replace a suspend"
       }
     },
@@ -3927,23 +4599,20 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to target for workflow termination\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
+            "description": "Workflow name to terminate in the specified namespace.",
             "schema": {
-              "$ref": "#/definitions/io.argoproj.workflow.v1alpha1.WorkflowTerminateRequest"
-            },
-            "description": "Required string parameter"
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3960,7 +4629,7 @@
             }
           }
         },
-        "description": "Update or replace a terminate Use when: when modifying existing resource configurations or properties. Required: namespace, name, body",
+        "description": "Terminates a specific workflow. Use when: needing to stop a workflow immediately due to errors or changes in requirements.",
         "summary": "Update or replace a terminate"
       }
     },
@@ -3977,104 +4646,152 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the workflow\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Workflow name to retrieve specific details",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "podName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specific pod name to retrieve details within the workflow.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
-            "description": "The container for which to stream logs. Defaults to only container if there is o...",
+            "description": "Specifies container to stream logs from; use if pod has multiple containers.",
             "name": "logOptions.container",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "boolean",
-            "description": "Follow the log stream of the pod. Defaults to false. +optional.",
+            "description": "Stream live pod logs when true; default is false. Use for real-time monitoring.",
             "name": "logOptions.follow",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "boolean",
-            "description": "Return previous terminated container logs. Defaults to false. +optional.",
+            "description": "Return logs from previous container run when true. Use for terminated containers.",
             "name": "logOptions.previous",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "A relative time in seconds before the current time from which to show logs. If t...",
+            "description": "Specifies logs from seconds ago; use for recent activity analysis.",
             "name": "logOptions.sinceSeconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be fr...",
+            "description": "Specify UTC seconds since epoch to filter logs from that time onward.",
             "name": "logOptions.sinceTime.seconds",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "integer",
             "format": "int32",
-            "description": "Non-negative fractions of a second at nanosecond resolution. Negative second val...",
+            "description": "Specifies nanoseconds for log start time; use for precise log retrieval.",
             "name": "logOptions.sinceTime.nanos",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line ...",
+            "description": "Add timestamps to log lines when true (use for detailed time tracking)",
             "name": "logOptions.timestamps",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of lines from the end of the logs to show. If not specified, ...",
+            "description": "\"Number of log lines from end to display (e.g., 100)\"",
             "name": "logOptions.tailLines",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "string",
             "format": "int64",
-            "description": "If set, the number of bytes to read from the server before terminating the log o...",
+            "description": "Specifies max bytes to read from logs; use to limit log size.",
             "name": "logOptions.limitBytes",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
           },
           {
             "type": "boolean",
-            "description": "insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the...",
+            "description": "Skip TLS verification for backend when true (use cautiously)",
             "name": "logOptions.insecureSkipTLSVerifyBackend",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
-            "description": "Specify which container log stream to return to the client. Acceptable values ar...",
+            "description": "Specifies log stream type: \"All\", \"Stdout\", or \"Stderr\" for container logs.",
             "name": "logOptions.stream",
-            "in": "query"
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           },
           {
             "type": "string",
             "name": "grep",
             "in": "query",
-            "description": "Optional string parameter"
+            "description": "Specifies text pattern to filter logs (e.g., \"error\")",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "selector",
             "in": "query",
-            "description": "Filter to narrow results based on labels or fields"
+            "description": "Criteria to filter workflows (e.g., status=active)",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4100,7 +4817,7 @@
             }
           }
         },
-        "description": "Retrieve log information Use when: for debugging issues or understanding resource behavior. Required: namespace, name, podName"
+        "description": "Retrieves logs for a specific pod in a workflow. Use when: accessing pod logs for debugging or monitoring purposes. Note: Deprecated, use WorkflowLogs if podName is empty."
       }
     },
     "/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}": {
@@ -4116,7 +4833,10 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate artifact files\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "enum": [
@@ -4127,28 +4847,40 @@
             "name": "idDiscriminator",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier to target specific artifact file",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "\"Unique identifier of the artifact file to retrieve\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "nodeId",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "\"Unique node identifier to retrieve artifact files\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "artifactName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the name of the artifact file to retrieve.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "enum": [
@@ -4158,7 +4890,10 @@
             "name": "artifactDiscriminator",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier for the specific artifact to retrieve",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4176,7 +4911,7 @@
             }
           }
         },
-        "description": "Retrieve artifact-files information Use when: when you have a specific resource identifier and need its current details"
+        "description": "Retrieves a specific artifact file. Use when: accessing detailed artifact data for analysis or verification within a workflow."
       }
     },
     "/artifacts-by-uid/{uid}/{nodeId}/{artifactName}": {
@@ -4192,21 +4927,30 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier of the artifact to retrieve",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "nodeId",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier of the node to retrieve its artifacts",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "artifactName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the name of the artifact to retrieve from the node.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4224,7 +4968,7 @@
             }
           }
         },
-        "description": "Retrieve artifacts-by-uid information Use when: when you have a specific resource identifier and need its current details. Required: uid, nodeId, artifactName"
+        "description": "Retrieves an output artifact by UID. Use when: accessing specific artifact details for analysis or debugging purposes."
       }
     },
     "/artifacts/{namespace}/{name}/{nodeId}/{artifactName}": {
@@ -4240,28 +4984,40 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the artifact\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "\"Artifact name to retrieve within the specified namespace\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "nodeId",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "\"Unique identifier of the node to retrieve artifacts from\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "artifactName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the name of the artifact to retrieve from the node.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4279,7 +5035,7 @@
             }
           }
         },
-        "description": "Retrieve artifacts information Use when: when you have a specific resource identifier and need its current details"
+        "description": "Retrieves an output artifact by name and node ID. Use when: accessing specific artifact data for analysis or debugging within a workflow."
       }
     },
     "/input-artifacts-by-uid/{uid}/{nodeId}/{artifactName}": {
@@ -4295,21 +5051,30 @@
             "name": "uid",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier of the input artifact to retrieve.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "nodeId",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "Unique identifier of the node to retrieve input artifacts for.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "artifactName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the name of the artifact to retrieve from the node.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4327,7 +5092,7 @@
             }
           }
         },
-        "description": "Retrieve input-artifacts-by-uid information Use when: when you have a specific resource identifier and need its current details. Required: uid, nodeId, artifactName"
+        "description": "Retrieves an input artifact by UID, node ID, and artifact name. Use when: verifying artifact details for a specific workflow node or investigating input data issues."
       }
     },
     "/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}": {
@@ -4343,28 +5108,40 @@
             "name": "namespace",
             "in": "path",
             "required": true,
-            "description": "Kubernetes namespace to scope the operation"
+            "description": "\"Kubernetes namespace to locate the input artifact\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "name",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the artifact name to retrieve within the namespace and node.",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "nodeId",
             "in": "path",
             "required": true,
-            "description": "Required string parameter"
+            "description": "\"Unique identifier of the node to retrieve input artifacts\"",
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "type": "string",
             "name": "artifactName",
             "in": "path",
             "required": true,
-            "description": "Name of the resource to operate on"
+            "description": "Specifies the name of the artifact to retrieve from the node.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4382,7 +5159,7 @@
             }
           }
         },
-        "description": "Retrieve input-artifacts information Use when: when you have a specific resource identifier and need its current details"
+        "description": "Retrieves details of a specific input artifact. Use when: checking artifact data for a node in a workflow or investigating input issues."
       }
     }
   },
@@ -16041,6 +16818,12 @@
   "security": [
     {
       "BearerToken": []
+    }
+  ],
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "http://localhost:2746"
     }
   ]
 }

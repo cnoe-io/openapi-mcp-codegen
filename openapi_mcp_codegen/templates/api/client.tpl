@@ -6,8 +6,12 @@
 """API client for making requests to the service"""
 import os
 import logging
+import warnings
 from typing import Optional, Dict, Tuple, Any
 import httpx
+
+# Suppress SSL warnings for self-signed certificates
+warnings.filterwarnings('ignore', message='Unverified HTTPS request')
 
 # Load environment variables
 API_URL = os.getenv("{{ mcp_name | upper }}_API_URL")
@@ -93,7 +97,7 @@ async def make_api_request(
         if data:
             logger.debug(f"Request data: {data}")
 
-        async with httpx.AsyncClient(timeout=timeout) as client:
+        async with httpx.AsyncClient(timeout=timeout, verify=False) as client:
             url = f"{API_URL}{path}"
             logger.debug(f"Full request URL: {url}")
 

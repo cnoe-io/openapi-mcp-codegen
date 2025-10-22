@@ -14,37 +14,37 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def archived_workflow_service_list_archived_workflow_label_keys(param_namespace: str = None) -> Any:
-    """
-    List or query archived-workflows-label-keys
+  """
+  List or query archived-workflows-label-keys
 
-    OpenAPI Description:
-        List or query archived-workflows-label-keys Use when: when you need to discover available resources or check what exists
+  OpenAPI Description:
+      Lists all label keys for archived workflows. Use when: discovering available labels for filtering or categorizing archived workflows.
 
-    Args:
+  Args:
 
-        param_namespace (str): Kubernetes namespace to scope the operation
+      param_namespace (str): "Kubernetes namespace to filter archived workflows"
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/archived-workflows-label-keys")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/archived-workflows-label-keys")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_namespace is not None:
-        params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+  if param_namespace is not None:
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/archived-workflows-label-keys", method="GET", params=params, data=data)
+  success, response = await make_api_request("/api/v1/archived-workflows-label-keys", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

@@ -5,7 +5,7 @@
 """Tools for /api/v1/archived-workflows/{uid}/retry operations"""
 
 import logging
-from typing import Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,67 +13,35 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def archived_workflow_service_retry_archived_workflow(
-    path_uid: str,
-    body_name: str = None,
-    body_namespace: str = None,
-    body_nodeFieldSelector: str = None,
-    body_parameters: List[str] = None,
-    body_restartSuccessful: bool = None,
-    body_uid: str = None,
-) -> Any:
-    """
-    Update or replace a retry
+async def archived_workflow_service_retry_archived_workflow(path_uid: str) -> Any:
+  """
+  Update or replace a retry
 
-    OpenAPI Description:
-        Update or replace a retry Use when: when modifying existing resource configurations or properties. Required: uid, body
+  OpenAPI Description:
+      Retries an archived workflow by UID. Use when: attempting to rerun a previously completed or failed workflow for further analysis or correction.
 
-    Args:
+  Args:
 
-        path_uid (str): Required string parameter
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-        body_nodeFieldSelector (str): OpenAPI parameter corresponding to 'body_nodeFieldSelector'
-
-        body_parameters (List[str]): OpenAPI parameter corresponding to 'body_parameters'
-
-        body_restartSuccessful (bool): OpenAPI parameter corresponding to 'body_restartSuccessful'
-
-        body_uid (str): OpenAPI parameter corresponding to 'body_uid'
+      path_uid (str): Unique identifier of the archived workflow to retry
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/archived-workflows/{uid}/retry")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/archived-workflows/{uid}/retry")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_nodeFieldSelector is not None:
-        flat_body["nodeFieldSelector"] = body_nodeFieldSelector
-    if body_parameters is not None:
-        flat_body["parameters"] = body_parameters
-    if body_restartSuccessful is not None:
-        flat_body["restartSuccessful"] = body_restartSuccessful
-    if body_uid is not None:
-        flat_body["uid"] = body_uid
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}/retry", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}/retry", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

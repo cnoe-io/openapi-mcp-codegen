@@ -5,7 +5,7 @@
 """Tools for /api/v1/workflows/{namespace}/lint operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,67 +13,35 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def workflow_service_lint_workflow(
-    path_namespace: str,
-    body_namespace: str = None,
-    body_workflow__apiVersion: str = None,
-    body_workflow__kind: str = None,
-    body_workflow__metadata: Dict[str, Any] = None,
-    body_workflow__spec: Dict[str, Any] = None,
-    body_workflow__status: Dict[str, Any] = None,
-) -> Any:
-    """
-    Perform an operation on lint
+async def workflow_service_lint_workflow(path_namespace: str) -> Any:
+  """
+  Perform an operation on lint
 
-    OpenAPI Description:
-        Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: namespace, body
+  OpenAPI Description:
+      Validates a workflow for errors in a given namespace. Use when: checking workflow syntax or configuration before execution.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-        body_workflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
-
-        body_workflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-
-        body_workflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-
-        body_workflow__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
-
-        body_workflow__status (Dict[str, Any]): WorkflowStatus contains overall status information about a workflow
+      path_namespace (str): "Kubernetes namespace to scope the linting operation"
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/workflows/{namespace}/lint")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/workflows/{namespace}/lint")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_workflow__apiVersion is not None:
-        flat_body["workflow__apiVersion"] = body_workflow__apiVersion
-    if body_workflow__kind is not None:
-        flat_body["workflow__kind"] = body_workflow__kind
-    if body_workflow__metadata is not None:
-        flat_body["workflow__metadata"] = body_workflow__metadata
-    if body_workflow__spec is not None:
-        flat_body["workflow__spec"] = body_workflow__spec
-    if body_workflow__status is not None:
-        flat_body["workflow__status"] = body_workflow__status
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/lint", method="POST", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/lint", method="POST", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

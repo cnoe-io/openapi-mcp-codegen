@@ -5,7 +5,7 @@
 """Tools for /api/v1/sensors/{namespace}/{name} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,252 +14,188 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def sensor_service_get_sensor(path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None) -> Any:
-    """
-    Retrieve sensors information
+  """
+  Retrieve sensors information
 
-    OpenAPI Description:
-        Retrieve sensors information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name
+  OpenAPI Description:
+      Retrieves details of a specific sensor. Use when: checking sensor configuration or investigating sensor-related issues.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate the sensor"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): "Sensor name to retrieve details from specified namespace"
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
-
-
-    Returns:
-        Any: The JSON response from the API call.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/sensors/{namespace}/{name}")
-
-    params = {}
-    data = {}
-
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="GET", params=params, data=data)
-
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+      param_getOptions_resourceVersion (str): Specifies resource version to retrieve; use for consistency across requests.
 
 
-async def sensor_service_update_sensor(
-    path_namespace: str,
-    path_name: str,
-    body_name: str = None,
-    body_namespace: str = None,
-    body_sensor__metadata: Dict[str, Any] = None,
-    body_sensor__spec__dependencies: List[Dict[str, Any]] = None,
-    body_sensor__spec__errorOnFailedRound: bool = None,
-    body_sensor__spec__eventBusName: str = None,
-    body_sensor__spec__loggingFields: Dict[str, Any] = None,
-    body_sensor__spec__replicas: int = None,
-    body_sensor__spec__revisionHistoryLimit: int = None,
-    body_sensor__spec__template: Dict[str, Any] = None,
-    body_sensor__spec__triggers: List[Dict[str, Any]] = None,
-    body_sensor__status__status__conditions: List[Dict[str, Any]] = None,
-) -> Any:
-    """
-        Update or replace a sensors
+  Returns:
+      Any: The JSON response from the API call.
 
-        OpenAPI Description:
-            Update or replace a sensors Use when: when modifying existing resource configurations or properties. Required: namespace, name, body
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/sensors/{namespace}/{name}")
 
-        Args:
+  params = {}
+  data = {}
 
-            path_namespace (str): Kubernetes namespace to scope the operation
+  if param_getOptions_resourceVersion is not None:
+    params["getOptions_resourceVersion"] = (
+      str(param_getOptions_resourceVersion).lower()
+      if isinstance(param_getOptions_resourceVersion, bool)
+      else param_getOptions_resourceVersion
+    )
 
-            path_name (str): Name of the resource to operate on
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-            body_name (str): OpenAPI parameter corresponding to 'body_name'
+  success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="GET", params=params, data=data)
 
-            body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-            body_sensor__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-
-            body_sensor__spec__dependencies (List[Dict[str, Any]]): Dependencies is a list of the events that this sensor is dependent on.
-
-            body_sensor__spec__errorOnFailedRound (bool): ErrorOnFailedRound if set to true, marks sensor state as `error` if the previous trigger round fails.
-    Once sensor state is set to `error`, no further triggers will be processed.
-
-            body_sensor__spec__eventBusName (str): OpenAPI parameter corresponding to 'body_sensor__spec__eventBusName'
-
-            body_sensor__spec__loggingFields (Dict[str, Any]): OpenAPI parameter corresponding to 'body_sensor__spec__loggingFields'
-
-            body_sensor__spec__replicas (int): OpenAPI parameter corresponding to 'body_sensor__spec__replicas'
-
-            body_sensor__spec__revisionHistoryLimit (int): OpenAPI parameter corresponding to 'body_sensor__spec__revisionHistoryLimit'
-
-            body_sensor__spec__template (Dict[str, Any]): Request body as dictionary. Contains 11 nested properties. See OpenAPI schema for detailed structure.
-
-            body_sensor__spec__triggers (List[Dict[str, Any]]): Triggers is a list of the things that this sensor evokes. These are the outputs from this sensor.
-
-            body_sensor__status__status__conditions (List[Dict[str, Any]]): OpenAPI parameter corresponding to 'body_sensor__status__status__conditions'
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
-        Returns:
-            Any: The JSON response from the API call.
+async def sensor_service_update_sensor(path_namespace: str, path_name: str) -> Any:
+  """
+  Update or replace a sensors
 
-        Raises:
-            Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/sensors/{namespace}/{name}")
+  OpenAPI Description:
+      Updates sensor configuration. Use when: modifying sensor settings or updating sensor details in a specific namespace.
 
-    params = {}
-    data = {}
+  Args:
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_sensor__metadata is not None:
-        flat_body["sensor__metadata"] = body_sensor__metadata
-    if body_sensor__spec__dependencies is not None:
-        flat_body["sensor__spec__dependencies"] = body_sensor__spec__dependencies
-    if body_sensor__spec__errorOnFailedRound is not None:
-        flat_body["sensor__spec__errorOnFailedRound"] = body_sensor__spec__errorOnFailedRound
-    if body_sensor__spec__eventBusName is not None:
-        flat_body["sensor__spec__eventBusName"] = body_sensor__spec__eventBusName
-    if body_sensor__spec__loggingFields is not None:
-        flat_body["sensor__spec__loggingFields"] = body_sensor__spec__loggingFields
-    if body_sensor__spec__replicas is not None:
-        flat_body["sensor__spec__replicas"] = body_sensor__spec__replicas
-    if body_sensor__spec__revisionHistoryLimit is not None:
-        flat_body["sensor__spec__revisionHistoryLimit"] = body_sensor__spec__revisionHistoryLimit
-    if body_sensor__spec__template is not None:
-        flat_body["sensor__spec__template"] = body_sensor__spec__template
-    if body_sensor__spec__triggers is not None:
-        flat_body["sensor__spec__triggers"] = body_sensor__spec__triggers
-    if body_sensor__status__status__conditions is not None:
-        flat_body["sensor__status__status__conditions"] = body_sensor__status__status__conditions
-    data = assemble_nested_body(flat_body)
+      path_namespace (str): "Kubernetes namespace to locate the sensor for update"
 
-    success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="PUT", params=params, data=data)
+      path_name (str): Sensor name to update in the specified namespace
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+
+  Returns:
+      Any: The JSON response from the API call.
+
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/sensors/{namespace}/{name}")
+
+  params = {}
+  data = {}
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="PUT", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def sensor_service_delete_sensor(
-    path_namespace: str,
-    path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+  path_namespace: str,
+  path_name: str,
+  param_deleteOptions_gracePeriodSeconds: int = None,
+  param_deleteOptions_preconditions_uid: str = None,
+  param_deleteOptions_preconditions_resourceVersion: str = None,
+  param_deleteOptions_orphanDependents: bool = False,
+  param_deleteOptions_propagationPolicy: str = None,
+  param_deleteOptions_dryRun: str = None,
+  param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: str = None,
 ) -> Any:
-    """
-    Delete a sensors
+  """
+  Delete a sensors
 
-    OpenAPI Description:
-        Delete a sensors Use when: when cleaning up resources that are no longer needed. Required: namespace, name
+  OpenAPI Description:
+      Deletes a sensor by name and namespace. Use when: removing obsolete or unwanted sensors from the system.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace of the sensor to delete"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): "Sensor name to delete within the specified namespace"
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+      param_deleteOptions_gracePeriodSeconds (int): Specifies delay in seconds before deletion; use for graceful shutdown.
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+      param_deleteOptions_preconditions_uid (str): "UID to ensure deletion only if it matches the target sensor's UID"
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+      param_deleteOptions_preconditions_resourceVersion (str): "Delete only if resource version matches specified value"
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+      param_deleteOptions_orphanDependents (bool): "Delete without affecting dependents when true (deprecated)"
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+      param_deleteOptions_propagationPolicy (str): Controls garbage collection method (e.g., "Foreground", "Background") during deletion.
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+      param_deleteOptions_dryRun (str): Simulate deletion without actual changes (e.g., ["All"]).
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+      param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (str): Ignore read errors for unsafe deletion when true
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/sensors/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/sensors/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
-        )
+  if param_deleteOptions_gracePeriodSeconds is not None:
+    params["deleteOptions_gracePeriodSeconds"] = (
+      str(param_deleteOptions_gracePeriodSeconds).lower()
+      if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
+      else param_deleteOptions_gracePeriodSeconds
+    )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
-        )
+  if param_deleteOptions_preconditions_uid is not None:
+    params["deleteOptions_preconditions_uid"] = (
+      str(param_deleteOptions_preconditions_uid).lower()
+      if isinstance(param_deleteOptions_preconditions_uid, bool)
+      else param_deleteOptions_preconditions_uid
+    )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
-        )
+  if param_deleteOptions_preconditions_resourceVersion is not None:
+    params["deleteOptions_preconditions_resourceVersion"] = (
+      str(param_deleteOptions_preconditions_resourceVersion).lower()
+      if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
+      else param_deleteOptions_preconditions_resourceVersion
+    )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
-        )
+  if param_deleteOptions_orphanDependents is not None:
+    params["deleteOptions_orphanDependents"] = (
+      str(param_deleteOptions_orphanDependents).lower()
+      if isinstance(param_deleteOptions_orphanDependents, bool)
+      else param_deleteOptions_orphanDependents
+    )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
-        )
+  if param_deleteOptions_propagationPolicy is not None:
+    params["deleteOptions_propagationPolicy"] = (
+      str(param_deleteOptions_propagationPolicy).lower()
+      if isinstance(param_deleteOptions_propagationPolicy, bool)
+      else param_deleteOptions_propagationPolicy
+    )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
-        )
+  if param_deleteOptions_dryRun is not None:
+    params["deleteOptions_dryRun"] = (
+      str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
-        )
+  if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
+    params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
+      str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
+      if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
+      else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    )
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/sensors/{path_namespace}/{path_name}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

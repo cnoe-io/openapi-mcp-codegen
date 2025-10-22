@@ -14,32 +14,32 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def info_service_get_user_info() -> Any:
-    """
-    List or query userinfo
+  """
+  List or query userinfo
 
-    OpenAPI Description:
-        List or query userinfo
+  OpenAPI Description:
+      Retrieves current user information. Use when: confirming user identity or checking user details for personalization.
 
-    Args:
+  Args:
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/userinfo")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/userinfo")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/userinfo", method="GET", params=params, data=data)
+  success, response = await make_api_request("/api/v1/userinfo", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

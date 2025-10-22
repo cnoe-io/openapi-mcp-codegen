@@ -138,8 +138,8 @@ class MCPGenerator:
     self.spec = self._load_spec()
     # Get MCP name from config (title or mcp_name) or fall back to spec title
     raw_name = (
-        self.config.get('title') or 
-        self.config.get('mcp_name') or 
+        self.config.get('title') or
+        self.config.get('mcp_name') or
         self.spec.get('info', {}).get('title', 'generated_mcp')
     )
     # Sanitize: lowercase, replace spaces and hyphens with underscores
@@ -850,6 +850,12 @@ class MCPGenerator:
       logger.info("Rendering helpers.py")
       self.render_template("agent/a2a_server/helpers.tpl", os.path.join(a2a_dir, "helpers.py"), **fh)
 
+      logger.info("Rendering base_agent.py (abstract base class)")
+      self.render_template("agent/a2a_server/base_agent.tpl", os.path.join(a2a_dir, "base_agent.py"), **fh)
+
+      logger.info("Rendering base_agent_executor.py (abstract base class)")
+      self.render_template("agent/a2a_server/base_agent_executor.tpl", os.path.join(a2a_dir, "base_agent_executor.py"), **fh)
+
       logger.info("Rendering agent.py")
       self.render_template("agent/a2a_server/agent.tpl", os.path.join(a2a_dir, "agent.py"), mcp_name=self.mcp_name, **fh)
 
@@ -866,7 +872,7 @@ class MCPGenerator:
       )
 
       # Ruff format
-      for file in ["state.py", "helpers.py", "agent.py", "agent_executor.py", "__main__.py"]:
+      for file in ["state.py", "helpers.py", "base_agent.py", "base_agent_executor.py", "agent.py", "agent_executor.py", "__main__.py"]:
           logger.debug(f"Formatting {file} with Ruff")
           self.run_ruff_lint(os.path.join(a2a_dir, file))
 

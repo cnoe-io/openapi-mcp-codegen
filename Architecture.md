@@ -23,6 +23,69 @@ The OpenAPI MCP Code Generator is a sophisticated tool that bridges the gap betw
 
 ---
 
+## Complete Enhancement Workflow
+
+The diagram below shows the end-to-end workflow from raw OpenAPI spec to production-ready MCP server with AgentGateway:
+
+```mermaid
+flowchart TB
+    subgraph Input["📥 Input Configuration"]
+        OAS[OpenAPI Spec<br/>openapi_argo_workflows.json<br/>Swagger 2.0 or OpenAPI 3.x]
+        CFG[config.yaml<br/>overlay_enhancements: enabled<br/>agentgateway: port 3000]
+        PRO[prompt.yaml<br/>operation_description<br/>parameter_description]
+    end
+
+    subgraph Enhancement["🤖 LLM Enhancement Engine"]
+        GEN[Overlay Generator<br/>Loads prompt.yaml<br/>Calls GPT-4o/Claude]
+        OVL[overlay.yaml<br/>511 Enhancement Actions<br/>OpenAPI Overlay 1.0.0]
+        APP[Overlay Applier<br/>Applies enhancements<br/>Fixes Swagger 2.0 → 3.x<br/>Validates parameters]
+    end
+
+    subgraph Output["📤 Generated Artifacts"]
+        ENH[enhanced_openapi.json<br/>LLM-enhanced descriptions<br/>OpenAPI 3.0 compliant<br/>All parameters valid]
+        MCP[MCP Server<br/>52 tool modules<br/>mcp_argo_workflows/]
+        AGW[agw.yaml<br/>AgentGateway config<br/>Auto-generated]
+    end
+
+    subgraph Deploy["🚀 Deployment"]
+        VAL{Validation<br/>Pass?}
+        SRV[AgentGateway<br/>Listening on :3000<br/>Proxying to :2746]
+        AI[AI Agents<br/>Claude/GPT/etc<br/>MCP Protocol]
+    end
+
+    OAS --> GEN
+    CFG --> GEN
+    PRO --> GEN
+    GEN -->|Generates| OVL
+    OAS --> APP
+    OVL --> APP
+    APP -->|Produces| ENH
+    ENH --> MCP
+    ENH --> VAL
+    CFG --> AGW
+    VAL -->|✓ Valid| SRV
+    VAL -->|✗ Invalid| APP
+    ENH --> SRV
+    SRV --> AI
+
+    style PRO fill:#ffe4e1
+    style GEN fill:#e1f5ff
+    style OVL fill:#fff4e6
+    style ENH fill:#e8f5e9
+    style MCP fill:#f3e5f5
+    style AGW fill:#e6f3ff
+    style SRV fill:#90EE90
+    style AI fill:#FFD700
+```
+
+**Key Innovations:**
+1. **Declarative Prompts**: LLM prompts are configuration, not code
+2. **Auto-Fix Pipeline**: Automatically converts Swagger 2.0 and fixes parameter schemas
+3. **Zero-Config Gateway**: AgentGateway config generated from single source of truth
+4. **Validation Loop**: Only valid specs reach production
+
+---
+
 ## What is the Model Context Protocol (MCP)?
 
 **MCP** is a standardized protocol that enables AI assistants and agents to interact with external tools, services, and APIs in a structured, reliable manner.
@@ -63,13 +126,14 @@ Our generator implements a **four-layer architecture** that transforms OpenAPI s
 flowchart TB
     subgraph Input["📥 Layer 1: Input & Configuration"]
         A1[OpenAPI Specification<br/>JSON/YAML Format<br/>Argo Workflows API]
-        A2[config.yaml<br/>Authentication<br/>Metadata<br/>Dependencies]
+        A2[config.yaml<br/>overlay_enhancements<br/>agentgateway<br/>Authentication & Dependencies]
+        A3[prompt.yaml<br/>Declarative LLM Prompts<br/>System & User Templates]
     end
 
     subgraph Enhancement["🤖 Layer 2: LLM Enhancement Pipeline"]
-        B1[Overlay Generator<br/>Analyzes 255 API Operations<br/>GPT-4/Claude Integration]
+        B1[Overlay Generator<br/>Analyzes 255 API Operations<br/>GPT-4/Claude Integration<br/>Uses prompt.yaml Templates]
         B2[OpenAPI Overlay YAML<br/>511 Enhancement Actions<br/>Standards-Compliant]
-        B3[Overlay Applier<br/>JSONPath Targeting<br/>Non-Destructive Merging]
+        B3[Overlay Applier<br/>JSONPath Targeting<br/>Non-Destructive Merging<br/>Swagger 2.0 → OpenAPI 3.x]
     end
 
     subgraph Generation["⚙️ Layer 3: Code Generation Engine"]
@@ -82,10 +146,12 @@ flowchart TB
         D1[MCP Server Package<br/>52 Python Modules<br/>mcp_argo_workflows]
         D2[API Client<br/>httpx-based<br/>Async/Await]
         D3[Documentation<br/>OpenAI-Compatible<br/>Use Case Oriented]
+        D4[AgentGateway Config<br/>agw.yaml<br/>Auto-generated from config.yaml]
     end
 
     A1 --> B1
     A2 --> B1
+    A3 --> B1
     B1 -->|Generates| B2
     A1 --> B3
     B2 --> B3
@@ -96,24 +162,33 @@ flowchart TB
     C2 -->|Creates| D1
     C2 -->|Creates| D2
     C2 -->|Creates| D3
+    A2 -->|Generates| D4
 
+    style A3 fill:#ffe4e1
     style B1 fill:#e1f5ff
     style B2 fill:#fff4e6
     style C1 fill:#e8f5e9
     style D1 fill:#f3e5f5
+    style D4 fill:#e6f3ff
 ```
 
 ### Layer Descriptions
 
 #### Layer 1: Input & Configuration
 - **OpenAPI Spec**: The Argo Workflows API contains 255 operations across 52 endpoints
-- **config.yaml**: Defines package metadata, authentication headers, and dependencies
+- **config.yaml**: Defines package metadata, authentication headers, dependencies, and declarative settings:
+  - `overlay_enhancements`: Controls LLM usage, description length, CRUD enhancements, parameter guidance
+  - `agentgateway`: Port, backend configuration, CORS settings for AgentGateway
+- **prompt.yaml**: Declarative LLM prompts with system and user templates for:
+  - Operation descriptions (max 300 chars, agent-focused)
+  - Parameter descriptions (guidance-oriented)
 - **Validation**: Ensures spec compliance with OpenAPI 3.0+ standards
 
 #### Layer 2: LLM Enhancement Pipeline
-- **Overlay Generator**: Uses GPT-4 or Claude to analyze each operation
-- **Enhancement Logic**: Creates contextual descriptions with "Use when:" patterns
+- **Overlay Generator**: Uses GPT-4 or Claude with declarative prompts from `prompt.yaml`
+- **Enhancement Logic**: Creates contextual descriptions with "Use when:" patterns using LLM
 - **Overlay Output**: Standards-compliant YAML (OpenAPI Overlay Spec 1.0.0)
+- **Overlay Applier**: Applies enhancements and performs Swagger 2.0 → OpenAPI 3.x conversion
 - **511 Actions Generated**: One for each operation, parameter, and response
 
 #### Layer 3: Code Generation Engine
@@ -126,6 +201,7 @@ flowchart TB
 - **MCP Server**: Production-ready Python package with 52 tool modules
 - **API Client**: Fully-typed async HTTP client with error handling
 - **Documentation**: Auto-generated README and docstrings
+- **AgentGateway Config**: Auto-generated `agw.yaml` from `config.yaml` settings for immediate deployment
 
 ---
 
@@ -167,36 +243,57 @@ The Overlay Generator analyzes the Argo Workflows OpenAPI spec:
 
 ---
 
-### Step 2: LLM Enhancement
+### Step 2: LLM Enhancement with Declarative Prompts
 
-The generator sends structured prompts to the LLM:
+The generator loads prompts from `prompt.yaml` and sends structured requests to the LLM:
 
-**System Prompt**:
+**Declarative System Prompt** (from `prompt.yaml`):
+```yaml
+operation_description:
+  system_prompt: |
+    You are an expert at writing concise, OpenAI-compatible tool descriptions.
+    Your task is to write clear, brief descriptions that help AI function calling understand when to use each API operation.
+    Follow these strict rules:
+    1. Keep descriptions under {max_length} characters (OpenAI's recommended limit)
+    2. Start with what the operation does (verb + object)
+    3. Add one use case if space allows: 'Use when: <scenario>'
+    4. NO markdown formatting, bullet points, or special characters
+    5. NO parameter listings in the description
+    6. Write in plain, direct language
+    7. Focus on the agentic purpose: when should an AI agent choose this tool?
+
+  user_prompt_template: |
+    API: {method} {path}
+    Operation ID: {operation_id}
+    Summary: {summary}
+    Original Description: {description}
+    Path Parameters: {path_params}
+    Query Parameters: {query_params}
+    Has Request Body: {has_body}
+
+    Considering the above, write a concise, agent-focused tool description (max {max_length} chars, plain text).
+    Prioritize the primary action and a clear use case for an AI agent.
 ```
-You are an expert at writing OpenAI-compatible tool descriptions.
-Write clear, brief descriptions that help AI function calling.
-Rules:
-1. Keep under 250 characters
-2. Plain text only (no markdown)
-3. Start with action verb
-4. Add "Use when:" for context
-5. Be specific and actionable
-```
 
-**User Prompt**:
+**Runtime Execution** (with values from config.yaml):
 ```
-API: GET /api/v1/workflows/{namespace}
-Operation: WorkflowService_ListWorkflows
-Summary: Perform an operation on list
-Original: Perform an operation on list
+System: You are an expert at writing concise, OpenAI-compatible tool descriptions...
+        (max_description_length: 300 from config.yaml)
 
-Write a concise, OpenAI-compatible description (max 250 chars).
+User: API: GET /api/v1/workflows/{namespace}
+      Operation ID: WorkflowService_ListWorkflows
+      Summary: Perform an operation on list
+      Original Description: Perform an operation on list
+      Path Parameters: namespace
+      Query Parameters: listOptions.labelSelector, listOptions.fieldSelector
+      Has Request Body: false
 ```
 
 **LLM Response**:
 ```
 List all workflows in a namespace. Use when: you need to discover
-running workflows or monitor workflow states. Required: namespace
+running workflows or monitor workflow states. Supports filtering
+by labels and fields. Required: namespace
 ```
 
 ---
@@ -984,6 +1081,105 @@ if response.choices[0].message.get("function_call"):
 
 ---
 
+## AgentGateway Integration
+
+### What is AgentGateway?
+
+**AgentGateway** is a high-performance proxy that exposes OpenAPI specifications as MCP (Model Context Protocol) endpoints, enabling AI agents to discover and interact with REST APIs through a standardized interface.
+
+```mermaid
+flowchart LR
+    A[AI Agent<br/>Claude/GPT] -->|MCP Protocol| B[AgentGateway<br/>Port 3000]
+    B -->|HTTP/REST| C[Backend API<br/>Argo Workflows<br/>Port 2746]
+    C -->|JSON Response| B
+    B -->|MCP Response| A
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e6
+    style C fill:#e8f5e9
+```
+
+### Automated Configuration Generation
+
+The generator creates AgentGateway configuration directly from `config.yaml`:
+
+**config.yaml** (declarative settings):
+```yaml
+# AgentGateway configuration
+agentgateway:
+  port: 3000
+  backend:
+    host: localhost
+    port: 2746
+    path: /
+  cors:
+    enabled: true
+    allow_origins:
+      - "*"
+    allow_headers:
+      - "*"
+```
+
+**Generated agw.yaml** (AgentGateway config):
+```yaml
+binds:
+- port: 3000
+  listeners:
+  - routes:
+    - policies:
+        cors:
+          allowOrigins:
+          - '*'
+          allowHeaders:
+          - '*'
+      backends:
+      - mcp:
+          targets:
+          - name: openapi
+            openapi:
+              schema:
+                file: enhanced_openapi.json
+              host: localhost
+              port: 2746
+              path: /
+```
+
+### Workflow Integration
+
+```mermaid
+flowchart TD
+    Start[config.yaml] --> Gen[Generate Enhanced OpenAPI]
+    Gen --> Val[Validate Spec]
+    Val --> AGW[Generate agw.yaml]
+    AGW --> Run[Start AgentGateway]
+    Run --> Test[AI Agent Connects]
+
+    style Start fill:#e8f5e9
+    style Gen fill:#e1f5ff
+    style AGW fill:#fff4e6
+    style Run fill:#f3e5f5
+    style Test fill:#90EE90
+```
+
+**Makefile Targets**:
+```bash
+# Complete workflow
+make generate-enhanced      # Generate with LLM enhancements
+make validate              # Validate OpenAPI spec
+make generate-agw-config   # Create agw.yaml from config.yaml
+make run-agentgateway      # Start AgentGateway on port 3000
+```
+
+### Benefits
+
+- ✅ **Zero Configuration**: AgentGateway config auto-generated from existing settings
+- ✅ **Instant Deployment**: Start serving MCP endpoints immediately after generation
+- ✅ **Validated Specs**: Only compliant OpenAPI 3.x specs are used
+- ✅ **Production Ready**: CORS, error handling, and logging configured
+- ✅ **AI Agent Ready**: Works with any MCP-compatible AI agent
+
+---
+
 ## Advanced Features
 
 ### Custom Overlay Editing
@@ -1099,12 +1295,98 @@ poetry_dependencies: |
   pydantic = ">=2.0.0"
   mcp = ">=1.9.0"
 
+# Overlay Enhancement Configuration (NEW)
+overlay_enhancements:
+  enabled: true                          # Enable LLM enhancements
+  use_llm: true                          # Use LLM (requires OPENAI_API_KEY or ANTHROPIC_API_KEY)
+  llm_provider: null                     # Auto-detect from env (openai/anthropic)
+  max_description_length: 300            # Max chars for operation descriptions
+  enhance_crud_operations: true          # Add CRUD context to operations
+  add_use_cases: true                    # Include "Use when:" patterns
+  enhance_parameters: true               # Enhance parameter descriptions
+  add_parameter_guidance: true           # Add parameter usage guidance
+  agentic_focus: true                    # Focus on AI agent use cases
+
+# AgentGateway Configuration (NEW)
+agentgateway:
+  port: 3000                             # AgentGateway listen port
+  backend:
+    host: localhost                      # Backend API host
+    port: 2746                           # Backend API port (Argo Workflows default)
+    path: /                              # Backend API base path
+  cors:
+    enabled: true                        # Enable CORS
+    allow_origins:
+      - "*"                              # Allowed origins (use specific domains in prod)
+    allow_headers:
+      - "*"                              # Allowed headers
+
 # Generated File Headers
 file_headers:
   copyright: Copyright 2025 Your Org
   license: "SPDX-License-Identifier: Apache-2.0"
   message: "Generated by CNOE OpenAPI MCP Codegen tool"
 ```
+
+### prompt.yaml Structure (NEW)
+
+Declarative LLM prompts for operation and parameter enhancements:
+
+```yaml
+# Operation Description Enhancement
+operation_description:
+  system_prompt: |
+    You are an expert at writing concise, OpenAI-compatible tool descriptions.
+    Follow these strict rules:
+    1. Keep descriptions under {max_length} characters
+    2. Start with what the operation does (verb + object)
+    3. Add one use case: 'Use when: <scenario>'
+    4. NO markdown formatting, bullet points, or special characters
+    5. Write in plain, direct language
+    6. Focus on the agentic purpose
+
+  user_prompt_template: |
+    API: {method} {path}
+    Operation ID: {operation_id}
+    Summary: {summary}
+    Original Description: {description}
+    Path Parameters: {path_params}
+    Query Parameters: {query_params}
+    Has Request Body: {has_body}
+
+    Write a concise, agent-focused tool description (max {max_length} chars).
+
+  validation:
+    max_length: 300               # Configurable per prompt type
+    plain_text_only: true
+    remove_markdown: true
+
+# Parameter Description Enhancement
+parameter_description:
+  system_prompt: |
+    You are an expert at writing parameter descriptions for AI agents.
+    Focus on practical guidance and valid values.
+
+  user_prompt_template: |
+    Parameter: {param_name}
+    Type: {param_type}
+    Location: {param_in}
+    Required: {param_required}
+    Original Description: {original_description}
+
+    Write a brief, practical parameter description focusing on usage guidance.
+
+  validation:
+    max_length: 150
+    include_examples: true
+```
+
+**Benefits of Declarative Prompts:**
+- ✅ **Version Control**: Prompts are tracked in git, reviewable in PRs
+- ✅ **Team Collaboration**: Non-developers can improve prompts
+- ✅ **A/B Testing**: Easy to test different prompt strategies
+- ✅ **Consistency**: Same prompts used across all operations
+- ✅ **Configurability**: `max_length` and other params from config.yaml
 
 ### Environment Variables
 
@@ -1117,8 +1399,8 @@ ARGO_TOKEN=your-bearer-token
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 LLM_PROVIDER=openai  # or anthropic
-OPENAI_MODEL_NAME=gpt-4
-ANTHROPIC_MODEL_NAME=claude-3-opus-20240229
+OPENAI_MODEL_NAME=gpt-4o
+ANTHROPIC_MODEL_NAME=claude-3-5-sonnet-20241022
 
 # Logging
 LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
@@ -1128,7 +1410,51 @@ LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR
 
 ## CLI Reference
 
-### Generate Enhanced MCP Server
+### Makefile Automation (Recommended)
+
+The Argo Workflows example includes a comprehensive Makefile with automated workflows:
+
+```bash
+# Complete end-to-end workflow
+make generate-enhanced      # Generate with LLM enhancements
+make validate              # Validate enhanced spec
+make generate-agw-config   # Generate AgentGateway config
+make run-agentgateway      # Start AgentGateway
+
+# Individual steps
+make generate-overlay      # Generate overlay only
+make apply-overlay         # Apply overlay to spec
+make generate-mcp          # Generate MCP server code
+
+# Testing & Development
+make run-mcp-server        # Run MCP server (stdio mode)
+make run-mcp-http          # Run MCP server (HTTP mode)
+make run-a2a               # Run A2A server
+make run-a2a-client        # Run agent chat client
+make run-a2a-eval-mode     # Run in evaluation mode
+
+# Validation & Cleanup
+make validate-original     # Validate original spec (verbose)
+make agw-validate          # Validate AgentGateway config
+make stop-agentgateway     # Stop running gateway
+make clean                 # Remove generated files
+```
+
+**Quick Start**:
+```bash
+cd examples/argo-workflows
+
+# Set LLM API key
+export OPENAI_API_KEY=sk-...
+
+# Run complete workflow
+make generate-enhanced && \
+make validate && \
+make generate-agw-config && \
+make run-agentgateway
+```
+
+### Generate Enhanced MCP Server (Direct CLI)
 ```bash
 python -m openapi_mcp_codegen.enhance_and_generate \
     INPUT_SPEC \
@@ -1173,34 +1499,58 @@ python -m openapi_mcp_codegen \
 
 ### 1. Configuration Management
 - ✅ Use descriptive `title` in config.yaml
-- ✅ Version-control config.yaml
+- ✅ Version-control config.yaml, prompt.yaml, and generated overlays
 - ✅ Document custom headers in comments
-- ✅ Use environment variables for secrets
+- ✅ Use environment variables for secrets (API keys, tokens)
+- ✅ Set appropriate `max_description_length` in overlay_enhancements (200-300 chars)
+- ✅ Configure `agentgateway` section for production deployment
 
-### 2. Overlay Management
-- ✅ Save generated overlays (`--save-overlay`)
-- ✅ Review LLM-generated descriptions
+### 2. Declarative Prompts (NEW)
+- ✅ Start with default prompt.yaml and iterate based on results
+- ✅ Version-control prompt changes in git
+- ✅ Review generated descriptions and adjust prompts accordingly
+- ✅ Use `{max_length}` placeholder for configurable limits
+- ✅ Test prompts with different API types (CRUD vs search vs admin)
+- ✅ Collaborate with non-developers on prompt improvements
+
+### 3. Overlay Management
+- ✅ Save generated overlays (`--save-overlay`) for review
+- ✅ Review LLM-generated descriptions before production
 - ✅ Version-control overlays for reproducibility
 - ✅ Edit overlays for domain-specific terminology
+- ✅ Use overlays as documentation of enhancements made
 
-### 3. OpenAPI Spec Quality
-- ✅ Include operation summaries
-- ✅ Use meaningful `operationId` values
-- ✅ Document all parameters
-- ✅ Provide response schemas
-- ✅ Add examples where possible
+### 4. OpenAPI Spec Quality
+- ✅ Include operation summaries (used by LLM for context)
+- ✅ Use meaningful `operationId` values (becomes function names)
+- ✅ Document all parameters (helps LLM generate better guidance)
+- ✅ Provide response schemas (improves agent understanding)
+- ✅ Add examples where possible (LLM uses for context)
+- ✅ Don't worry about Swagger 2.0 vs 3.x (auto-converted)
 
-### 4. Generated Code
-- ✅ Review generated docstrings
+### 5. Generated Code & Validation
+- ✅ Run `make validate` after every generation
+- ✅ Review generated docstrings for accuracy
 - ✅ Test with real API endpoints
 - ✅ Monitor logs for errors
-- ✅ Iterate on overlay descriptions
+- ✅ Iterate on overlay descriptions and prompts
+- ✅ Check parameter count (if >10, dict mode is used)
 
-### 5. AI Agent Integration
-- ✅ Use OpenAI-compatible descriptions
-- ✅ Test function calling behavior
-- ✅ Monitor token usage
-- ✅ Implement retry logic
+### 6. AgentGateway Deployment (NEW)
+- ✅ Test locally first: `make run-agentgateway`
+- ✅ Validate spec before deployment: `make validate`
+- ✅ Use specific CORS origins in production (not `*`)
+- ✅ Monitor AgentGateway logs at `:15020/stats`
+- ✅ Use AgentGateway UI at `:15000/ui` for debugging
+- ✅ Set appropriate backend timeout values
+
+### 7. AI Agent Integration
+- ✅ Use OpenAI-compatible descriptions (<300 chars)
+- ✅ Test function calling behavior with real agents
+- ✅ Monitor token usage (shorter descriptions = lower cost)
+- ✅ Implement retry logic for API failures
+- ✅ Use AgentGateway for centralized API access
+- ✅ Monitor agent tool selection accuracy
 
 ---
 
@@ -1279,6 +1629,74 @@ python -c "import mcp; import httpx; print('OK')"
 python --version  # Should be 3.13+
 ```
 
+### Issue: Prompt.yaml Not Loading (NEW)
+
+**Symptoms**: LLM generates generic descriptions, not following template
+
+**Solutions**:
+```bash
+# Verify prompt.yaml exists
+ls -la openapi_mcp_codegen/prompt.yaml
+
+# Check YAML syntax
+python -c "import yaml; yaml.safe_load(open('openapi_mcp_codegen/prompt.yaml'))"
+
+# Verify config.yaml has use_llm: true
+grep -A5 overlay_enhancements examples/argo-workflows/config.yaml
+
+# Check LLM provider is available
+python -c "from cnoe_agent_utils import LLMFactory; print(LLMFactory().get_llm())"
+```
+
+### Issue: AgentGateway Validation Errors (NEW)
+
+**Symptoms**: `Error: missing field 'openapi'` or parameter schema errors
+
+**Solutions**:
+```bash
+# Step 1: Validate the enhanced spec first
+make validate
+# or
+python tests/test_openapi_validation.py enhanced_openapi.json
+
+# Step 2: Check for Swagger 2.0 (should be OpenAPI 3.x)
+grep '"swagger"' enhanced_openapi.json  # Should be empty
+grep '"openapi"' enhanced_openapi.json  # Should show "openapi": "3.0.0"
+
+# Step 3: Regenerate with fixes
+make generate-enhanced
+
+# Step 4: Verify all parameters have schemas
+python tests/test_openapi_validation.py enhanced_openapi.json -v
+
+# Step 5: Test AgentGateway
+make generate-agw-config
+agentgateway -f agw.yaml  # Should start without errors
+```
+
+### Issue: LLM Rate Limiting (NEW)
+
+**Symptoms**: Slow generation, API errors, timeouts
+
+**Solutions**:
+```bash
+# Use smaller API (fewer operations)
+# Or generate overlay once and reuse
+make generate-overlay  # Save overlay.yaml
+
+# Next time, skip LLM
+make apply-overlay     # Use saved overlay
+make generate-mcp      # Generate code
+
+# Or disable LLM in config.yaml
+overlay_enhancements:
+  use_llm: false  # Uses rule-based enhancements
+
+# Switch to Claude (may have higher limits)
+export ANTHROPIC_API_KEY=sk-ant-...
+export LLM_PROVIDER=anthropic
+```
+
 ---
 
 ## Conclusion
@@ -1309,11 +1727,14 @@ The OpenAPI MCP Code Generator represents a comprehensive solution for bridging 
 
 ### Key Achievements
 
-- ✅ **Automated Enhancement**: Transform raw specs into AI-friendly APIs
-- ✅ **Standards-Based**: Use industry-standard overlay specification
-- ✅ **Production-Ready**: Generate fully-typed, documented Python code
-- ✅ **AI-Optimized**: OpenAI-compatible descriptions and parameters
-- ✅ **Developer-Friendly**: Clean code, comprehensive docs, easy integration
+- ✅ **Automated Enhancement**: Transform raw specs into AI-friendly APIs with LLM-powered descriptions
+- ✅ **Declarative Configuration**: Prompts, enhancements, and gateway settings in version-controlled YAML
+- ✅ **Standards-Based**: Use industry-standard OpenAPI Overlay Specification 1.0.0
+- ✅ **Auto-Fix Pipeline**: Converts Swagger 2.0 → OpenAPI 3.x, fixes 378 parameter schema issues
+- ✅ **Production-Ready**: Generate fully-typed, documented Python code with 52 tool modules
+- ✅ **AI-Optimized**: OpenAI-compatible descriptions under 300 characters with "Use when:" patterns
+- ✅ **Zero-Config Deployment**: AgentGateway config auto-generated, validated, and ready to run
+- ✅ **Developer-Friendly**: Clean code, comprehensive docs, Makefile automation, easy integration
 
 ### Impact
 

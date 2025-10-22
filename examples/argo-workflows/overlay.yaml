@@ -7,1279 +7,1108 @@ info:
     AI agent understanding.
 actions:
 - target: $.paths['/api/v1/archived-workflows'].get.description
-  update: 'List or query archived-workflows Use when: when you need to discover available
-    resources or check what exists'
+  update: 'Lists all archived workflows with optional filters. Use when: discovering
+    past workflows or monitoring historical data.'
 - target: $.paths['/api/v1/archived-workflows'].get.summary
   update: List or query archived-workflows
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[0].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter workflows by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: '"Field criteria to filter results (e.g., status=completed)"'
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[2].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[3].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode when true
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[4].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter archived workflows"'
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[5].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[6].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for results in seconds (e.g., 30)
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[7].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum archived workflows to return (default: 50)"'
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[8].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for retrieving next page of results
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[9].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[10].description
-  update: Optional string parameter
+  update: '"Filter workflows starting with this prefix (e.g., ''test-'')"'
 - target: $.paths['/api/v1/archived-workflows'].get.parameters[11].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to filter archived workflows"'
 - target: $.paths['/api/v1/archived-workflows-label-keys'].get.description
-  update: 'List or query archived-workflows-label-keys Use when: when you need to
-    discover available resources or check what exists'
+  update: 'Lists all label keys for archived workflows. Use when: discovering available
+    labels for filtering or categorizing archived workflows.'
 - target: $.paths['/api/v1/archived-workflows-label-keys'].get.summary
   update: List or query archived-workflows-label-keys
 - target: $.paths['/api/v1/archived-workflows-label-keys'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to filter archived workflows"'
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.description
-  update: 'List or query archived-workflows-label-values Use when: when you need to
-    discover available resources or check what exists'
+  update: 'Lists label values of archived workflows. Use when: filtering or categorizing
+    archived workflows based on specific labels.'
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.summary
   update: List or query archived-workflows-label-values
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[0].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter results by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by specific fields (e.g., status=completed)
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[2].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[3].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode when true
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[4].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter results for consistency"'
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[5].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[6].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for response in seconds (e.g., 30)
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[7].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum archived workflows to return (e.g., 100)"'
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[8].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[9].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/archived-workflows-label-values'].get.parameters[10].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to filter archived workflows"'
 - target: $.paths['/api/v1/archived-workflows/{uid}'].get.description
-  update: 'Retrieve details of a specific archived-workflows Use when: when you have
-    a specific resource identifier and need its current details. Required: uid'
+  update: 'Retrieves details of an archived workflow by UID. Use when: investigating
+    past workflow executions or reviewing historical data.'
 - target: $.paths['/api/v1/archived-workflows/{uid}'].get.summary
   update: Retrieve details of a specific archived-workflows
 - target: $.paths['/api/v1/archived-workflows/{uid}'].get.parameters[0].description
-  update: Required string parameter
+  update: Unique identifier of archived workflow to retrieve
 - target: $.paths['/api/v1/archived-workflows/{uid}'].get.parameters[1].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to filter archived workflows"'
 - target: $.paths['/api/v1/archived-workflows/{uid}'].get.parameters[2].description
-  update: Name of the resource to operate on
+  update: Workflow name to filter archived results (optional)
 - target: $.paths['/api/v1/archived-workflows/{uid}'].delete.description
-  update: 'Delete a archived-workflows Use when: when cleaning up resources that are
-    no longer needed. Required: uid'
+  update: 'Deletes an archived workflow by UID. Use when: removing outdated or unnecessary
+    archived workflows to free up storage or maintain organization.'
 - target: $.paths['/api/v1/archived-workflows/{uid}'].delete.summary
   update: Delete a archived-workflows
 - target: $.paths['/api/v1/archived-workflows/{uid}'].delete.parameters[0].description
-  update: Required string parameter
+  update: '"Unique identifier of archived workflow to delete"'
 - target: $.paths['/api/v1/archived-workflows/{uid}'].delete.parameters[1].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the deletion operation"'
 - target: $.paths['/api/v1/archived-workflows/{uid}/resubmit'].put.description
-  update: 'Update or replace a resubmit Use when: when modifying existing resource
-    configurations or properties. Required: uid, body'
+  update: 'Resubmits an archived workflow by UID. Use when: needing to rerun a completed
+    or failed workflow for further analysis or correction.'
 - target: $.paths['/api/v1/archived-workflows/{uid}/resubmit'].put.summary
   update: Update or replace a resubmit
 - target: $.paths['/api/v1/archived-workflows/{uid}/resubmit'].put.parameters[0].description
-  update: Required string parameter
+  update: Unique identifier of the archived workflow to resubmit
 - target: $.paths['/api/v1/archived-workflows/{uid}/resubmit'].put.parameters[1].description
-  update: Required string parameter
+  update: Specifies workflow details for resubmission; required for operation.
 - target: $.paths['/api/v1/archived-workflows/{uid}/retry'].put.description
-  update: 'Update or replace a retry Use when: when modifying existing resource configurations
-    or properties. Required: uid, body'
+  update: 'Retries an archived workflow by UID. Use when: attempting to rerun a previously
+    completed or failed workflow for further analysis or correction.'
 - target: $.paths['/api/v1/archived-workflows/{uid}/retry'].put.summary
   update: Update or replace a retry
 - target: $.paths['/api/v1/archived-workflows/{uid}/retry'].put.parameters[0].description
-  update: Required string parameter
+  update: Unique identifier of the archived workflow to retry
 - target: $.paths['/api/v1/archived-workflows/{uid}/retry'].put.parameters[1].description
-  update: Required string parameter
+  update: Specifies workflow retry details in JSON format
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.description
-  update: 'List or query cluster-workflow-templates Use when: when you need to discover
-    available resources or check what exists'
+  update: 'Lists all cluster workflow templates with optional filters. Use when: discovering
+    available templates or monitoring changes in cluster workflows.'
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.summary
   update: List or query cluster-workflow-templates
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[0].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter templates by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[2].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[3].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: '"Request bookmark events in watch mode when true"'
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[4].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter results for consistency. Use for version-specific
+    queries.
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[5].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[6].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for response in seconds (use to prevent long waits)
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[7].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum templates to return (e.g., 100). Use for pagination."'
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[8].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/cluster-workflow-templates'].get.parameters[9].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: '"Send initial events with watch stream when true"'
 - target: $.paths['/api/v1/cluster-workflow-templates'].post.description
-  update: 'Create a new cluster-workflow-templates Use when: when initializing new
-    resources based on user requirements. Required: body'
+  update: 'Creates a new cluster workflow template. Use when: setting up reusable
+    workflows for cluster-wide automation tasks.'
 - target: $.paths['/api/v1/cluster-workflow-templates'].post.summary
   update: Create a new cluster-workflow-templates
 - target: $.paths['/api/v1/cluster-workflow-templates'].post.parameters[0].description
-  update: Required string parameter
+  update: Workflow template details in JSON format to create a new template.
 - target: $.paths['/api/v1/cluster-workflow-templates/lint'].post.description
-  update: 'Perform an operation on lint Use when: when initializing new resources
-    based on user requirements. Required: body'
+  update: 'Validates a cluster workflow template. Use when: checking for errors or
+    ensuring template correctness before deployment.'
 - target: $.paths['/api/v1/cluster-workflow-templates/lint'].post.summary
   update: Perform an operation on lint
 - target: $.paths['/api/v1/cluster-workflow-templates/lint'].post.parameters[0].description
-  update: Required string parameter
+  update: Specifies workflow template content for linting validation
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].get.description
-  update: 'Retrieve details of a specific cluster-workflow-templates Use when: when
-    you have a specific resource identifier and need its current details. Required:
-    name'
+  update: 'Retrieves details of a specific cluster workflow template. Use when: checking
+    template configuration or verifying current settings.'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].get.summary
   update: Retrieve details of a specific cluster-workflow-templates
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].get.parameters[0].description
-  update: Name of the resource to operate on
+  update: Specifies the workflow template to retrieve by its unique name.
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].get.parameters[1].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specifies resource version to retrieve; use for consistency across requests.
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].put.description
-  update: 'Update or replace a cluster-workflow-templates Use when: when modifying
-    existing resource configurations or properties. Required: name, body'
+  update: 'Updates a cluster workflow template by name. Use when: modifying existing
+    template configurations or updating workflow parameters.'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].put.summary
   update: Update or replace a cluster-workflow-templates
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].put.parameters[0].description
-  update: 'DEPRECATED: This field is ignored.'
+  update: Unique name of the cluster workflow template to update
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].put.parameters[1].description
-  update: Required string parameter
+  update: Specifies workflow template details to update in JSON format.
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.description
-  update: 'Delete a cluster-workflow-templates Use when: when cleaning up resources
-    that are no longer needed. Required: name'
+  update: 'Deletes a cluster workflow template by name. Use when: removing outdated
+    or unnecessary templates to maintain a clean environment.'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.summary
   update: Delete a cluster-workflow-templates
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[0].description
-  update: Name of the resource to operate on
+  update: '"Cluster workflow template name to delete"'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[1].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[2].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if it matches the target resource"'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[3].description
-  update: Specifies the target ResourceVersion +optional.
+  update: '"Resource version to ensure deletion only if it matches"'
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[4].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: Control orphan resource deletion; use PropagationPolicy instead.
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[5].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Specifies garbage collection method (e.g., "Foreground", "Background")
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[6].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Simulate deletion without actual changes (e.g., ["All"]).
 - target: $.paths['/api/v1/cluster-workflow-templates/{name}'].delete.parameters[7].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: Allow unsafe deletion if store read error occurs
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.description
-  update: 'Retrieve details of a specific cron-workflows Use when: when you need to
-    discover available resources or check what exists. Required: namespace'
+  update: 'Lists all cron workflows in a namespace. Use when: discovering scheduled
+    workflows or monitoring cron job configurations.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.summary
   update: Retrieve details of a specific cron-workflows
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the cron workflow retrieval"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter workflows by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Stream real-time resource changes when true
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode for progress tracking
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter results for consistency. Use for version-specific
+    data.
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for response in seconds (use to prevent long waits)
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum cron workflows to return (default: 50)"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].post.description
-  update: 'Create a new cron-workflows Use when: when initializing new resources based
-    on user requirements. Required: namespace, body'
+  update: 'Creates a new cron workflow in the specified namespace. Use when: scheduling
+    recurring automated tasks or batch processes.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].post.summary
   update: Create a new cron-workflows
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the cron workflow operation"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}'].post.parameters[1].description
-  update: Required string parameter
+  update: Specifies cron workflow details in JSON format for creation.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/lint'].post.description
-  update: 'Perform an operation on lint Use when: when initializing new resources
-    based on user requirements. Required: namespace, body'
+  update: 'Validates a cron workflow in the specified namespace. Use when: checking
+    for syntax errors or configuration issues before deployment.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/lint'].post.summary
   update: Perform an operation on lint
 - target: $.paths['/api/v1/cron-workflows/{namespace}/lint'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the cron workflow linting operation"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/lint'].post.parameters[1].description
-  update: Required string parameter
+  update: Specifies cron workflow YAML to lint for errors
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].get.description
-  update: 'Retrieve cron-workflows information Use when: when you have a specific
-    resource identifier and need its current details. Required: namespace, name'
+  update: 'Retrieves details of a specific cron workflow. Use when: checking current
+    configuration or investigating issues with scheduled tasks.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].get.summary
   update: Retrieve cron-workflows information
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the cron workflow"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the cron workflow to retrieve in the given namespace.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].get.parameters[2].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to retrieve specific state (optional)
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].put.description
-  update: 'Update or replace a cron-workflows Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Updates cron workflow configuration. Use when: modifying schedule or settings
+    of an existing cron workflow.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].put.summary
   update: Update or replace a cron-workflows
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for the cron workflow operation"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].put.parameters[1].description
-  update: 'DEPRECATED: This field is ignored.'
+  update: Unique name of the cron workflow to update
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies cron workflow details to update in JSON format
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.description
-  update: 'Delete a cron-workflows Use when: when cleaning up resources that are no
-    longer needed. Required: namespace, name'
+  update: 'Deletes a cron workflow by name and namespace. Use when: removing outdated
+    or unnecessary scheduled tasks to free up resources.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.summary
   update: Delete a cron-workflows
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace of the cron workflow to delete"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the cron workflow to delete within the namespace.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[2].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[3].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if it matches the target resource"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[4].description
-  update: Specifies the target ResourceVersion +optional.
+  update: '"Ensure deletion only if resource version matches specified value"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[5].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: Control orphan resource deletion; use PropagationPolicy instead.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[6].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Specifies garbage collection method (e.g., "Foreground", "Background")
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[7].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Simulate deletion without saving changes (e.g., ["All"]).
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}'].delete.parameters[8].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: Ignore store read errors for unsafe deletion when true
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/resume'].put.description
-  update: 'Update or replace a resume Use when: when modifying existing resource configurations
-    or properties. Required: namespace, name, body'
+  update: 'Resumes a paused cron workflow. Use when: restarting scheduled tasks after
+    a pause or interruption.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/resume'].put.summary
   update: Update or replace a resume
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/resume'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for the cron workflow operation"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/resume'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Name of the cron workflow to resume in the specified namespace"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/resume'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies cron workflow data to update in JSON format.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/suspend'].put.description
-  update: 'Update or replace a suspend Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Suspends a cron workflow. Use when: pausing scheduled executions temporarily
+    without deleting the workflow.'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/suspend'].put.summary
   update: Update or replace a suspend
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/suspend'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for the operation"'
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/suspend'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the cron workflow to suspend in the given namespace.
 - target: $.paths['/api/v1/cron-workflows/{namespace}/{name}/suspend'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies suspension state of the cron workflow (e.g., "true" to suspend)
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.description
-  update: 'Retrieve details of a specific event-sources Use when: when you need to
-    discover available resources or check what exists. Required: namespace'
+  update: 'Lists all event sources in a namespace. Use when: discovering available
+    event sources or monitoring changes in a specific namespace.'
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.summary
   update: Retrieve details of a specific event-sources
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to retrieve event sources from"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter event sources by labels (e.g., type=webhook)
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., metadata.name=my-event)
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: '"Request bookmark events in watch mode when true"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter events (e.g., ''12345'')"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Specifies max duration in seconds for list/watch call; use to prevent long
+    waits.
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum event sources to return (default: 50)"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/event-sources/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: '"Send initial events with watch stream when true"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].post.description
-  update: 'Create a new event-sources Use when: when initializing new resources based
-    on user requirements. Required: namespace, body'
+  update: 'Creates a new event source in the specified namespace. Use when: setting
+    up a new event source for monitoring or triggering workflows.'
 - target: $.paths['/api/v1/event-sources/{namespace}'].post.summary
   update: Create a new event-sources
 - target: $.paths['/api/v1/event-sources/{namespace}'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to create the event source in"'
 - target: $.paths['/api/v1/event-sources/{namespace}'].post.parameters[1].description
-  update: Required string parameter
+  update: Event source configuration details in JSON format
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].get.description
-  update: 'Retrieve event-sources information Use when: when you have a specific resource
-    identifier and need its current details. Required: namespace, name'
+  update: 'Retrieves details of a specific event source. Use when: checking current
+    configuration or investigating issues with event source setup.'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].get.summary
   update: Retrieve event-sources information
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the event source"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Event source name to retrieve details"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].put.description
-  update: 'Update or replace a event-sources Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Updates event source configuration. Use when: modifying event source settings
+    or updating parameters in a specific namespace.'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].put.summary
   update: Update or replace a event-sources
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the event source"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Unique name of the event source to update in the specified namespace.
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].put.parameters[2].description
-  update: Required string parameter
+  update: Event source configuration details in JSON format
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.description
-  update: 'Delete a event-sources Use when: when cleaning up resources that are no
-    longer needed. Required: namespace, name'
+  update: 'Deletes an event source. Use when: removing outdated or unnecessary event
+    sources to clean up resources.'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.summary
   update: Delete a event-sources
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace of the event source to delete"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Event source name to delete in specified namespace"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[2].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[3].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if resource matches this identifier"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[4].description
-  update: Specifies the target ResourceVersion +optional.
+  update: '"Ensure deletion only if resource version matches specified value"'
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[5].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: Control orphaning of dependents when deleting (use PropagationPolicy instead)
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[6].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Specifies garbage collection method (e.g., "Foreground", "Background")
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[7].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Simulate deletion without actual changes (e.g., ["All"]).
 - target: $.paths['/api/v1/event-sources/{namespace}/{name}'].delete.parameters[8].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: '"Allow unsafe deletion if store read error occurs"'
 - target: $.paths['/api/v1/events/{namespace}/{discriminator}'].post.description
-  update: 'Perform an operation on events Use when: when initializing new resources
-    based on user requirements. Required: namespace, discriminator, body'
+  update: 'Creates an event in the specified namespace. Use when: logging a new event
+    or triggering actions based on specific conditions.'
 - target: $.paths['/api/v1/events/{namespace}/{discriminator}'].post.summary
   update: Perform an operation on events
 - target: $.paths['/api/v1/events/{namespace}/{discriminator}'].post.parameters[0].description
-  update: The namespace for the io.argoproj.workflow.v1alpha1. This can be empty if
-    the cl...
+  update: '"Kubernetes namespace to scope the event operation"'
 - target: $.paths['/api/v1/events/{namespace}/{discriminator}'].post.parameters[1].description
-  update: Optional discriminator for the io.argoproj.workflow.v1alpha1. This should
-    almost...
+  update: Unique event identifier for specific workflow context
 - target: $.paths['/api/v1/events/{namespace}/{discriminator}'].post.parameters[2].description
-  update: The event itself can be any data.
+  update: Specifies event data to send; must be provided for event creation.
 - target: $.paths['/api/v1/info'].get.description
-  update: List or query info
+  update: 'Retrieves system information. Use when: needing an overview of the current
+    system status or configuration.'
 - target: $.paths['/api/v1/info'].get.summary
   update: List or query info
 - target: $.paths['/api/v1/sensors/{namespace}'].get.description
-  update: 'Retrieve details of a specific sensors Use when: when you need to discover
-    available resources or check what exists. Required: namespace'
+  update: 'Lists all sensors in a namespace with optional filters. Use when: discovering
+    available sensors or monitoring sensor status.'
 - target: $.paths['/api/v1/sensors/{namespace}'].get.summary
   update: Retrieve details of a specific sensors
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope sensor retrieval"'
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: '"Filter sensors by labels (e.g., type=temperature)"'
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode when true
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter results for consistency"'
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for response in seconds (use to prevent long waits)
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum sensors to return (use for pagination)"'
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/sensors/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: '"Send initial events with watch stream when true"'
 - target: $.paths['/api/v1/sensors/{namespace}'].post.description
-  update: 'Create a new sensors Use when: when initializing new resources based on
-    user requirements. Required: namespace, body'
+  update: 'Creates a new sensor in the specified namespace. Use when: adding a new
+    sensor for monitoring or data collection tasks.'
 - target: $.paths['/api/v1/sensors/{namespace}'].post.summary
   update: Create a new sensors
 - target: $.paths['/api/v1/sensors/{namespace}'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for sensor creation"'
 - target: $.paths['/api/v1/sensors/{namespace}'].post.parameters[1].description
-  update: Required string parameter
+  update: Sensor configuration details in JSON format to create or update a sensor.
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].get.description
-  update: 'Retrieve sensors information Use when: when you have a specific resource
-    identifier and need its current details. Required: namespace, name'
+  update: 'Retrieves details of a specific sensor. Use when: checking sensor configuration
+    or investigating sensor-related issues.'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].get.summary
   update: Retrieve sensors information
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the sensor"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Sensor name to retrieve details from specified namespace"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].get.parameters[2].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specifies resource version to retrieve; use for consistency across requests.
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].put.description
-  update: 'Update or replace a sensors Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Updates sensor configuration. Use when: modifying sensor settings or updating
+    sensor details in a specific namespace.'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].put.summary
   update: Update or replace a sensors
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the sensor for update"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Sensor name to update in the specified namespace
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies sensor configuration details to update in JSON format.
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.description
-  update: 'Delete a sensors Use when: when cleaning up resources that are no longer
-    needed. Required: namespace, name'
+  update: 'Deletes a sensor by name and namespace. Use when: removing obsolete or
+    unwanted sensors from the system.'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.summary
   update: Delete a sensors
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace of the sensor to delete"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Sensor name to delete within the specified namespace"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[2].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[3].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if it matches the target sensor''s UID"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[4].description
-  update: Specifies the target ResourceVersion +optional.
+  update: '"Delete only if resource version matches specified value"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[5].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: '"Delete without affecting dependents when true (deprecated)"'
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[6].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Controls garbage collection method (e.g., "Foreground", "Background") during
+    deletion.
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[7].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Simulate deletion without actual changes (e.g., ["All"]).
 - target: $.paths['/api/v1/sensors/{namespace}/{name}'].delete.parameters[8].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: Ignore read errors for unsafe deletion when true
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.description
-  update: 'Retrieve details of a specific event-sources. Required: namespace'
+  update: 'Watches event sources in a namespace. Use when: monitoring changes or updates
+    to event sources in real-time.'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.summary
   update: Retrieve details of a specific event-sources
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope event source retrieval"'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter results by labels (e.g., type=event,source=external)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode when true
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter events (e.g., "12345")
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, not older)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for results in seconds (e.g., 30)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum event sources to return (default: 50)"'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/stream/event-sources/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: '"Send initial events with watch stream when true"'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.description
-  update: 'Retrieve details of a specific logs Use when: for debugging issues or understanding
-    resource behavior. Required: namespace'
+  update: 'Streams logs for event sources in a namespace. Use when: monitoring event
+    source activity or debugging issues with specific events.'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.summary
   update: Retrieve details of a specific logs
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to retrieve event source logs"'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[1].description
-  update: optional - only return entries for this event source.
+  update: Filter logs by event source name (optional)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[2].description
-  update: optional - only return entries for this event source type (e.g. `webhook`).
+  update: Specifies event source type to filter logs (e.g., webhook)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[3].description
-  update: optional - only return entries for this event name (e.g. `example`).
+  update: Filter logs by specific event name (e.g., "example") to narrow results.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[4].description
-  update: optional - only return entries where `msg` matches this regular expression.
+  update: Filter logs by message matching this regex pattern (e.g., error.*)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[5].description
-  update: The container for which to stream logs. Defaults to only container if there
-    is o...
+  update: Specifies container to stream logs from; use if pod has multiple containers.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[6].description
-  update: Follow the log stream of the pod. Defaults to false. +optional.
+  update: Stream live pod logs when true; default is false. Use for real-time monitoring.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[7].description
-  update: Return previous terminated container logs. Defaults to false. +optional.
+  update: Return logs from previous container if true; use for terminated containers.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[8].description
-  update: A relative time in seconds before the current time from which to show logs.
-    If t...
+  update: Specifies log start time in seconds before now; use for recent logs.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[9].description
-  update: Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must
-    be fr...
+  update: 'Specify logs from this UTC time onward (format: seconds since 1970-01-01).'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[10].description
-  update: Non-negative fractions of a second at nanosecond resolution. Negative second
-    val...
+  update: Specifies nanoseconds for log retrieval start time. Use for precise time
+    filtering.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[11].description
-  update: If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every
-    line ...
+  update: 'Add timestamps to log lines when true (default: false)'
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[12].description
-  update: If set, the number of lines from the end of the logs to show. If not specified,
-    ...
+  update: Specifies number of log lines from end to display; use for recent log insights.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[13].description
-  update: If set, the number of bytes to read from the server before terminating the
-    log o...
+  update: Specifies max bytes of log to retrieve; use to limit log size.
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[14].description
-  update: insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm
-    the...
+  update: Skip TLS verification for backend when true (use cautiously)
 - target: $.paths['/api/v1/stream/event-sources/{namespace}/logs'].get.parameters[15].description
-  update: Specify which container log stream to return to the client. Acceptable values
-    ar...
+  update: 'Specifies log stream type: "All", "Stdout". Use to filter container log
+    output.'
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.description
-  update: 'Retrieve details of a specific events. Required: namespace'
+  update: 'Streams events in a namespace. Use when: monitoring real-time changes or
+    tracking specific events in workflows.'
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.summary
   update: Retrieve details of a specific events
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope event retrieval"'
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter events by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: '"Enable bookmark events in watch streams when true"'
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter events from that point onward.
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for events in seconds (e.g., 30)
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum events to return (e.g., 100). Use to limit response size."'
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for retrieving next set of results
 - target: $.paths['/api/v1/stream/events/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.description
-  update: 'Retrieve details of a specific sensors. Required: namespace'
+  update: 'Watches sensor updates in a namespace. Use when: monitoring real-time changes
+    or tracking sensor status in a specific namespace.'
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.summary
   update: Retrieve details of a specific sensors
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope sensor retrieval"'
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter sensors by labels (e.g., type=temperature)
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch streams when true
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter results for consistency"'
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for results in seconds (use to prevent long waits)
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum sensors to return (default: 50)"'
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/stream/sensors/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.description
-  update: 'Retrieve details of a specific logs Use when: for debugging issues or understanding
-    resource behavior. Required: namespace'
+  update: 'Streams sensor logs in a namespace. Use when: monitoring sensor activity,
+    debugging issues, or analyzing specific events with filters.'
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.summary
   update: Retrieve details of a specific logs
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to retrieve sensor logs from"'
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[1].description
-  update: optional - only return entries for this sensor name.
+  update: Filter logs by sensor name (e.g., temperature)
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[2].description
-  update: optional - only return entries for this trigger.
+  update: Filter logs by specific trigger name (e.g., "sensor-start")
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[3].description
-  update: option - only return entries where `msg` contains this regular expressions.
+  update: Filter logs by regex match in 'msg' field (e.g., error, warning)
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[4].description
-  update: The container for which to stream logs. Defaults to only container if there
-    is o...
+  update: Specifies container to stream logs from; use if pod has multiple containers.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[5].description
-  update: Follow the log stream of the pod. Defaults to false. +optional.
+  update: 'Enable real-time log streaming when true (default: false)'
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[6].description
-  update: Return previous terminated container logs. Defaults to false. +optional.
+  update: Return logs from previous container if true; use for terminated containers.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[7].description
-  update: A relative time in seconds before the current time from which to show logs.
-    If t...
+  update: Specifies logs from seconds ago; use for recent activity analysis.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[8].description
-  update: Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must
-    be fr...
+  update: Specifies log start time in seconds since Unix epoch for filtering logs.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[9].description
-  update: Non-negative fractions of a second at nanosecond resolution. Negative second
-    val...
+  update: Specifies nanoseconds for log start time; use for precise time filtering.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[10].description
-  update: If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every
-    line ...
+  update: 'Add timestamps to log lines when true (default: false)'
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[11].description
-  update: If set, the number of lines from the end of the logs to show. If not specified,
-    ...
+  update: Specifies number of log lines from end to display. Use for recent log insights.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[12].description
-  update: If set, the number of bytes to read from the server before terminating the
-    log o...
+  update: Specifies max bytes to read from logs; use to limit log size.
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[13].description
-  update: insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm
-    the...
+  update: Skip TLS verification for backend when true (use cautiously)
 - target: $.paths['/api/v1/stream/sensors/{namespace}/logs'].get.parameters[14].description
-  update: Specify which container log stream to return to the client. Acceptable values
-    ar...
+  update: 'Specifies log stream type: "All", "Stdout". Use to filter container log
+    output.'
 - target: $.paths['/api/v1/tracking/event'].post.description
-  update: 'Perform an operation on event Use when: when initializing new resources
-    based on user requirements. Required: body'
+  update: 'Creates a tracking event. Use when: logging user actions or system events
+    for analytics or monitoring purposes.'
 - target: $.paths['/api/v1/tracking/event'].post.summary
   update: Perform an operation on event
 - target: $.paths['/api/v1/tracking/event'].post.parameters[0].description
-  update: Required string parameter
+  update: Specifies event data to send for tracking (required)
 - target: $.paths['/api/v1/userinfo'].get.description
-  update: List or query userinfo
+  update: 'Retrieves current user information. Use when: confirming user identity
+    or checking user details for personalization.'
 - target: $.paths['/api/v1/userinfo'].get.summary
   update: List or query userinfo
 - target: $.paths['/api/v1/version'].get.description
-  update: List or query version
+  update: 'Retrieves the current API version. Use when: checking compatibility or
+    ensuring you''re using the latest features.'
 - target: $.paths['/api/v1/version'].get.summary
   update: List or query version
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.description
-  update: 'Retrieve details of a specific workflow-event-bindings Use when: when you
-    need to discover available resources or check what exists. Required: namespace'
+  update: 'Lists workflow event bindings in a namespace. Use when: discovering event
+    bindings or monitoring changes in a specific namespace.'
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.summary
   update: Retrieve details of a specific workflow-event-bindings
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the workflow event binding operation"'
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: '"Filter results by label (e.g., app=nginx) to narrow search"'
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: Criteria to filter results by field values (e.g., status=active)
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode when true
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter results for consistency. Use for version-specific
+    queries.
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Specifies max wait time in seconds for list/watch call; use to prevent long
+    waits.
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: Specifies max results to return; use to limit response size.
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/workflow-event-bindings/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: '"Send initial events with watch stream when true"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.description
-  update: 'Retrieve details of a specific workflow-events. Required: namespace'
+  update: 'Streams workflow events in a namespace. Use when: monitoring real-time
+    changes or tracking workflow activity.'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.summary
   update: Retrieve details of a specific workflow-events
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the workflow events retrieval"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter results by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: '"Field criteria to filter results (e.g., status=active)"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: '"Request bookmark events in watch mode when true"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter events (e.g., "12345")
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: '"Match criteria for resource version in list calls (e.g., exact, notOlderThan)"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Maximum time to wait for results in seconds (e.g., 30)
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum workflow events to return (default: 50)"'
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/workflow-events/{namespace}'].get.parameters[11].description
-  update: Optional string parameter
+  update: Specify fields to include in results (e.g., name,status)
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.description
-  update: 'Retrieve details of a specific workflow-templates Use when: when you need
-    to discover available resources or check what exists. Required: namespace'
+  update: 'Lists workflow templates in a namespace. Use when: discovering available
+    templates or monitoring changes with filters.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.summary
   update: Retrieve details of a specific workflow-templates
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate workflow templates"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Pattern to match workflow template names (e.g., "template-*")
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter results by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[3].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: '"Field criteria to filter results (e.g., status=active)"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[4].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Enable streaming updates for resource changes when true
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[5].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode for progress tracking.
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[6].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: '"Specify resource version to filter results for consistency"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[7].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, notOlderThan)
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[8].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: '"Maximum time to wait for results in seconds"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[9].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: Specifies max workflow templates to return (e.g., limit=10)
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[10].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].get.parameters[11].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events in watch stream when true
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].post.description
-  update: 'Create a new workflow-templates Use when: when initializing new resources
-    based on user requirements. Required: namespace, body'
+  update: 'Creates a new workflow template in the specified namespace. Use when: setting
+    up reusable workflows for automation or standardizing processes.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].post.summary
   update: Create a new workflow-templates
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for workflow template operations"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}'].post.parameters[1].description
-  update: Required string parameter
+  update: Workflow template details in JSON format to create or update.
 - target: $.paths['/api/v1/workflow-templates/{namespace}/lint'].post.description
-  update: 'Perform an operation on lint Use when: when initializing new resources
-    based on user requirements. Required: namespace, body'
+  update: 'Validates a workflow template in a namespace. Use when: checking for errors
+    or ensuring template correctness before deployment.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/lint'].post.summary
   update: Perform an operation on lint
 - target: $.paths['/api/v1/workflow-templates/{namespace}/lint'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the linting operation"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/lint'].post.parameters[1].description
-  update: Required string parameter
+  update: Specifies workflow template content to lint for errors
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].get.description
-  update: 'Retrieve workflow-templates information Use when: when you have a specific
-    resource identifier and need its current details. Required: namespace, name'
+  update: 'Retrieves details of a specific workflow template. Use when: checking template
+    configuration or verifying template existence in a namespace.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].get.summary
   update: Retrieve workflow-templates information
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow template"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Workflow template name to retrieve in specified namespace"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].get.parameters[2].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to retrieve specific state (optional)
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].put.description
-  update: 'Update or replace a workflow-templates Use when: when modifying existing
-    resource configurations or properties. Required: namespace, name, body'
+  update: 'Updates a workflow template by name. Use when: modifying an existing template''s
+    configuration or settings.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].put.summary
   update: Update or replace a workflow-templates
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow template"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].put.parameters[1].description
-  update: 'DEPRECATED: This field is ignored.'
+  update: Unique name of the workflow template to update
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].put.parameters[2].description
-  update: Required string parameter
+  update: Workflow template data to update in JSON format
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.description
-  update: 'Delete a workflow-templates Use when: when cleaning up resources that are
-    no longer needed. Required: namespace, name'
+  update: 'Deletes a workflow template. Use when: removing outdated or unused templates
+    to free up resources or maintain organization.'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.summary
   update: Delete a workflow-templates
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow template to delete"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Workflow template name to delete in specified namespace"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[2].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[3].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if it matches the target resource"'
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[4].description
-  update: Specifies the target ResourceVersion +optional.
+  update: Specify resource version to ensure deletion of specific template version.
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[5].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: Control orphaning of dependents when deleting (use PropagationPolicy instead)
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[6].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Specifies garbage collection method (e.g., 'Foreground', 'Background') when
+    deleting.
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[7].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Simulate deletion without actual changes (e.g., ["All"]).
 - target: $.paths['/api/v1/workflow-templates/{namespace}/{name}'].delete.parameters[8].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: Ignore read errors for unsafe deletion when true
 - target: $.paths['/api/v1/workflows/{namespace}'].get.description
-  update: 'Retrieve details of a specific workflows Use when: when you need to discover
-    available resources or check what exists. Required: namespace'
+  update: 'Lists all workflows in a namespace with optional filters. Use when: discovering
+    available workflows or monitoring active runs within a specific namespace.'
 - target: $.paths['/api/v1/workflows/{namespace}'].get.summary
   update: Retrieve details of a specific workflows
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the workflow retrieval"'
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[1].description
-  update: A selector to restrict the list of returned objects by their labels. Defaults
-    to...
+  update: Criteria to filter workflows by labels (e.g., app=nginx)
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[2].description
-  update: A selector to restrict the list of returned objects by their fields. Defaults
-    to...
+  update: '"Field criteria to filter results (e.g., status=active)"'
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[3].description
-  update: Watch for changes to the described resources and return them as a stream
-    of add,...
+  update: Stream real-time resource updates when true
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[4].description
-  update: allowWatchBookmarks requests watch events with type "BOOKMARK". Servers
-    that do ...
+  update: Enable bookmark events in watch mode for progress tracking
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[5].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to filter results (e.g., "12345")
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[6].description
-  update: resourceVersionMatch determines how resourceVersion is applied to list calls.
-    It...
+  update: Controls resource version matching for list calls (e.g., exact, not older).
+    Use for consistency.
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[7].description
-  update: Timeout for the list/watch call. This limits the duration of the call, regardles...
+  update: Specifies max wait time in seconds for list/watch call. Use to prevent long
+    waits.
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[8].description
-  update: limit is a maximum number of responses to return for a list call. If more
-    items ...
+  update: '"Maximum workflows to return (default: 50)"'
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[9].description
-  update: The continue option should be set when retrieving more results from the
-    server. ...
+  update: Pagination token for next page of results
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[10].description
-  update: '`sendInitialEvents=true` may be set together with `watch=true`. In that
-    case, th...'
+  update: Send initial events with watch stream when true
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[11].description
-  update: Fields to be included or excluded in the response. e.g. "items.spec,items.status...
+  update: Specifies fields to include/exclude in response (e.g., "items.spec,-items.status")
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[12].description
-  update: Filter type used for name filtering. Exact | Contains | Prefix. Default
-    to Exact.
+  update: 'Specifies name match type: Exact, Contains, or Prefix. Default is Exact.'
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[13].description
-  update: Optional string parameter
+  update: Filter workflows created after this date (e.g., 2023-01-01)
 - target: $.paths['/api/v1/workflows/{namespace}'].get.parameters[14].description
-  update: Optional string parameter
+  update: Specify end time to filter workflows completed before this date/time.
 - target: $.paths['/api/v1/workflows/{namespace}'].post.description
-  update: 'Create a new workflows Use when: when initializing new resources based
-    on user requirements. Required: namespace, body'
+  update: 'Creates a new workflow in the specified namespace. Use when: starting a
+    new automated process or task sequence.'
 - target: $.paths['/api/v1/workflows/{namespace}'].post.summary
   update: Create a new workflows
 - target: $.paths['/api/v1/workflows/{namespace}'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: Kubernetes namespace to target for workflow operations
 - target: $.paths['/api/v1/workflows/{namespace}'].post.parameters[1].description
-  update: Required string parameter
+  update: Specifies workflow details to create in JSON format
 - target: $.paths['/api/v1/workflows/{namespace}/lint'].post.description
-  update: 'Perform an operation on lint Use when: when initializing new resources
-    based on user requirements. Required: namespace, body'
+  update: 'Validates a workflow for errors in a given namespace. Use when: checking
+    workflow syntax or configuration before execution.'
 - target: $.paths['/api/v1/workflows/{namespace}/lint'].post.summary
   update: Perform an operation on lint
 - target: $.paths['/api/v1/workflows/{namespace}/lint'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to scope the linting operation"'
 - target: $.paths['/api/v1/workflows/{namespace}/lint'].post.parameters[1].description
-  update: Required string parameter
+  update: Workflow definition to lint for errors in YAML format
 - target: $.paths['/api/v1/workflows/{namespace}/submit'].post.description
-  update: 'Perform an operation on submit Use when: when initializing new resources
-    based on user requirements. Required: namespace, body'
+  update: 'Submits a new workflow for execution. Use when: initiating a workflow process
+    in a specified namespace.'
 - target: $.paths['/api/v1/workflows/{namespace}/submit'].post.summary
   update: Perform an operation on submit
 - target: $.paths['/api/v1/workflows/{namespace}/submit'].post.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: Specifies the Kubernetes namespace for the workflow submission.
 - target: $.paths['/api/v1/workflows/{namespace}/submit'].post.parameters[1].description
-  update: Required string parameter
+  update: Workflow data to submit for execution in JSON format
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.description
-  update: 'Retrieve workflows information Use when: when you have a specific resource
-    identifier and need its current details. Required: namespace, name'
+  update: 'Retrieves details of a specific workflow by name. Use when: checking current
+    status or investigating issues with a particular workflow.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.summary
   update: Retrieve workflows information
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to retrieve details from the specified namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.parameters[2].description
-  update: resourceVersion sets a constraint on what resource versions a request may
-    be ser...
+  update: Specify resource version to retrieve specific state (optional)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].get.parameters[3].description
-  update: Fields to be included or excluded in the response. e.g. "spec,status.phase",
-    "-status.nodes".
+  update: Specify fields to include/exclude in response (e.g., "spec,status.phase",
+    "-status.nodes").
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.description
-  update: 'Delete a workflows Use when: when cleaning up resources that are no longer
-    needed. Required: namespace, name'
+  update: 'Deletes a specific workflow. Use when: removing outdated or unnecessary
+    workflows to free up resources or clean up the system.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.summary
   update: Delete a workflows
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace of the workflow to delete"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Workflow name to delete in specified namespace"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[2].description
-  update: The duration in seconds before the object should be deleted. Value must
-    be non-n...
+  update: Specifies delay in seconds before deletion; use for graceful shutdown.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[3].description
-  update: Specifies the target UID. +optional.
+  update: '"UID to ensure deletion only if it matches the target resource"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[4].description
-  update: Specifies the target ResourceVersion +optional.
+  update: '"Ensure deletion only if resource version matches specified value"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[5].description
-  update: 'Deprecated: please use the PropagationPolicy, this field will be deprecated
-    in 1...'
+  update: Control orphaning of dependents when deleting (use PropagationPolicy instead)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[6].description
-  update: Whether and how garbage collection will be performed. Either this field
-    or Orpha...
+  update: Specifies garbage collection method (e.g., "Foreground", "Background")
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[7].description
-  update: When present, indicates that modifications should not be persisted. An invalid
-    o...
+  update: Specifies simulation mode; no changes are saved. Use to test deletion effects.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[8].description
-  update: if set to true, it will trigger an unsafe deletion of the resource in case
-    the n...
+  update: Ignore store read errors for unsafe deletion when true
 - target: $.paths['/api/v1/workflows/{namespace}/{name}'].delete.parameters[9].description
-  update: Optional boolean parameter
+  update: Force deletion even if workflow is running when true
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.description
-  update: 'Retrieve log information Use when: for debugging issues or understanding
-    resource behavior. Required: namespace, name'
+  update: 'Retrieves logs for a specific workflow. Use when: debugging workflow execution
+    or investigating issues with specific pods or containers.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.summary
   update: Retrieve log information
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow logs"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to retrieve logs for specific workflow
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[2].description
-  update: Name of the resource to operate on
+  update: Specify pod name to retrieve logs for a specific pod within the workflow.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[3].description
-  update: The container for which to stream logs. Defaults to only container if there
-    is o...
+  update: Specifies container to stream logs from; use if multiple containers exist.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[4].description
-  update: Follow the log stream of the pod. Defaults to false. +optional.
+  update: 'Stream real-time pod logs when true (default: false)'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[5].description
-  update: Return previous terminated container logs. Defaults to false. +optional.
+  update: '"Retrieve logs from previous container run when true"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[6].description
-  update: A relative time in seconds before the current time from which to show logs.
-    If t...
+  update: Specifies logs from seconds ago; use for recent log retrieval.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[7].description
-  update: Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must
-    be fr...
+  update: Specifies start time in seconds since epoch for log retrieval
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[8].description
-  update: Non-negative fractions of a second at nanosecond resolution. Negative second
-    val...
+  update: Specifies nanoseconds for precise log start time filtering. Use with sinceTime.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[9].description
-  update: If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every
-    line ...
+  update: 'Add timestamps to log lines when true (default: false)'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[10].description
-  update: If set, the number of lines from the end of the logs to show. If not specified,
-    ...
+  update: Specifies number of log lines from end to display; use for recent log insights.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[11].description
-  update: If set, the number of bytes to read from the server before terminating the
-    log o...
+  update: Specifies max bytes to read from logs; use to limit data size.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[12].description
-  update: insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm
-    the...
+  update: Skip TLS verification for backend when true (use for testing or debugging)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[13].description
-  update: Specify which container log stream to return to the client. Acceptable values
-    ar...
+  update: 'Specifies log stream type: "All", "Stdout", or "Stderr" for container logs.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[14].description
-  update: Optional string parameter
+  update: Filter logs by matching text pattern (e.g., "error")
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/log'].get.parameters[15].description
-  update: Filter to narrow results based on labels or fields
+  update: Criteria to filter logs (e.g., pod=frontend,container=nginx)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resubmit'].put.description
-  update: 'Update or replace a resubmit Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Resubmits a workflow by name. Use when: retrying a failed workflow or reprocessing
+    with the same configuration.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resubmit'].put.summary
   update: Update or replace a resubmit
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resubmit'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace for the workflow to resubmit"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resubmit'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to resubmit in the specified namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resubmit'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies workflow details for resubmission in JSON format
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resume'].put.description
-  update: 'Update or replace a resume Use when: when modifying existing resource configurations
-    or properties. Required: namespace, name, body'
+  update: 'Resumes a paused workflow. Use when: continuing a workflow that was previously
+    halted or paused.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resume'].put.summary
   update: Update or replace a resume
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resume'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for the workflow operation"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resume'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the workflow name to resume in the given namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/resume'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies workflow details to resume; required for operation execution.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/retry'].put.description
-  update: 'Update or replace a retry Use when: when modifying existing resource configurations
-    or properties. Required: namespace, name, body'
+  update: 'Retries a failed workflow. Use when: attempting to rerun a workflow after
+    a failure to achieve successful completion.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/retry'].put.summary
   update: Update or replace a retry
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/retry'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for workflow retry"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/retry'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to retry in the specified namespace
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/retry'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies workflow retry details in JSON format for update.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/set'].put.description
-  update: 'Update or replace a set Use when: when modifying existing resource configurations
-    or properties. Required: namespace, name, body'
+  update: 'Updates workflow settings by name and namespace. Use when: modifying workflow
+    configuration or adjusting parameters for specific tasks.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/set'].put.summary
   update: Update or replace a set
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/set'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for the workflow operation"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/set'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the workflow name to update in the given namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/set'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies workflow data to update; required for setting new values.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/stop'].put.description
-  update: 'Update or replace a stop Use when: when modifying existing resource configurations
-    or properties. Required: namespace, name, body'
+  update: 'Stops a running workflow by name. Use when: halting a process or preventing
+    further execution in a specific namespace.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/stop'].put.summary
   update: Update or replace a stop
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/stop'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow to stop"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/stop'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to stop in the specified namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/stop'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies workflow stop details; required for stopping the workflow.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/suspend'].put.description
-  update: 'Update or replace a suspend Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Suspends a specific workflow. Use when: pausing a workflow temporarily
+    for maintenance or issue resolution.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/suspend'].put.summary
   update: Update or replace a suspend
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/suspend'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for suspending the workflow"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/suspend'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to suspend in the specified namespace
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/suspend'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies suspension details for the workflow; required for operation.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/terminate'].put.description
-  update: 'Update or replace a terminate Use when: when modifying existing resource
-    configurations or properties. Required: namespace, name, body'
+  update: 'Terminates a specific workflow. Use when: needing to stop a workflow immediately
+    due to errors or changes in requirements.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/terminate'].put.summary
   update: Update or replace a terminate
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/terminate'].put.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to target for workflow termination"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/terminate'].put.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to terminate in the specified namespace.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/terminate'].put.parameters[2].description
-  update: Required string parameter
+  update: Specifies termination details for the workflow (e.g., reason, message)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.description
-  update: 'Retrieve log information Use when: for debugging issues or understanding
-    resource behavior. Required: namespace, name, podName'
+  update: 'Retrieves logs for a specific pod in a workflow. Use when: accessing pod
+    logs for debugging or monitoring purposes. Note: Deprecated, use WorkflowLogs
+    if podName is empty.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the workflow"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Workflow name to retrieve specific details
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[2].description
-  update: Name of the resource to operate on
+  update: Specific pod name to retrieve details within the workflow.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[3].description
-  update: The container for which to stream logs. Defaults to only container if there
-    is o...
+  update: Specifies container to stream logs from; use if pod has multiple containers.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[4].description
-  update: Follow the log stream of the pod. Defaults to false. +optional.
+  update: Stream live pod logs when true; default is false. Use for real-time monitoring.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[5].description
-  update: Return previous terminated container logs. Defaults to false. +optional.
+  update: Return logs from previous container run when true. Use for terminated containers.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[6].description
-  update: A relative time in seconds before the current time from which to show logs.
-    If t...
+  update: Specifies logs from seconds ago; use for recent activity analysis.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[7].description
-  update: Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must
-    be fr...
+  update: Specify UTC seconds since epoch to filter logs from that time onward.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[8].description
-  update: Non-negative fractions of a second at nanosecond resolution. Negative second
-    val...
+  update: Specifies nanoseconds for log start time; use for precise log retrieval.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[9].description
-  update: If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every
-    line ...
+  update: Add timestamps to log lines when true (use for detailed time tracking)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[10].description
-  update: If set, the number of lines from the end of the logs to show. If not specified,
-    ...
+  update: '"Number of log lines from end to display (e.g., 100)"'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[11].description
-  update: If set, the number of bytes to read from the server before terminating the
-    log o...
+  update: Specifies max bytes to read from logs; use to limit log size.
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[12].description
-  update: insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm
-    the...
+  update: Skip TLS verification for backend when true (use cautiously)
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[13].description
-  update: Specify which container log stream to return to the client. Acceptable values
-    ar...
+  update: 'Specifies log stream type: "All", "Stdout", or "Stderr" for container logs.'
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[14].description
-  update: Optional string parameter
+  update: Specifies text pattern to filter logs (e.g., "error")
 - target: $.paths['/api/v1/workflows/{namespace}/{name}/{podName}/log'].get.parameters[15].description
-  update: Filter to narrow results based on labels or fields
+  update: Criteria to filter workflows (e.g., status=active)
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.description
-  update: 'Retrieve artifact-files information Use when: when you have a specific
-    resource identifier and need its current details'
+  update: 'Retrieves a specific artifact file. Use when: accessing detailed artifact
+    data for analysis or verification within a workflow.'
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.summary
   update: Retrieve artifact-files information
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate artifact files"'
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[1].description
-  update: Required string parameter
+  update: Unique identifier to target specific artifact file
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[2].description
-  update: Required string parameter
+  update: '"Unique identifier of the artifact file to retrieve"'
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[3].description
-  update: Required string parameter
+  update: '"Unique node identifier to retrieve artifact files"'
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[4].description
-  update: Name of the resource to operate on
+  update: Specifies the name of the artifact file to retrieve.
 - target: $.paths['/artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}'].get.parameters[5].description
-  update: Required string parameter
+  update: Unique identifier for the specific artifact to retrieve
 - target: $.paths['/artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.description
-  update: 'Retrieve artifacts-by-uid information Use when: when you have a specific
-    resource identifier and need its current details. Required: uid, nodeId, artifactName'
+  update: 'Retrieves an output artifact by UID. Use when: accessing specific artifact
+    details for analysis or debugging purposes.'
 - target: $.paths['/artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[0].description
-  update: Required string parameter
+  update: Unique identifier of the artifact to retrieve
 - target: $.paths['/artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[1].description
-  update: Required string parameter
+  update: Unique identifier of the node to retrieve its artifacts
 - target: $.paths['/artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[2].description
-  update: Name of the resource to operate on
+  update: Specifies the name of the artifact to retrieve from the node.
 - target: $.paths['/artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.description
-  update: 'Retrieve artifacts information Use when: when you have a specific resource
-    identifier and need its current details'
+  update: 'Retrieves an output artifact by name and node ID. Use when: accessing specific
+    artifact data for analysis or debugging within a workflow.'
 - target: $.paths['/artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the artifact"'
 - target: $.paths['/artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: '"Artifact name to retrieve within the specified namespace"'
 - target: $.paths['/artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[2].description
-  update: Required string parameter
+  update: '"Unique identifier of the node to retrieve artifacts from"'
 - target: $.paths['/artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[3].description
-  update: Name of the resource to operate on
+  update: Specifies the name of the artifact to retrieve from the node.
 - target: $.paths['/input-artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.description
-  update: 'Retrieve input-artifacts-by-uid information Use when: when you have a specific
-    resource identifier and need its current details. Required: uid, nodeId, artifactName'
+  update: 'Retrieves an input artifact by UID, node ID, and artifact name. Use when:
+    verifying artifact details for a specific workflow node or investigating input
+    data issues.'
 - target: $.paths['/input-artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[0].description
-  update: Required string parameter
+  update: Unique identifier of the input artifact to retrieve.
 - target: $.paths['/input-artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[1].description
-  update: Required string parameter
+  update: Unique identifier of the node to retrieve input artifacts for.
 - target: $.paths['/input-artifacts-by-uid/{uid}/{nodeId}/{artifactName}'].get.parameters[2].description
-  update: Name of the resource to operate on
+  update: Specifies the name of the artifact to retrieve from the node.
 - target: $.paths['/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.description
-  update: 'Retrieve input-artifacts information Use when: when you have a specific
-    resource identifier and need its current details'
+  update: 'Retrieves details of a specific input artifact. Use when: checking artifact
+    data for a node in a workflow or investigating input issues.'
 - target: $.paths['/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[0].description
-  update: Kubernetes namespace to scope the operation
+  update: '"Kubernetes namespace to locate the input artifact"'
 - target: $.paths['/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[1].description
-  update: Name of the resource to operate on
+  update: Specifies the artifact name to retrieve within the namespace and node.
 - target: $.paths['/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[2].description
-  update: Required string parameter
+  update: '"Unique identifier of the node to retrieve input artifacts"'
 - target: $.paths['/input-artifacts/{namespace}/{name}/{nodeId}/{artifactName}'].get.parameters[3].description
-  update: Name of the resource to operate on
+  update: Specifies the name of the artifact to retrieve from the node.

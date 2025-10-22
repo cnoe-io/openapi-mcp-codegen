@@ -14,51 +14,51 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def artifact_service_get_artifact_file(
-    path_namespace: str, path_idDiscriminator: str, path_id: str, path_nodeId: str, path_artifactName: str, path_artifactDiscriminator: str
+  path_namespace: str, path_idDiscriminator: str, path_id: str, path_nodeId: str, path_artifactName: str, path_artifactDiscriminator: str
 ) -> Any:
-    """
-    Retrieve artifact-files information
+  """
+  Retrieve artifact-files information
 
-    OpenAPI Description:
-        Retrieve artifact-files information Use when: when you have a specific resource identifier and need its current details
+  OpenAPI Description:
+      Retrieves a specific artifact file. Use when: accessing detailed artifact data for analysis or verification within a workflow.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate artifact files"
 
-        path_idDiscriminator (str): Required string parameter
+      path_idDiscriminator (str): Unique identifier to target specific artifact file
 
-        path_id (str): Required string parameter
+      path_id (str): "Unique identifier of the artifact file to retrieve"
 
-        path_nodeId (str): Required string parameter
+      path_nodeId (str): "Unique node identifier to retrieve artifact files"
 
-        path_artifactName (str): Name of the resource to operate on
+      path_artifactName (str): Specifies the name of the artifact file to retrieve.
 
-        path_artifactDiscriminator (str): Required string parameter
+      path_artifactDiscriminator (str): Unique identifier for the specific artifact to retrieve
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /artifact-files/{namespace}/{idDiscriminator}/{id}/{nodeId}/{artifactDiscriminator}/{artifactName}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/artifact-files/{path_namespace}/{path_idDiscriminator}/{path_id}/{path_nodeId}/{path_artifactDiscriminator}/{path_artifactName}",
-        method="GET",
-        params=params,
-        data=data,
-    )
+  success, response = await make_api_request(
+    f"/artifact-files/{path_namespace}/{path_idDiscriminator}/{path_id}/{path_nodeId}/{path_artifactDiscriminator}/{path_artifactName}",
+    method="GET",
+    params=params,
+    data=data,
+  )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

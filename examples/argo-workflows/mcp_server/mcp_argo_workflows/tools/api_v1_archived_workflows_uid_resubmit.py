@@ -5,7 +5,7 @@
 """Tools for /api/v1/archived-workflows/{uid}/resubmit operations"""
 
 import logging
-from typing import Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,62 +13,35 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def archived_workflow_service_resubmit_archived_workflow(
-    path_uid: str,
-    body_memoized: bool = None,
-    body_name: str = None,
-    body_namespace: str = None,
-    body_parameters: List[str] = None,
-    body_uid: str = None,
-) -> Any:
-    """
-    Update or replace a resubmit
+async def archived_workflow_service_resubmit_archived_workflow(path_uid: str) -> Any:
+  """
+  Update or replace a resubmit
 
-    OpenAPI Description:
-        Update or replace a resubmit Use when: when modifying existing resource configurations or properties. Required: uid, body
+  OpenAPI Description:
+      Resubmits an archived workflow by UID. Use when: needing to rerun a completed or failed workflow for further analysis or correction.
 
-    Args:
+  Args:
 
-        path_uid (str): Required string parameter
-
-        body_memoized (bool): OpenAPI parameter corresponding to 'body_memoized'
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-        body_parameters (List[str]): OpenAPI parameter corresponding to 'body_parameters'
-
-        body_uid (str): OpenAPI parameter corresponding to 'body_uid'
+      path_uid (str): Unique identifier of the archived workflow to resubmit
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/archived-workflows/{uid}/resubmit")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/archived-workflows/{uid}/resubmit")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_memoized is not None:
-        flat_body["memoized"] = body_memoized
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_parameters is not None:
-        flat_body["parameters"] = body_parameters
-    if body_uid is not None:
-        flat_body["uid"] = body_uid
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}/resubmit", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}/resubmit", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

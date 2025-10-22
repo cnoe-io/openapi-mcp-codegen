@@ -14,153 +14,151 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def workflow_service_workflow_logs(
-    path_namespace: str,
-    path_name: str,
-    param_podName: str = None,
-    param_logOptions_container: str = None,
-    param_logOptions_follow: bool = False,
-    param_logOptions_previous: bool = False,
-    param_logOptions_sinceSeconds: str = None,
-    param_logOptions_sinceTime_seconds: str = None,
-    param_logOptions_sinceTime_nanos: int = None,
-    param_logOptions_timestamps: bool = False,
-    param_logOptions_tailLines: str = None,
-    param_logOptions_limitBytes: str = None,
-    param_logOptions_insecureSkipTLSVerifyBackend: bool = False,
-    param_logOptions_stream: str = None,
-    param_grep: str = None,
-    param_selector: str = None,
+  path_namespace: str,
+  path_name: str,
+  param_podName: str = None,
+  param_logOptions_container: str = None,
+  param_logOptions_follow: bool = False,
+  param_logOptions_previous: bool = False,
+  param_logOptions_sinceSeconds: int = None,
+  param_logOptions_sinceTime_seconds: int = None,
+  param_logOptions_sinceTime_nanos: int = None,
+  param_logOptions_timestamps: bool = False,
+  param_logOptions_tailLines: int = None,
+  param_logOptions_limitBytes: int = None,
+  param_logOptions_insecureSkipTLSVerifyBackend: bool = False,
+  param_logOptions_stream: bool = False,
+  param_grep: str = None,
+  param_selector: str = None,
 ) -> Any:
-    """
-    Retrieve log information
+  """
+  Retrieve log information
 
-    OpenAPI Description:
-        Retrieve log information Use when: for debugging issues or understanding resource behavior. Required: namespace, name
+  OpenAPI Description:
+      Retrieves logs for a specific workflow. Use when: debugging workflow execution or investigating issues with specific pods or containers.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate the workflow logs"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): Workflow name to retrieve logs for specific workflow
 
-        param_podName (str): Name of the resource to operate on
+      param_podName (str): Specify pod name to retrieve logs for a specific pod within the workflow.
 
-        param_logOptions_container (str): The container for which to stream logs. Defaults to only container if there is o...
+      param_logOptions_container (str): Specifies container to stream logs from; use if multiple containers exist.
 
-        param_logOptions_follow (bool): Follow the log stream of the pod. Defaults to false. +optional.
+      param_logOptions_follow (bool): Stream real-time pod logs when true (default: false)
 
-        param_logOptions_previous (bool): Return previous terminated container logs. Defaults to false. +optional.
+      param_logOptions_previous (bool): "Retrieve logs from previous container run when true"
 
-        param_logOptions_sinceSeconds (str): A relative time in seconds before the current time from which to show logs. If t...
+      param_logOptions_sinceSeconds (int): Specifies logs from seconds ago; use for recent log retrieval.
 
-        param_logOptions_sinceTime_seconds (str): Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be fr...
+      param_logOptions_sinceTime_seconds (int): Specifies start time in seconds since epoch for log retrieval
 
-        param_logOptions_sinceTime_nanos (int): Non-negative fractions of a second at nanosecond resolution. Negative second val...
+      param_logOptions_sinceTime_nanos (int): Specifies nanoseconds for precise log start time filtering. Use with sinceTime.
 
-        param_logOptions_timestamps (bool): If true, add an RFC3339 or RFC3339Nano timestamp at the beginning of every line ...
+      param_logOptions_timestamps (bool): Add timestamps to log lines when true (default: false)
 
-        param_logOptions_tailLines (str): If set, the number of lines from the end of the logs to show. If not specified, ...
+      param_logOptions_tailLines (int): Specifies number of log lines from end to display; use for recent log insights.
 
-        param_logOptions_limitBytes (str): If set, the number of bytes to read from the server before terminating the log o...
+      param_logOptions_limitBytes (int): Specifies max bytes to read from logs; use to limit data size.
 
-        param_logOptions_insecureSkipTLSVerifyBackend (bool): insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the...
+      param_logOptions_insecureSkipTLSVerifyBackend (bool): Skip TLS verification for backend when true (use for testing or debugging)
 
-        param_logOptions_stream (str): Specify which container log stream to return to the client. Acceptable values ar...
+      param_logOptions_stream (bool): Specifies log stream type: "All", "Stdout", or "Stderr" for container logs.
 
-        param_grep (str): Optional string parameter
+      param_grep (str): Filter logs by matching text pattern (e.g., "error")
 
-        param_selector (str): Filter to narrow results based on labels or fields
+      param_selector (str): Criteria to filter logs (e.g., pod=frontend,container=nginx)
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/workflows/{namespace}/{name}/log")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/workflows/{namespace}/{name}/log")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_podName is not None:
-        params["podName"] = str(param_podName).lower() if isinstance(param_podName, bool) else param_podName
+  if param_podName is not None:
+    params["podName"] = str(param_podName).lower() if isinstance(param_podName, bool) else param_podName
 
-    if param_logOptions_container is not None:
-        params["logOptions_container"] = (
-            str(param_logOptions_container).lower() if isinstance(param_logOptions_container, bool) else param_logOptions_container
-        )
-
-    if param_logOptions_follow is not None:
-        params["logOptions_follow"] = (
-            str(param_logOptions_follow).lower() if isinstance(param_logOptions_follow, bool) else param_logOptions_follow
-        )
-
-    if param_logOptions_previous is not None:
-        params["logOptions_previous"] = (
-            str(param_logOptions_previous).lower() if isinstance(param_logOptions_previous, bool) else param_logOptions_previous
-        )
-
-    if param_logOptions_sinceSeconds is not None:
-        params["logOptions_sinceSeconds"] = (
-            str(param_logOptions_sinceSeconds).lower() if isinstance(param_logOptions_sinceSeconds, bool) else param_logOptions_sinceSeconds
-        )
-
-    if param_logOptions_sinceTime_seconds is not None:
-        params["logOptions_sinceTime_seconds"] = (
-            str(param_logOptions_sinceTime_seconds).lower()
-            if isinstance(param_logOptions_sinceTime_seconds, bool)
-            else param_logOptions_sinceTime_seconds
-        )
-
-    if param_logOptions_sinceTime_nanos is not None:
-        params["logOptions_sinceTime_nanos"] = (
-            str(param_logOptions_sinceTime_nanos).lower()
-            if isinstance(param_logOptions_sinceTime_nanos, bool)
-            else param_logOptions_sinceTime_nanos
-        )
-
-    if param_logOptions_timestamps is not None:
-        params["logOptions_timestamps"] = (
-            str(param_logOptions_timestamps).lower() if isinstance(param_logOptions_timestamps, bool) else param_logOptions_timestamps
-        )
-
-    if param_logOptions_tailLines is not None:
-        params["logOptions_tailLines"] = (
-            str(param_logOptions_tailLines).lower() if isinstance(param_logOptions_tailLines, bool) else param_logOptions_tailLines
-        )
-
-    if param_logOptions_limitBytes is not None:
-        params["logOptions_limitBytes"] = (
-            str(param_logOptions_limitBytes).lower() if isinstance(param_logOptions_limitBytes, bool) else param_logOptions_limitBytes
-        )
-
-    if param_logOptions_insecureSkipTLSVerifyBackend is not None:
-        params["logOptions_insecureSkipTLSVerifyBackend"] = (
-            str(param_logOptions_insecureSkipTLSVerifyBackend).lower()
-            if isinstance(param_logOptions_insecureSkipTLSVerifyBackend, bool)
-            else param_logOptions_insecureSkipTLSVerifyBackend
-        )
-
-    if param_logOptions_stream is not None:
-        params["logOptions_stream"] = (
-            str(param_logOptions_stream).lower() if isinstance(param_logOptions_stream, bool) else param_logOptions_stream
-        )
-
-    if param_grep is not None:
-        params["grep"] = str(param_grep).lower() if isinstance(param_grep, bool) else param_grep
-
-    if param_selector is not None:
-        params["selector"] = str(param_selector).lower() if isinstance(param_selector, bool) else param_selector
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(
-        f"/api/v1/workflows/{path_namespace}/{path_name}/log", method="GET", params=params, data=data
+  if param_logOptions_container is not None:
+    params["logOptions_container"] = (
+      str(param_logOptions_container).lower() if isinstance(param_logOptions_container, bool) else param_logOptions_container
     )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if param_logOptions_follow is not None:
+    params["logOptions_follow"] = (
+      str(param_logOptions_follow).lower() if isinstance(param_logOptions_follow, bool) else param_logOptions_follow
+    )
+
+  if param_logOptions_previous is not None:
+    params["logOptions_previous"] = (
+      str(param_logOptions_previous).lower() if isinstance(param_logOptions_previous, bool) else param_logOptions_previous
+    )
+
+  if param_logOptions_sinceSeconds is not None:
+    params["logOptions_sinceSeconds"] = (
+      str(param_logOptions_sinceSeconds).lower() if isinstance(param_logOptions_sinceSeconds, bool) else param_logOptions_sinceSeconds
+    )
+
+  if param_logOptions_sinceTime_seconds is not None:
+    params["logOptions_sinceTime_seconds"] = (
+      str(param_logOptions_sinceTime_seconds).lower()
+      if isinstance(param_logOptions_sinceTime_seconds, bool)
+      else param_logOptions_sinceTime_seconds
+    )
+
+  if param_logOptions_sinceTime_nanos is not None:
+    params["logOptions_sinceTime_nanos"] = (
+      str(param_logOptions_sinceTime_nanos).lower()
+      if isinstance(param_logOptions_sinceTime_nanos, bool)
+      else param_logOptions_sinceTime_nanos
+    )
+
+  if param_logOptions_timestamps is not None:
+    params["logOptions_timestamps"] = (
+      str(param_logOptions_timestamps).lower() if isinstance(param_logOptions_timestamps, bool) else param_logOptions_timestamps
+    )
+
+  if param_logOptions_tailLines is not None:
+    params["logOptions_tailLines"] = (
+      str(param_logOptions_tailLines).lower() if isinstance(param_logOptions_tailLines, bool) else param_logOptions_tailLines
+    )
+
+  if param_logOptions_limitBytes is not None:
+    params["logOptions_limitBytes"] = (
+      str(param_logOptions_limitBytes).lower() if isinstance(param_logOptions_limitBytes, bool) else param_logOptions_limitBytes
+    )
+
+  if param_logOptions_insecureSkipTLSVerifyBackend is not None:
+    params["logOptions_insecureSkipTLSVerifyBackend"] = (
+      str(param_logOptions_insecureSkipTLSVerifyBackend).lower()
+      if isinstance(param_logOptions_insecureSkipTLSVerifyBackend, bool)
+      else param_logOptions_insecureSkipTLSVerifyBackend
+    )
+
+  if param_logOptions_stream is not None:
+    params["logOptions_stream"] = (
+      str(param_logOptions_stream).lower() if isinstance(param_logOptions_stream, bool) else param_logOptions_stream
+    )
+
+  if param_grep is not None:
+    params["grep"] = str(param_grep).lower() if isinstance(param_grep, bool) else param_grep
+
+  if param_selector is not None:
+    params["selector"] = str(param_selector).lower() if isinstance(param_selector, bool) else param_selector
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/{path_name}/log", method="GET", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

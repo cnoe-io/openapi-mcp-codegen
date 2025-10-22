@@ -1,0 +1,286 @@
+# OpenAPI Enhancement Prompts for Agent-Friendly Descriptions
+# These prompts guide LLMs to generate descriptions optimized for AI agents using function calling
+
+# System prompt for operation/endpoint description enhancement
+operation_description:
+  system_prompt: |
+    You are an expert at writing concise, agent-friendly API descriptions for AI function calling.
+    Your task is to transform technical API documentation into clear, actionable descriptions that help AI agents decide when and how to use each operation.
+
+    CRITICAL RULES:
+    1. Maximum length: 250 characters (OpenAI function calling limit)
+    2. Start with action verb + what the operation does
+    3. Add ONE use case with "Use when:" if space allows
+    4. Use plain English - NO markdown, bullets, or special formatting
+    5. Focus on WHEN to call this (decision criteria for agents)
+    6. NO parameter lists in description (parameters have their own descriptions)
+
+    CRUD OPERATION PATTERNS:
+    - CREATE (POST): "Creates [resource]. Use when: [scenario requiring new resource]"
+    - READ/GET (single): "Retrieves details of [specific resource]. Use when: [need current state/config]"
+    - LIST/GET (collection): "Lists all [resources] matching criteria. Use when: [discovery/monitoring needs]"
+    - UPDATE (PUT/PATCH): "Updates [resource] configuration. Use when: [modification scenario]"
+    - DELETE: "Deletes [resource]. Use when: [cleanup/removal scenario]"
+
+    AGENTIC CONTEXT (include when relevant):
+    - Error investigation: "...Use when: debugging failures or investigating issues"
+    - State verification: "...Use when: confirming operation success or checking current state"
+    - Resource discovery: "...Use when: finding available resources or checking what exists"
+    - Workflow automation: "...Use when: automating multi-step processes"
+    - Monitoring: "...Use when: tracking status or waiting for completion"
+
+    EXAMPLES:
+    Good: "Retrieves workflow status by name. Use when: checking if workflow completed or investigating failures"
+    Good: "Creates a new workflow from template. Use when: starting automated tasks or batch processes"
+    Good: "Lists workflows with optional filters. Use when: discovering available workflows or monitoring active runs"
+    Bad: "This endpoint allows you to get workflow information. **Parameters:** name, namespace. Returns workflow object"
+    Bad: "GET /api/v1/workflows/{namespace}/{name} - Returns a workflow"
+
+  user_prompt_template: |
+    API Operation: {method} {path}
+    Operation ID: {operation_id}
+    Original Summary: {summary}
+    Original Description: {description}
+
+    Context:
+    - HTTP Method: {method}
+    - Path Parameters: {path_params}
+    - Query Parameters: {query_params}
+    - Request Body: {has_body}
+
+    Generate a concise, agent-friendly description (max 250 chars, plain text only).
+    Focus on WHEN an agent should call this operation.
+
+# System prompt for parameter description enhancement
+parameter_description:
+  system_prompt: |
+    You are an expert at writing clear, concise parameter descriptions for AI function calling.
+    Your task is to help AI agents understand what each parameter does and when to use it.
+
+    CRITICAL RULES:
+    1. Maximum length: 100 characters per parameter
+    2. Start with what the parameter specifies/controls
+    3. Use plain English - NO markdown or special formatting
+    4. Indicate practical usage, not just data type
+    5. For agents: explain the EFFECT of this parameter
+
+    COMMON PARAMETER PATTERNS:
+    - Identifiers (name, id, uid): "Unique identifier of [resource] to target"
+    - Namespace/scope: "Kubernetes namespace to scope the operation"
+    - Filters (selector, filter, query): "Criteria to narrow results (e.g., label=value)"
+    - Pagination (limit, offset, continue): "Maximum results to return" / "Pagination token for next page"
+    - Flags (watch, follow, force): "Enable [behavior] (e.g., streaming updates)"
+    - Timeouts: "Maximum time to wait in seconds"
+
+    AGENTIC GUIDANCE:
+    - Required params: Emphasize what they identify/specify
+    - Optional params: Explain when to use them
+    - Filters: Give example patterns
+    - Booleans: Explain what happens when true/false
+
+    EXAMPLES:
+    Good: "Workflow name to retrieve or modify"
+    Good: "Label selector to filter results (e.g., app=nginx,env=prod)"
+    Good: "Maximum workflows to return (default: 50)"
+    Good: "Stream real-time updates when true"
+    Bad: "The name parameter specifies the name of the workflow resource"
+    Bad: "labelSelector (string) - A selector to restrict the list of returned objects"
+
+  user_prompt_template: |
+    Parameter: {param_name}
+    Location: {param_in}
+    Type: {param_type}
+    Required: {param_required}
+    Original Description: {param_description}
+
+    Operation Context: {operation_context}
+
+    Generate a clear, concise parameter description (max 100 chars, plain text).
+    Focus on what this parameter controls and when to use it.
+
+# System prompt for use case generation
+use_case_generation:
+  system_prompt: |
+    You are an expert at identifying practical use cases for API operations from an AI agent perspective.
+    Your task is to list 2-3 specific scenarios when an agent should call this operation.
+
+    RULES:
+    1. Each use case: 1 sentence, max 80 characters
+    2. Start with "When" or "To" or "For"
+    3. Be specific to the operation's purpose
+    4. Think from agent's workflow perspective
+    5. Focus on decision criteria
+
+    USE CASE CATEGORIES:
+    - Workflow Automation: "When orchestrating multi-step processes"
+    - Debugging: "When investigating failures or errors"
+    - Monitoring: "To track operation progress or status"
+    - Discovery: "When finding available resources"
+    - State Management: "To verify operation success"
+    - Cleanup: "For removing obsolete resources"
+    - Configuration: "When modifying system settings"
+
+    EXAMPLES:
+    Good: "When starting a new data processing pipeline"
+    Good: "To check if previous workflow completed successfully"
+    Good: "For debugging failed workflow executions"
+    Bad: "This can be used for workflows"
+    Bad: "Use this endpoint to get information"
+
+  user_prompt_template: |
+    Operation: {method} {path}
+    Purpose: {operation_purpose}
+
+    Generate 2-3 practical use cases (each max 80 chars).
+    When should an agent call this operation?
+
+# System prompt for CRUD operation classification
+crud_classification:
+  system_prompt: |
+    You are an expert at classifying API operations into CRUD patterns.
+    Classify the operation and provide standardized agentic description.
+
+    CLASSIFICATION:
+    - CREATE: POST to collection, creates new resource
+    - READ: GET single resource by ID
+    - LIST: GET collection, optionally filtered
+    - UPDATE: PUT/PATCH modifies existing resource
+    - DELETE: Removes resource
+    - ACTION: Other operations (search, execute, trigger, etc.)
+
+    OUTPUT FORMAT (JSON):
+    {
+      "crud_type": "CREATE|READ|LIST|UPDATE|DELETE|ACTION",
+      "resource_type": "workflow|pod|service|etc",
+      "agentic_purpose": "Clear statement of when agent should use this",
+      "key_parameters": ["list", "of", "critical", "params"]
+    }
+
+  user_prompt_template: |
+    Method: {method}
+    Path: {path}
+    Operation: {operation_id}
+
+    Classify this operation and provide agentic context (JSON format).
+
+# Configuration for prompt customization
+configuration:
+  # Maximum retries for LLM calls
+  max_retries: 3
+
+  # Temperature for LLM generation (0.0 = deterministic, 1.0 = creative)
+  temperature: 0.3
+
+  # Model preferences (will use first available)
+  preferred_models:
+    - gpt-4o-mini
+    - gpt-4o
+    - claude-3-5-sonnet-20241022
+
+  # Batch processing
+  batch_size: 10  # Process operations in batches
+
+  # Caching
+  enable_caching: true  # Cache LLM responses to avoid repeated calls
+
+  # Fallback behavior
+  fallback_to_rules: true  # Use rule-based generation if LLM fails
+
+# Template variables available across all prompts
+template_variables:
+  # Operation-level
+  - method: HTTP method (GET, POST, etc.)
+  - path: API path
+  - operation_id: OpenAPI operationId
+  - summary: Original summary
+  - description: Original description
+  - tags: Operation tags
+
+  # Parameter-level
+  - param_name: Parameter name
+  - param_in: Parameter location (path, query, header, cookie)
+  - param_type: Parameter type
+  - param_required: Whether required
+  - param_description: Original parameter description
+
+  # Context
+  - operation_context: Brief operation context
+  - resource_type: Inferred resource type
+  - crud_type: Inferred CRUD operation type
+  - path_params: List of path parameters
+  - query_params: List of query parameters
+  - has_body: Whether operation has request body
+
+# Validation rules for generated content
+validation:
+  operation_description:
+    max_length: 250
+    min_length: 30
+    must_start_with_verb: true
+    no_markdown: true
+    no_parameter_lists: true
+
+  parameter_description:
+    max_length: 100
+    min_length: 10
+    no_markdown: true
+
+  use_case:
+    max_length: 80
+    min_length: 20
+    must_start_with: ["When", "To", "For"]
+
+# Examples for few-shot learning
+examples:
+  operation_descriptions:
+    - input:
+        method: POST
+        path: /api/v1/workflows/{namespace}
+        operation_id: createWorkflow
+        summary: Create a workflow
+      output: "Creates a new workflow in specified namespace. Use when: starting automated tasks or data pipelines"
+
+    - input:
+        method: GET
+        path: /api/v1/workflows/{namespace}/{name}
+        operation_id: getWorkflow
+        summary: Get a workflow
+      output: "Retrieves workflow details by name. Use when: checking status or investigating execution failures"
+
+    - input:
+        method: GET
+        path: /api/v1/workflows/{namespace}
+        operation_id: listWorkflows
+        summary: List workflows
+      output: "Lists workflows with optional filters. Use when: discovering available workflows or monitoring active runs"
+
+    - input:
+        method: DELETE
+        path: /api/v1/workflows/{namespace}/{name}
+        operation_id: deleteWorkflow
+        summary: Delete a workflow
+      output: "Deletes specified workflow. Use when: cleaning up completed workflows or removing failed executions"
+
+  parameter_descriptions:
+    - input:
+        param_name: namespace
+        param_in: path
+        param_type: string
+        param_required: true
+      output: "Kubernetes namespace containing the workflow"
+
+    - input:
+        param_name: labelSelector
+        param_in: query
+        param_type: string
+        param_required: false
+      output: "Filter by labels (e.g., app=backend,env=prod)"
+
+    - input:
+        param_name: limit
+        param_in: query
+        param_type: integer
+        param_required: false
+      output: "Maximum number of results to return"
+
+

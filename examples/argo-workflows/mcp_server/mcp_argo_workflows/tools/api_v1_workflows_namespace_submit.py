@@ -5,7 +5,7 @@
 """Tools for /api/v1/workflows/{namespace}/submit operations"""
 
 import logging
-from typing import Dict, Any
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,57 +13,35 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def workflow_service_submit_workflow(
-    path_namespace: str,
-    body_namespace: str = None,
-    body_resourceKind: str = None,
-    body_resourceName: str = None,
-    body_submitOptions: Dict[str, Any] = None,
-) -> Any:
-    """
-    Perform an operation on submit
+async def workflow_service_submit_workflow(path_namespace: str) -> Any:
+  """
+  Perform an operation on submit
 
-    OpenAPI Description:
-        Perform an operation on submit Use when: when initializing new resources based on user requirements. Required: namespace, body
+  OpenAPI Description:
+      Submits a new workflow for execution. Use when: initiating a workflow process in a specified namespace.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-        body_resourceKind (str): OpenAPI parameter corresponding to 'body_resourceKind'
-
-        body_resourceName (str): OpenAPI parameter corresponding to 'body_resourceName'
-
-        body_submitOptions (Dict[str, Any]): SubmitOpts are workflow submission options
+      path_namespace (str): Specifies the Kubernetes namespace for the workflow submission.
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/workflows/{namespace}/submit")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/workflows/{namespace}/submit")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_resourceKind is not None:
-        flat_body["resourceKind"] = body_resourceKind
-    if body_resourceName is not None:
-        flat_body["resourceName"] = body_resourceName
-    if body_submitOptions is not None:
-        flat_body["submitOptions"] = body_submitOptions
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/submit", method="POST", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/submit", method="POST", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

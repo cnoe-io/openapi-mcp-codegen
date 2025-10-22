@@ -14,32 +14,32 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def info_service_get_info() -> Any:
-    """
-    List or query info
+  """
+  List or query info
 
-    OpenAPI Description:
-        List or query info
+  OpenAPI Description:
+      Retrieves system information. Use when: needing an overview of the current system status or configuration.
 
-    Args:
+  Args:
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/info")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/info")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/info", method="GET", params=params, data=data)
+  success, response = await make_api_request("/api/v1/info", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

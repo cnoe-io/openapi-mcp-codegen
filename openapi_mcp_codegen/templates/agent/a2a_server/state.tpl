@@ -1,12 +1,9 @@
-{% if file_headers %}
-# {{ file_headers_copyright }}
-# {{ file_headers_license }}
-# {{ file_headers_message }}
-{% endif %}
-"""Data-classes used by the A2A server."""
+# Copyright 2025 CNOE
+# SPDX-License-Identifier: Apache-2.0
 
 from enum import Enum
-from typing import Optional, TypedDict, List
+from typing import Optional, TypedDict
+
 from pydantic import BaseModel, Field
 
 
@@ -16,16 +13,24 @@ class MsgType(Enum):
 
 
 class Message(BaseModel):
-    type: MsgType = Field(..., description="originator")
-    content: str = Field(..., description="message text")
+    type: MsgType = Field(
+        ...,
+        description="indicates the originator of the message, a human or an assistant",
+    )
+    content: str = Field(..., description="the content of the message")
+
+
+class ConfigSchema(TypedDict):
+    to_upper: bool
+    to_lower: bool
 
 
 class InputState(BaseModel):
-    messages: Optional[List[Message]] = None
+    messages: Optional[list[Message]] = None
 
 
 class OutputState(BaseModel):
-    messages: Optional[List[Message]] = None
+    messages: Optional[list[Message]] = None
 
 
 class AgentState(BaseModel):

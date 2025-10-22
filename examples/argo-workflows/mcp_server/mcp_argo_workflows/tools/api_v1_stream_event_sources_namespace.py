@@ -14,130 +14,126 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def event_source_service_watch_event_sources(
-    path_namespace: str,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
+  path_namespace: str,
+  param_listOptions_labelSelector: str = None,
+  param_listOptions_fieldSelector: str = None,
+  param_listOptions_watch: bool = False,
+  param_listOptions_allowWatchBookmarks: bool = False,
+  param_listOptions_resourceVersion: str = None,
+  param_listOptions_resourceVersionMatch: str = None,
+  param_listOptions_timeoutSeconds: int = None,
+  param_listOptions_limit: int = None,
+  param_listOptions_continue: str = None,
+  param_listOptions_sendInitialEvents: str = None,
 ) -> Any:
-    """
-    Retrieve details of a specific event-sources
+  """
+  Retrieve details of a specific event-sources
 
-    OpenAPI Description:
-        Retrieve details of a specific event-sources. Required: namespace
+  OpenAPI Description:
+      Watches event sources in a namespace. Use when: monitoring changes or updates to event sources in real-time.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to scope event source retrieval"
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+      param_listOptions_labelSelector (str): Criteria to filter results by labels (e.g., type=event,source=external)
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+      param_listOptions_fieldSelector (str): Criteria to filter results by field values (e.g., status=active)
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+      param_listOptions_watch (bool): Enable streaming updates for resource changes when true
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+      param_listOptions_allowWatchBookmarks (bool): Enable bookmark events in watch mode when true
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+      param_listOptions_resourceVersion (str): Specify resource version to filter events (e.g., "12345")
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+      param_listOptions_resourceVersionMatch (str): Controls resource version matching for list calls (e.g., exact, not older)
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+      param_listOptions_timeoutSeconds (int): Maximum time to wait for results in seconds (e.g., 30)
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+      param_listOptions_limit (int): "Maximum event sources to return (default: 50)"
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+      param_listOptions_continue (str): Pagination token for next page of results
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
+      param_listOptions_sendInitialEvents (str): "Send initial events with watch stream when true"
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/stream/event-sources/{namespace}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/stream/event-sources/{namespace}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
-        )
+  if param_listOptions_labelSelector is not None:
+    params["listOptions_labelSelector"] = (
+      str(param_listOptions_labelSelector).lower() if isinstance(param_listOptions_labelSelector, bool) else param_listOptions_labelSelector
+    )
 
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
-        )
+  if param_listOptions_fieldSelector is not None:
+    params["listOptions_fieldSelector"] = (
+      str(param_listOptions_fieldSelector).lower() if isinstance(param_listOptions_fieldSelector, bool) else param_listOptions_fieldSelector
+    )
 
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
-        )
+  if param_listOptions_watch is not None:
+    params["listOptions_watch"] = (
+      str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    )
 
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
-        )
+  if param_listOptions_allowWatchBookmarks is not None:
+    params["listOptions_allowWatchBookmarks"] = (
+      str(param_listOptions_allowWatchBookmarks).lower()
+      if isinstance(param_listOptions_allowWatchBookmarks, bool)
+      else param_listOptions_allowWatchBookmarks
+    )
 
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
-        )
+  if param_listOptions_resourceVersion is not None:
+    params["listOptions_resourceVersion"] = (
+      str(param_listOptions_resourceVersion).lower()
+      if isinstance(param_listOptions_resourceVersion, bool)
+      else param_listOptions_resourceVersion
+    )
 
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
-        )
+  if param_listOptions_resourceVersionMatch is not None:
+    params["listOptions_resourceVersionMatch"] = (
+      str(param_listOptions_resourceVersionMatch).lower()
+      if isinstance(param_listOptions_resourceVersionMatch, bool)
+      else param_listOptions_resourceVersionMatch
+    )
 
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
-        )
+  if param_listOptions_timeoutSeconds is not None:
+    params["listOptions_timeoutSeconds"] = (
+      str(param_listOptions_timeoutSeconds).lower()
+      if isinstance(param_listOptions_timeoutSeconds, bool)
+      else param_listOptions_timeoutSeconds
+    )
 
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
-        )
+  if param_listOptions_limit is not None:
+    params["listOptions_limit"] = (
+      str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    )
 
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
-        )
+  if param_listOptions_continue is not None:
+    params["listOptions_continue"] = (
+      str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    )
 
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
-        )
+  if param_listOptions_sendInitialEvents is not None:
+    params["listOptions_sendInitialEvents"] = (
+      str(param_listOptions_sendInitialEvents).lower()
+      if isinstance(param_listOptions_sendInitialEvents, bool)
+      else param_listOptions_sendInitialEvents
+    )
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/stream/event-sources/{path_namespace}", method="GET", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/stream/event-sources/{path_namespace}", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

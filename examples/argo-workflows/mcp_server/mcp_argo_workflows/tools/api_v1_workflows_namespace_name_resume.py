@@ -13,53 +13,39 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def workflow_service_resume_workflow(
-    path_namespace: str, path_name: str, body_name: str = None, body_namespace: str = None, body_nodeFieldSelector: str = None
-) -> Any:
-    """
-    Update or replace a resume
+async def workflow_service_resume_workflow(path_namespace: str, path_name: str) -> Any:
+  """
+  Update or replace a resume
 
-    OpenAPI Description:
-        Update or replace a resume Use when: when modifying existing resource configurations or properties. Required: namespace, name, body
+  OpenAPI Description:
+      Resumes a paused workflow. Use when: continuing a workflow that was previously halted or paused.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to target for the workflow operation"
 
-        path_name (str): Name of the resource to operate on
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
-
-        body_nodeFieldSelector (str): OpenAPI parameter corresponding to 'body_nodeFieldSelector'
+      path_name (str): Specifies the workflow name to resume in the given namespace.
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/workflows/{namespace}/{name}/resume")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/workflows/{namespace}/{name}/resume")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    if body_nodeFieldSelector is not None:
-        flat_body["nodeFieldSelector"] = body_nodeFieldSelector
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/api/v1/workflows/{path_namespace}/{path_name}/resume", method="PUT", params=params, data=data
-    )
+  success, response = await make_api_request(
+    f"/api/v1/workflows/{path_namespace}/{path_name}/resume", method="PUT", params=params, data=data
+  )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

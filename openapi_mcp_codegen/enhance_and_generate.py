@@ -20,6 +20,7 @@ import tempfile
 from pathlib import Path
 import sys
 import os
+import json
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -35,6 +36,106 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger("enhance_and_generate")
+
+
+def _fix_openapi_parameters(spec_path: str) -> int:
+    """
+    Fix OpenAPI parameters that are missing schema or content fields.
+
+    According to OpenAPI 3.x spec, parameters must have either a 'schema' or
+    'content' field to define their type. This function adds default schemas
+    to parameters that are missing both.
+
+    Also removes invalid 'body' parameters (OpenAPI 2.0 style) as they should
+    be defined in requestBody instead.
+
+    Additionally, converts Swagger 2.0 specs to OpenAPI 3.x format.
+
+    Args:
+        spec_path: Path to the OpenAPI specification file to fix
+
+    Returns:
+        Number of parameters that were fixed
+    """
+    try:
+        # Load the OpenAPI spec
+        with open(spec_path, 'r', encoding='utf-8') as f:
+            spec = json.load(f)
+
+        # Check if this is a Swagger 2.0 spec and convert to OpenAPI 3.x
+        if 'swagger' in spec and spec.get('swagger') == '2.0':
+            logger.info("Detected Swagger 2.0 spec, converting to OpenAPI 3.0")
+            spec['openapi'] = '3.0.0'
+            del spec['swagger']
+            # basePath and schemes should be converted to servers
+            base_path = spec.pop('basePath', '')
+            schemes = spec.pop('schemes', ['https'])
+            host = spec.pop('host', 'localhost')
+            if 'servers' not in spec or not spec['servers']:
+                spec['servers'] = [{
+                    'url': f"{schemes[0]}://{host}{base_path}"
+                }]
+
+        fixed_count = 0
+        removed_body_params = 0
+
+        # Process all parameters in all operations
+        for path, methods in spec.get('paths', {}).items():
+            for method, operation in methods.items():
+                if method in ['get', 'post', 'put', 'delete', 'patch', 'options', 'head']:
+                    if 'parameters' in operation:
+                        # First pass: remove invalid 'body' parameters
+                        # In OpenAPI 3.x, body parameters should be in requestBody, not parameters
+                        original_params = operation['parameters']
+                        operation['parameters'] = [
+                            p for p in original_params
+                            if p.get('in') != 'body'
+                        ]
+                        body_params_removed = len(original_params) - len(operation['parameters'])
+                        if body_params_removed > 0:
+                            removed_body_params += body_params_removed
+                            logger.debug(f"Removed {body_params_removed} body parameter(s) from {method.upper()} {path}")
+
+                        # Second pass: fix parameters missing schema
+                        for param in operation['parameters']:
+                            # If parameter has neither schema nor content, add a default schema
+                            if 'schema' not in param and 'content' not in param:
+                                param_name = param.get('name', '').lower()
+                                param_in = param.get('in', '')
+
+                                # Infer type from parameter name and location
+                                if any(word in param_name for word in [
+                                    'limit', 'timeout', 'seconds', 'nanos', 'period',
+                                    'retries', 'count', 'size', 'port', 'lines', 'bytes'
+                                ]):
+                                    param['schema'] = {'type': 'integer'}
+                                elif any(word in param_name for word in [
+                                    'watch', 'follow', 'previous', 'timestamps', 'orphan',
+                                    'force', 'enabled', 'allow', 'skip', 'insecure', 'stream'
+                                ]):
+                                    param['schema'] = {'type': 'boolean'}
+                                else:
+                                    # Default to string type
+                                    param['schema'] = {'type': 'string'}
+
+                                fixed_count += 1
+                                logger.debug(f"Fixed parameter '{param.get('name')}' in {method.upper()} {path}")
+
+        # Save the fixed spec
+        total_fixes = fixed_count + removed_body_params
+        if total_fixes > 0:
+            with open(spec_path, 'w', encoding='utf-8') as f:
+                json.dump(spec, f, indent=2)
+            if fixed_count > 0:
+                logger.info(f"Fixed {fixed_count} parameters missing schema definitions")
+            if removed_body_params > 0:
+                logger.info(f"Removed {removed_body_params} invalid 'body' parameters (OpenAPI 2.0 style)")
+
+        return total_fixes
+
+    except Exception as e:
+        logger.error(f"Error fixing OpenAPI parameters: {e}")
+        raise
 
 
 def _generate_example_makefile(spec_path: str, mcp_generator: MCPGenerator):
@@ -156,7 +257,22 @@ Examples:
             logger.info("STEP 1: Generating OpenAPI Overlay")
             logger.info("=" * 70)
 
-            generator = OpenAPIOverlayGenerator(spec_path=args.spec_path)
+            # Load config to get overlay enhancement settings
+            import yaml as yaml_loader
+            overlay_config = {}
+            try:
+                with open(args.config_path, 'r', encoding='utf-8') as f:
+                    config = yaml_loader.safe_load(f)
+                    overlay_config = config.get('overlay_enhancements', {})
+                    if overlay_config.get('enabled', True):
+                        logger.info("Using overlay enhancement configuration from config.yaml")
+            except Exception as e:
+                logger.warning(f"Could not load overlay config: {e}, using defaults")
+
+            generator = OpenAPIOverlayGenerator(
+                spec_path=args.spec_path,
+                overlay_config=overlay_config
+            )
 
             # Save overlay to specified path or temporary file
             if args.save_overlay:
@@ -197,6 +313,18 @@ Examples:
             applier.save_result(enhanced_spec_path, format='json')
             print(f"✓ Applied overlay, enhanced spec: {enhanced_spec_path}")
 
+            # Fix OpenAPI parameters that may be missing schema definitions
+            logger.info("")
+            logger.info("=" * 70)
+            logger.info("STEP 2.1: Validating and Fixing OpenAPI Parameters")
+            logger.info("=" * 70)
+
+            fixed_count = _fix_openapi_parameters(enhanced_spec_path)
+            if fixed_count > 0:
+                print(f"✓ Fixed {fixed_count} parameters with missing schema definitions")
+            else:
+                print(f"✓ All parameters are valid")
+
             # Clean up temporary overlay if not saved
             if not args.save_overlay:
                 Path(overlay_path).unlink(missing_ok=True)
@@ -208,12 +336,26 @@ Examples:
             logger.info("STEP 3: Generating MCP Server Code")
             logger.info("=" * 70)
 
+            # Load config to get generate_agent and other flags
+            import yaml
+            with open(args.config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+
+            generate_agent = config.get('generate_agent', False)
+            generate_eval = config.get('generate_eval', False)
+            enable_slim = config.get('enable_slim', False)
+            with_a2a_proxy = config.get('with_a2a_proxy', False)
+
             script_dir = Path(__file__).parent.parent / 'openapi_mcp_codegen'
             mcp_generator = MCPGenerator(
                 script_dir=str(script_dir),
                 spec_path=enhanced_spec_path,
                 output_dir=args.output_dir,
-                config_path=args.config_path
+                config_path=args.config_path,
+                generate_agent=generate_agent,
+                generate_eval=generate_eval,
+                enable_slim=enable_slim,
+                with_a2a_proxy=with_a2a_proxy
             )
             mcp_generator.generate()
             print(f"✓ Generated MCP server code in: {args.output_dir}")

@@ -5,7 +5,7 @@
 """Tools for /api/v1/cluster-workflow-templates/{name} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,210 +14,183 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def cluster_workflow_template_service_get_cluster_workflow_template(
-    path_name: str, param_getOptions_resourceVersion: str = None
+  path_name: str, param_getOptions_resourceVersion: str = None
 ) -> Any:
-    """
-    Retrieve details of a specific cluster-workflow-templates
+  """
+  Retrieve details of a specific cluster-workflow-templates
 
-    OpenAPI Description:
-        Retrieve details of a specific cluster-workflow-templates Use when: when you have a specific resource identifier and need its current details. Required: name
+  OpenAPI Description:
+      Retrieves details of a specific cluster workflow template. Use when: checking template configuration or verifying current settings.
 
-    Args:
+  Args:
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): Specifies the workflow template to retrieve by its unique name.
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
-
-
-    Returns:
-        Any: The JSON response from the API call.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/cluster-workflow-templates/{name}")
-
-    params = {}
-    data = {}
-
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="GET", params=params, data=data)
-
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+      param_getOptions_resourceVersion (str): Specifies resource version to retrieve; use for consistency across requests.
 
 
-async def cluster_workflow_template_service_update_cluster_workflow_template(
-    path_name: str,
-    body_name: str = None,
-    body_template__apiVersion: str = None,
-    body_template__kind: str = None,
-    body_template__metadata: Dict[str, Any] = None,
-    body_template__spec: Dict[str, Any] = None,
-) -> Any:
-    """
-    Update or replace a cluster-workflow-templates
+  Returns:
+      Any: The JSON response from the API call.
 
-    OpenAPI Description:
-        Update or replace a cluster-workflow-templates Use when: when modifying existing resource configurations or properties. Required: name, body
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/cluster-workflow-templates/{name}")
 
-    Args:
+  params = {}
+  data = {}
 
-        path_name (str): DEPRECATED: This field is ignored.
+  if param_getOptions_resourceVersion is not None:
+    params["getOptions_resourceVersion"] = (
+      str(param_getOptions_resourceVersion).lower()
+      if isinstance(param_getOptions_resourceVersion, bool)
+      else param_getOptions_resourceVersion
+    )
 
-        body_name (str): DEPRECATED: This field is ignored.
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-        body_template__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+  success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="GET", params=params, data=data)
 
-        body_template__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
-        body_template__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_template__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+async def cluster_workflow_template_service_update_cluster_workflow_template(path_name: str) -> Any:
+  """
+  Update or replace a cluster-workflow-templates
+
+  OpenAPI Description:
+      Updates a cluster workflow template by name. Use when: modifying existing template configurations or updating workflow parameters.
+
+  Args:
+
+      path_name (str): Unique name of the cluster workflow template to update
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/cluster-workflow-templates/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/cluster-workflow-templates/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_template__apiVersion is not None:
-        flat_body["template__apiVersion"] = body_template__apiVersion
-    if body_template__kind is not None:
-        flat_body["template__kind"] = body_template__kind
-    if body_template__metadata is not None:
-        flat_body["template__metadata"] = body_template__metadata
-    if body_template__spec is not None:
-        flat_body["template__spec"] = body_template__spec
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="PUT", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="PUT", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def cluster_workflow_template_service_delete_cluster_workflow_template(
-    path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+  path_name: str,
+  param_deleteOptions_gracePeriodSeconds: int = None,
+  param_deleteOptions_preconditions_uid: str = None,
+  param_deleteOptions_preconditions_resourceVersion: str = None,
+  param_deleteOptions_orphanDependents: bool = False,
+  param_deleteOptions_propagationPolicy: str = None,
+  param_deleteOptions_dryRun: str = None,
+  param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: str = None,
 ) -> Any:
-    """
-    Delete a cluster-workflow-templates
+  """
+  Delete a cluster-workflow-templates
 
-    OpenAPI Description:
-        Delete a cluster-workflow-templates Use when: when cleaning up resources that are no longer needed. Required: name
+  OpenAPI Description:
+      Deletes a cluster workflow template by name. Use when: removing outdated or unnecessary templates to maintain a clean environment.
 
-    Args:
+  Args:
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): "Cluster workflow template name to delete"
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+      param_deleteOptions_gracePeriodSeconds (int): Specifies delay in seconds before deletion; use for graceful shutdown.
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+      param_deleteOptions_preconditions_uid (str): "UID to ensure deletion only if it matches the target resource"
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+      param_deleteOptions_preconditions_resourceVersion (str): "Resource version to ensure deletion only if it matches"
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+      param_deleteOptions_orphanDependents (bool): Control orphan resource deletion; use PropagationPolicy instead.
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+      param_deleteOptions_propagationPolicy (str): Specifies garbage collection method (e.g., "Foreground", "Background")
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+      param_deleteOptions_dryRun (str): Simulate deletion without actual changes (e.g., ["All"]).
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+      param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (str): Allow unsafe deletion if store read error occurs
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/cluster-workflow-templates/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/cluster-workflow-templates/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
-        )
+  if param_deleteOptions_gracePeriodSeconds is not None:
+    params["deleteOptions_gracePeriodSeconds"] = (
+      str(param_deleteOptions_gracePeriodSeconds).lower()
+      if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
+      else param_deleteOptions_gracePeriodSeconds
+    )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
-        )
+  if param_deleteOptions_preconditions_uid is not None:
+    params["deleteOptions_preconditions_uid"] = (
+      str(param_deleteOptions_preconditions_uid).lower()
+      if isinstance(param_deleteOptions_preconditions_uid, bool)
+      else param_deleteOptions_preconditions_uid
+    )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
-        )
+  if param_deleteOptions_preconditions_resourceVersion is not None:
+    params["deleteOptions_preconditions_resourceVersion"] = (
+      str(param_deleteOptions_preconditions_resourceVersion).lower()
+      if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
+      else param_deleteOptions_preconditions_resourceVersion
+    )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
-        )
+  if param_deleteOptions_orphanDependents is not None:
+    params["deleteOptions_orphanDependents"] = (
+      str(param_deleteOptions_orphanDependents).lower()
+      if isinstance(param_deleteOptions_orphanDependents, bool)
+      else param_deleteOptions_orphanDependents
+    )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
-        )
+  if param_deleteOptions_propagationPolicy is not None:
+    params["deleteOptions_propagationPolicy"] = (
+      str(param_deleteOptions_propagationPolicy).lower()
+      if isinstance(param_deleteOptions_propagationPolicy, bool)
+      else param_deleteOptions_propagationPolicy
+    )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
-        )
+  if param_deleteOptions_dryRun is not None:
+    params["deleteOptions_dryRun"] = (
+      str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
-        )
+  if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
+    params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
+      str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
+      if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
+      else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    )
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

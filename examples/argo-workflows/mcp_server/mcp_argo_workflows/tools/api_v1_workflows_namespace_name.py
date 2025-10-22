@@ -5,7 +5,7 @@
 """Tools for /api/v1/workflows/{namespace}/{name} operations"""
 
 import logging
-from typing import Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,165 +14,165 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def workflow_service_get_workflow(
-    path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None, param_fields: str = None
+  path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None, param_fields: str = None
 ) -> Any:
-    """
-    Retrieve workflows information
+  """
+  Retrieve workflows information
 
-    OpenAPI Description:
-        Retrieve workflows information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name
+  OpenAPI Description:
+      Retrieves details of a specific workflow by name. Use when: checking current status or investigating issues with a particular workflow.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate the workflow"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): Workflow name to retrieve details from the specified namespace.
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+      param_getOptions_resourceVersion (str): Specify resource version to retrieve specific state (optional)
 
-        param_fields (str): Fields to be included or excluded in the response. e.g. "spec,status.phase", "-status.nodes".
+      param_fields (str): Specify fields to include/exclude in response (e.g., "spec,status.phase", "-status.nodes").
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/workflows/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/workflows/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
-        )
+  if param_getOptions_resourceVersion is not None:
+    params["getOptions_resourceVersion"] = (
+      str(param_getOptions_resourceVersion).lower()
+      if isinstance(param_getOptions_resourceVersion, bool)
+      else param_getOptions_resourceVersion
+    )
 
-    if param_fields is not None:
-        params["fields"] = str(param_fields).lower() if isinstance(param_fields, bool) else param_fields
+  if param_fields is not None:
+    params["fields"] = str(param_fields).lower() if isinstance(param_fields, bool) else param_fields
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/{path_name}", method="GET", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/{path_name}", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def workflow_service_delete_workflow(
-    path_namespace: str,
-    path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
-    param_force: bool = False,
+  path_namespace: str,
+  path_name: str,
+  param_deleteOptions_gracePeriodSeconds: int = None,
+  param_deleteOptions_preconditions_uid: str = None,
+  param_deleteOptions_preconditions_resourceVersion: str = None,
+  param_deleteOptions_orphanDependents: bool = False,
+  param_deleteOptions_propagationPolicy: str = None,
+  param_deleteOptions_dryRun: str = None,
+  param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: str = None,
+  param_force: bool = False,
 ) -> Any:
-    """
-    Delete a workflows
+  """
+  Delete a workflows
 
-    OpenAPI Description:
-        Delete a workflows Use when: when cleaning up resources that are no longer needed. Required: namespace, name
+  OpenAPI Description:
+      Deletes a specific workflow. Use when: removing outdated or unnecessary workflows to free up resources or clean up the system.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace of the workflow to delete"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): "Workflow name to delete in specified namespace"
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+      param_deleteOptions_gracePeriodSeconds (int): Specifies delay in seconds before deletion; use for graceful shutdown.
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+      param_deleteOptions_preconditions_uid (str): "UID to ensure deletion only if it matches the target resource"
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+      param_deleteOptions_preconditions_resourceVersion (str): "Ensure deletion only if resource version matches specified value"
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+      param_deleteOptions_orphanDependents (bool): Control orphaning of dependents when deleting (use PropagationPolicy instead)
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+      param_deleteOptions_propagationPolicy (str): Specifies garbage collection method (e.g., "Foreground", "Background")
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+      param_deleteOptions_dryRun (str): Specifies simulation mode; no changes are saved. Use to test deletion effects.
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+      param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (str): Ignore store read errors for unsafe deletion when true
 
-        param_force (bool): Optional boolean parameter
+      param_force (bool): Force deletion even if workflow is running when true
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/workflows/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/workflows/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
-        )
+  if param_deleteOptions_gracePeriodSeconds is not None:
+    params["deleteOptions_gracePeriodSeconds"] = (
+      str(param_deleteOptions_gracePeriodSeconds).lower()
+      if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
+      else param_deleteOptions_gracePeriodSeconds
+    )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
-        )
+  if param_deleteOptions_preconditions_uid is not None:
+    params["deleteOptions_preconditions_uid"] = (
+      str(param_deleteOptions_preconditions_uid).lower()
+      if isinstance(param_deleteOptions_preconditions_uid, bool)
+      else param_deleteOptions_preconditions_uid
+    )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
-        )
+  if param_deleteOptions_preconditions_resourceVersion is not None:
+    params["deleteOptions_preconditions_resourceVersion"] = (
+      str(param_deleteOptions_preconditions_resourceVersion).lower()
+      if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
+      else param_deleteOptions_preconditions_resourceVersion
+    )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
-        )
+  if param_deleteOptions_orphanDependents is not None:
+    params["deleteOptions_orphanDependents"] = (
+      str(param_deleteOptions_orphanDependents).lower()
+      if isinstance(param_deleteOptions_orphanDependents, bool)
+      else param_deleteOptions_orphanDependents
+    )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
-        )
+  if param_deleteOptions_propagationPolicy is not None:
+    params["deleteOptions_propagationPolicy"] = (
+      str(param_deleteOptions_propagationPolicy).lower()
+      if isinstance(param_deleteOptions_propagationPolicy, bool)
+      else param_deleteOptions_propagationPolicy
+    )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
-        )
+  if param_deleteOptions_dryRun is not None:
+    params["deleteOptions_dryRun"] = (
+      str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
-        )
+  if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
+    params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
+      str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
+      if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
+      else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    )
 
-    if param_force is not None:
-        params["force"] = str(param_force).lower() if isinstance(param_force, bool) else param_force
+  if param_force is not None:
+    params["force"] = str(param_force).lower() if isinstance(param_force, bool) else param_force
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/{path_name}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/{path_name}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

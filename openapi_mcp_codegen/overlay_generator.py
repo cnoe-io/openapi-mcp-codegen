@@ -42,7 +42,7 @@ class OpenAPIOverlayGenerator:
     for better AI agent understanding and MCP server code generation.
     """
 
-    def __init__(self, spec_path: str, use_llm: bool = False, llm_config: Optional[Dict] = None):
+    def __init__(self, spec_path: str, use_llm: bool = False, llm_config: Optional[Dict] = None, overlay_config: Optional[Dict] = None):
         """
         Initialize the overlay generator.
 
@@ -50,14 +50,28 @@ class OpenAPIOverlayGenerator:
             spec_path: Path to the OpenAPI specification file
             use_llm: Whether to use LLM for generating enhanced descriptions
             llm_config: Configuration for LLM (if use_llm is True)
+            overlay_config: Configuration for overlay enhancements from config.yaml
         """
         self.spec_path = spec_path
         self.spec = self._load_spec()
-        self.use_llm = use_llm and LLM_AVAILABLE
+        self.prompts = self._load_prompts()  # Load declarative prompts
+
+        # Load overlay configuration
+        self.overlay_config = overlay_config or {}
+        self.max_description_length = self.overlay_config.get('max_description_length', 300)
+        self.enhance_crud = self.overlay_config.get('enhance_crud_operations', True)
+        self.add_use_cases = self.overlay_config.get('add_use_cases', True)
+        self.enhance_params = self.overlay_config.get('enhance_parameters', True)
+        self.add_param_guidance = self.overlay_config.get('add_parameter_guidance', True)
+        self.agentic_focus = self.overlay_config.get('agentic_focus', True)
+
+        # Determine if LLM should be used - prefer LLM when available
+        use_llm_from_config = self.overlay_config.get('use_llm', True)  # Default to True
+        self.use_llm = (use_llm or use_llm_from_config) and LLM_AVAILABLE
         self.llm_config = llm_config or {}
         self.overlay_actions = []
         self.llm = None
-        
+
         if self.use_llm:
             if not LLM_AVAILABLE:
                 logger.warning("LLM enhancement requested but cnoe_agent_utils not available")
@@ -77,6 +91,16 @@ class OpenAPIOverlayGenerator:
                 return json.load(f)
             else:
                 return yaml.safe_load(f)
+
+    def _load_prompts(self) -> Dict[str, Any]:
+        """Load prompt templates from prompt.yaml"""
+        prompt_file = Path(__file__).parent / 'prompt.yaml'
+        try:
+            with open(prompt_file, 'r') as f:
+                return yaml.safe_load(f)
+        except Exception as e:
+            logger.warning(f"Failed to load prompt.yaml: {e}, using defaults")
+            return {}
 
     def _get_operation_purpose(self, method: str, path: str, operation: Dict[str, Any]) -> str:
         """
@@ -170,7 +194,7 @@ class OpenAPIOverlayGenerator:
 
     def _create_enhanced_description_with_llm(self, method: str, path: str, operation: Dict[str, Any]) -> str:
         """
-        Create an enhanced description using LLM.
+        Create an enhanced description using LLM with declarative prompts from prompt.yaml.
 
         Args:
             method: HTTP method
@@ -184,48 +208,52 @@ class OpenAPIOverlayGenerator:
             return self._create_enhanced_description(method, path, operation)
 
         try:
+            # Get prompts from declarative configuration
+            op_desc_prompts = self.prompts.get('operation_description', {})
+            system_prompt = op_desc_prompts.get('system_prompt', '')
+            user_template = op_desc_prompts.get('user_prompt_template', '')
+
+            # Fallback to default if prompts not loaded
+            if not system_prompt:
+                logger.warning("No system prompt loaded from prompt.yaml, using fallback")
+                return self._create_enhanced_description(method, path, operation)
+
+            # Extract operation details
             original_desc = operation.get('description', '')
             summary = operation.get('summary', '')
             operation_id = operation.get('operationId', '')
             parameters = operation.get('parameters', [])
-            
-            param_info = []
-            for p in parameters:
-                param_info.append({
-                    'name': p.get('name', ''),
-                    'type': p.get('type', p.get('schema', {}).get('type', 'string')),
-                    'required': p.get('required', False),
-                    'description': p.get('description', '')
-                })
+            has_body = 'requestBody' in operation
 
-            system_msg = SystemMessage(
-                content=(
-                    "You are an expert at writing concise, OpenAI-compatible tool descriptions. "
-                    "Your task is to write clear, brief descriptions that help AI function calling understand when to use each API operation. "
-                    "Follow these strict rules:\n"
-                    "1. Keep descriptions under 250 characters (OpenAI's recommended limit)\n"
-                    "2. Start with what the operation does (verb + object)\n"
-                    "3. Add one use case if space allows: 'Use when: <scenario>'\n"
-                    "4. NO markdown formatting, bullet points, or special characters\n"
-                    "5. NO parameter listings in the description\n"
-                    "6. Write in plain, direct language\n\n"
-                    "Example good description: 'Retrieve details of a specific workflow by name. Use when: you need to check workflow status or configuration.'\n"
-                    "Example bad description: '**Purpose:** Lists workflows\\n\\n**Usage:**...'"
-                )
+            # Separate path and query parameters
+            path_params = [p.get('name') for p in parameters if p.get('in') == 'path']
+            query_params = [p.get('name') for p in parameters if p.get('in') == 'query']
+
+            # Format user prompt with template variables
+            user_prompt = user_template.format(
+                method=method.upper(),
+                path=path,
+                operation_id=operation_id or 'None',
+                summary=summary or 'None',
+                description=original_desc[:200] if original_desc else 'None',
+                path_params=', '.join(path_params) if path_params else 'None',
+                query_params=', '.join(query_params) if query_params else 'None',
+                has_body='Yes' if has_body else 'No'
             )
 
-            user_prompt = f"""
-API: {method.upper()} {path}
-Operation: {operation_id}
-Summary: {summary}
-Original: {original_desc[:200] if original_desc else 'None'}
-
-Write a concise, OpenAI-compatible tool description (max 250 chars, no markdown).
-"""
-
-            response = self.llm.invoke([system_msg, SystemMessage(content=user_prompt)])
+            # Call LLM
+            system_msg = SystemMessage(content=system_prompt.strip())
+            user_msg = SystemMessage(content=user_prompt.strip())
+            response = self.llm.invoke([system_msg, user_msg])
             enhanced_desc = response.content.strip()
-            
+
+            # Validate length according to prompt.yaml configuration
+            validation = self.prompts.get('validation', {}).get('operation_description', {})
+            max_length = validation.get('max_length', self.max_description_length)
+            if len(enhanced_desc) > max_length:
+                enhanced_desc = enhanced_desc[:max_length-3] + "..."
+                logger.debug(f"Truncated description to {max_length} chars")
+
             logger.debug(f"LLM enhanced description for {method.upper()} {path}")
             return enhanced_desc
 
@@ -323,7 +351,7 @@ Write a concise, OpenAI-compatible tool description (max 250 chars, no markdown)
 
     def _enhance_parameter_description_with_llm(self, param: Dict[str, Any], operation_context: str = "") -> str:
         """
-        Enhance a parameter description using LLM.
+        Enhance a parameter description using LLM with declarative prompts from prompt.yaml.
 
         Args:
             param: Parameter object
@@ -336,36 +364,47 @@ Write a concise, OpenAI-compatible tool description (max 250 chars, no markdown)
             return self._enhance_parameter_description(param)
 
         try:
+            # Get prompts from declarative configuration
+            param_desc_prompts = self.prompts.get('parameter_description', {})
+            system_prompt = param_desc_prompts.get('system_prompt', '')
+            user_template = param_desc_prompts.get('user_prompt_template', '')
+
+            # Fallback if prompts not loaded
+            if not system_prompt:
+                logger.warning("No parameter prompt loaded from prompt.yaml, using fallback")
+                return self._enhance_parameter_description(param)
+
+            # Extract parameter details
             name = param.get('name', '')
             original_desc = param.get('description', '')
             param_type = param.get('type', param.get('schema', {}).get('type', 'string'))
+            param_in = param.get('in', 'query')
             required = param.get('required', False)
 
-            system_msg = SystemMessage(
-                content=(
-                    "You are an expert at writing OpenAI-compatible parameter descriptions. "
-                    "Write clear, brief descriptions for function parameters. "
-                    "Rules:\n"
-                    "1. Keep under 100 characters\n"
-                    "2. Plain text only, no markdown or special formatting\n"
-                    "3. Start with what the parameter does\n"
-                    "4. Be specific and actionable\n\n"
-                    "Example good: 'Namespace to scope the operation to'\n"
-                    "Example bad: '**Optional parameter** - only include when...'"
-                )
+            # Format user prompt with template variables
+            user_prompt = user_template.format(
+                param_name=name,
+                param_in=param_in,
+                param_type=param_type,
+                param_required='Yes' if required else 'No',
+                param_description=original_desc[:100] if original_desc else 'None',
+                operation_context=operation_context[:50] if operation_context else 'General API operation'
             )
 
-            user_prompt = f"""
-Parameter: {name} ({param_type})
-{'Required' if required else 'Optional'}
-Original: {original_desc[:100] if original_desc else 'None'}
-Context: {operation_context[:50]}
+            # Call LLM
+            system_msg = SystemMessage(content=system_prompt.strip())
+            user_msg = SystemMessage(content=user_prompt.strip())
+            response = self.llm.invoke([system_msg, user_msg])
+            enhanced_desc = response.content.strip()
 
-Write concise parameter description (max 100 chars, plain text).
-"""
+            # Validate length according to prompt.yaml configuration
+            validation = self.prompts.get('validation', {}).get('parameter_description', {})
+            max_length = validation.get('max_length', 100)
+            if len(enhanced_desc) > max_length:
+                enhanced_desc = enhanced_desc[:max_length-3] + "..."
 
-            response = self.llm.invoke([system_msg, SystemMessage(content=user_prompt)])
-            return response.content.strip()
+            logger.debug(f"LLM enhanced parameter description for {name}")
+            return enhanced_desc
 
         except Exception as e:
             logger.warning(f"LLM enhancement failed for parameter {param.get('name')}: {e}")
@@ -429,7 +468,7 @@ Write concise parameter description (max 100 chars, plain text).
             description = description[:147] + "..."
 
         return description
-    
+
     def _extract_resource_from_path(self, param: Dict[str, Any]) -> str:
         """Extract resource type from parameter context."""
         # This is a simple helper to make parameter descriptions more contextual
@@ -474,7 +513,7 @@ Write concise parameter description (max 100 chars, plain text).
                     enhanced_desc = self._create_enhanced_description_with_llm(method, path, operation)
                 else:
                     enhanced_desc = self._create_enhanced_description(method, path, operation)
-                    
+
                 overlay['actions'].append({
                     'target': f"$.paths['{path}'].{method}.description",
                     'update': enhanced_desc
@@ -492,7 +531,7 @@ Write concise parameter description (max 100 chars, plain text).
                 # Enhance parameter descriptions
                 parameters = operation.get('parameters', [])
                 operation_context = f"{method.upper()} {path} - {operation.get('summary', '')}"
-                
+
                 for idx, param in enumerate(parameters):
                     if '$ref' in param:
                         continue  # Skip refs for now
@@ -501,7 +540,7 @@ Write concise parameter description (max 100 chars, plain text).
                         enhanced_param_desc = self._enhance_parameter_description_with_llm(param, operation_context)
                     else:
                         enhanced_param_desc = self._enhance_parameter_description(param)
-                        
+
                     overlay['actions'].append({
                         'target': f"$.paths['{path}'].{method}.parameters[{idx}].description",
                         'update': enhanced_param_desc

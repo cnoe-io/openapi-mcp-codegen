@@ -14,83 +14,83 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def archived_workflow_service_get_archived_workflow(path_uid: str, param_namespace: str = None, param_name: str = None) -> Any:
-    """
-    Retrieve details of a specific archived-workflows
+  """
+  Retrieve details of a specific archived-workflows
 
-    OpenAPI Description:
-        Retrieve details of a specific archived-workflows Use when: when you have a specific resource identifier and need its current details. Required: uid
+  OpenAPI Description:
+      Retrieves details of an archived workflow by UID. Use when: investigating past workflow executions or reviewing historical data.
 
-    Args:
+  Args:
 
-        path_uid (str): Required string parameter
+      path_uid (str): Unique identifier of archived workflow to retrieve
 
-        param_namespace (str): Kubernetes namespace to scope the operation
+      param_namespace (str): "Kubernetes namespace to filter archived workflows"
 
-        param_name (str): Name of the resource to operate on
+      param_name (str): Workflow name to filter archived results (optional)
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/archived-workflows/{uid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/archived-workflows/{uid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_namespace is not None:
-        params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+  if param_namespace is not None:
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
 
-    if param_name is not None:
-        params["name"] = str(param_name).lower() if isinstance(param_name, bool) else param_name
+  if param_name is not None:
+    params["name"] = str(param_name).lower() if isinstance(param_name, bool) else param_name
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}", method="GET", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def archived_workflow_service_delete_archived_workflow(path_uid: str, param_namespace: str = None) -> Any:
-    """
-    Delete a archived-workflows
+  """
+  Delete a archived-workflows
 
-    OpenAPI Description:
-        Delete a archived-workflows Use when: when cleaning up resources that are no longer needed. Required: uid
+  OpenAPI Description:
+      Deletes an archived workflow by UID. Use when: removing outdated or unnecessary archived workflows to free up storage or maintain organization.
 
-    Args:
+  Args:
 
-        path_uid (str): Required string parameter
+      path_uid (str): "Unique identifier of archived workflow to delete"
 
-        param_namespace (str): Kubernetes namespace to scope the operation
+      param_namespace (str): "Kubernetes namespace to scope the deletion operation"
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/archived-workflows/{uid}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/archived-workflows/{uid}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_namespace is not None:
-        params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
+  if param_namespace is not None:
+    params["namespace"] = str(param_namespace).lower() if isinstance(param_namespace, bool) else param_namespace
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}", method="DELETE", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/archived-workflows/{path_uid}", method="DELETE", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

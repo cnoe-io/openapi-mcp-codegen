@@ -14,40 +14,40 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def artifact_service_get_output_artifact_by_uid(path_uid: str, path_nodeId: str, path_artifactName: str) -> Any:
-    """
-    Get an output artifact by UID.
+  """
+  Get an output artifact by UID.
 
-    OpenAPI Description:
-        Retrieve artifacts-by-uid information Use when: when you have a specific resource identifier and need its current details. Required: uid, nodeId, artifactName
+  OpenAPI Description:
+      Retrieves an output artifact by UID. Use when: accessing specific artifact details for analysis or debugging purposes.
 
-    Args:
+  Args:
 
-        path_uid (str): Required string parameter
+      path_uid (str): Unique identifier of the artifact to retrieve
 
-        path_nodeId (str): Required string parameter
+      path_nodeId (str): Unique identifier of the node to retrieve its artifacts
 
-        path_artifactName (str): Name of the resource to operate on
+      path_artifactName (str): Specifies the name of the artifact to retrieve from the node.
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /artifacts-by-uid/{uid}/{nodeId}/{artifactName}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /artifacts-by-uid/{uid}/{nodeId}/{artifactName}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/artifacts-by-uid/{path_uid}/{path_nodeId}/{path_artifactName}", method="GET", params=params, data=data
-    )
+  success, response = await make_api_request(
+    f"/artifacts-by-uid/{path_uid}/{path_nodeId}/{path_artifactName}", method="GET", params=params, data=data
+  )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

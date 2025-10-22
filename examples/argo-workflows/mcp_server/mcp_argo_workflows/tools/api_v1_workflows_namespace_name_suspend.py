@@ -13,47 +13,39 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def workflow_service_suspend_workflow(path_namespace: str, path_name: str, body_name: str = None, body_namespace: str = None) -> Any:
-    """
-    Update or replace a suspend
+async def workflow_service_suspend_workflow(path_namespace: str, path_name: str) -> Any:
+  """
+  Update or replace a suspend
 
-    OpenAPI Description:
-        Update or replace a suspend Use when: when modifying existing resource configurations or properties. Required: namespace, name, body
+  OpenAPI Description:
+      Suspends a specific workflow. Use when: pausing a workflow temporarily for maintenance or issue resolution.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to target for suspending the workflow"
 
-        path_name (str): Name of the resource to operate on
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
+      path_name (str): Workflow name to suspend in the specified namespace
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/workflows/{namespace}/{name}/suspend")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/workflows/{namespace}/{name}/suspend")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/api/v1/workflows/{path_namespace}/{path_name}/suspend", method="PUT", params=params, data=data
-    )
+  success, response = await make_api_request(
+    f"/api/v1/workflows/{path_namespace}/{path_name}/suspend", method="PUT", params=params, data=data
+  )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

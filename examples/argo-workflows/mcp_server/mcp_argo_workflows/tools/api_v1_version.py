@@ -14,32 +14,32 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def info_service_get_version() -> Any:
-    """
-    List or query version
+  """
+  List or query version
 
-    OpenAPI Description:
-        List or query version
+  OpenAPI Description:
+      Retrieves the current API version. Use when: checking compatibility or ensuring you're using the latest features.
 
-    Args:
+  Args:
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/version")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/version")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/version", method="GET", params=params, data=data)
+  success, response = await make_api_request("/api/v1/version", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

@@ -13,41 +13,39 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def event_service_receive_event(path_namespace: str, path_discriminator: str, body: str) -> Any:
-    """
-    Perform an operation on events
+async def event_service_receive_event(path_namespace: str, path_discriminator: str) -> Any:
+  """
+  Perform an operation on events
 
-    OpenAPI Description:
-        Perform an operation on events Use when: when initializing new resources based on user requirements. Required: namespace, discriminator, body
+  OpenAPI Description:
+      Creates an event in the specified namespace. Use when: logging a new event or triggering actions based on specific conditions.
 
-    Args:
+  Args:
 
-        path_namespace (str): The namespace for the io.argoproj.workflow.v1alpha1. This can be empty if the cl...
+      path_namespace (str): "Kubernetes namespace to scope the event operation"
 
-        path_discriminator (str): Optional discriminator for the io.argoproj.workflow.v1alpha1. This should almost...
-
-        body (str): Item expands a single workflow step into multiple parallel steps The value of Item can be a map, string, bool, or number
+      path_discriminator (str): Unique event identifier for specific workflow context
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/events/{namespace}/{discriminator}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/events/{namespace}/{discriminator}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(
-        f"/api/v1/events/{path_namespace}/{path_discriminator}", method="POST", params=params, data=data
-    )
+  success, response = await make_api_request(
+    f"/api/v1/events/{path_namespace}/{path_discriminator}", method="POST", params=params, data=data
+  )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

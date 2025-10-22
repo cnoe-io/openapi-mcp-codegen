@@ -1,119 +1,107 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
 """{{ mcp_name | capitalize }} LangGraph agent wrapper used by the A2A server.
 
-  This class adapts the LangGraph agent to the A2A streaming protocol by emitting
-  generic status updates during tool use and a final completion message.
+  This class extends BaseAgent to provide {{ mcp_name }}-specific configuration
+  and streaming behavior for the A2A protocol.
   """
 
-import asyncio
 import logging
 import os
-from typing import AsyncIterable, Any, Dict
+import importlib.util
+from pathlib import Path
+from typing import Any, Dict
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
 
-from langchain_core.messages import AIMessage, ToolMessage
-from langchain_core.runnables import RunnableConfig
-from langchain_core.callbacks import BaseCallbackHandler
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.prebuilt import create_react_agent
-from langchain_mcp_adapters.client import MultiServerMCPClient
+from .base_agent import BaseAgent
 
-from .state import AgentState, InputState, Message, MsgType
-from cnoe_agent_utils import LLMFactory
-from langfuse import get_client
-from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
-
+load_dotenv()
 logger = logging.getLogger(__name__)
-memory = MemorySaver()
 
 
-async def _bootstrap_langgraph_agent():
-    """Launch the generated MCP server via MultiServerMCPClient and return a LangGraph React agent."""
-    load_dotenv()
-    token = os.getenv("{{ mcp_name | upper }}_TOKEN")
-    api_url = os.getenv("{{ mcp_name | upper }}_API_URL")
-    if not token or not api_url:
-        raise EnvironmentError("Both {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN must be set")
-
-    from agent import create_agent  # noqa: E402
-    agent, _ = await create_agent()
-    try:
-        get_client().update_current_trace(tags=["{{ mcp_name }}-a2a"])
-    except Exception:
-        pass
-    return agent
+# Response format for structured agent output
+class {{ mcp_name | capitalize }}ResponseFormat(BaseModel):
+    """Structured response format for {{ mcp_name }} agent."""
+    status: str = Field(
+        description="Status of the task: 'completed', 'input_required', or 'error'"
+    )
+    message: str = Field(
+        description="The response message to the user"
+    )
 
 
-class {{ mcp_name | capitalize }}Agent:
-    """A thin streaming wrapper that adapts the LangGraph agent to the A2A protocol."""
+class {{ mcp_name | capitalize }}Agent(BaseAgent):
+    """{{ mcp_name | capitalize }} agent implementation extending BaseAgent."""
 
-    async def stream(
-        self,
-        query: str,
-        session_id: str,
-        callbacks: list[BaseCallbackHandler] | None = None,
-    ) -> AsyncIterable[Dict[str, Any]]:
-        agent = await _bootstrap_langgraph_agent()
-        cfg: RunnableConfig = {"configurable": {"thread_id": session_id}}
+    def __init__(self):
+        """Initialize the {{ mcp_name }} agent."""
+        super().__init__()
 
-        lf = get_client()
-        lf_handler = None
-        try:
-            lf_handler = LangfuseCallbackHandler()
-        except Exception:
-            pass
+    def get_agent_name(self) -> str:
+        """Return the agent's name."""
+        return "{{ mcp_name }}"
 
-        async def _async_gen():
-            with lf.start_as_current_span(
-                name="{{ mcp_name }}-query",
-                input={"query": query, "session_id": session_id},
-            ) as root_span:
-                # Tag the trace and set session id
-                root_span.update_trace(tags=["{{ mcp_name }}-a2a"], session_id=session_id)
-                async for item in agent.astream(
-                    {"messages": [("user", query)]},
-                    {**cfg, "callbacks": ([lf_handler] if lf_handler else [])},
-                    stream_mode="values",
-                ):
-                    yield item
-                state = agent.get_state(cfg)
-                output_msg = state.values.get("messages", [])[-1]
-                root_span.update_trace(output={"response": getattr(output_msg, "content", str(output_msg))})
+    def get_system_instruction(self) -> str:
+        """Return the system instruction for the agent."""
+        return """You are a helpful assistant that can interact with {{ mcp_name | capitalize }}.
 
-        agen = _async_gen()
+You have access to tools that allow you to:
+- Query and retrieve information
+- Perform operations
+- Manage resources
 
-        async for item in agen:
-            msg = item["messages"][-1]
-            if isinstance(msg, AIMessage) and msg.tool_calls:
-                yield {
-                    "is_task_complete": False,
-                    "require_user_input": False,
-                    "content": "Looking up required data via tools...",
-                }
-            elif isinstance(msg, ToolMessage):
-                yield {
-                    "is_task_complete": False,
-                    "require_user_input": False,
-                    "content": "Processing tool output...",
-                }
+Always:
+1. Use the appropriate tools to fulfill user requests
+2. Provide clear, concise responses
+3. Ask for clarification when needed
+4. Explain what you're doing when using tools
 
-        # Final response or input-required guard
-        state = agent.get_state(cfg)
-        output_msg = state.values.get("messages", [])[-1]
+When you complete a task, set status='completed'.
+If you need more information from the user, set status='input_required'.
+If an error occurs, set status='error'."""
 
-        # If the final assistant message asks for clarification, request user input
-        final_text = getattr(output_msg, "content", str(output_msg)) or ""
-        if isinstance(output_msg, AIMessage) and any(
-            kw in final_text.lower() for kw in ["please provide", "need more info", "could you clarify"]
-        ):
-            yield {
-                "is_task_complete": False,
-                "require_user_input": True,
-                "content": final_text,
-            }
-            return
-        yield {
-            "is_task_complete": True,
-            "require_user_input": False,
-            "content": getattr(output_msg, "content", str(output_msg)),
+    def get_response_format_instruction(self) -> str:
+        """Return the response format instruction."""
+        return """Provide your response in the following format:
+- status: 'completed' (task done), 'input_required' (need user input), or 'error' (something went wrong)
+- message: Your response to the user"""
+
+    def get_response_format_class(self) -> type[BaseModel]:
+        """Return the Pydantic response format class."""
+        return {{ mcp_name | capitalize }}ResponseFormat
+
+    def get_mcp_config(self, server_path: str) -> Dict[str, Any]:
+        """
+        Return the MCP server configuration for {{ mcp_name }}.
+
+        Args:
+            server_path: Path to the MCP server script
+
+        Returns:
+            Dictionary with MCP configuration
+        """
+        token = os.getenv("{{ mcp_name | upper }}_TOKEN")
+        api_url = os.getenv("{{ mcp_name | upper }}_API_URL")
+
+        if not token or not api_url:
+            raise EnvironmentError(
+                "Both {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN must be set"
+            )
+
+        return {
+            "transport": "stdio",
+            "command": "uv",
+            "args": ["run", "python", server_path],
+            "env": {
+                "{{ mcp_name | upper }}_API_URL": api_url,
+                "{{ mcp_name | upper }}_TOKEN": token,
+            },
         }
+
+    def get_tool_working_message(self) -> str:
+        """Return message shown when agent is calling tools."""
+        return "Looking up required data via tools..."
+
+    def get_tool_processing_message(self) -> str:
+        """Return message shown when agent is processing tool results."""
+        return "Processing tool output..."

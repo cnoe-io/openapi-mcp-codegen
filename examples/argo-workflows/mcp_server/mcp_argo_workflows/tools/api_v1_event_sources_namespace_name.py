@@ -5,7 +5,7 @@
 """Tools for /api/v1/event-sources/{namespace}/{name} operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -14,213 +14,181 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def event_source_service_get_event_source(path_namespace: str, path_name: str) -> Any:
-    """
-    Retrieve event-sources information
+  """
+  Retrieve event-sources information
 
-    OpenAPI Description:
-        Retrieve event-sources information Use when: when you have a specific resource identifier and need its current details. Required: namespace, name
+  OpenAPI Description:
+      Retrieves details of a specific event source. Use when: checking current configuration or investigating issues with event source setup.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to locate the event source"
 
-        path_name (str): Name of the resource to operate on
-
-
-    Returns:
-        Any: The JSON response from the API call.
-
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/event-sources/{namespace}/{name}")
-
-    params = {}
-    data = {}
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(
-        f"/api/v1/event-sources/{path_namespace}/{path_name}", method="GET", params=params, data=data
-    )
-
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+      path_name (str): "Event source name to retrieve details"
 
 
-async def event_source_service_update_event_source(
-    path_namespace: str,
-    path_name: str,
-    body_eventSource__metadata: Dict[str, Any] = None,
-    body_eventSource__spec: Dict[str, Any] = None,
-    body_eventSource__status__status__conditions: List[Dict[str, Any]] = None,
-    body_name: str = None,
-    body_namespace: str = None,
-) -> Any:
-    """
-    Update or replace a event-sources
+  Returns:
+      Any: The JSON response from the API call.
 
-    OpenAPI Description:
-        Update or replace a event-sources Use when: when modifying existing resource configurations or properties. Required: namespace, name, body
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/event-sources/{namespace}/{name}")
 
-    Args:
+  params = {}
+  data = {}
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-        path_name (str): Name of the resource to operate on
+  success, response = await make_api_request(f"/api/v1/event-sources/{path_namespace}/{path_name}", method="GET", params=params, data=data)
 
-        body_eventSource__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-
-        body_eventSource__spec (Dict[str, Any]): Request body as dictionary. Contains 35 nested properties. See OpenAPI schema for detailed structure.
-
-        body_eventSource__status__status__conditions (List[Dict[str, Any]]): OpenAPI parameter corresponding to 'body_eventSource__status__status__conditions'
-
-        body_name (str): OpenAPI parameter corresponding to 'body_name'
-
-        body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
-    Returns:
-        Any: The JSON response from the API call.
+async def event_source_service_update_event_source(path_namespace: str, path_name: str) -> Any:
+  """
+  Update or replace a event-sources
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making PUT request to /api/v1/event-sources/{namespace}/{name}")
+  OpenAPI Description:
+      Updates event source configuration. Use when: modifying event source settings or updating parameters in a specific namespace.
 
-    params = {}
-    data = {}
+  Args:
 
-    flat_body = {}
-    if body_eventSource__metadata is not None:
-        flat_body["eventSource__metadata"] = body_eventSource__metadata
-    if body_eventSource__spec is not None:
-        flat_body["eventSource__spec"] = body_eventSource__spec
-    if body_eventSource__status__status__conditions is not None:
-        flat_body["eventSource__status__status__conditions"] = body_eventSource__status__status__conditions
-    if body_name is not None:
-        flat_body["name"] = body_name
-    if body_namespace is not None:
-        flat_body["namespace"] = body_namespace
-    data = assemble_nested_body(flat_body)
+      path_namespace (str): "Kubernetes namespace to locate the event source"
 
-    success, response = await make_api_request(
-        f"/api/v1/event-sources/{path_namespace}/{path_name}", method="PUT", params=params, data=data
-    )
+      path_name (str): Unique name of the event source to update in the specified namespace.
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+
+  Returns:
+      Any: The JSON response from the API call.
+
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making PUT request to /api/v1/event-sources/{namespace}/{name}")
+
+  params = {}
+  data = {}
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(f"/api/v1/event-sources/{path_namespace}/{path_name}", method="PUT", params=params, data=data)
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
 
 
 async def event_source_service_delete_event_source(
-    path_namespace: str,
-    path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+  path_namespace: str,
+  path_name: str,
+  param_deleteOptions_gracePeriodSeconds: int = None,
+  param_deleteOptions_preconditions_uid: str = None,
+  param_deleteOptions_preconditions_resourceVersion: str = None,
+  param_deleteOptions_orphanDependents: bool = False,
+  param_deleteOptions_propagationPolicy: str = None,
+  param_deleteOptions_dryRun: str = None,
+  param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: str = None,
 ) -> Any:
-    """
-    Delete a event-sources
+  """
+  Delete a event-sources
 
-    OpenAPI Description:
-        Delete a event-sources Use when: when cleaning up resources that are no longer needed. Required: namespace, name
+  OpenAPI Description:
+      Deletes an event source. Use when: removing outdated or unnecessary event sources to clean up resources.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace of the event source to delete"
 
-        path_name (str): Name of the resource to operate on
+      path_name (str): "Event source name to delete in specified namespace"
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+      param_deleteOptions_gracePeriodSeconds (int): Specifies delay in seconds before deletion; use for graceful shutdown.
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+      param_deleteOptions_preconditions_uid (str): "UID to ensure deletion only if resource matches this identifier"
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+      param_deleteOptions_preconditions_resourceVersion (str): "Ensure deletion only if resource version matches specified value"
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+      param_deleteOptions_orphanDependents (bool): Control orphaning of dependents when deleting (use PropagationPolicy instead)
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+      param_deleteOptions_propagationPolicy (str): Specifies garbage collection method (e.g., "Foreground", "Background")
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+      param_deleteOptions_dryRun (str): Simulate deletion without actual changes (e.g., ["All"]).
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+      param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (str): "Allow unsafe deletion if store read error occurs"
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making DELETE request to /api/v1/event-sources/{namespace}/{name}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making DELETE request to /api/v1/event-sources/{namespace}/{name}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
-        )
-
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
-        )
-
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
-        )
-
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
-        )
-
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
-        )
-
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
-        )
-
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
-        )
-
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
-
-    success, response = await make_api_request(
-        f"/api/v1/event-sources/{path_namespace}/{path_name}", method="DELETE", params=params, data=data
+  if param_deleteOptions_gracePeriodSeconds is not None:
+    params["deleteOptions_gracePeriodSeconds"] = (
+      str(param_deleteOptions_gracePeriodSeconds).lower()
+      if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
+      else param_deleteOptions_gracePeriodSeconds
     )
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if param_deleteOptions_preconditions_uid is not None:
+    params["deleteOptions_preconditions_uid"] = (
+      str(param_deleteOptions_preconditions_uid).lower()
+      if isinstance(param_deleteOptions_preconditions_uid, bool)
+      else param_deleteOptions_preconditions_uid
+    )
+
+  if param_deleteOptions_preconditions_resourceVersion is not None:
+    params["deleteOptions_preconditions_resourceVersion"] = (
+      str(param_deleteOptions_preconditions_resourceVersion).lower()
+      if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
+      else param_deleteOptions_preconditions_resourceVersion
+    )
+
+  if param_deleteOptions_orphanDependents is not None:
+    params["deleteOptions_orphanDependents"] = (
+      str(param_deleteOptions_orphanDependents).lower()
+      if isinstance(param_deleteOptions_orphanDependents, bool)
+      else param_deleteOptions_orphanDependents
+    )
+
+  if param_deleteOptions_propagationPolicy is not None:
+    params["deleteOptions_propagationPolicy"] = (
+      str(param_deleteOptions_propagationPolicy).lower()
+      if isinstance(param_deleteOptions_propagationPolicy, bool)
+      else param_deleteOptions_propagationPolicy
+    )
+
+  if param_deleteOptions_dryRun is not None:
+    params["deleteOptions_dryRun"] = (
+      str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    )
+
+  if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
+    params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
+      str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
+      if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
+      else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    )
+
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
+
+  success, response = await make_api_request(
+    f"/api/v1/event-sources/{path_namespace}/{path_name}", method="DELETE", params=params, data=data
+  )
+
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

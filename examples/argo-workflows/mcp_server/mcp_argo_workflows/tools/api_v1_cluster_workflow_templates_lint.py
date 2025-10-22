@@ -5,7 +5,7 @@
 """Tools for /api/v1/cluster-workflow-templates/lint operations"""
 
 import logging
-from typing import Dict, Any, List
+from typing import Any
 from mcp_argo_workflows.api.client import make_api_request, assemble_nested_body
 
 # Configure logging
@@ -13,69 +13,33 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def cluster_workflow_template_service_lint_cluster_workflow_template(
-    body_createOptions__dryRun: List[str] = None,
-    body_createOptions__fieldManager: str = None,
-    body_createOptions__fieldValidation: str = None,
-    body_template__apiVersion: str = None,
-    body_template__kind: str = None,
-    body_template__metadata: Dict[str, Any] = None,
-    body_template__spec: Dict[str, Any] = None,
-) -> Any:
-    """
-    Perform an operation on lint
+async def cluster_workflow_template_service_lint_cluster_workflow_template() -> Any:
+  """
+  Perform an operation on lint
 
-    OpenAPI Description:
-        Perform an operation on lint Use when: when initializing new resources based on user requirements. Required: body
+  OpenAPI Description:
+      Validates a cluster workflow template. Use when: checking for errors or ensuring template correctness before deployment.
 
-    Args:
-
-        body_createOptions__dryRun (List[str]): OpenAPI parameter corresponding to 'body_createOptions__dryRun'
-
-        body_createOptions__fieldManager (str): OpenAPI parameter corresponding to 'body_createOptions__fieldManager'
-
-        body_createOptions__fieldValidation (str): OpenAPI parameter corresponding to 'body_createOptions__fieldValidation'
-
-        body_template__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
-
-        body_template__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-
-        body_template__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
-
-        body_template__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+  Args:
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making POST request to /api/v1/cluster-workflow-templates/lint")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making POST request to /api/v1/cluster-workflow-templates/lint")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    flat_body = {}
-    if body_createOptions__dryRun is not None:
-        flat_body["createOptions__dryRun"] = body_createOptions__dryRun
-    if body_createOptions__fieldManager is not None:
-        flat_body["createOptions__fieldManager"] = body_createOptions__fieldManager
-    if body_createOptions__fieldValidation is not None:
-        flat_body["createOptions__fieldValidation"] = body_createOptions__fieldValidation
-    if body_template__apiVersion is not None:
-        flat_body["template__apiVersion"] = body_template__apiVersion
-    if body_template__kind is not None:
-        flat_body["template__kind"] = body_template__kind
-    if body_template__metadata is not None:
-        flat_body["template__metadata"] = body_template__metadata
-    if body_template__spec is not None:
-        flat_body["template__spec"] = body_template__spec
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request("/api/v1/cluster-workflow-templates/lint", method="POST", params=params, data=data)
+  success, response = await make_api_request("/api/v1/cluster-workflow-templates/lint", method="POST", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response

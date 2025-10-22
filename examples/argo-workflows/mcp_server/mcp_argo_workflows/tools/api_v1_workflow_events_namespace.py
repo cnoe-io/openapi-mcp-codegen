@@ -14,136 +14,132 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def workflow_service_watch_workflows(
-    path_namespace: str,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
-    param_fields: str = None,
+  path_namespace: str,
+  param_listOptions_labelSelector: str = None,
+  param_listOptions_fieldSelector: str = None,
+  param_listOptions_watch: bool = False,
+  param_listOptions_allowWatchBookmarks: bool = False,
+  param_listOptions_resourceVersion: str = None,
+  param_listOptions_resourceVersionMatch: str = None,
+  param_listOptions_timeoutSeconds: int = None,
+  param_listOptions_limit: int = None,
+  param_listOptions_continue: str = None,
+  param_listOptions_sendInitialEvents: str = None,
+  param_fields: str = None,
 ) -> Any:
-    """
-    Retrieve details of a specific workflow-events
+  """
+  Retrieve details of a specific workflow-events
 
-    OpenAPI Description:
-        Retrieve details of a specific workflow-events. Required: namespace
+  OpenAPI Description:
+      Streams workflow events in a namespace. Use when: monitoring real-time changes or tracking workflow activity.
 
-    Args:
+  Args:
 
-        path_namespace (str): Kubernetes namespace to scope the operation
+      path_namespace (str): "Kubernetes namespace to scope the workflow events retrieval"
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+      param_listOptions_labelSelector (str): Criteria to filter results by labels (e.g., app=nginx)
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+      param_listOptions_fieldSelector (str): "Field criteria to filter results (e.g., status=active)"
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+      param_listOptions_watch (bool): Enable streaming updates for resource changes when true
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+      param_listOptions_allowWatchBookmarks (bool): "Request bookmark events in watch mode when true"
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+      param_listOptions_resourceVersion (str): Specify resource version to filter events (e.g., "12345")
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+      param_listOptions_resourceVersionMatch (str): "Match criteria for resource version in list calls (e.g., exact, notOlderThan)"
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+      param_listOptions_timeoutSeconds (int): Maximum time to wait for results in seconds (e.g., 30)
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+      param_listOptions_limit (int): "Maximum workflow events to return (default: 50)"
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+      param_listOptions_continue (str): Pagination token for next page of results
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
+      param_listOptions_sendInitialEvents (str): Send initial events in watch stream when true
 
-        param_fields (str): Optional string parameter
+      param_fields (str): Specify fields to include in results (e.g., name,status)
 
 
-    Returns:
-        Any: The JSON response from the API call.
+  Returns:
+      Any: The JSON response from the API call.
 
-    Raises:
-        Exception: If the API request fails or returns an error.
-    """
-    logger.debug("Making GET request to /api/v1/workflow-events/{namespace}")
+  Raises:
+      Exception: If the API request fails or returns an error.
+  """
+  logger.debug("Making GET request to /api/v1/workflow-events/{namespace}")
 
-    params = {}
-    data = {}
+  params = {}
+  data = {}
 
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
-        )
+  if param_listOptions_labelSelector is not None:
+    params["listOptions_labelSelector"] = (
+      str(param_listOptions_labelSelector).lower() if isinstance(param_listOptions_labelSelector, bool) else param_listOptions_labelSelector
+    )
 
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
-        )
+  if param_listOptions_fieldSelector is not None:
+    params["listOptions_fieldSelector"] = (
+      str(param_listOptions_fieldSelector).lower() if isinstance(param_listOptions_fieldSelector, bool) else param_listOptions_fieldSelector
+    )
 
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
-        )
+  if param_listOptions_watch is not None:
+    params["listOptions_watch"] = (
+      str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    )
 
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
-        )
+  if param_listOptions_allowWatchBookmarks is not None:
+    params["listOptions_allowWatchBookmarks"] = (
+      str(param_listOptions_allowWatchBookmarks).lower()
+      if isinstance(param_listOptions_allowWatchBookmarks, bool)
+      else param_listOptions_allowWatchBookmarks
+    )
 
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
-        )
+  if param_listOptions_resourceVersion is not None:
+    params["listOptions_resourceVersion"] = (
+      str(param_listOptions_resourceVersion).lower()
+      if isinstance(param_listOptions_resourceVersion, bool)
+      else param_listOptions_resourceVersion
+    )
 
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
-        )
+  if param_listOptions_resourceVersionMatch is not None:
+    params["listOptions_resourceVersionMatch"] = (
+      str(param_listOptions_resourceVersionMatch).lower()
+      if isinstance(param_listOptions_resourceVersionMatch, bool)
+      else param_listOptions_resourceVersionMatch
+    )
 
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
-        )
+  if param_listOptions_timeoutSeconds is not None:
+    params["listOptions_timeoutSeconds"] = (
+      str(param_listOptions_timeoutSeconds).lower()
+      if isinstance(param_listOptions_timeoutSeconds, bool)
+      else param_listOptions_timeoutSeconds
+    )
 
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
-        )
+  if param_listOptions_limit is not None:
+    params["listOptions_limit"] = (
+      str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    )
 
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
-        )
+  if param_listOptions_continue is not None:
+    params["listOptions_continue"] = (
+      str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    )
 
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
-        )
+  if param_listOptions_sendInitialEvents is not None:
+    params["listOptions_sendInitialEvents"] = (
+      str(param_listOptions_sendInitialEvents).lower()
+      if isinstance(param_listOptions_sendInitialEvents, bool)
+      else param_listOptions_sendInitialEvents
+    )
 
-    if param_fields is not None:
-        params["fields"] = str(param_fields).lower() if isinstance(param_fields, bool) else param_fields
+  if param_fields is not None:
+    params["fields"] = str(param_fields).lower() if isinstance(param_fields, bool) else param_fields
 
-    flat_body = {}
-    data = assemble_nested_body(flat_body)
+  flat_body = {}
+  data = assemble_nested_body(flat_body)
 
-    success, response = await make_api_request(f"/api/v1/workflow-events/{path_namespace}", method="GET", params=params, data=data)
+  success, response = await make_api_request(f"/api/v1/workflow-events/{path_namespace}", method="GET", params=params, data=data)
 
-    if not success:
-        logger.error(f"Request failed: {response.get('error')}")
-        return {"error": response.get("error", "Request failed")}
-    return response
+  if not success:
+    logger.error(f"Request failed: {response.get('error')}")
+    return {"error": response.get("error", "Request failed")}
+  return response
