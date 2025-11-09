@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+argocon-na-2025/
+*.pptx
+
 # Distribution / packaging
 .Python
 build/
