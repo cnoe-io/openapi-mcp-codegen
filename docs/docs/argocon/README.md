@@ -1,3 +1,9 @@
+---
+id: README
+title: ArgoCon 2025 Presentation
+sidebar_label: Presentation Overview
+---
+
 # Revolutionizing Argo Integration With Model Context Protocol: An AI-Driven Approach
 
 **ArgoCon 2025 Presentation**
@@ -55,10 +61,10 @@ At CISCO we are using this process to generate MCP servers for Argo for our inte
 
 ## Related Materials
 
-- **Detailed Presentation**: [ADR-003: Community Presentation Strategy](./ADR-003-argocon-presentation.md)
+- **Detailed Presentation**: [Presentation Content](./presentation.md)
 - **Architecture Deep Dive**: [ADR-001: Architecture Overview](../adr/ADR-001-openapi-mcp-architecture.md)
 - **Technical Implementation**: [ADR-004: Overlay Enhancement Strategy](../adr/ADR-004-openapi-overlay-enhancement.md)
-- **Working Example**: [Argo Workflows Example](../../examples/argo-workflows/README.md)
+- **Working Example**: [Argo Workflows Example](../examples/argo-workflows.md)
 - **GitHub Repository**: https://github.com/cnoe-io/openapi-mcp-codegen
 
 ## Getting Started
@@ -68,7 +74,7 @@ Try the technology yourself:
 ```bash
 # Generate MCP server from Argo Workflows API
 uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/argo-workflows/argo-openapi.json \
+  --spec-file examples/argo-workflows/argo-openapi-unedited.json \
   --output-dir examples/argo-workflows/mcp_server \
   --generate-agent \
   --generate-eval

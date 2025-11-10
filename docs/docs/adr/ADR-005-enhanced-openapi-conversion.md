@@ -338,7 +338,7 @@ conversion:
 
 - [OpenAPI 3.0 Specification](https://swagger.io/specification/)
 - [Swagger 2.0 to OpenAPI 3.0 Migration Guide](https://swagger.io/docs/specification/2-0/swagger-2-0-to-openapi-3-0/)
-- [Argo Workflows OpenAPI Specification](../../examples/argo-workflows/argo-openapi.json)
+- Argo Workflows OpenAPI Specification (see examples/argo-workflows/argo-openapi-unedited.json in repository)
 - [ADR-004: OpenAPI Overlay Enhancement](./ADR-004-openapi-overlay-enhancement.md)
 - [ADR-002: OpenAPI Specification Automatic Fixes and Enhancements](./ADR-002-openapi-specification-fixes.md)
 
