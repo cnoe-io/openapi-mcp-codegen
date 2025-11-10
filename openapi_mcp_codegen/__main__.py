@@ -30,19 +30,7 @@ def get_mcp_name(spec_path):
     base_name = title.split()[0].lower()  # Take first word and convert to lowercase
     return f"{base_name}_mcp"
 
-@click.group(name="openapi-mcp-codegen", help="OpenAPI MCP Code Generator")
-@click.option(
-    "--log-level",
-    type=click.Choice(["critical", "error", "warning", "info", "debug"], case_sensitive=False),
-    default="info",
-    show_default=True,
-    help="Set logging level.",
-)
-def main(log_level):
-  """OpenAPI MCP Code Generator - Generate MCP servers and A2A agents from OpenAPI specs."""
-  pass
-
-@main.command(name="generate-mcp", help="Generate MCP server from OpenAPI specification")
+@click.command(short_help="OpenAPI MCP Code Generator")
 @click.option(
   "--spec-file",
   type=click.Path(exists=True, dir_okay=False, readable=True),
@@ -55,6 +43,13 @@ def main(log_level):
   default=None,
   help="Directory to output the generated MCP server (default: <script_dir>/<mcp_name>).",
 )
+@click.option(
+    "--log-level",
+    type=click.Choice(["critical", "error", "warning", "info", "debug"], case_sensitive=False),
+    default="info",
+    show_default=True,
+    help="Set logging level.",
+  )
 @click.option(
     "--generate-agent",
     is_flag=True,
@@ -104,7 +99,8 @@ def main(log_level):
   default=False,
   help="Enhance generated docstrings using an LLM and add OpenAPI spec to docstring.",
 )
-def generate_mcp(
+def main(
+   log_level,
    spec_file,
    output_dir,
    dry_run,
@@ -158,7 +154,8 @@ def generate_mcp(
   print(f"🎉 Generated MCP server in {output_dir}")
   print("\n🚀 See the README.md to continue")
 
-@main.command(name="generate-a2a-agent", help="Generate A2A agent that connects to external MCP server")
+
+@click.command(short_help="Generate A2A agent for remote MCP server")
 @click.option(
   "--spec-file",
   type=click.Path(exists=True, dir_okay=False, readable=True),
@@ -195,7 +192,7 @@ def generate_mcp(
   default=False,
   help="Run the generator in dry-run mode without writing files.",
 )
-def generate_a2a_agent(
+def generate_a2a_agent_with_remote_mcp(
    spec_file,
    agent_name,
    mcp_server_url,
@@ -265,5 +262,80 @@ def generate_a2a_agent(
   print(f"   make dev        # Setup environment")
   print(f"   make run-a2a    # Start the agent")
 
+
+@click.command(short_help="Validate generated MCP functions")
+@click.option(
+  "--project-root",
+  type=click.Path(exists=True, dir_okay=True, readable=True),
+  default=None,
+  help="Path to project root directory (default: auto-detected).",
+)
+@click.option(
+  "--verbose", "-v",
+  is_flag=True,
+  default=False,
+  help="Enable verbose logging for detailed validation output.",
+)
+def validate_functions(project_root, verbose):
+    """Validate all generated MCP functions for compliance and quality."""
+    
+    try:
+        from openapi_mcp_codegen.function_validator import FunctionValidator
+        from pathlib import Path
+        
+        # Auto-detect project root if not provided
+        if project_root is None:
+            project_root = Path(__file__).parent.parent
+        else:
+            project_root = Path(project_root)
+        
+        if verbose:
+            import logging
+            logging.getLogger().setLevel(logging.DEBUG)
+            
+        print("🔍 Running function validation...")
+        print(f"📋 Project root: {project_root}")
+        
+        validator = FunctionValidator(project_root)
+        success = validator.validate_all_projects()
+        
+        if success:
+            print("\n🎉 All function validations passed!")
+        else:
+            print("\n❌ Function validation failed!")
+            print("💡 See details above for specific issues.")
+            exit(1)
+            
+    except ImportError as e:
+        print(f"❌ Function validator not available: {e}")
+        exit(1)
+    except Exception as e:
+        print(f"❌ Validation error: {e}")
+        if verbose:
+            import traceback
+            traceback.print_exc()
+        exit(1)
+
+
+# Create a multi-command CLI
+@click.group()
+def cli():
+    """OpenAPI MCP Code Generator - Generate MCP servers and A2A agents from OpenAPI specs."""
+    pass
+
+# Add commands to the group
+cli.add_command(main, name="generate-mcp")
+cli.add_command(generate_a2a_agent_with_remote_mcp)
+cli.add_command(validate_functions)
+
 if __name__ == '__main__':
-    main()
+    # Check if this is being called as a direct command (backward compatibility)
+    import sys
+
+    # If first argument is not a subcommand, assume it's the original direct interface
+    if len(sys.argv) > 1 and not sys.argv[1] in ['generate-mcp', 'generate-a2a-agent-with-remote-mcp', 'validate-functions']:
+        # Call main directly for backward compatibility
+        main()
+    else:
+        # Use the group interface for subcommands
+        cli()

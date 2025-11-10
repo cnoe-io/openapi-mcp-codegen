@@ -17,20 +17,45 @@ load_dotenv()
 AGENT_NAME = '{{ agent_name }}'
 AGENT_DESCRIPTION="{{ agent_description }}"
 
-agent_skill = AgentSkill(
-  id="{{ agent_name }}_agent_skill",
-  name="{{ agent_display_name }} Agent Skill",
-  description="Handles tasks related to {{ agent_display_name }} operations via MCP server.",
-  tags=[
-    "{{ agent_name }}",
-    "mcp",
-    "api management",
-    "automation"],
-  examples=[
-{% for example in skill_examples %}
-      {{ example }},
+# Define agent skills from config or fallback to generated single skill
+{% if skills %}
+# Skills from config.yaml
+agent_skills = [
+{% for skill in skills %}
+    AgentSkill(
+        id="{{ skill.id }}",
+        name="{{ skill.name }}",
+        description="{{ skill.description }}",
+        tags={{ skill.tags | list }},
+        examples=[
+{% for example in skill.examples %}
+            "{{ example }}",
 {% endfor %}
-  ])
+        ]
+    ),
+{% endfor %}
+]
+{% else %}
+# Fallback single skill from OpenAPI spec
+agent_skills = [
+    AgentSkill(
+        id="{{ agent_name }}_agent_skill",
+        name="{{ agent_display_name }} Agent Skill",
+        description="Handles tasks related to {{ agent_display_name }} operations via MCP server.",
+        tags=[
+            "{{ agent_name }}",
+            "mcp",
+            "api management",
+            "automation"
+        ],
+        examples=[
+{% for example in skill_examples %}
+            {{ example }},
+{% endfor %}
+        ]
+    )
+]
+{% endif %}
 
 # ==================================================
 # SHARED CONFIGURATION - DO NOT MODIFY
@@ -57,7 +82,7 @@ def create_agent_card(agent_url):
     defaultInputModes=SUPPORTED_CONTENT_TYPES,
     defaultOutputModes=SUPPORTED_CONTENT_TYPES,
     capabilities=capabilities,
-    skills=[agent_skill],
+    skills=agent_skills,
     # Using the security field instead of the non-existent AgentAuthentication class
     security=[{"public": []}],
   )

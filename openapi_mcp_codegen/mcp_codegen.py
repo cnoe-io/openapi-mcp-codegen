@@ -10,6 +10,7 @@ import logging
 import concurrent.futures
 from jinja2 import Environment, FileSystemLoader
 from typing import Dict, Any
+from pathlib import Path
 import subprocess
 import itertools
 
@@ -29,6 +30,174 @@ def camel_to_snake(name):
     # Replace multiple underscores with a single underscore
     s3 = re.sub(r'_+', '_', s2)
     return s3
+
+
+def truncate_function_name(name: str, http_method: str = "", used_names: set = None, target_length: int = 30, max_length: int = 64) -> str:
+    """
+    Truncate function names with consistent service abbreviations and aggressive length limits.
+    Always applies service prefix abbreviations for consistency, then applies length-based truncation.
+    Adds HTTP method prefix to ensure uniqueness when duplicates would occur.
+
+    Args:
+        name: Original function name
+        http_method: HTTP method (GET, POST, etc.) to add as prefix if needed for uniqueness
+        used_names: Set of already used function names to check for duplicates
+        target_length: Target length to aim for (default: 30)
+        max_length: Hard limit - anything over this MUST be truncated (default: 64)
+
+    Always applies consistent abbreviations for known service patterns.
+    Based on RULE-LLM-LIMITATION-1 from prompt.yaml.
+    """
+    if used_names is None:
+        used_names = set()
+
+    # Always apply consistent service prefix abbreviations first (regardless of length)
+    abbreviated = name
+
+    # Known service patterns that should always be abbreviated for consistency
+    service_patterns = {
+        'workflow_service_': 'wf_svc_',
+        'event_source_service_': 'evt_src_svc_',
+        'event_service_': 'evt_svc_',
+        'sensor_service_': 'sns_svc_',
+        'artifact_service_': 'art_svc_',
+        'info_service_': 'info_svc_',
+        'cluster_workflow_template_service_': 'clust_wf_tpl_svc_',
+        'workflow_template_service_': 'wf_tpl_svc_',
+        'cron_workflow_service_': 'cron_wf_svc_',
+    }
+
+    # Apply service pattern abbreviations
+    for full_pattern, abbrev_pattern in service_patterns.items():
+        if abbreviated.startswith(full_pattern):
+            abbreviated = abbreviated.replace(full_pattern, abbrev_pattern, 1)
+            break
+
+    # Continue to HTTP prefix logic even for short names to ensure consistency
+
+    # Log warning for names that will be truncated
+    if len(name) > max_length:
+        logger.warning(f"Function name '{name}' ({len(name)} chars) exceeds {max_length} hard limit, truncating...")
+    else:
+        logger.info(f"Function name '{name}' ({len(name)} chars) exceeds {target_length} target, applying abbreviations...")
+
+    # Apply aggressive abbreviation rules for target length
+    abbreviations = {
+        # Service/System abbreviations
+        'service': 'svc',
+        'account': 'acct',
+        'permissions': 'perms',
+        'configuration': 'cfg',
+        'template': 'tpl',
+        'templates': 'tpls',
+        'namespace': 'ns',
+        'workflow': 'wf',
+        'workflows': 'wfs',
+        'archived': 'arch',
+        'cluster': 'clust',
+        'selector': 'sel',
+        'metadata': 'meta',
+        'artifact': 'art',
+        'artifacts': 'arts',
+        'event_source': 'evt_src',
+        'event_sources': 'evt_srcs',
+        'cron_workflow': 'cron_wf',
+        'cron_workflows': 'cron_wfs',
+        'sensor': 'sns',
+        'sensors': 'snss',
+        # Action abbreviations
+        'retrieve': 'get',
+        'terminate': 'term',
+        'resubmit': 'resub',
+        'suspend': 'susp',
+        'resume': 'res',
+        'delete': 'del',
+        'create': 'new',
+        'update': 'upd',
+        'list': 'ls'
+    }
+
+    # Remove unnecessary connector words
+    connectors_to_remove = ['_all_', '_by_', '_with_', '_and_', '_from_', '_using_']
+
+    abbreviated = name
+
+    # Apply abbreviations
+    for full_word, abbrev in abbreviations.items():
+        abbreviated = abbreviated.replace(full_word, abbrev)
+
+    # Remove connector words
+    for connector in connectors_to_remove:
+        abbreviated = abbreviated.replace(connector, '_')
+
+    # Clean up multiple underscores
+    abbreviated = re.sub(r'_+', '_', abbreviated)
+    abbreviated = abbreviated.strip('_')
+
+    # Apply more aggressive truncation if still over target length
+    if len(abbreviated) > target_length:
+        parts = abbreviated.split('_')
+        if len(parts) > 4:
+            # For long functions, keep first part (action) + key middle part + last part
+            abbreviated = '_'.join([parts[0], parts[1], parts[-1]])
+        elif len(parts) > 3:
+            # Keep first 2 and last part
+            abbreviated = '_'.join(parts[:2] + parts[-1:])
+
+    # Clean up multiple underscores again after aggressive truncation
+    abbreviated = re.sub(r'_+', '_', abbreviated)
+    abbreviated = abbreviated.strip('_')
+
+    # ALWAYS add HTTP method prefix at the front for consistency
+    final_name = abbreviated
+    should_add_prefix = False
+
+    # Check if the function name already starts with an HTTP verb
+    starts_with_http_verb = any(final_name.startswith(verb + '_') for verb in [
+        'get', 'post', 'put', 'patch', 'del', 'delete', 'head', 'opts', 'options'
+    ])
+
+    # Always add HTTP method prefix unless it already starts with one
+    if http_method and not starts_with_http_verb:
+        should_add_prefix = True
+    elif http_method and final_name in used_names:
+        # Always add prefix for duplicates even if already has HTTP verb
+        should_add_prefix = True
+
+    if should_add_prefix:
+        # Add HTTP method prefix
+        method_abbrev = {
+            "GET": "get",
+            "POST": "post",
+            "PUT": "put",
+            "PATCH": "patch",
+            "DELETE": "del",
+            "HEAD": "head",
+            "OPTIONS": "opts"
+        }
+        prefix = method_abbrev.get(http_method.upper(), http_method.lower()[:3])
+
+        # Reserve space for prefix + underscore, respecting max_length
+        max_base_length = max_length - len(prefix) - 1
+        if len(abbreviated) > max_base_length:
+            abbreviated = abbreviated[:max_base_length].rstrip('_')
+
+        final_name = f"{prefix}_{abbreviated}"
+
+        if final_name != abbreviated:
+            reason = "for consistency" if not (abbreviated in used_names) else "to avoid duplicate"
+            logger.info(f"Added method prefix {reason}: '{abbreviated}' → '{final_name}'")
+
+    # Hard limit enforcement - must not exceed max_length
+    if len(final_name) > max_length:
+        logger.warning(f"Applying hard truncation to enforce {max_length} char limit")
+        final_name = final_name[:max_length].rstrip('_')
+
+    # Add to used names set
+    used_names.add(final_name)
+
+    logger.info(f"Truncated '{name}' ({len(name)}) → '{final_name}' ({len(final_name)})")
+    return final_name
 
 class MCPGenerator:
   """
@@ -133,6 +302,24 @@ class MCPGenerator:
     self.should_enhance_docstring_with_llm = enhance_docstring_with_llm
     self.should_enhance_docstring_with_llm_openapi = enhance_docstring_with_llm_openapi
     self.env = Environment(loader=FileSystemLoader(os.path.join(script_dir, 'templates')))
+    
+    # Add custom filters for MCP compatibility
+    def truncate_description(text, max_length=9000):
+      """Truncate descriptions to prevent MCP tool registration failures (10024 char limit)"""
+      if not text or len(text) <= max_length:
+        return text
+      # Find a good break point near the limit (end of sentence or paragraph)
+      truncated = text[:max_length]
+      # Look for sentence endings near the limit
+      for break_char in ['. ', '.\n', '\n\n']:
+        last_break = truncated.rfind(break_char)
+        if last_break > max_length * 0.8:  # Within 80% of limit
+          return truncated[:last_break + 1] + "\n\n[Description truncated for MCP compatibility]"
+      # Fallback: hard truncate with ellipsis
+      return truncated + "...\n\n[Description truncated for MCP compatibility]"
+    
+    self.env.filters['truncate_description'] = truncate_description
+    
     with open(config_path, encoding='utf-8') as f:
       self.config = yaml.safe_load(f)
     self.spec = self._load_spec()
@@ -152,6 +339,7 @@ class MCPGenerator:
     self.generate_system_prompt = generate_system_prompt
     self.with_a2a_proxy = with_a2a_proxy
     self.enable_slim = enable_slim
+    self.used_function_names = set()  # Track function names to avoid duplicates
     logger.debug(f"Initialized MCPGenerator with MCP name: {self.mcp_name}")
 
   def _load_spec(self) -> Dict[str, Any]:
@@ -475,7 +663,9 @@ class MCPGenerator:
                   "description": p.get("description", "")
               })
           elif p.get("in") == "query":
-              pname = "param_" + p.get("name", "param").replace('.', '_')
+              # Apply snake_case conversion for better Python compliance
+              param_name = p.get("name", "param").replace('.', '_')
+              pname = "param_" + camel_to_snake(param_name)
               # If the schema is not defined, use the parameter object itself
               schema = p.get("schema") or p
               if "$ref" in schema:
@@ -536,11 +726,13 @@ class MCPGenerator:
                 # Replace placeholder {orig_name} with {fixed_name}
                 formatted_path = formatted_path.replace("{" + orig_name + "}", "{" + fixed_name + "}")
 
-        operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}").replace(" ", "_"))
-        logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
-
+        raw_operation_id = camel_to_snake(op.get("operationId", f"{method}_{module_name}").replace(" ", "_"))
         # Remove any curly braces from the operation id
-        operation_id = operation_id.replace("{", "").replace("}", "")
+        clean_operation_id = raw_operation_id.replace("{", "").replace("}", "")
+        # Apply 30-character target with intelligent truncation and duplicate handling
+        operation_id = truncate_function_name(clean_operation_id, method.upper(), self.used_function_names)
+
+        logger.debug(f"Generating function for operation: {operation_id}, method: {method.upper()}, module: {module_name}, path: {path}")
 
         functions.append({
           "operation_id": operation_id,
@@ -652,7 +844,12 @@ class MCPGenerator:
           otherwise, answer normally."""
       ).strip()
 
-      if self.generate_system_prompt:
+      # Check if system_prompt is defined in config.yaml first
+      config_system_prompt = self.config.get("system_prompt")
+      if config_system_prompt:
+          system_prompt = config_system_prompt.strip()
+          logger.info("Using system prompt from config.yaml")
+      elif self.generate_system_prompt:
           try:
               llm = LLMFactory().get_llm()
               sys_req = SystemMessage(
@@ -664,6 +861,7 @@ class MCPGenerator:
                   )
               )
               system_prompt = llm.invoke([sys_req]).content.strip()
+              logger.info("Generated system prompt using LLM")
           except Exception as e:  # noqa: BLE001
               logger.warning("LLM failed to generate system prompt: %s – using stub.", e)
               system_prompt = fallback_prompt
@@ -835,6 +1033,48 @@ class MCPGenerator:
 
       fh = self.get_file_header_kwargs()
 
+      # Extract skills from config.yaml if available, otherwise fallback to OpenAPI spec
+      skills = []
+      skill_examples = []
+
+      # Try to get skills from config first
+      config_skills = self.config.get("skills", [])
+      if config_skills:
+          # Use skills from config.yaml
+          skills = config_skills
+          # For backward compatibility, also create a flattened list of examples for simple template usage
+          for skill in config_skills:
+              skill_examples.extend([f"'{example}'" for example in skill.get("examples", [])])
+      else:
+          # Fallback to extracting from OpenAPI spec (original behavior)
+          for path, ops in self.spec.get("paths", {}).items():
+              for method, op in ops.items():
+                  if method.upper() not in {"GET", "POST", "PUT", "DELETE"}:
+                      continue
+                  operation_desc = op.get("summary") or op.get("description", "")
+                  if operation_desc:
+                      skill_examples.append(f"'{operation_desc.strip()}'")
+
+          # Limit to reasonable number of examples
+          skill_examples = skill_examples[:5]
+
+      # Get system prompt from config if available
+      config_system_prompt = self.config.get("system_prompt")
+      if config_system_prompt:
+          system_prompt = config_system_prompt.strip()
+      else:
+          # Fallback system prompt
+          system_prompt = f"""You are a {self.mcp_name.replace('_', ' ').title()} expert assistant. You help users manage and interact with {self.mcp_name.replace('_', ' ').title()} services.
+
+Your capabilities include:
+- Managing {self.mcp_name.replace('_', ' ').title()} resources and configurations
+- Monitoring service status and performance
+- Handling API operations and data retrieval
+- Troubleshooting issues and providing solutions
+- Providing best practices and recommendations
+
+Always provide clear, actionable responses and include relevant resource names, status information, and next steps when available."""
+
       proto_dir = os.path.join(agent_dir, "protocol_bindings")
       os.makedirs(proto_dir, exist_ok=True)
       logger.info("Rendering protocol_bindings/__init__.py")
@@ -850,14 +1090,12 @@ class MCPGenerator:
       logger.info("Rendering helpers.py")
       self.render_template("agent/a2a_server/helpers.tpl", os.path.join(a2a_dir, "helpers.py"), **fh)
 
-      logger.info("Rendering base_agent.py (abstract base class)")
-      self.render_template("agent/a2a_server/base_agent.tpl", os.path.join(a2a_dir, "base_agent.py"), **fh)
-
-      logger.info("Rendering base_agent_executor.py (abstract base class)")
-      self.render_template("agent/a2a_server/base_agent_executor.tpl", os.path.join(a2a_dir, "base_agent_executor.py"), **fh)
+      # Note: base_agent.py and base_agent_executor.py are no longer generated
+      # since we now use cnoe_agent_utils.agents.BaseLangGraphAgent and BaseLangGraphAgentExecutor
 
       logger.info("Rendering agent.py")
-      self.render_template("agent/a2a_server/agent.tpl", os.path.join(a2a_dir, "agent.py"), mcp_name=self.mcp_name, **fh)
+      self.render_template("agent/a2a_server/agent.tpl", os.path.join(a2a_dir, "agent.py"),
+                          mcp_name=self.mcp_name, system_prompt=system_prompt, **fh)
 
       logger.info("Rendering agent_executor.py")
       self.render_template("agent/a2a_server/agent_executor.tpl", os.path.join(a2a_dir, "agent_executor.py"), mcp_name=self.mcp_name, **fh)
@@ -868,11 +1106,14 @@ class MCPGenerator:
           os.path.join(a2a_dir, "__main__.py"),
           mcp_name=self.mcp_name,
           enable_slim=self.enable_slim,
+          skills=skills,
+          skill_examples=skill_examples,
+          system_prompt=system_prompt,
           **fh,
       )
 
       # Ruff format
-      for file in ["state.py", "helpers.py", "base_agent.py", "base_agent_executor.py", "agent.py", "agent_executor.py", "__main__.py"]:
+      for file in ["state.py", "helpers.py", "agent.py", "agent_executor.py", "__main__.py"]:
           logger.debug(f"Formatting {file} with Ruff")
           self.run_ruff_lint(os.path.join(a2a_dir, file))
 
@@ -1060,16 +1301,16 @@ class MCPGenerator:
           required_fields = schema.get("required", [])
           params_info = []
           for prop_name, prop in schema["properties"].items():
-              # Use “__” between nesting levels so that a single “_” inside a
-              # field name is preserved when we rebuild the JSON body later.
-              delim = "_" if prefix == "body" else "__"
-              param_name = f"{prefix}{delim}{prop_name}"
+              # Use single "_" for consistent parameter naming
+              # Improved from argocon-na-2025-b: single underscore for all nesting
+              delim = "_"
+              param_name = f"{prefix}{delim}{camel_to_snake(prop_name)}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
-                  # Use “__” between nesting levels so that a single “_” inside a
-                  # field name is preserved when we rebuild the JSON body later.
-                  delim = "_" if prefix == "body" else "__"
-                  param_name = f"{prefix}{delim}{prop_name}"
+                  # Use single "_" for consistent parameter naming
+                  # Improved from argocon-na-2025-b: single underscore for all nesting
+                  delim = "_"
+                  param_name = f"{prefix}{delim}{camel_to_snake(prop_name)}"
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
                       sub_params = self._extract_body_params(resolved_prop, prefix=param_name)
                       for sig, info in sub_params:
@@ -1135,7 +1376,61 @@ class MCPGenerator:
         self.generate_env()
     if not self.generate_agent_flag:
         self.generate_readme()
-    logger.info("MCP code generation completed")
+        logger.info("MCP code generation completed")
+
+        # Run function validation
+        self._run_function_validation()
+
+  def _run_function_validation(self):
+    """Run function validation on the generated code."""
+    try:
+        from .function_validator import FunctionValidator
+
+        logger.info("🔍 Running function validation on generated code...")
+
+        # Create validator for the current project
+        project_root = Path(self.output_dir).parent.parent  # Go up to project root
+        validator = FunctionValidator(project_root)
+
+        # Validate the current project
+        current_project_path = Path(self.src_output_dir)
+        result = validator.validate_project(current_project_path)
+
+        if result.passed:
+            logger.info("✅ Function validation passed!")
+            logger.info(f"   ✨ {result.total_functions} functions validated")
+            logger.info(f"   ✨ No duplicates or critical issues found")
+
+            if result.warnings:
+                logger.info(f"   ⚠️  {len(result.warnings)} minor warnings (see details above)")
+        else:
+            logger.error("❌ Function validation failed!")
+            logger.error(f"   🔧 {result.total_functions} functions checked")
+            logger.error(f"   ❌ {len(result.errors)} critical errors found")
+
+            # Print specific errors
+            for error in result.errors:
+                logger.error(f"      • {error}")
+
+            # Print duplicates if any
+            if result.duplicates:
+                logger.error("   📋 Duplicate functions found:")
+                for name, paths in result.duplicates.items():
+                    logger.error(f"      • '{name}' appears in {len(paths)} files")
+
+            # Print length violations
+            if result.length_violations:
+                logger.error("   📏 Function name length violations:")
+                for func in result.length_violations:
+                    logger.error(f"      • '{func.name}' ({func.length} chars > {validator.max_length} limit)")
+
+            logger.error("   💡 Run with --verbose for detailed analysis")
+
+    except ImportError:
+        logger.warning("⚠️  Function validator not available, skipping validation")
+    except Exception as e:
+        logger.warning(f"⚠️  Function validation failed: {e}")
+
   # ---------------------------------------------------------------- WebSocket proxy
   def _generate_ws_proxy(self, agent_dir: str) -> None:
       logger.info("Generating WebSocket proxy server")

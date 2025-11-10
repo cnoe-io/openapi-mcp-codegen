@@ -1,107 +1,162 @@
 {% if file_headers %}# {{ file_headers_copyright }}{% endif %}
 """{{ mcp_name | capitalize }} LangGraph agent wrapper used by the A2A server.
 
-  This class extends BaseAgent to provide {{ mcp_name }}-specific configuration
-  and streaming behavior for the A2A protocol.
-  """
+This class inherits from BaseLangGraphAgent to leverage common A2A functionality
+while providing {{ mcp_name }}-specific configuration and MCP server bootstrap.
+"""
 
 import logging
 import os
-import importlib.util
-from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
+from typing_extensions import override
+
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from cnoe_agent_utils.agents import BaseLangGraphAgent
 
-from .base_agent import BaseAgent
-
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-# Response format for structured agent output
-class {{ mcp_name | capitalize }}ResponseFormat(BaseModel):
-    """Structured response format for {{ mcp_name }} agent."""
-    status: str = Field(
-        description="Status of the task: 'completed', 'input_required', or 'error'"
-    )
-    message: str = Field(
-        description="The response message to the user"
-    )
+class InputField(BaseModel):
+    """Model for input field requirements extracted from tool responses"""
+    field_name: str = Field(description="The name of the field that should be provided, extracted from the tool's specific request.")
+    field_description: str = Field(description="A description of what this field represents, based on the tool's actual request for information.")
+    field_type: Optional[str] = Field(default="text", description="The type of input field: 'text', 'number', 'email', 'password', 'textarea', 'select', 'boolean'")
+    field_required: Optional[bool] = Field(default=True, description="Whether this field is required")
+    field_values: Optional[List[str]] = Field(default=None, description="Possible values for select/dropdown fields, if any")
 
 
-class {{ mcp_name | capitalize }}Agent(BaseAgent):
-    """{{ mcp_name | capitalize }} agent implementation extending BaseAgent."""
+class Metadata(BaseModel):
+    """Model for response metadata"""
+    user_input: bool = Field(description="Whether user input is required. Set to true when tools ask for specific information from user.")
+    input_fields: Optional[List[InputField]] = Field(default=None, description="List of input fields extracted from the tool's specific request, if any")
 
-    def __init__(self):
-        """Initialize the {{ mcp_name }} agent."""
-        super().__init__()
 
-    def get_agent_name(self) -> str:
-        """Return the agent's name."""
-        return "{{ mcp_name }}"
+class PlatformEngineerResponse(BaseModel):
+    """Structured response format matching ai-platform-engineering pattern"""
+    is_task_complete: bool = Field(description="Whether the task is complete. Set to false if tools ask for more information.")
+    require_user_input: bool = Field(description="Whether user input is required. Set to true if tools request specific information from user.")
+    content: str = Field(description="The main response content in markdown format. When tools ask for information, preserve their exact message without rewriting.")
+    metadata: Optional[Metadata] = Field(default=None, description="Additional metadata about the response")
 
-    def get_system_instruction(self) -> str:
-        """Return the system instruction for the agent."""
-        return """You are a helpful assistant that can interact with {{ mcp_name | capitalize }}.
 
-You have access to tools that allow you to:
-- Query and retrieve information
-- Perform operations
-- Manage resources
+class {{ mcp_name | capitalize }}Agent(BaseLangGraphAgent):
+    """{{ mcp_name | capitalize }} agent that inherits streaming and A2A protocol handling from BaseLangGraphAgent."""
 
-Always:
-1. Use the appropriate tools to fulfill user requests
-2. Provide clear, concise responses
-3. Ask for clarification when needed
-4. Explain what you're doing when using tools
-
-When you complete a task, set status='completed'.
-If you need more information from the user, set status='input_required'.
-If an error occurs, set status='error'."""
-
-    def get_response_format_instruction(self) -> str:
-        """Return the response format instruction."""
-        return """Provide your response in the following format:
-- status: 'completed' (task done), 'input_required' (need user input), or 'error' (something went wrong)
-- message: Your response to the user"""
-
-    def get_response_format_class(self) -> type[BaseModel]:
-        """Return the Pydantic response format class."""
-        return {{ mcp_name | capitalize }}ResponseFormat
-
-    def get_mcp_config(self, server_path: str) -> Dict[str, Any]:
-        """
-        Return the MCP server configuration for {{ mcp_name }}.
-
-        Args:
-            server_path: Path to the MCP server script
-
-        Returns:
-            Dictionary with MCP configuration
-        """
+    @override
+    async def _bootstrap_agent(self) -> Any:
+        """Bootstrap the {{ mcp_name }} MCP server and return a LangGraph React agent."""
+        load_dotenv()
         token = os.getenv("{{ mcp_name | upper }}_TOKEN")
         api_url = os.getenv("{{ mcp_name | upper }}_API_URL")
 
         if not token or not api_url:
             raise EnvironmentError(
-                "Both {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN must be set"
+                f"Both {{ mcp_name | upper }}_API_URL and {{ mcp_name | upper }}_TOKEN must be set"
             )
 
-        return {
-            "transport": "stdio",
-            "command": "uv",
-            "args": ["run", "python", server_path],
-            "env": {
-                "{{ mcp_name | upper }}_API_URL": api_url,
-                "{{ mcp_name | upper }}_TOKEN": token,
-            },
-        }
+        # Import and create the agent
+        from agent import create_agent  # noqa: E402
+        agent, _ = await create_agent()
 
+        return agent
+
+    @override
+    def _get_trace_tags(self) -> list[str]:
+        """Return trace tags specific to {{ mcp_name }}."""
+        return ["{{ mcp_name }}-a2a"]
+
+    @override
+    def _get_trace_name(self) -> str:
+        """Return trace name for {{ mcp_name }} queries."""
+        return "{{ mcp_name }}-query"
+
+    @override
+    def _should_request_user_input(self, final_message_content: str) -> bool:
+        """
+        Determine if user input is required based on the final message content.
+
+        Override this method to customize when the agent requests user input.
+        """
+        # Check for common phrases that indicate the agent needs clarification
+        clarification_phrases = [
+            "please provide",
+            "need more info",
+            "could you clarify",
+            "what would you like",
+            "please specify",
+            "need additional details"
+        ]
+
+        return any(phrase in final_message_content.lower() for phrase in clarification_phrases)
+
+    @override
+    def get_agent_name(self) -> str:
+        """Return the agent name for identification."""
+        return "{{ mcp_name }}-agent"
+
+    @override
+    def get_system_instruction(self) -> str:
+        """Return the system instruction for the agent."""
+        {% if system_prompt %}
+        return """{{ system_prompt }}"""
+        {% else %}
+        return """You are a {{ mcp_name | capitalize }} expert assistant. You help users manage and interact with {{ mcp_name | capitalize }} services.
+
+Your capabilities include:
+- Managing {{ mcp_name | capitalize }} resources and configurations
+- Monitoring service status and performance
+- Handling API operations and data retrieval
+- Troubleshooting issues and providing solutions
+- Providing best practices and recommendations
+
+Always provide clear, actionable responses and include relevant resource names, status information, and next steps when available."""
+        {% endif %}
+
+    @override
+    def get_response_format_instruction(self) -> str:
+        """Return instructions for response formatting."""
+        return """CRITICAL: You MUST respond ONLY with a valid JSON object matching the PlatformEngineerResponse schema.
+
+Use this exact JSON structure:
+{
+  "is_task_complete": true,
+  "require_user_input": false,
+  "content": "Your complete response content in markdown format",
+  "metadata": null
+}
+
+RULES:
+1. Set "is_task_complete": false if tools ask for more information
+2. Set "require_user_input": true if tools request specific information from user
+3. When tools ask for input, preserve their exact message in "content" field
+4. Use "metadata" field when tools request user input:
+   {
+     "user_input": true,
+     "input_fields": [
+       {
+         "field_name": "parameter_name",
+         "field_description": "Description of what this field represents",
+         "field_type": "text",
+         "field_required": true,
+         "field_values": ["option1", "option2"] or null
+       }
+     ]
+   }
+
+Do NOT include any text before or after the JSON. The "content" field contains your complete, helpful response."""
+
+    @override
+    def get_response_format_class(self) -> type[BaseModel]:
+        """Return the Pydantic model class for response formatting."""
+        return PlatformEngineerResponse
+
+    @override
     def get_tool_working_message(self) -> str:
-        """Return message shown when agent is calling tools."""
-        return "Looking up required data via tools..."
+        """Return message displayed when tools are being executed."""
+        return "🔄 Working with {{ mcp_name | capitalize }}..."
 
+    @override
     def get_tool_processing_message(self) -> str:
-        """Return message shown when agent is processing tool results."""
-        return "Processing tool output..."
+        """Return message displayed when processing tool results."""
+        return "📊 Processing {{ mcp_name }} data..."

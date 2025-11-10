@@ -20,7 +20,7 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Any:
     {{ func.summary }}
 
     OpenAPI Description:
-        {{ func.description }}
+        {{ func.description | truncate_description }}
 
     Args:
     {{ newline }}

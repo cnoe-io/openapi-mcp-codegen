@@ -48,6 +48,27 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
+      label: 'Core Components',
+      items: [
+        {
+          type: 'doc',
+          id: 'core-components/index',
+          label: 'Overview',
+        },
+        {
+          type: 'doc',
+          id: 'core-components/mcp-server-generator',
+          label: 'MCP Server Generator',
+        },
+        {
+          type: 'doc',
+          id: 'core-components/a2a-agent-generator',
+          label: 'A2A Agent Generator',
+        }
+      ],
+    },
+    {
+      type: 'category',
       label: 'Architecture',
       items: [
         {
@@ -193,6 +214,16 @@ const sidebars: SidebarsConfig = {
               type: 'doc',
               id: 'adr/ADR-006-a2a-agent-refactoring',
               label: 'ADR-006: A2A Agent Refactoring',
+            },
+            {
+              type: 'doc',
+              id: 'adr/ADR-007-agent-base-classes-migration',
+              label: 'ADR-007: Agent Base Classes Migration',
+            },
+            {
+              type: 'doc',
+              id: 'adr/ADR-008-openapi-enhancement-proposal',
+              label: 'ADR-008: OpenAPI Enhancement Proposal',
             }
           ],
         },

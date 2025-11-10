@@ -329,7 +329,7 @@ def test_query_parameter_without_schema(setup_env):
     if os.path.exists(tools_dir):
         shutil.rmtree(tools_dir)
     os.makedirs(tools_dir, exist_ok=True)
-    
+
     # Generate tool modules based on the dummy spec
     gen.generate_tool_modules()
 

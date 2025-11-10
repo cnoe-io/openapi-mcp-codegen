@@ -1,154 +1,210 @@
 # Basic Usage
 
-Learn how to use OpenAPI MCP Codegen for common scenarios and understand the available CLI options.
+Learn how to use OpenAPI MCP Codegen's two main generation modes: **MCP Server Generation** and **A2A Agent Generation**.
 
-## Basic Generation
+## Generation Modes Overview
 
-Generate a simple MCP server from an OpenAPI specification:
+OpenAPI MCP Codegen provides two distinct generation capabilities:
+
+### 1. MCP Server Generation
+Create self-contained MCP servers that expose API functionality directly through the MCP protocol.
 
 ```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-mcp \
   --spec-file your-api-spec.json \
-  --output-dir ./generated_mcp_server
+  --output-dir ./mcp_server
 ```
 
-## CLI Options
+### 2. A2A Agent Generation
+Create standalone agents that connect to external MCP servers (like those deployed via AgentGateway).
 
-### Core Generation Flags
+```bash
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-a2a-agent-with-remote-mcp \
+  --spec-file your-api-spec.json \
+  --agent-name "Your Agent" \
+  --mcp-server-url "http://agentgateway:3000"
+```
 
-| Flag | Description | Example |
-|------|-------------|---------|
-| `--spec-file` | Path to OpenAPI specification (JSON/YAML) | `--spec-file api.json` |
-| `--output-dir` | Output directory for generated code | `--output-dir ./mcp_server` |
+## Command-Specific Options
 
-### Enhancement Flags
+### generate-mcp Options
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--generate-agent` | Create LangGraph React agent | `false` |
+| `--spec-file` | Path to OpenAPI specification (JSON/YAML) | Required |
+| `--output-dir` | Output directory for generated MCP server | Auto-generated |
+| `--generate-agent` | Create LangGraph agent wrapper | `false` |
 | `--generate-eval` | Include evaluation framework | `false` |
-| `--generate-system-prompt` | Generate AI system prompt | `false` |
-| `--enhance-docstring-with-llm` | Use LLM for docstring enhancement | `false` |
+| `--generate-system-prompt` | Generate AI system prompt using LLM | `false` |
+| `--enhance-docstring-with-llm` | Enhance docstrings using LLM | `false` |
+| `--with-a2a-proxy` | Generate WebSocket upstream server | `false` |
+| `--enable-slim` | Enable SLIM transport support | `false` |
+| `--dry-run` | Run without writing files | `false` |
 
-### Experimental Flags
+### generate-a2a-agent-with-remote-mcp Options
 
-| Flag | Description | Status |
-|------|-------------|--------|
-| `--enable-slim` | Enable SLIM transport support | Experimental |
-| `--with-a2a-proxy` | Generate WebSocket upstream server | Experimental |
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--spec-file` | Path to OpenAPI specification (JSON/YAML) | Required |
+| `--agent-name` | Name of the agent (e.g., 'Argo Workflows') | Required |
+| `--mcp-server-url` | URL of external MCP server | Required |
+| `--output-dir` | Output directory for generated A2A agent | `./agent_<name>` |
+| `--agent-description` | Description of the agent | Auto-generated |
+| `--dry-run` | Run without writing files | `false` |
 
-## Common Usage Patterns
+## Usage Patterns by Scenario
 
-### 1. Basic MCP Server
+### 1. Basic MCP Server Generation
 
-For simple API integration:
+Create a self-contained MCP server for direct API integration:
 
 ```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-mcp \
   --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore/mcp_server
+  --output-dir ./petstore_mcp
 ```
 
-**Generated**:
-- MCP server package
-- API client code
-- Tool modules for each endpoint
-- Configuration templates
+**Generated Output:**
+- Complete MCP server package (`mcp_petstore/`)
+- Type-safe API client with async support
+- Tool modules for each API endpoint
+- Configuration templates and documentation
+
+**Use Case:** Direct integration where you control the MCP server deployment
 
 ### 2. Complete Agent System
 
-For full AI agent development:
+Generate MCP server with full agent wrapper and intelligence features:
 
 ```bash
-uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen \
-  --spec-file examples/petstore/openapi_petstore.json \
-  --output-dir examples/petstore \
-  --generate-agent \
-  --generate-eval \
-  --generate-system-prompt
-```
-
-**Generated**:
-- MCP server package
-- LangGraph React agent
-- A2A server wrapper
-- Evaluation framework
-- System prompt optimization
-- Makefile for development
-
-### 3. Enhanced with LLM Pipeline
-
-For AI-optimized documentation:
-
-```bash
-# Set LLM API key
+# Set LLM API key for system prompt generation
 export OPENAI_API_KEY=your-key-here
 
-# Generate with enhancements
-python -m openapi_mcp_codegen.enhance_and_generate \
-    examples/argo-workflows/openapi_argo_workflows.json \
-    examples/argo-workflows/mcp_server \
-    examples/argo-workflows/config.yaml \
-    --save-overlay overlay.yaml \
-    --save-enhanced-spec enhanced_openapi.json
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-mcp \
+  --spec-file examples/argo-workflows/openapi_argo_workflows.json \
+  --output-dir ./argo_agent_system \
+  --generate-agent \
+  --generate-eval \
+  --generate-system-prompt \
+  --enhance-docstring-with-llm
 ```
 
-**Benefits**:
-- AI-generated descriptions optimized for function calling
-- OpenAI-compatible format (&lt;300 characters)
-- "Use when:" context patterns
-- Smart parameter handling for complex schemas
+**Generated Output:**
+- MCP server package
+- LangGraph agent wrapper with A2A bindings
+- Evaluation framework for testing
+- LLM-generated system prompt
+- Enhanced function documentation
+- Complete development tooling
+
+**Use Case:** Full AI agent development with evaluation and intelligence enhancements
+
+### 3. Standalone A2A Agent
+
+Create an agent that connects to an external MCP server:
+
+```bash
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-a2a-agent-with-remote-mcp \
+  --spec-file examples/argo-workflows/openapi_argo_workflows.json \
+  --agent-name "Argo Workflows Expert" \
+  --mcp-server-url "http://agentgateway:3000/argo-workflows" \
+  --agent-description "Specialized AI agent for Argo Workflows management and operations"
+```
+
+**Generated Output:**
+- Complete A2A agent package (`agent_argo_workflows_expert/`)
+- Protocol bindings for external MCP server connection
+- Agent card with capability definitions
+- Skills-based architecture
+- Client integration code
+
+**Use Case:** Integration with existing MCP infrastructure like AgentGateway
+
+### 4. Development and Testing
+
+Use dry-run mode for testing generation without writing files:
+
+```bash
+# Test MCP server generation
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-mcp \
+  --spec-file your-api.json \
+  --dry-run
+
+# Test A2A agent generation
+uvx --from git+https://github.com/cnoe-io/openapi-mcp-codegen.git openapi_mcp_codegen generate-a2a-agent-with-remote-mcp \
+  --spec-file your-api.json \
+  --agent-name "Test Agent" \
+  --mcp-server-url "http://localhost:3000" \
+  --dry-run
+```
+
+**Benefits:**
+- Validate configuration and OpenAPI specs
+- Test generation logic without file system changes
+- Preview generated structure and components
 
 ## Configuration Files
 
 ### config.yaml Structure
 
+The configuration file defines generation parameters and metadata:
+
 ```yaml
-# Package Identification
-title: petstore                     # → mcp_petstore package
+# Package Identification (Required)
+title: petstore                     # → mcp_petstore package name
 description: Petstore API MCP Server
 author: Your Name
 email: you@example.com
 version: 0.1.0
 license: Apache-2.0
-python_version: 3.8
 
-# API Authentication
+# API Configuration (MCP Server Generation)
 headers:
-  Authorization: Bearer {token}      # Placeholder for runtime token
+  Authorization: Bearer {token}      # Runtime token placeholder
   Accept: application/json
   Content-Type: application/json
 
-# Python Dependencies
+# A2A Agent Configuration (A2A Agent Generation)
+skills:
+  - name: "Pet Management"
+    description: "Manage pet store inventory"
+    examples:
+      - "Find pets by status"
+      - "Add new pets to store"
+      - "Update pet information"
+
+system_prompt: |
+  You are a Petstore API expert assistant.
+  Help users manage pet store operations including
+  inventory, orders, and customer management.
+
+# Python Dependencies (Optional)
 poetry_dependencies: |
-  python = ">=3.8,<4.0"
+  python = ">=3.13,<4.0"
   httpx = ">=0.24.0"
   python-dotenv = ">=1.0.0"
   pydantic = ">=2.0.0"
   mcp = ">=1.9.0"
-
-# Enhancement Configuration (Optional)
-overlay_enhancements:
-  enabled: true
-  use_llm: true
-  max_description_length: 300
-  enhance_crud_operations: true
-  add_use_cases: true
 ```
 
 ### Environment Variables
 
-```bash
-# API Configuration (Required)
-PETSTORE_API_URL=https://petstore.swagger.io/v2
-PETSTORE_TOKEN=your-api-token
+Runtime configuration for generated MCP servers and A2A agents:
 
-# LLM Configuration (Optional, for enhancements)
+```bash
+# API Configuration (Required for MCP servers)
+API_URL=https://api.example.com
+API_TOKEN=your-api-token
+
+# A2A Agent Configuration (Required for A2A agents)
+AGENT_NAME=your_agent
+MCP_SERVER_URL=http://agentgateway:3000
+
+# LLM Configuration (Optional, for system prompt & docstring generation)
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
-LLM_PROVIDER=openai  # or anthropic
 
-# Evaluation/Tracing (Optional)
+# Tracing and Evaluation (Optional)
 LANGFUSE_HOST=http://localhost:3000
 LANGFUSE_PUBLIC_KEY=pk-...
 LANGFUSE_SECRET_KEY=sk-...
@@ -156,9 +212,9 @@ LANGFUSE_SECRET_KEY=sk-...
 
 ## Generated Code Patterns
 
-### Tool Function Structure
+### MCP Server Tool Functions
 
-Generated tools follow consistent patterns:
+Generated MCP server tools follow consistent patterns:
 
 ```python
 async def pet_service_find_pets_by_status(
@@ -167,12 +223,8 @@ async def pet_service_find_pets_by_status(
     """
     Find pets by status
 
-    OpenAPI Description:
-        Find pets by status. Use when: you need to filter pets by
-        their availability status (available, pending, sold).
-
     Args:
-        param_status (str): Pet status filter
+        param_status (str): Pet status filter (available, pending, sold)
 
     Returns:
         Any: List of pets matching the status filter
@@ -196,85 +248,153 @@ async def pet_service_find_pets_by_status(
     return response
 ```
 
-### Smart Parameter Handling
+### A2A Agent Structure
 
-For complex schemas (>10 nested parameters):
+Generated A2A agents include capability definitions:
 
 ```python
-# Instead of 1000+ parameters, use clean dictionary interface
-async def complex_operation(
+# agentcard.py
+class AgentCard:
+    name: str = "petstore_agent"
+    display_name: str = "Petstore Expert"
+    description: str = "AI agent for pet store management"
+
+    skills: List[Dict[str, Any]] = [
+        {
+            "name": "Pet Management",
+            "description": "Manage pet inventory and information",
+            "examples": ["Find pets by status", "Add new pets"]
+        }
+    ]
+
+    system_prompt: str = "You are a Petstore API expert..."
+    mcp_server_url: str = "http://agentgateway:3000/petstore"
+```
+
+### Smart Parameter Handling
+
+For complex schemas (>10 nested parameters), the generator automatically uses dictionary mode:
+
+```python
+# Instead of 1000+ individual parameters
+async def complex_kubernetes_operation(
     body_metadata: Dict[str, Any] = None,
     body_spec: Dict[str, Any] = None
 ) -> Any:
-    """Clean interface for complex Kubernetes-style schemas"""
+    """
+    Clean interface for complex Kubernetes-style schemas
+
+    Args:
+        body_metadata: Kubernetes metadata dictionary
+        body_spec: Kubernetes spec dictionary
+    """
 ```
 
-## Development Workflow
+## Development Workflows
 
-### 1. Setup Environment
+### MCP Server Development
 
+**1. Generate and Setup:**
 ```bash
-cd generated_mcp_server/
+# Generate MCP server
+uvx openapi_mcp_codegen generate-mcp --spec-file api.json --output-dir ./mcp_server
+
+# Setup environment
+cd mcp_server/
 uv venv && source .venv/bin/activate
 uv sync
 ```
 
-### 2. Configure API Access
-
+**2. Configure and Test:**
 ```bash
+# Configure API access
 cp .env.example .env
-# Edit .env with your API credentials
+# Edit .env with API credentials
+
+# Test MCP server
+uv run python -m mcp_server.server
+
+# Test with agent-chat-cli
+uvx agent-chat-cli --mcp-server stdio --server-command "uv run python -m mcp_server.server"
 ```
 
-### 3. Test MCP Server
+### A2A Agent Development
 
+**1. Generate and Setup:**
 ```bash
-# Run in stdio mode
-uv run python -m mcp_petstore.server
+# Generate A2A agent
+uvx openapi_mcp_codegen generate-a2a-agent-with-remote-mcp \
+  --spec-file api.json \
+  --agent-name "API Expert" \
+  --mcp-server-url "http://agentgateway:3000"
 
-# Or use generated Makefile
-make run-mcp-server
+# Setup environment
+cd agent_api_expert/
+make dev
 ```
 
-### 4. Test with Agent (if generated)
-
+**2. Configure and Test:**
 ```bash
-# Start agent server
+# Configure environment
+cp .env.example .env
+# Edit .env with MCP server URL and credentials
+
+# Start A2A server
 make run-a2a
 
-# In new terminal, start client
+# Test with A2A client
 make run-a2a-client
 ```
 
 ## Best Practices
 
-### File Organization
-- Keep original OpenAPI specs in version control
-- Store `config.yaml` and `prompt.yaml` (if using enhancements)
-- Generated code can be recreated, so consider gitignore
-- Save overlays for review and customization
+### Configuration Management
+- Store `config.yaml` in version control with OpenAPI specs
+- Use environment variables for secrets (API keys, tokens, URLs)
+- Provide comprehensive `.env.example` templates
+- Document required environment variables in generated README
 
-### Configuration
-- Use environment variables for secrets (API keys, tokens)
-- Document required environment variables in README
-- Provide `.env.example` templates
-- Use descriptive package names in `config.yaml`
+### Development
+- Use descriptive names for agents and MCP server packages
+- Test with mock servers during development
+- Validate with real API endpoints before production deployment
+- Use `--dry-run` to preview generation before writing files
 
-### Testing
-- Use mock servers for development testing
-- Include evaluation datasets when using `--generate-eval`
-- Test with real API endpoints before deployment
-- Monitor LangFuse traces for agent behavior
+### MCP Server Best Practices
+- Configure appropriate API timeouts and retry logic
+- Monitor API rate limits and implement backoff strategies
+- Use generated evaluation frameworks to test tool accuracy
+- Deploy behind AgentGateway for A2A protocol exposure
 
-### Enhancements
-- Review generated overlays before production use
-- Customize descriptions for domain-specific terminology
-- Iterate on prompts for better LLM enhancement
-- Use rule-based fallback if LLM unavailable
+### A2A Agent Best Practices
+- Define clear, focused skills and capabilities in config
+- Test connectivity to external MCP servers before deployment
+- Monitor agent performance with tracing and evaluation
+- Use meaningful agent names and descriptions for discoverability
+
+### Production Deployment
+- Use container deployments for consistency and scaling
+- Implement health checks for both MCP servers and A2A agents
+- Configure appropriate resource limits and monitoring
+- Plan for horizontal scaling based on usage patterns
+
+## Choosing Between MCP Server and A2A Agent
+
+### Use MCP Server Generation When:
+- You need direct control over the MCP server deployment
+- Building new API integrations from scratch
+- Want self-contained, standalone MCP servers
+- Deploying in environments without existing MCP infrastructure
+
+### Use A2A Agent Generation When:
+- Integrating with existing MCP server infrastructure (AgentGateway)
+- Building agents for distributed, multi-agent systems
+- Want to leverage existing MCP server deployments
+- Need agents that can connect to remote MCP services
 
 ## Next Steps
 
-- [Configure your environment](./configuration.md) in detail
-- [Explore the examples](./examples.md) for different API types
-- [Learn about CLI commands](../cli/commands.md)
-- [Understand troubleshooting](../cli/troubleshooting.md)
+- [Explore detailed CLI commands](../cli/commands.md)
+- [Learn about core components](../core-components/)
+- [Review configuration options](./configuration.md)
+- [See practical examples](./examples.md)

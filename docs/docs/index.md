@@ -8,12 +8,16 @@ sidebar_position: 1
 
 > **⭐ GitHub repository**: [github.com/cnoe-io/openapi-mcp-codegen](https://github.com/cnoe-io/openapi-mcp-codegen)
 
-> 💡 *Tip: **OpenAPI MCP Codegen** transforms traditional REST APIs into AI-friendly MCP (Model Context Protocol) servers. Just as a 🦸‍♂️ cape empowers a superhero, MCP servers empower AI agents with seamless API integration! 🚀*
+> 💡 *Tip: **OpenAPI MCP Codegen** transforms OpenAPI specifications into production-ready MCP servers and intelligent A2A agents. Just as a 🦸‍♂️ cape empowers a superhero, MCP servers empower AI agents with seamless API integration! 🚀*
 
 As [Platform Engineering](https://platformengineering.org/blog/what-is-platform-engineering), [SRE](https://en.wikipedia.org/wiki/Site_reliability_engineering) and [DevOps](https://en.wikipedia.org/wiki/DevOps) teams increasingly adopt AI-powered workflows, integrating existing APIs with AI agents remains a significant challenge. Manual integration takes weeks per service, results in inconsistent quality, and creates maintenance overhead with every API update.
 
+OpenAPI MCP Codegen is an open-source tool that provides **two primary capabilities**:
 
-OpenAPI MCP Codegen is an open-source tool that automatically transforms OpenAPI specifications into production-ready MCP (Model Context Protocol) servers. It bridges the gap between traditional REST APIs and AI-powered integrations by using LLM-enhanced documentation and intelligent code generation, enabling AI agents to effectively discover, understand, and utilize APIs with minimal human intervention.
+1. **MCP Server Generation**: Transform OpenAPI specifications into production-ready MCP (Model Context Protocol) servers
+2. **A2A Agent Generation**: Create standalone Agent-to-Agent (A2A) compatible agents that connect to external MCP servers
+
+The tool bridges the gap between traditional REST APIs and AI-powered integrations through intelligent code generation and LLM-enhanced documentation, enabling AI agents to effectively discover, understand, and utilize APIs with minimal human intervention.
 
 The tool generates specialized MCP servers that integrate seamlessly with AI agents and platform engineering tools. Below are some example integrations enabled by generated MCP servers:
 
@@ -27,40 +31,71 @@ The tool generates specialized MCP servers that integrate seamlessly with AI age
 
 *...and any REST API with an OpenAPI specification can be transformed into an AI-friendly MCP server.*
 
-Together, these MCP servers enable AI agents to perform complex API operations using natural language workflows. The system also includes:
+## Core Components
 
-* **LLM-Enhanced Documentation**: AI-generated, contextual descriptions optimized for function calling with "Use when:" patterns and OpenAI-compatible formatting under 300 characters.
-* **Smart Parameter Handling**: Intelligent consolidation of complex Kubernetes-style schemas, reducing 1000+ parameter functions to clean, usable interfaces with 98.6% code reduction.
-* **Standards-Based Approach**: Uses OpenAPI Overlay Specification 1.0.0 for non-destructive, version-controlled API enhancements that work across toolchains.
-* **Production-Ready Output**: Generates fully-typed Python MCP servers with async HTTP clients, comprehensive error handling, and auto-generated documentation.
-* **Zero-Touch Maintenance**: GitHub Actions workflows automatically update MCP servers when APIs change, ensuring always up-to-date integrations.
+OpenAPI MCP Codegen is built around **three main components**:
+
+### 1. MCP Server Generator (`mcp_codegen.py`)
+Transforms OpenAPI specifications into production-ready MCP servers with:
+* **Type-Safe Python Code**: Full async/await support with comprehensive type hints
+* **Smart Parameter Handling**: Automatically detects complex schemas and uses dictionary mode for 1000+ parameter operations
+* **Tool Module Generation**: Each API endpoint becomes a callable tool for AI agents
+* **LLM-Enhanced Docstrings**: AI-optimized function documentation for better agent comprehension
+
+### 2. A2A Agent Generator (`a2a_agent_codegen.py`)
+Creates standalone agents that connect to external MCP servers with:
+* **Complete Agent Package**: Full agent structure with protocol bindings and client integration
+* **AgentGateway Compatible**: Works seamlessly with external MCP servers and AgentGateway
+* **Configurable System Prompts**: LLM-generated or custom system prompts for domain expertise
+* **Skills-Based Architecture**: Structured capability definitions from config or OpenAPI operations
+
+### 3. CLI Interface (`__main__.py`)
+Provides two primary commands:
+* **`generate-mcp`**: Create MCP servers with optional agent wrappers, evaluation frameworks, and system prompt generation
+* **`generate-a2a-agent-with-remote-mcp`**: Generate standalone A2A agents for external MCP servers
+
+The system also includes:
+* **LLM-Enhanced Generation**: AI-generated system prompts and enhanced docstrings optimized for agent comprehension
+* **Smart Parameter Handling**: Intelligent consolidation of complex schemas, reducing 1000+ parameter functions to clean, usable interfaces
+* **Production-Ready Output**: Generates fully-typed Python code with async HTTP clients, comprehensive error handling, and auto-generated documentation
+* **Evaluation Framework**: Optional evaluation suites for testing agent performance and accuracy
 
 ## Goals of the project
 
-- **Automated AI-API Integration**: Transform any OpenAPI specification into a production-ready MCP server that AI agents can effectively utilize, reducing integration time from weeks to minutes.
+- **Automated AI-API Integration**: Transform any OpenAPI specification into production-ready MCP servers and A2A agents that AI systems can effectively utilize, reducing integration time from weeks to minutes.
 
-- **Standards-Driven Enhancement**: Use industry standards (OpenAPI Overlay 1.0.0, MCP Protocol) to create portable, maintainable, and reusable API enhancements that work across different AI platforms and toolchains.
+- **Dual Generation Approach**: Provide both self-contained MCP servers and standalone A2A agents that connect to external MCP servers, supporting different deployment architectures and use cases.
 
-- **Community-Powered Ecosystem**: Foster a collaborative community of platform engineers, API developers, and AI practitioners to continuously improve prompt libraries, enhance code generation templates, and expand API coverage across the CNCF landscape.
+- **LLM-Enhanced Intelligence**: Generate AI-optimized system prompts, enhanced docstrings, and evaluation frameworks that improve agent performance and accuracy in real-world scenarios.
 
-- **Production Excellence**: Ensure generated MCP servers meet enterprise requirements with comprehensive type safety, error handling, observability, and automated testing capabilities.
+- **Production Excellence**: Ensure generated code meets enterprise requirements with comprehensive type safety, error handling, smart parameter management, and automated testing capabilities.
+
+- **Community-Powered Ecosystem**: Foster a collaborative community of platform engineers, API developers, and AI practitioners to continuously improve generation templates and expand API coverage across the CNCF landscape.
 
 ## Key Features
 
-### 🤖 LLM Enhancement Pipeline
-- **GPT-4/Claude Integration**: Analyzes OpenAPI operations and generates contextual, AI-friendly descriptions
-- **Declarative Prompts**: Version-controlled prompt templates in `prompt.yaml` for consistent enhancement patterns
-- **OpenAPI Overlay Output**: Standards-compliant enhancement specifications that can be reviewed, edited, and reused
+### 🚀 MCP Server Generation
+- **Complete MCP Servers**: Transform OpenAPI specs into fully functional MCP servers with typed Python code
+- **Smart Parameter Handling**: Automatically detects complex schemas and uses dictionary mode for 1000+ parameter operations
+- **Tool Module Architecture**: Each API endpoint becomes a callable tool with proper error handling and logging
+- **Agent Wrapper Generation**: Optional LangGraph agent wrappers with A2A server bindings
 
-### ⚙️ Intelligent Code Generation
-- **Smart Parameter Handling**: Automatically detects complex schemas and uses dictionary mode to prevent unusable 1000+ parameter functions
-- **Type-Safe Interfaces**: Full Python type hints with proper error handling and async/await patterns
+### 🤝 A2A Agent Generation
+- **Standalone Agents**: Create complete A2A-compatible agents that connect to external MCP servers
+- **AgentGateway Ready**: Generated agents work seamlessly with AgentGateway and other MCP infrastructures
+- **Skills-Based Configuration**: Structured capability definitions from config files or OpenAPI operations
+- **Protocol Bindings**: Complete protocol binding layers for different transport mechanisms
+
+### 🧠 LLM-Enhanced Intelligence
+- **System Prompt Generation**: AI-generated system prompts optimized for specific API domains
+- **Enhanced Docstrings**: LLM-optimized function documentation for better agent tool selection
+- **Evaluation Frameworks**: Optional evaluation suites for testing agent performance and accuracy
+- **Smart Documentation**: AI-friendly descriptions that improve tool discovery and usage
+
+### ⚙️ Production Ready
+- **Type-Safe Code**: Full Python type hints with proper error handling and async/await patterns
 - **Template System**: Jinja2-based generation with customizable templates for different output formats
-
-### 🔧 Production Ready
-- **AgentGateway Integration**: Auto-generated configuration for immediate deployment
-- **Comprehensive Testing**: Automated validation, evaluation suites, and integration testing
-- **Zero-Config Deployment**: From OpenAPI spec to running MCP server in minutes
+- **Zero-Config Deployment**: From OpenAPI spec to running MCP server or A2A agent in minutes
 
 ### 📊 Real-World Impact
 - **98.6% code size reduction** for complex API operations

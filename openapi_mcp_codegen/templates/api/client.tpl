@@ -4,18 +4,24 @@
 # {{ file_headers_message }}
 {% endif %}
 """API client for making requests to the service"""
+
 import os
+import ssl
 import logging
-import warnings
 from typing import Optional, Dict, Tuple, Any
 import httpx
-
-# Suppress SSL warnings for self-signed certificates
-warnings.filterwarnings('ignore', message='Unverified HTTPS request')
 
 # Load environment variables
 API_URL = os.getenv("{{ mcp_name | upper }}_API_URL")
 API_TOKEN = os.getenv("{{ mcp_name | upper }}_TOKEN")
+
+# SSL verification configuration with fallback
+verify_ssl_env = os.getenv('{{ mcp_name | upper }}_VERIFY_SSL', None)
+if verify_ssl_env is None:
+    verify_ssl_env = os.getenv('VERIFY_SSL', 'true')
+VERIFY_SSL = verify_ssl_env.lower() == 'true'
+
+CA_BUNDLE = os.getenv("{{ mcp_name | upper }}_CA_BUNDLE")
 
 if not API_URL:
     raise ValueError("{{ mcp_name | upper }}_API_URL environment variable is not set.")
@@ -64,7 +70,7 @@ async def make_api_request(
     Args:
         path: API path to request (without base URL)
         method: HTTP method (default: GET)
-        token: API token (defaults to ARGOCD_TOKEN)
+        token: API token (defaults to {{ mcp_name | upper }}_TOKEN)
         params: Query parameters for the request (optional)
         data: JSON data for POST/PATCH/PUT requests (optional)
         timeout: Request timeout in seconds (default: 30)
@@ -92,12 +98,26 @@ async def make_api_request(
 {% else %}
         headers = {}
 {% endif %}
-        logger.debug(f"Request headers prepared (Authorization header masked)")
+        logger.debug("Request headers prepared (Authorization header masked)")
         logger.debug(f"Request parameters: {params}")
         if data:
             logger.debug(f"Request data: {data}")
 
-        async with httpx.AsyncClient(timeout=timeout, verify=False) as client:
+        # Configure SSL verification
+        if VERIFY_SSL:
+            if CA_BUNDLE:
+                logger.debug(f"Using custom CA bundle: {CA_BUNDLE}")
+                async_client_kwargs = {"timeout": timeout, "verify": CA_BUNDLE}
+            else:
+                async_client_kwargs = {"timeout": timeout}
+        else:
+            logger.warning("SSL verification is disabled. This is not recommended for production environments.")
+            ssl_context = ssl.create_default_context()
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+            async_client_kwargs = {"timeout": timeout, "verify": ssl_context}
+
+        async with httpx.AsyncClient(**async_client_kwargs) as client:
             url = f"{API_URL}{path}"
             logger.debug(f"Full request URL: {url}")
 

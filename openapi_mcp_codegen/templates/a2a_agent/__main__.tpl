@@ -45,8 +45,8 @@ SLIM_ENDPOINT = os.getenv("SLIM_ENDPOINT", "http://slim-dataplane:46357")
 
 # We can't use click decorators for async functions so we wrap the main function in a sync function
 @click.command()
-@click.option('--host', 'host', default='localhost')
-@click.option('--port', 'port', default=10000)
+@click.option('--host', 'host', default=os.getenv('A2A_HOST', 'localhost'), help='Host to bind the A2A server (env: A2A_HOST)')
+@click.option('--port', 'port', default=int(os.getenv('A2A_PORT', '10000')), help='Port to bind the A2A server (env: A2A_PORT)')
 def main(host: str, port: int):
     asyncio.run(async_main(host, port))
 
@@ -87,12 +87,17 @@ async def async_main(host: str, port: int):
         print("Running A2A server in p2p mode.")
         app = server.build()
 
-        # Add CORSMiddleware to allow requests from any origin (disables CORS restrictions)
+        # Add CORS middleware to allow cross-origin requests (configurable via environment)
+        cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
+        cors_methods = os.getenv("CORS_METHODS", "*").split(",") if os.getenv("CORS_METHODS") != "*" else ["*"]
+        cors_headers = os.getenv("CORS_HEADERS", "*").split(",") if os.getenv("CORS_HEADERS") != "*" else ["*"]
+
         app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],  # Allow all origins
-            allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
-            allow_headers=["*"],  # Allow all headers
+            allow_origins=cors_origins,  # Configurable origins
+            allow_methods=cors_methods,  # Configurable HTTP methods
+            allow_headers=cors_headers,  # Configurable headers
+            allow_credentials=os.getenv("CORS_CREDENTIALS", "false").lower() == "true",
         )
 
         # Disable uvicorn access logs to reduce noise from health checks

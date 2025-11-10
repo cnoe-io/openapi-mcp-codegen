@@ -1,0 +1,185 @@
+name: Build and Push Argo Agent Containers
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'examples/argo*/**'
+      - 'build/**'
+      - '.github/workflows/build-argo-agents.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'examples/argo*/**'
+      - 'build/**'
+      - '.github/workflows/build-argo-agents.yml'
+  workflow_dispatch:
+    inputs:
+      push_images:
+        description: 'Push images to registry'
+        required: false
+        default: 'true'
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  REGISTRY_NAMESPACE: cnoe-io
+
+jobs:
+  generate-code:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: argo-workflows
+            make_target: generate-argo-workflows-agent
+          - name: argocd
+            make_target: generate-argocd-agent
+          - name: argo-rollouts
+            make_target: generate-argo-rollouts-agent
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Generate code for ${{ matrix.service.name }}
+        run: make ${{ matrix.service.make_target }}
+        env:
+          # Add any required environment variables for code generation
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Upload generated code
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code-${{ matrix.service.name }}
+          path: examples/${{ matrix.service.name }}/generate_code/
+          retention-days: 1
+
+  build-and-push:
+    needs: generate-code
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - name: argo-workflows
+            image_name: agent-argo-workflows
+          - name: argocd
+            image_name: agent-argocd
+          - name: argo-rollouts
+            image_name: agent-argo-rollouts
+        variant:
+          - mcp
+          - a2a
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download generated code
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code-${{ matrix.service.name }}
+          path: examples/${{ matrix.service.name }}/generate_code/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.push_images)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/${{ matrix.service.image_name }}-${{ matrix.variant }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=autogen-{{date 'YYYYMMDD-HHmmss'}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./build/Dockerfile.${{ matrix.variant }}.agent
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            SERVICE_NAME=${{ matrix.service.name }}
+          push: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.push_images) }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate SARIF report
+        if: github.event_name != 'pull_request'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/${{ matrix.service.image_name }}-${{ matrix.variant }}:latest
+          format: 'sarif'
+          output: 'trivy-results-${{ matrix.service.name }}-${{ matrix.variant }}.sarif'
+
+      - name: Upload Trivy scan results
+        if: github.event_name != 'pull_request'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results-${{ matrix.service.name }}-${{ matrix.variant }}.sarif'
+
+  summary:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Generate build summary
+        run: |
+          echo "# 🚀 Argo Agent Container Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Built Images" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          services=("argo-workflows:agent-argo-workflows" "argocd:agent-argocd" "argo-rollouts:agent-argo-rollouts")
+          variants=("mcp" "a2a")
+
+          for service_pair in "${services[@]}"; do
+            IFS=':' read -r service_name image_name <<< "$service_pair"
+            echo "### $service_name" >> $GITHUB_STEP_SUMMARY
+            for variant in "${variants[@]}"; do
+              echo "- 📦 \`${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/${image_name}-${variant}:autogen-$(date +%Y%m%d-%H%M%S)\`" >> $GITHUB_STEP_SUMMARY
+            done
+            echo "" >> $GITHUB_STEP_SUMMARY
+          done
+
+          echo "## Usage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Pull and run any of the built images:" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "# MCP Server" >> $GITHUB_STEP_SUMMARY
+          echo "docker run -p 8000:8000 ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/agent-argocd-mcp:latest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# A2A Agent Server" >> $GITHUB_STEP_SUMMARY
+          echo "docker run -p 8000:8000 ${{ env.REGISTRY }}/${{ env.REGISTRY_NAMESPACE }}/agent-argocd-a2a:latest" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

@@ -5,7 +5,12 @@
 # A2A AGENT CONFIGURATION
 # =============================================================================
 
-# Agent host and port
+# A2A Server host and port
+# These can be overridden via command line: --host <host> --port <port>
+A2A_HOST=localhost
+A2A_PORT=10000
+
+# Legacy agent-specific host and port (kept for compatibility)
 {{ agent_name.upper() }}_AGENT_HOST=localhost
 {{ agent_name.upper() }}_AGENT_PORT=8000
 
@@ -16,12 +21,25 @@ A2A_TRANSPORT=p2p
 # SLIM endpoint (only needed if A2A_TRANSPORT=slim)
 SLIM_ENDPOINT=http://slim-dataplane:46357
 
+# CORS configuration for A2A HTTP server
+# CORS_ORIGINS=*                                   # Allow all origins (default, use with caution in production)
+# CORS_ORIGINS=http://localhost:3000,http://localhost:8080  # Specific origins (comma-separated, recommended for production)
+# CORS_METHODS=*                                   # Allow all methods (default)
+# CORS_METHODS=GET,POST,PUT,DELETE                 # Specific methods (comma-separated)
+# CORS_HEADERS=*                                   # Allow all headers (default)
+# CORS_HEADERS=Content-Type,Authorization,X-Requested-With  # Specific headers (comma-separated)
+# CORS_CREDENTIALS=false                           # Allow credentials (default: false)
+
 # =============================================================================
 # MCP SERVER CONFIGURATION
 # =============================================================================
 
 # MCP Server URL (AgentGateway or other MCP server)
 MCP_SERVER_URL={{ mcp_server_url }}
+
+# MCP Server host and port (for running MCP server locally)
+MCP_HOST=localhost
+MCP_PORT=3000
 
 # =============================================================================
 # LLM PROVIDER CONFIGURATION
@@ -71,6 +89,10 @@ SSL_VERIFY=true
 
 # {{ agent_display_name }} specific settings
 # Add any service-specific environment variables here
+
+# SSL Configuration for {{ agent_display_name }} API
+{{ mcp_name.upper() }}_VERIFY_SSL=true
+# {{ mcp_name.upper() }}_CA_BUNDLE=/path/to/ca-bundle.pem
 
 # Example: API timeouts
 API_TIMEOUT=30

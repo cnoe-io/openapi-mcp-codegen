@@ -1,57 +1,52 @@
-# Argo Workflows Example
+# Argo Workflows - MCP Server + A2A Agent
 
-This example demonstrates OpenAPI MCP Codegen with the Argo Workflows API, showcasing complex API handling and LLM enhancement capabilities.
+This directory contains both components for the Argo Workflows integration:
 
-## Quick Start
+## Components
 
-1. **Generate Enhanced MCP Server**:
-   ```bash
-   # Set your LLM API key for enhancements
-   export OPENAI_API_KEY=your-key-here
+### 1. `mcp_argo_workflows/` - MCP Server
+- **Purpose**: Streamable HTTP MCP server that wraps Argo Workflows API
+- **Protocol**: Model Context Protocol (MCP) over HTTP
+- **Generated from**: `argo-workflows-openapi-unedited.json`
 
-   # Generate with LLM enhancements
-   python -m openapi_mcp_codegen.enhance_and_generate \
-       argo-openapi.json \
-       mcp_server \
-       config.yaml \
-       --save-overlay overlay.yaml \
-       --save-enhanced-spec enhanced_openapi.json
-   ```
+### 2. `agent_argo_workflows/` - A2A Agent
+- **Purpose**: Agent-to-Agent (A2A) protocol agent
+- **Uses**: `cnoe-agent-utils` base classes (LangGraph + A2A integration)
+- **Connects to**: MCP server via streamable_http
+- **Protocol**: A2A over WebSocket/HTTP
 
-2. **Test AgentGateway Integration**:
-   ```bash
-   # Generate AgentGateway config
-   python -m openapi_mcp_codegen.generate_agw_config \
-       config.yaml argo-agentgateway.yaml
+## Architecture
 
-   # Start AgentGateway
-   agentgateway -f argo-agentgateway.yaml
-   ```
+```
+┌─────────────────┐    HTTP/MCP     ┌─────────────────┐    HTTP API   ┌─────────────────┐
+│  A2A Agent      │ ──────────────> │  MCP Server     │ ─────────────> │ Argo Workflows │
+│ agent_argo_     │                 │ mcp_argo_       │               │ API Server      │
+│ workflows       │                 │ workflows       │               │                 │
+└─────────────────┘                 └─────────────────┘               └─────────────────┘
+```
 
-## Files
+## Generation Commands
 
-- `argo-openapi.json` - Original Argo Workflows OpenAPI specification (771KB, 255 operations)
-- `config.yaml` - Configuration for package generation and enhancements
-- `argo-agentgateway.yaml` - Pre-generated AgentGateway configuration
+### Generate MCP Server
+```bash
+cd /path/to/openapi-mcp-codegen
+python -m openapi_mcp_codegen generate-mcp \
+  --spec-file examples/argo-workflows.bk/argo-workflows-openapi-unedited.json \
+  --output-dir examples/argo-workflows/mcp_argo_workflows
+```
 
-## Features Demonstrated
+### Generate A2A Agent
+```bash
+python -m openapi_mcp_codegen generate-a2a-agent \
+  --spec-file examples/argo-workflows.bk/argo-workflows-openapi-unedited.json \
+  --agent-name argo_workflows \
+  --mcp-server-url http://localhost:3000 \
+  --output-dir examples/argo-workflows/agent_argo_workflows
+```
 
-- **Complex API Handling**: 255 operations with nested Kubernetes-style schemas
-- **Smart Parameter Handling**: Automatic detection and consolidation of complex parameters
-- **LLM Enhancement**: AI-generated descriptions optimized for function calling
-- **AgentGateway Integration**: HTTP proxy configuration for web-based AI agents
+## Usage
 
-## Performance Metrics
+1. **Start MCP Server**: `cd mcp_argo_workflows && make run`
+2. **Start A2A Agent**: `cd agent_argo_workflows && make run-a2a`
 
-- **98.6% code size reduction** for complex operations
-- **99.3% parameter count reduction** while maintaining functionality
-- **OpenAI-compatible descriptions** under 300 characters
-- **Production usage** at Cisco's Jarvis platform
-
-## Setup Argo Workflows
-
-To test with a real Argo Workflows instance, see the [Argo Workflows Setup Guide](../../docs/docs/argocon/setup.md) for installation instructions.
-
-## Documentation
-
-For detailed documentation, see the [Argo Workflows example guide](../../docs/docs/examples/argo-workflows.md).
+The A2A agent will connect to the MCP server via HTTP and expose an A2A WebSocket interface.

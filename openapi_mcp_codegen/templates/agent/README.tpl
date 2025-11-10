@@ -28,7 +28,7 @@ See `Makefile` for useful targets.
    ```
 
 {% if not a2a_proxy %}
-2.  In one terminal, start the A2A server  
+2.  In one terminal, start the A2A server
    ```bash
    make run-a2a
    ```
@@ -39,7 +39,7 @@ See `Makefile` for useful targets.
   ```
   Environment:
   - SLIM_ENDPOINT=http://localhost:46357
-  - PORT=8000 (HTTP A2A)
+  - A2A_PORT=8000 (HTTP A2A)
   - SLIM_PORT=8001 (container process for SLIM bridge)
 {% endif %}
 
@@ -48,15 +48,15 @@ See `Makefile` for useful targets.
      - A2A endpoints handled by DefaultRequestHandler and backed by InMemoryTaskStore
    - The executor streams status updates while tools run and emits a final artifact on completion.
 {% else %}
-2.  In one terminal, start the WS proxy  
+2.  In one terminal, start the WS proxy
    ```bash
    make run-with-proxy
    ```
-3.  Start/deploy the external a2a-proxy and configure it to connect to ws://localhost:8000. The a2a-proxy will expose the A2A HTTP API to your clients.  
+3.  Start/deploy the external a2a-proxy and configure it to connect to ws://localhost:${A2A_PORT:-8000}. The a2a-proxy will expose the A2A HTTP API to your clients.
 {% endif %}
 
 {% if not a2a_proxy %}
-3.  In another terminal, launch the interactive client  
+3.  In another terminal, launch the interactive client
    ```bash
    make run-a2a-client
    # (equivalent to: docker run -it --network=host ghcr.io/cnoe-io/agent-chat-cli:stable)
@@ -68,7 +68,7 @@ Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools
 {% if generate_eval %}
 ## 📊 Evaluation
 
-1.  Enter **evaluation mode** to create or extend the test set  
+1.  Enter **evaluation mode** to create or extend the test set
 {% if not a2a_proxy %}
     ```bash
     make run-a2a-eval-mode   # same as: uv run python eval_mode.py
@@ -79,7 +79,7 @@ Follow the on-screen prompts to chat with your {{ mcp_name | capitalize }} tools
     echo "Evaluation mode disabled (A2A not generated)."
     ```
 {% endif %}
-    • Test each tool, update / skip as needed  
+    • Test each tool, update / skip as needed
     • Traces are stored in `eval/dataset.yaml`
 
 2.  Execute the automated benchmark (uploads to LangFuse)
@@ -112,6 +112,48 @@ Configure the agent:
   - optionally LANGFUSE_DEBUG=True for verbose logs
 
 Run the agent/A2A server as usual (make run-a2a). Visit Langfuse UI to see traces per request, including nested LLM/tool spans.
+
+## ⚙️ Environment Variables
+
+### A2A Agent Configuration
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `A2A_HOST` | `0.0.0.0` | Host for the A2A agent server |
+| `A2A_PORT` | `8000` | Port for the A2A agent server |
+
+### MCP Server Configuration
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MCP_HOST` | `localhost` | Host for local MCP server |
+| `MCP_PORT` | `3000` | Port for local MCP server |
+
+### Service-Specific Configuration
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `{{ mcp_name | upper }}_API_URL` | Yes | URL of the backend service |
+| `{{ mcp_name | upper }}_TOKEN` | Yes | Authentication token for the service |
+| `{{ mcp_name | upper }}_VERIFY_SSL` | No | Enable/disable SSL certificate verification (default: `true`). Falls back to `VERIFY_SSL` if not set. |
+| `{{ mcp_name | upper }}_CA_BUNDLE` | No | Path to custom CA bundle for SSL verification |
+
+### Usage Examples
+```bash
+# Run A2A agent on custom host/port
+A2A_HOST=localhost A2A_PORT=9000 make run-a2a
+
+# Run MCP server on custom host/port
+MCP_HOST=0.0.0.0 MCP_PORT=4000 make run-mcp
+
+# Disable SSL verification for self-signed certificates
+{{ mcp_name | upper }}_VERIFY_SSL=false make run-a2a
+
+# Use custom CA bundle for SSL verification
+{{ mcp_name | upper }}_CA_BUNDLE=/path/to/ca-bundle.pem make run-a2a
+
+# Set via environment file
+echo "A2A_PORT=9000" >> .env
+echo "MCP_PORT=4000" >> .env
+echo "{{ mcp_name | upper }}_VERIFY_SSL=false" >> .env
+```
 
 Notes:
 - Ensure Langfuse platform version >= 3.63.0 for v3 SDK.

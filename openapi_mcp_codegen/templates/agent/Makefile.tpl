@@ -3,9 +3,9 @@
 .PHONY: run-with-proxy reset
 {% else %}
 {% if enable_slim %}
-.PHONY: run-a2a run-a2a-and-slim run-a2a-client reset
+.PHONY: run-a2a run-a2a-and-slim run-a2a-client run-mcp reset
 {% else %}
-.PHONY: run-a2a run-a2a-client reset
+.PHONY: run-a2a run-a2a-client run-mcp reset
 {% endif %}
 {% endif %}
 
@@ -17,15 +17,21 @@ ensure-uv-venv:
 	@if [ ! -d ".venv" ]; then echo "Creating uv virtual environment (.venv)"; uv venv; fi
 
 {% if a2a_proxy %}
-# Starts the WebSocket JSON-RPC upstream server used by the external “a2a-proxy” (set {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN)
+# Starts the WebSocket JSON-RPC upstream server used by the external "a2a-proxy" (set {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN)
 run-with-proxy: ensure-uv-venv  ## Install deps (via uv) and run the WebSocket proxy
 	uv pip install -e . --upgrade
-	uv run python -m protocol_bindings.ws_proxy --host 0.0.0.0 --port $${PORT:-8000}
+	uv run python -m protocol_bindings.ws_proxy --host $${A2A_HOST:-0.0.0.0} --port $${A2A_PORT:-8000}
 {% else %}
 # Starts the A2A HTTP server (expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
 run-a2a: ensure-uv-venv  ## Install deps (via uv) and run the A2A server
 	uv pip install -e . --upgrade
-	uv run python -m protocol_bindings.a2a_server --host 0.0.0.0 --port $${PORT:-8000}
+	uv run python -m protocol_bindings.a2a_server --host $${A2A_HOST:-0.0.0.0} --port $${A2A_PORT:-8000}
+
+# Run the MCP server in HTTP mode (expects {{ mcp_name | upper }}_API_URL + {{ mcp_name | upper }}_TOKEN in env)
+run-mcp: ensure-uv-venv  ## Run MCP server in HTTP mode
+	@echo "Starting MCP server in HTTP mode on $${MCP_HOST:-localhost}:$${MCP_PORT:-3000}..."
+	@echo "Make sure to set {{ mcp_name | upper }}_TOKEN and {{ mcp_name | upper }}_API_URL environment variables"
+	MCP_MODE=http MCP_HOST=$${MCP_HOST:-localhost} MCP_PORT=$${MCP_PORT:-3000} uv run python -m mcp_{{ mcp_name }}.server
 {% if enable_slim %}
 # Run HTTP A2A and SLIM bridge side-by-side via Docker Compose
 .PHONY: run-a2a-and-slim
@@ -33,7 +39,7 @@ run-a2a-and-slim:
 	@if [ ! -f docker-compose.yml ]; then echo "docker-compose.yml not found. Ensure this agent was generated with --enable-slim."; exit 1; fi
 	docker build -t agent_{{ mcp_name }}:latest .
 	SLIM_ENDPOINT=$${SLIM_ENDPOINT:-http://localhost:46357} \
-	A2A_PORT=$${PORT:-8000} \
+	A2A_PORT=$${A2A_PORT:-8000} \
 	SLIM_A2A_PORT=$${SLIM_PORT:-8001} \
 	docker compose up
 

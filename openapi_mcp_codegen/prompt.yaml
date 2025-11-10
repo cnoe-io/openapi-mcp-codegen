@@ -1,5 +1,6 @@
 # OpenAPI Enhancement Prompts for Agent-Friendly Descriptions
 # These prompts guide LLMs to generate descriptions optimized for AI agents using function calling
+# Updated with improvements from argocon-na-2025-b branch manual fixes
 
 # System prompt for operation/endpoint description enhancement
 operation_description:
@@ -83,8 +84,11 @@ parameter_description:
     Good: "Label selector to filter results (e.g., app=nginx,env=prod)"
     Good: "Maximum workflows to return (default: 50)"
     Good: "Stream real-time updates when true"
+    Good: "Timeout in seconds for the list operation"  # For timeout_seconds parameters
+    Good: "Send initial events when starting watch mode"  # For send_initial_events
     Bad: "The name parameter specifies the name of the workflow resource"
     Bad: "labelSelector (string) - A selector to restrict the list of returned objects"
+    Bad: "timeout_seconds parameter"  # Too generic, doesn't explain purpose
 
   user_prompt_template: |
     Parameter: {param_name}
@@ -282,5 +286,534 @@ examples:
         param_type: integer
         param_required: false
       output: "Maximum number of results to return"
+
+# MCP Server Generation Rules
+# These rules ensure generated MCP servers are compatible with MCP protocol requirements
+# and follow best practices for AI agent consumption
+mcp_generation_rules:
+  # LLM Provider Limitations
+  llm_limitations:
+    RULE-LLM-LIMITATION-1:
+      title: "Function Name Length Strategy (Target 30 chars, Max 64 chars)"
+      description: |
+        Function names use aggressive abbreviation targeting ~30 characters with 64 char hard limit:
+        - Target: ~30 characters (aggressive abbreviation for consistency)
+        - Hard limit: 64 characters (OpenAI: "string too long. Expected maximum length 64")
+        - Strategy: Apply abbreviations to all names over 30 chars for consistent short names
+        Apply aggressive abbreviation techniques while preserving semantic clarity.
+      enforcement: "mandatory"
+      target_length: 30
+      max_length: 64
+    
+    RULE-LLM-LIMITATION-2:
+      title: "Tool Description Length Limit (Max 10024 chars)"
+      description: |
+        MCP tool descriptions must not exceed 10024 characters to prevent registration failures:
+        - Target: ~9000 characters (safe buffer under the 10024 limit)
+        - Hard limit: 10024 characters (MCP protocol limitation)
+        - Strategy: Intelligent truncation at sentence boundaries with "[Description truncated for MCP compatibility]" suffix
+        - Truncation priority: Find sentence endings ('. ', '.\n', '\n\n') within 80% of limit
+        - Fallback: Hard truncate with "..." if no good break point found
+      enforcement: "mandatory"
+      max_length: 10024
+      target_length: 9000
+      truncation_strategy:
+        priority_order:
+          1: "Keep HTTP method verb (get, post, put, delete, patch)"
+          2: "Keep primary resource type (workflow, template, pod, etc)"
+          3: "Keep key identifiers (namespace, name, uid)"
+          4: "Abbreviate secondary elements"
+          5: "Remove connector words (by, with, and, all, from, to)"
+
+        abbreviation_rules:
+          # Service/System abbreviations
+          - "service → svc"
+          - "account → acct"
+          - "permissions → perms"
+          - "configuration → cfg"
+          - "template → tpl"
+          - "namespace → ns"
+          - "workflow → wf"
+          - "archived → arch"
+          - "cluster → clust"
+          - "selector → sel"
+          - "metadata → meta"
+          - "artifact → art"
+          - "event_source → event_src"
+          - "cron_workflow → cron_wf"
+
+          # Action abbreviations
+          - "create → create"  # Keep as-is (short)
+          - "retrieve → get"   # Use shorter verb
+          - "update → update"  # Keep as-is
+          - "delete → delete"  # Keep as-is
+          - "list → list"      # Keep as-is
+          - "submit → submit"  # Keep as-is
+          - "suspend → suspend"
+          - "resume → resume"
+          - "terminate → term"
+          - "resubmit → resub"
+
+          # Remove unnecessary words
+          - "all_" → ""
+          - "_by_" → "_"
+          - "_with_" → "_"
+          - "_and_" → "_"
+          - "_from_" → "_"
+          - "_using_" → "_"
+
+      examples:
+        - bad: "get_workflow_template_service_account_permissions_by_namespace_and_name" (76 chars)
+          good: "get_wf_tpl_svc_acct_perms" (26 chars)
+
+        - bad: "list_all_archived_workflows_with_label_selector_and_field_selector" (70 chars)
+          good: "list_arch_wf_filtered" (22 chars)
+
+        - bad: "api_v1_cluster_workflow_templates_namespace_name_service_account" (67 chars)
+          good: "api_v1_clust_wf_tpl_ns_name_svc_acct" (37 chars)
+
+        - bad: "artifact_service_get_output_artifact_by_uid_node_id_artifact_name" (69 chars)
+          good: "get_output_art_by_uid_node_art_name" (35 chars)
+
+        - bad: "workflow_service_terminate_workflow_by_namespace_and_name_force" (65 chars)
+          good: "term_wf_ns_name_force" (21 chars)
+
+      validation_check: |
+        After generating function names, ALWAYS verify:
+        if len(function_name) > 64:
+            raise ValueError(f"Function name too long: {len(function_name)} chars, max 64")
+
+      implementation_notes: |
+        - MANDATORY: Check function name length before code generation
+        - Add comment: # Target: ≤30 chars, Hard limit: ≤64 chars
+        - Prioritize readability: even abbreviated names should be understandable
+        - Test with actual OpenAI API calls during development
+        - Log warning if original name would exceed limit
+
+  # Python Code Style Requirements
+  python_style:
+    PYTHON-STYLE-NAMING-1:
+      title: "Snake Case for Functions and Parameters"
+      description: |
+        Python function names and parameter names must use snake_case convention.
+        This applies to all generated MCP tool functions and their parameters.
+      enforcement: "mandatory"
+      examples:
+        - bad: "getUserWorkflow(userName, workflowId)"
+        - good: "get_user_workflow(user_name, workflow_id)"
+        - bad: "createWorkflowTemplate(templateName, serviceAccount)"
+        - good: "create_workflow_template(template_name, service_account)"
+      implementation_notes: |
+        - Convert camelCase from OpenAPI to snake_case
+        - Convert PascalCase from OpenAPI to snake_case
+        - Preserve existing snake_case from OpenAPI
+        - Apply to: function names, parameter names, variable names
+
+    PYTHON-STYLE-NAMING-2:
+      title: "OpenAPI operationId Transformation"
+      description: |
+        Transform OpenAPI operationId to valid Python function names.
+        Handle common patterns: camelCase, PascalCase, kebab-case, dots, special chars.
+      enforcement: "mandatory"
+      transformation_rules:
+        - "camelCase → snake_case"
+        - "PascalCase → snake_case"
+        - "kebab-case → snake_case"
+        - "dots.in.name → underscores_in_name"
+        - "Remove special characters except underscore"
+        - "Ensure starts with letter or underscore"
+        - "Apply RULE-LLM-LIMITATION-1 if result exceeds 30 chars (target) or 64 chars (hard limit)"
+      examples:
+        - operationId: "getUserWorkflows"
+          function_name: "get_user_workflows"
+        - operationId: "WorkflowService.ListWorkflows"
+          function_name: "workflow_service_list_workflows"
+        - operationId: "list-archived-workflows"
+          function_name: "list_archived_workflows"
+
+    PYTHON-STYLE-TYPE-HINTS-1:
+      title: "Type Hints for All Parameters"
+      description: |
+        All function parameters must include type hints.
+        Use appropriate Python types based on OpenAPI schema types.
+      enforcement: "mandatory"
+      type_mapping:
+        string: "str"
+        integer: "int"
+        number: "float"
+        boolean: "bool"
+        array: "list"
+        object: "dict"
+      examples:
+        - "def get_workflow(namespace: str, name: str, include_metadata: bool = False) -> dict:"
+        - "def list_workflows(namespace: str, limit: int = 50, labels: dict = None) -> list:"
+
+    PYTHON-STYLE-DOCSTRING-1:
+      title: "Google Style Docstrings"
+      description: |
+        All generated functions must include comprehensive docstrings using Google style.
+        Include: description, Args, Returns, Raises sections.
+      enforcement: "mandatory"
+      example: |
+        def get_workflow(namespace: str, name: str) -> dict:
+            \"\"\"Retrieves workflow details by name.
+
+            Use when: checking status or investigating execution failures.
+
+            Args:
+                namespace: Kubernetes namespace containing the workflow
+                name: Workflow name to retrieve
+
+            Returns:
+                dict: Workflow details including status, spec, and metadata
+
+            Raises:
+                ValueError: If namespace or name is empty
+                APIError: If workflow not found or API call fails
+            \"\"\"
+
+  # MCP Protocol Requirements
+  mcp_protocol:
+    MCP-PROTOCOL-SCHEMA-1:
+      title: "JSON Schema for Tool Parameters"
+      description: |
+        Every MCP tool must provide a valid JSON Schema for its parameters.
+        Schema must accurately reflect OpenAPI parameter definitions.
+      enforcement: "mandatory"
+      schema_requirements:
+        - "Include 'type' for all parameters"
+        - "Mark required parameters in 'required' array"
+        - "Include 'description' for agent context"
+        - "Use 'enum' for parameters with fixed values"
+        - "Set appropriate 'default' values"
+        - "Include 'format' hints (date, uri, email, etc.)"
+      example: |
+        {
+          "type": "object",
+          "properties": {
+            "namespace": {
+              "type": "string",
+              "description": "Kubernetes namespace containing the workflow"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of results to return",
+              "default": 50,
+              "minimum": 1,
+              "maximum": 1000
+            }
+          },
+          "required": ["namespace"]
+        }
+
+    MCP-PROTOCOL-ERROR-1:
+      title: "Structured Error Handling"
+      description: |
+        MCP tools must return structured error responses that agents can interpret.
+        Include error type, message, and actionable guidance.
+      enforcement: "mandatory"
+      error_format: |
+        {
+          "error": {
+            "type": "ValidationError|APIError|NotFoundError|AuthenticationError",
+            "message": "Human-readable error description",
+            "details": "Additional context for debugging",
+            "suggestion": "Actionable next steps for the agent"
+          }
+        }
+      implementation_notes: |
+        - Catch and transform HTTP errors to MCP error format
+        - Include request context in error details
+        - Provide retry guidance when appropriate
+        - Distinguish between client errors (4xx) and server errors (5xx)
+
+    MCP-PROTOCOL-RESPONSE-1:
+      title: "Consistent Response Format"
+      description: |
+        MCP tools must return responses in a consistent, agent-friendly format.
+        Include both data and metadata for agent decision-making.
+      enforcement: "mandatory"
+      response_format: |
+        {
+          "data": { ... },  # Actual response data from API
+          "metadata": {
+            "operation": "get_workflow",
+            "timestamp": "2025-11-10T12:00:00Z",
+            "api_version": "v1",
+            "success": true
+          }
+        }
+
+  # Agent-Friendly Design Patterns
+  agent_patterns:
+    AGENT-PATTERN-PAGINATION-1:
+      title: "Automatic Pagination Handling"
+      description: |
+        For list operations, provide options for automatic pagination.
+        Let agents retrieve all results or control pagination explicitly.
+      enforcement: "recommended"
+      parameters:
+        - "limit: Maximum results per page"
+        - "continue_token: Token for next page"
+        - "fetch_all: Boolean to auto-paginate (default: False)"
+      implementation_notes: |
+        - If fetch_all=True, internally handle pagination and return all results
+        - If fetch_all=False, return single page with continuation token
+        - Include pagination metadata in response
+
+    AGENT-PATTERN-FILTERING-1:
+      title: "Consistent Filter Parameters"
+      description: |
+        Standardize filtering parameters across list operations.
+        Use common parameter names and patterns.
+      enforcement: "recommended"
+      standard_filters:
+        - "label_selector: Kubernetes-style label filtering"
+        - "field_selector: Field-based filtering"
+        - "name_prefix: Filter by name prefix"
+        - "status: Filter by resource status"
+      examples:
+        - "label_selector='app=backend,env=prod'"
+        - "field_selector='status.phase=Running'"
+        - "name_prefix='workflow-2024'"
+
+    AGENT-PATTERN-DRY-RUN-1:
+      title: "Dry Run Support for Mutations"
+      description: |
+        For create/update/delete operations, support dry_run parameter.
+        Allows agents to validate operations before execution.
+      enforcement: "recommended"
+      implementation: |
+        - Add dry_run: bool = False parameter
+        - If dry_run=True, validate but don't execute
+        - Return validation results and what would happen
+
+  # Code Generation Quality
+  code_quality:
+    CODEGEN-QUALITY-LOGGING-1:
+      title: "Comprehensive Logging"
+      description: |
+        Generated code must include appropriate logging for debugging.
+        Use Python logging module with structured logging.
+      enforcement: "mandatory"
+      logging_points:
+        - "Function entry with parameters (DEBUG level)"
+        - "API calls with endpoint and method (INFO level)"
+        - "Errors and exceptions (ERROR level)"
+        - "Successful completions (INFO level)"
+      example: |
+        logger.info(f"Calling get_workflow: namespace={namespace}, name={name}")
+        try:
+            response = api_client.get(f"/api/v1/workflows/{namespace}/{name}")
+            logger.info(f"Successfully retrieved workflow: {name}")
+        except Exception as e:
+            logger.error(f"Failed to get workflow {name}: {str(e)}")
+
+    CODEGEN-QUALITY-VALIDATION-1:
+      title: "Input Validation"
+      description: |
+        Validate all required parameters before making API calls.
+        Provide clear error messages for invalid inputs.
+      enforcement: "mandatory"
+      validation_checks:
+        - "Required parameters are not None or empty"
+        - "String parameters match expected patterns (if applicable)"
+        - "Numeric parameters are within valid ranges"
+        - "Enum parameters match allowed values"
+      example: |
+        if not namespace or not isinstance(namespace, str):
+            raise ValueError("namespace must be a non-empty string")
+        if limit is not None and (limit < 1 or limit > 1000):
+            raise ValueError("limit must be between 1 and 1000")
+
+    CODEGEN-QUALITY-TIMEOUT-1:
+      title: "Configurable Timeouts"
+      description: |
+        All API calls must have configurable timeouts.
+        Prevent agents from hanging on unresponsive APIs.
+      enforcement: "mandatory"
+      implementation: |
+        - Add timeout parameter to generated functions (default: 30 seconds)
+        - Pass timeout to underlying HTTP client
+        - Document timeout behavior in function docstring
+
+# Validation and Testing Rules for Generated Code
+generated_code_validation:
+  VALIDATION-SYNTAX-1:
+    description: "Generated Python code must be syntactically valid (passes ast.parse)"
+    enforcement: "mandatory"
+
+  VALIDATION-IMPORTS-1:
+    description: "All imported modules must be available in the generated environment"
+    enforcement: "mandatory"
+
+  VALIDATION-SCHEMA-1:
+    description: "Generated JSON schemas must validate against JSON Schema Draft 7"
+    enforcement: "mandatory"
+
+  VALIDATION-FUNCTION-NAMES-1:
+    description: "Generated function names must be unique within the module"
+    enforcement: "mandatory"
+
+  VALIDATION-FUNCTION-LENGTH-1:
+    description: "Generated function names MUST NOT exceed 64 characters (OpenAI/LLM limitation), target ~30 chars"
+    enforcement: "mandatory"
+    validation_code: |
+      for function_name in generated_function_names:
+          if len(function_name) > 64:
+              raise ValueError(f"Function name '{function_name}' is {len(function_name)} chars, exceeds 64 char limit")
+    error_handling: |
+      If function name exceeds target length (30 chars) or hard limit (64 chars):
+      1. Apply abbreviation rules from RULE-LLM-LIMITATION-1
+      2. Remove connector words (by, with, and, all, from, to)
+      3. Use standard abbreviations (service→svc, workflow→wf, template→tpl)
+      4. Validate final name is still semantically meaningful
+      5. Add comment indicating truncation reason
+
+# Code Generation Improvements Based on argocon-na-2025-b Branch Analysis
+# These rules codify the manual improvements discovered in the working branch
+code_generation_improvements:
+  # Parameter Naming Improvements
+  parameter_naming:
+    PARAM-NAMING-SNAKE-CASE-1:
+      title: "Consistent Snake Case Parameter Naming"
+      description: |
+        Use consistent snake_case naming for all parameters to improve Python
+        compatibility and readability. Based on argocon-na-2025-b improvements.
+      enforcement: "mandatory"
+      rules:
+        - "Convert camelCase API parameters to snake_case consistently"
+        - "Use single underscore (_) for all word separations, not double underscore (__)"
+        - "Maintain API field name recognition while ensuring Python compliance"
+        - "Apply naming consistently across all generated tools"
+      examples:
+        good:
+          - "param_list_options_label_selector"  # from listOptions.labelSelector
+          - "param_list_options_timeout_seconds"  # from listOptions.timeoutSeconds
+          - "param_list_options_allow_watch_bookmarks"  # from listOptions.allowWatchBookmarks
+        bad:
+          - "param_listOptions_labelSelector"  # Mixed casing
+          - "param_listOptions__labelSelector"  # Double underscore (old pattern)
+          - "param_listOptionslabelSelector"  # No separation
+
+    PARAM-TYPE-CONSISTENCY-1:
+      title: "Parameter Type Consistency"
+      description: |
+        Ensure parameter types are consistent and appropriate for the API usage.
+        Based on type improvements found in argocon-na-2025-b.
+      enforcement: "recommended"
+      rules:
+        - "Use string type for timeout parameters that accept time expressions"
+        - "Use appropriate primitive types matching OpenAPI specification"
+        - "Consider API usage patterns when determining parameter types"
+        - "Provide sensible defaults for optional parameters"
+      examples:
+        timeout_parameters:
+          - "param_list_options_timeout_seconds: str = None  # Can accept '30s', '1m', etc."
+        boolean_parameters:
+          - "param_list_options_send_initial_events: bool = False"
+
+  # Code Formatting Improvements
+  code_formatting:
+    FORMAT-INDENTATION-1:
+      title: "Consistent 4-Space Indentation"
+      description: |
+        Use 4-space indentation consistently throughout generated code.
+        This improves readability and follows Python PEP 8 standards.
+      enforcement: "mandatory"
+      rules:
+        - "Use 4 spaces for each indentation level"
+        - "Align function parameters vertically"
+        - "Maintain consistent indentation in docstrings"
+        - "Apply consistent indentation in nested structures"
+
+    FORMAT-DOCSTRING-1:
+      title: "Improved Docstring Formatting"
+      description: |
+        Generate well-formatted, readable docstrings with proper structure.
+        Based on docstring improvements from argocon-na-2025-b.
+      enforcement: "mandatory"
+      rules:
+        - "Use consistent indentation in docstrings (4 spaces)"
+        - "Structure docstrings with clear sections: Description, Args, Returns, Raises"
+        - "Include practical examples in parameter descriptions"
+        - "Keep descriptions concise but informative"
+
+  # Security Improvements
+  security_practices:
+    SECURITY-SSL-1:
+      title: "Proper SSL Certificate Handling"
+      description: |
+        Generate secure HTTP client code that properly handles SSL certificates.
+        Based on security improvements from argocon-na-2025-b.
+      enforcement: "mandatory"
+      rules:
+        - "Do not suppress SSL warnings globally"
+        - "Use verify=True for HTTPS requests (default httpx behavior)"
+        - "Allow explicit SSL configuration through environment variables"
+        - "Remove blanket SSL warning suppressions"
+      implementation:
+        - "Remove: warnings.filterwarnings('ignore', message='Unverified HTTPS request')"
+        - "Remove: verify=False from httpx.AsyncClient"
+        - "Allow SSL configuration via environment variables if needed"
+
+    SECURITY-TOKEN-1:
+      title: "Secure Token Handling"
+      description: |
+        Ensure API tokens are handled securely and not exposed in logs or errors.
+      enforcement: "mandatory"
+      rules:
+        - "Redact tokens from error messages"
+        - "Mask authorization headers in debug logs"
+        - "Use secure string comparison for tokens"
+        - "Validate token format before use"
+
+  # API Response Improvements
+  response_handling:
+    RESPONSE-STRUCTURE-1:
+      title: "Consistent Response Structure"
+      description: |
+        Generate tools that return consistent, agent-friendly response structures.
+      enforcement: "recommended"
+      rules:
+        - "Include operation metadata in responses"
+        - "Provide structured error responses"
+        - "Include timestamp and operation context"
+        - "Make responses easily parseable by AI agents"
+
+  # Nested Parameter Handling Improvements
+  nested_parameters:
+    NESTED-PARAM-ASSEMBLY-1:
+      title: "Consistent Nested Parameter Assembly"
+      description: |
+        Generate consistent logic for assembling nested request bodies from flat parameters.
+        Based on improvements found in argocon-na-2025-b client.py.
+      enforcement: "mandatory"
+      rules:
+        - "Use single underscore (_) consistently for parameter nesting"
+        - "Update assemble_nested_body function to use single underscore splitting"
+        - "Maintain backwards compatibility with API field names"
+        - "Ensure nested structure matches API expectations"
+      implementation_example: |
+        def assemble_nested_body(flat_body: Dict[str, Any]) -> Dict[str, Any]:
+            """
+            Re-inflate the nested JSON structure expected by the API.
+
+            Keys generated by the code-generator have the pattern:
+                body_<top>_<sub>_<subsub> …  (single "_" = nesting)
+
+            A single "_" is part of the original field name and DOES create nesting
+            to maintain parameter naming requirements (^[a-zA-Z0-9_.-]{1,64}$).
+            """
+            nested: Dict[str, Any] = {}
+            for key, value in flat_body.items():
+                if key.startswith("body_"):
+                    key = key[5:]  # drop helper prefix
+                parts = key.split("_")  # single underscore is a divider
+                cursor = nested
+                for part in parts[:-1]:
+                    cursor = cursor.setdefault(part, {})
+                cursor[parts[-1]] = value
+            return nested
 
 

@@ -84,3 +84,163 @@ agentgateway:
       - Content-Type
       - cache-control
     max_age: 3600
+
+# Agent Skills Configuration
+# Define skills based on available MCP tools
+skills:
+  - id: "workflow_management"
+    name: "Workflow Management"
+    description: "Core workflow operations for creating, managing, and monitoring Argo Workflows"
+    tags: ["workflows", "lifecycle", "management"]
+    examples:
+      - "List all workflows in the default namespace"
+      - "Get the status and details of workflow 'my-pipeline'"
+      - "Create a new workflow from a specification"
+      - "Delete workflow 'failed-job' from namespace 'production'"
+      - "Submit a workflow template as a new workflow instance"
+      - "Lint and validate a workflow specification before creation"
+      - "Stop a running workflow 'long-running-job'"
+      - "Suspend workflow 'batch-process' to pause execution"
+      - "Resume a suspended workflow 'paused-pipeline'"
+      - "Terminate workflow 'stuck-process' immediately"
+      - "Set custom parameters or outputs for workflow 'data-pipeline'"
+
+  - id: "workflow_templates"
+    name: "Workflow Templates"
+    description: "Manage reusable workflow templates for standardized processes"
+    tags: ["templates", "reusability", "standardization"]
+    examples:
+      - "List all workflow templates in the 'ci-cd' namespace"
+      - "Create a new workflow template for CI/CD pipelines"
+      - "Get details of workflow template 'build-and-deploy'"
+      - "Update workflow template 'test-runner' with new steps"
+      - "Delete obsolete workflow template 'legacy-build'"
+      - "Lint workflow template before saving changes"
+      - "Submit workflow template 'data-processing' as a new workflow"
+
+  - id: "cluster_workflow_templates"
+    name: "Cluster Workflow Templates"
+    description: "Manage cluster-wide workflow templates available across all namespaces"
+    tags: ["cluster-templates", "global", "shared-resources"]
+    examples:
+      - "List all cluster workflow templates"
+      - "Create a cluster-wide template for common CI/CD patterns"
+      - "Get details of cluster template 'global-security-scan'"
+      - "Update cluster template 'compliance-check' with new requirements"
+      - "Delete unused cluster template 'deprecated-build'"
+      - "Lint cluster workflow template for validation"
+
+  - id: "cron_workflows"
+    name: "Scheduled Workflows (Cron)"
+    description: "Manage recurring and scheduled workflows using cron expressions"
+    tags: ["scheduling", "cron", "automation", "recurring"]
+    examples:
+      - "List all cron workflows in the 'batch' namespace"
+      - "Create a cron workflow that runs daily backup at 2 AM"
+      - "Get details of cron workflow 'weekly-reports'"
+      - "Update cron workflow 'daily-cleanup' schedule to run twice daily"
+      - "Suspend cron workflow 'maintenance-tasks' temporarily"
+      - "Resume suspended cron workflow 'log-rotation'"
+      - "Delete cron workflow 'obsolete-sync'"
+      - "Lint cron workflow specification before deployment"
+
+  - id: "archived_workflows"
+    name: "Archived Workflows"
+    description: "Access and manage historical workflow data and completed executions"
+    tags: ["history", "archives", "completed", "analysis"]
+    examples:
+      - "List archived workflows from the past month"
+      - "Get details of archived workflow with specific UID"
+      - "Search archived workflows by label selector 'app=data-pipeline'"
+      - "Delete old archived workflows to free up storage"
+      - "Resubmit failed archived workflow 'data-migration-v1'"
+      - "Retry archived workflow 'payment-processing' with same parameters"
+      - "Get archived workflow label keys for filtering"
+      - "Get available label values for archived workflow queries"
+
+  - id: "event_driven_automation"
+    name: "Event-Driven Automation"
+    description: "Manage event sources and sensors for reactive workflow automation"
+    tags: ["events", "sensors", "reactive", "automation"]
+    examples:
+      - "List all event sources in the 'monitoring' namespace"
+      - "Create webhook event source for CI/CD triggers"
+      - "Get details of event source 'github-webhooks'"
+      - "Update event source 'prometheus-alerts' configuration"
+      - "Delete unused event source 'legacy-notifications'"
+      - "List all sensors in the 'automation' namespace"
+      - "Create sensor to trigger workflows from Slack messages"
+      - "Get details of sensor 'deployment-trigger'"
+      - "Update sensor 'alert-responder' with new conditions"
+      - "Delete sensor 'test-sensor' after validation"
+      - "Receive and process external events"
+      - "List workflow event bindings for debugging"
+
+  - id: "monitoring_observability"
+    name: "Monitoring & Observability"
+    description: "Access logs, artifacts, and monitoring data for workflows"
+    tags: ["logs", "artifacts", "monitoring", "debugging"]
+    examples:
+      - "Get logs for workflow 'data-processing-job'"
+      - "Get logs for specific pod in workflow 'multi-step-pipeline'"
+      - "Download output artifacts from workflow 'ml-training'"
+      - "Get input artifacts used by workflow 'data-validation'"
+      - "Get artifacts by workflow UID for historical analysis"
+      - "Stream real-time logs from running workflow"
+      - "Watch workflow events as they happen"
+      - "Monitor event source logs for troubleshooting"
+      - "Watch sensor logs for debugging triggers"
+
+  - id: "system_information"
+    name: "System Information"
+    description: "Access Argo Workflows server information and user details"
+    tags: ["system", "info", "version", "user"]
+    examples:
+      - "Get Argo Workflows server version and build information"
+      - "Get current user information and permissions"
+      - "Get server info including supported features"
+      - "Check API server health and status"
+      - "Collect system events for diagnostics"
+
+# Agent System Prompt Configuration
+system_prompt: |
+  You are an expert Argo Workflows assistant that helps users manage, create, and monitor workflows in Kubernetes.
+
+  # CORE CAPABILITIES
+  You can help with:
+  - 🔄 **Workflow Management**: Create, submit, monitor, and control workflow execution
+  - 📋 **Templates**: Manage reusable workflow and cluster workflow templates
+  - ⏰ **Scheduled Workflows**: Set up and manage cron-based recurring workflows
+  - 📊 **Monitoring**: View logs, artifacts, and real-time workflow status
+  - 🔍 **Troubleshooting**: Debug failures, retry workflows, and investigate issues
+  - 📁 **Archives**: Access historical workflow data and completed executions
+  - ⚡ **Event-Driven**: Configure event sources and sensors for reactive automation
+
+  # INTERACTION GUIDELINES
+  🎯 **Be Specific**: When asking for workflow operations, provide:
+  - Namespace (default: "default")
+  - Workflow/template names
+  - Specific parameters when available
+
+  💡 **Example Requests**:
+  - "Create a workflow template for a CI/CD pipeline in the 'production' namespace"
+  - "List all failed workflows from the last week"
+  - "Get logs for workflow 'data-processing-job' in namespace 'etl'"
+  - "Suspend the cron workflow 'daily-backup' temporarily"
+  - "Show me the artifacts from workflow 'ml-training-v2'"
+
+  # WORKFLOW CREATION TIPS
+  When creating workflows or templates, I'll guide you through:
+  - Template structure (apiVersion, kind, metadata, spec)
+  - Container specifications and dependencies
+  - Input/output parameters and artifacts
+  - Step sequencing and DAG configurations
+  - Resource requirements and constraints
+
+  # COMMON PATTERNS
+  - For **new workflows**: I'll ask for namespace, template details, and specifications
+  - For **monitoring**: I'll help filter by status, labels, or time ranges
+  - For **troubleshooting**: I'll check logs, events, and workflow status
+  - For **cleanup**: I'll help identify and remove old or failed workflows
+
+  Ask me anything about Argo Workflows - I'm here to help you build, run, and manage your workflow automation!

@@ -14,7 +14,7 @@ PYTHON = $(VENV_DIR)/bin/python
 PIP = $(VENV_DIR)/bin/pip
 UV = uv
 
-.PHONY: help setup-venv setup-env check-env uv-sync clean run-a2a test
+.PHONY: help setup-venv setup-env check-env uv-sync clean run-a2a run-mcp test
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -50,8 +50,13 @@ clean: ## Clean up generated files and virtual environment
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
 
-run-a2a: setup-venv check-env uv-sync ## Run A2A agent with uvicorn
-	$(UV) run python -m $(AGENT_PKG_NAME) --host 0.0.0.0 --port $${A2A_PORT:-8000}
+run-a2a: setup-venv check-env uv-sync ## Run A2A agent
+	$(UV) run python -m $(AGENT_PKG_NAME) --host $${A2A_HOST:-localhost} --port $${A2A_PORT:-10000}
+
+run-mcp: setup-venv check-env uv-sync ## Run MCP server in HTTP mode
+	@echo "Starting MCP server in HTTP mode on $${MCP_HOST:-localhost}:$${MCP_PORT:-3000}..."
+	@echo "Make sure to set required environment variables (API tokens, URLs, etc.)"
+	MCP_MODE=http MCP_HOST=$${MCP_HOST:-localhost} MCP_PORT=$${MCP_PORT:-3000} $(UV) run python -m mcp_{{ agent_name }}.server
 
 test: setup-venv uv-sync ## Run tests
 	$(UV) run pytest

@@ -35,6 +35,174 @@ def camel_to_snake(name):
     s3 = re.sub(r'_+', '_', s2)
     return s3
 
+
+def truncate_function_name(name: str, http_method: str = "", used_names: set = None, target_length: int = 30, max_length: int = 64) -> str:
+    """
+    Truncate function names with consistent service abbreviations and aggressive length limits.
+    Always applies service prefix abbreviations for consistency, then applies length-based truncation.
+    Adds HTTP method prefix to ensure uniqueness when duplicates would occur.
+
+    Args:
+        name: Original function name
+        http_method: HTTP method (GET, POST, etc.) to add as prefix if needed for uniqueness
+        used_names: Set of already used function names to check for duplicates
+        target_length: Target length to aim for (default: 30)
+        max_length: Hard limit - anything over this MUST be truncated (default: 64)
+
+    Always applies consistent abbreviations for known service patterns.
+    Based on RULE-LLM-LIMITATION-1 from prompt.yaml.
+    """
+    if used_names is None:
+        used_names = set()
+
+    # Always apply consistent service prefix abbreviations first (regardless of length)
+    abbreviated = name
+
+    # Known service patterns that should always be abbreviated for consistency
+    service_patterns = {
+        'workflow_service_': 'wf_svc_',
+        'event_source_service_': 'evt_src_svc_',
+        'event_service_': 'evt_svc_',
+        'sensor_service_': 'sns_svc_',
+        'artifact_service_': 'art_svc_',
+        'info_service_': 'info_svc_',
+        'cluster_workflow_template_service_': 'clust_wf_tpl_svc_',
+        'workflow_template_service_': 'wf_tpl_svc_',
+        'cron_workflow_service_': 'cron_wf_svc_',
+    }
+
+    # Apply service pattern abbreviations
+    for full_pattern, abbrev_pattern in service_patterns.items():
+        if abbreviated.startswith(full_pattern):
+            abbreviated = abbreviated.replace(full_pattern, abbrev_pattern, 1)
+            break
+
+    # Continue to HTTP prefix logic even for short names to ensure consistency
+
+    # Log warning for names that will be truncated
+    if len(name) > max_length:
+        logger.warning(f"Function name '{name}' ({len(name)} chars) exceeds {max_length} hard limit, truncating...")
+    else:
+        logger.info(f"Function name '{name}' ({len(name)} chars) exceeds {target_length} target, applying abbreviations...")
+
+    # Apply aggressive abbreviation rules for target length
+    abbreviations = {
+        # Service/System abbreviations
+        'service': 'svc',
+        'account': 'acct',
+        'permissions': 'perms',
+        'configuration': 'cfg',
+        'template': 'tpl',
+        'templates': 'tpls',
+        'namespace': 'ns',
+        'workflow': 'wf',
+        'workflows': 'wfs',
+        'archived': 'arch',
+        'cluster': 'clust',
+        'selector': 'sel',
+        'metadata': 'meta',
+        'artifact': 'art',
+        'artifacts': 'arts',
+        'event_source': 'evt_src',
+        'event_sources': 'evt_srcs',
+        'cron_workflow': 'cron_wf',
+        'cron_workflows': 'cron_wfs',
+        'sensor': 'sns',
+        'sensors': 'snss',
+        # Action abbreviations
+        'retrieve': 'get',
+        'terminate': 'term',
+        'resubmit': 'resub',
+        'suspend': 'susp',
+        'resume': 'res',
+        'delete': 'del',
+        'create': 'new',
+        'update': 'upd',
+        'list': 'ls'
+    }
+
+    # Remove unnecessary connector words
+    connectors_to_remove = ['_all_', '_by_', '_with_', '_and_', '_from_', '_using_']
+
+    abbreviated = name
+
+    # Apply abbreviations
+    for full_word, abbrev in abbreviations.items():
+        abbreviated = abbreviated.replace(full_word, abbrev)
+
+    # Remove connector words
+    for connector in connectors_to_remove:
+        abbreviated = abbreviated.replace(connector, '_')
+
+    # Clean up multiple underscores
+    abbreviated = re.sub(r'_+', '_', abbreviated)
+    abbreviated = abbreviated.strip('_')
+
+    # Apply more aggressive truncation if still over target length
+    if len(abbreviated) > target_length:
+        parts = abbreviated.split('_')
+        if len(parts) > 4:
+            # For long functions, keep first part (action) + key middle part + last part
+            abbreviated = '_'.join([parts[0], parts[1], parts[-1]])
+        elif len(parts) > 3:
+            # Keep first 2 and last part
+            abbreviated = '_'.join(parts[:2] + parts[-1:])
+
+    # Clean up multiple underscores again after aggressive truncation
+    abbreviated = re.sub(r'_+', '_', abbreviated)
+    abbreviated = abbreviated.strip('_')
+
+    # ALWAYS add HTTP method prefix at the front for consistency
+    final_name = abbreviated
+    should_add_prefix = False
+
+    # Check if the function name already starts with an HTTP verb
+    starts_with_http_verb = any(final_name.startswith(verb + '_') for verb in [
+        'get', 'post', 'put', 'patch', 'del', 'delete', 'head', 'opts', 'options'
+    ])
+
+    # Always add HTTP method prefix unless it already starts with one
+    if http_method and not starts_with_http_verb:
+        should_add_prefix = True
+    elif http_method and final_name in used_names:
+        # Always add prefix for duplicates even if already has HTTP verb
+        should_add_prefix = True
+
+    if should_add_prefix:
+        # Add HTTP method prefix
+        method_abbrev = {
+            "GET": "get",
+            "POST": "post",
+            "PUT": "put",
+            "PATCH": "patch",
+            "DELETE": "del",
+            "HEAD": "head",
+            "OPTIONS": "opts"
+        }
+        prefix = method_abbrev.get(http_method.upper(), http_method.lower()[:3])
+
+        # Reserve space for prefix + underscore, respecting max_length
+        max_base_length = max_length - len(prefix) - 1
+        if len(abbreviated) > max_base_length:
+            abbreviated = abbreviated[:max_base_length].rstrip('_')
+
+        final_name = f"{prefix}_{abbreviated}"
+
+        if final_name != abbreviated:
+            reason = "for consistency" if not (abbreviated in used_names) else "to avoid duplicate"
+            logger.info(f"Added method prefix {reason}: '{abbreviated}' → '{final_name}'")
+
+    # Hard limit enforcement - must not exceed max_length
+    if len(final_name) > max_length:
+        logger.warning(f"Applying hard truncation to enforce {max_length} char limit")
+        final_name = final_name[:max_length].rstrip('_')
+
+    # Add to used names set
+    used_names.add(final_name)
+
+    logger.info(f"Truncated '{name}' ({len(name)}) → '{final_name}' ({len(final_name)})")
+    return final_name
+
 class A2AAgentGenerator:
     """
     A2AAgentGenerator is a class responsible for generating standalone A2A agents
@@ -80,6 +248,7 @@ class A2AAgentGenerator:
             self.config = yaml.safe_load(f)
 
         self.spec = self._load_spec()
+        self.used_function_names = set()  # Track function names to avoid duplicates
 
     def _load_spec(self) -> Dict[str, Any]:
         """
@@ -211,20 +380,47 @@ class A2AAgentGenerator:
         if agent_description is None:
             agent_description = f"An AI agent that interacts with {agent_name} via MCP server."
 
-        # Extract skills from OpenAPI spec
+        # Extract skills from config.yaml if available, otherwise fallback to OpenAPI spec
         skills = []
         skill_examples = []
 
-        for path, ops in self.spec.get("paths", {}).items():
-            for method, op in ops.items():
-                if method.upper() not in {"GET", "POST", "PUT", "DELETE"}:
-                    continue
-                operation_desc = op.get("summary") or op.get("description", "")
-                if operation_desc:
-                    skill_examples.append(f"'{operation_desc.strip()}'")
+        # Try to get skills from config first
+        config_skills = self.config.get("skills", [])
+        if config_skills:
+            # Use skills from config.yaml
+            skills = config_skills
+            # For backward compatibility, also create a flattened list of examples for simple template usage
+            for skill in config_skills:
+                skill_examples.extend([f"'{example}'" for example in skill.get("examples", [])])
+        else:
+            # Fallback to extracting from OpenAPI spec (original behavior)
+            for path, ops in self.spec.get("paths", {}).items():
+                for method, op in ops.items():
+                    if method.upper() not in {"GET", "POST", "PUT", "DELETE"}:
+                        continue
+                    operation_desc = op.get("summary") or op.get("description", "")
+                    if operation_desc:
+                        skill_examples.append(f"'{operation_desc.strip()}'")
 
-        # Limit to reasonable number of examples
-        skill_examples = skill_examples[:5]
+            # Limit to reasonable number of examples
+            skill_examples = skill_examples[:5]
+
+        # Get system prompt from config if available
+        config_system_prompt = self.config.get("system_prompt")
+        if config_system_prompt:
+            system_prompt = config_system_prompt.strip()
+        else:
+            # Fallback system prompt
+            system_prompt = f"""You are a {agent_name.replace('_', ' ').title()} expert assistant. You help users manage and interact with {agent_name.replace('_', ' ').title()} services.
+
+Your capabilities include:
+- Managing {agent_name.replace('_', ' ').title()} resources and configurations
+- Monitoring service status and performance
+- Handling API operations and data retrieval
+- Troubleshooting issues and providing solutions
+- Providing best practices and recommendations
+
+Always provide clear, actionable responses and include relevant resource names, status information, and next steps when available."""
 
         context = {
             **file_header_kwargs,
@@ -233,6 +429,8 @@ class A2AAgentGenerator:
             'agent_description': agent_description,
             'mcp_server_url': mcp_server_url,
             'skill_examples': skill_examples,
+            'skills': skills,
+            'system_prompt': system_prompt,
             'timestamp': datetime.datetime.now().isoformat()
         }
 
@@ -268,24 +466,21 @@ class A2AAgentGenerator:
         self.render_template("a2a_agent/protocol_bindings/a2a_server/agent_executor.tpl",
                             os.path.join(a2a_server_dir, "agent_executor.py"), **context)
 
-        self.render_template("init_empty.tpl", 
+        self.render_template("init_empty.tpl",
                             os.path.join(a2a_server_dir, "__init__.py"), **context)
-        
+
         # Generate utils directory with local dependencies
         utils_dir = os.path.join(agent_pkg_dir, "utils")
-        
-        self.render_template("a2a_agent/utils/__init__.tpl", 
+
+        self.render_template("a2a_agent/utils/__init__.tpl",
                             os.path.join(utils_dir, "__init__.py"), **context)
-        
-        self.render_template("a2a_agent/utils/base_agent.tpl", 
-                            os.path.join(utils_dir, "base_agent.py"), **context)
-        
-        self.render_template("a2a_agent/utils/base_agent_executor.tpl", 
-                            os.path.join(utils_dir, "base_agent_executor.py"), **context)
-        
-        self.render_template("a2a_agent/utils/prompt_templates.tpl", 
+
+        # Note: base_agent.py and base_agent_executor.py are no longer generated
+        # since we now use cnoe_agent_utils.agents.BaseLangGraphAgent and BaseLangGraphAgentExecutor
+
+        self.render_template("a2a_agent/utils/prompt_templates.tpl",
                             os.path.join(utils_dir, "prompt_templates.py"), **context)
-        
+
         # Generate client files
         clients_dir = os.path.join(agent_output_dir, "clients")
         a2a_client_dir = os.path.join(clients_dir, "a2a")

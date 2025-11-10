@@ -53,10 +53,23 @@ The agent connects to the MCP server at:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `{{ agent_name.upper() }}_AGENT_HOST` | `localhost` | Host for the A2A agent |
-| `{{ agent_name.upper() }}_AGENT_PORT` | `8000` | Port for the A2A agent |
+| `A2A_HOST` | `localhost` | Host for the A2A agent server |
+| `A2A_PORT` | `10000` | Port for the A2A agent server |
 | `A2A_TRANSPORT` | `p2p` | Transport mode (`p2p` or `slim`) |
 | `SLIM_ENDPOINT` | `http://slim-dataplane:46357` | SLIM endpoint (if using SLIM transport) |
+| `MCP_SERVER_URL` | `{{ mcp_server_url }}` | MCP server endpoint |
+
+**Service-Specific Configuration**:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `{{ mcp_name.upper() }}_VERIFY_SSL` | `true` | Enable/disable SSL certificate verification. Falls back to `VERIFY_SSL` if not set. |
+| `{{ mcp_name.upper() }}_CA_BUNDLE` | | Path to custom CA bundle for SSL verification |
+
+**Legacy Environment Variables** (for compatibility):
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `{{ agent_name.upper() }}_AGENT_HOST` | `localhost` | Legacy host setting |
+| `{{ agent_name.upper() }}_AGENT_PORT` | `8000` | Legacy port setting |
 
 ## Installation
 
@@ -91,11 +104,20 @@ The agent connects to the MCP server at:
 ### Running the Agent
 
 ```bash
-# Run in development mode
+# Run with default settings (localhost:10000)
 make run-a2a
 
+# Run with custom host/port via environment variables
+A2A_HOST=0.0.0.0 A2A_PORT=8080 make run-a2a
+
 # Or directly with uv
-uv run python -m agent_{{ agent_name }} --host 0.0.0.0 --port 8000
+uv run python -m agent_{{ agent_name }}
+
+# With custom host/port via command line
+uv run python -m agent_{{ agent_name }} --host 0.0.0.0 --port 8080
+
+# View help for all options
+uv run python -m agent_{{ agent_name }} --help
 ```
 
 ### Integration with Other A2A Agents

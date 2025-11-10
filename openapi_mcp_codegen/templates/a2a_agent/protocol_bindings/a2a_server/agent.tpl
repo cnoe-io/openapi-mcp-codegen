@@ -31,6 +31,9 @@ class ResponseFormat(BaseModel):
 class {{ agent_display_name.replace(' ', '') }}Agent(BaseLangGraphAgent):
     """{{ agent_display_name }} Agent using BaseLangGraphAgent for consistent streaming."""
 
+    {% if system_prompt %}
+    SYSTEM_INSTRUCTION = """{{ system_prompt }}"""
+    {% else %}
     SYSTEM_INSTRUCTION = scope_limited_agent_instruction(
         service_name="{{ agent_display_name }}",
         service_operations="interact with {{ agent_display_name }} API through MCP server",
@@ -44,6 +47,7 @@ class {{ agent_display_name.replace(' ', '') }}Agent(BaseLangGraphAgent):
         include_error_handling=True,  # Real API calls through MCP server
         include_date_handling=True    # Enable date handling
     )
+    {% endif %}
 
     RESPONSE_FORMAT_INSTRUCTION = (
         'Select status as completed if the request is complete. '

@@ -1,8 +1,34 @@
 # LLM Integration
 
-OpenAPI MCP Codegen integrates with leading LLM providers to generate AI-optimized API documentation.
+OpenAPI MCP Codegen integrates with leading LLM providers to enhance both MCP server and A2A agent generation with AI-powered intelligence.
 
-## Supported Providers
+## Core LLM Features
+
+### 1. System Prompt Generation
+Generate domain-specific AI prompts optimized for API interactions:
+
+```bash
+uvx openapi_mcp_codegen generate-mcp \
+  --spec-file api.json \
+  --generate-system-prompt
+```
+
+### 2. Enhanced Docstring Generation
+Improve function documentation for better AI agent comprehension:
+
+```bash
+uvx openapi_mcp_codegen generate-mcp \
+  --spec-file api.json \
+  --enhance-docstring-with-llm
+```
+
+### 3. A2A Agent Intelligence
+Generate intelligent agent configurations with skills and capabilities:
+- **Skills Definition**: AI-generated capability descriptions
+- **Agent Prompts**: Domain-specific system prompts for A2A agents
+- **Example Generation**: Contextual usage examples
+
+## Supported LLM Providers
 
 ### OpenAI
 - **Models**: GPT-4, GPT-4o, GPT-3.5-turbo
@@ -14,12 +40,12 @@ OpenAPI MCP Codegen integrates with leading LLM providers to generate AI-optimiz
 - **Configuration**: Set `ANTHROPIC_API_KEY` environment variable
 - **Provider**: Set `LLM_PROVIDER=anthropic`
 
-## Enhancement Features
+## LLM Enhancement Benefits
 
-- **Contextual Descriptions**: Generate "Use when:" patterns for better AI comprehension
-- **OpenAI Compatibility**: Descriptions under 300 characters for function calling
-- **Plain Text Format**: No markdown or special formatting
-- **Fallback Support**: Rule-based enhancement when LLM unavailable
+- **Better Tool Selection**: AI-optimized descriptions improve agent tool discovery
+- **Contextual Intelligence**: Generated prompts understand specific API domains
+- **Production Ready**: All enhancements maintain code quality and type safety
+- **Fallback Support**: Graceful degradation when LLM services unavailable
 
 ## Configuration
 
