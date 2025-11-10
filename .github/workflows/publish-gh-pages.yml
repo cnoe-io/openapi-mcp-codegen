@@ -5,7 +5,9 @@ description: "Publish Docusaurus site to GitHub Pages"
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+      - "feat/openapi-overlay-enhancement-and-mcp-http-mode"
     tags: ["*"]
 
   # Allows you to run this workflow manually from the Actions tab
