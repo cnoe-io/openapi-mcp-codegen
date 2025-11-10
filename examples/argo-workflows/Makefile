@@ -1,10 +1,11 @@
 # Makefile for Argo Workflows MCP Server
 
 
-.PHONY: run-mcp-server run-mcp-http run-a2a run-a2a-and-slim run-a2a-client run-a2a-eval-mode eval reset help
-
-
-
+.PHONY: run-mcp-server run-mcp-http run-a2a run-a2a-client run-a2a-eval-mode \
+        validate validate-original \
+        generate-agw-config run-agentgateway stop-agentgateway agw-validate \
+        generate-enhanced generate-overlay apply-overlay generate-mcp \
+        reset clean help
 
 # Runs the MCP server in stdio mode (for testing with MCP clients)
 run-mcp-server:  ## Install deps and run the MCP server in stdio mode
