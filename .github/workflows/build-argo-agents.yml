@@ -43,10 +43,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.13'
 
@@ -63,7 +63,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Upload generated code
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: generated-code-${{ matrix.service.name }}
           path: examples/${{ matrix.service.name }}/generate_code/
@@ -87,10 +87,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download generated code
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: generated-code-${{ matrix.service.name }}
           path: examples/${{ matrix.service.name }}/generate_code/
@@ -144,7 +144,7 @@ jobs:
 
       - name: Upload Trivy scan results
         if: github.event_name != 'pull_request'
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results-${{ matrix.service.name }}-${{ matrix.variant }}.sarif'
 
