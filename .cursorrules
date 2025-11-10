@@ -1,0 +1,182 @@
+# Cursor Rules for OpenAPI MCP Codegen
+
+## ADR (Architecture Decision Record) Guidelines
+
+### When to Create ADRs
+Create an ADR for:
+- ✅ New features that introduce architectural changes
+- ✅ Significant refactoring or code reorganization
+- ✅ Integration with external systems or tools
+- ✅ Changes to core algorithms or processing pipelines
+- ✅ Breaking changes to public APIs or CLI interfaces
+- ✅ Performance optimizations with trade-offs
+- ✅ Security-related changes or fixes
+- ✅ Documentation of important bug fixes that affect architecture
+
+### ADR Template Structure
+When creating ADRs, use this exact structure:
+
+```markdown
+# ADR-XXX: [Short Descriptive Title]
+
+## Status
+**[PROPOSED|ACCEPTED|DEPRECATED|SUPERSEDED]** [✅ *Implemented* | 🚧 *In Progress* | ❌ *Rejected*]
+
+## Context
+[Describe the forces at play, including technological, political, social, and project local. These forces are probably in tension, and should be called out as such.]
+
+### Problems Identified:
+1. **Problem 1**: Description
+2. **Problem 2**: Description
+3. **Problem 3**: Description
+
+### User Request (if applicable):
+> "Direct quote from user request or issue"
+
+## Decision
+[Describe the response to these forces. This is the statement of what we will do.]
+
+### Implementation Strategy:
+1. **Step 1**: Detailed approach
+2. **Step 2**: Detailed approach
+3. **Step 3**: Detailed approach
+
+## Consequences
+[Describe the resulting context, after applying the decision. All consequences should be listed here, not just the "positive" ones. A particular decision may have positive, negative, and neutral consequences.]
+
+### Positive:
+- ✅ **Benefit 1**: Description
+- ✅ **Benefit 2**: Description
+
+### Negative (if any):
+- ❌ **Trade-off 1**: Description
+- ⚠️ **Risk 1**: Description and mitigation
+
+### Architecture Changes (if applicable):
+#### Before:
+```
+[Current architecture diagram/description]
+```
+
+#### After:
+```
+[New architecture diagram/description]
+```
+
+### Implementation Status
+**[PROPOSED|IN PROGRESS|COMPLETED]** [Status emoji]
+
+[Brief summary of implementation status and any remaining work]
+```
+
+### ADR Numbering Convention
+- Use sequential numbering: ADR-001, ADR-002, etc.
+- Check existing ADRs in `docs/docs/adr/` to determine next number
+- Update `docs/sidebars.ts` to include new ADR in the ADRs section
+
+### File Naming Convention
+- File path: `docs/docs/adr/ADR-XXX-short-kebab-case-title.md`
+- Use kebab-case for the descriptive part
+- Example: `ADR-005-a2a-agent-refactoring.md`
+
+### Integration with Documentation
+- Always update `docs/sidebars.ts` when adding new ADRs
+- Link to relevant ADRs from other documentation pages
+- Include ADRs in relevant architecture or design discussions
+
+## Code Quality Guidelines
+
+### Python Code Style
+- Follow PEP 8 conventions
+- Use type hints for all function parameters and return values
+- Add comprehensive docstrings using Google style
+- Use meaningful variable and function names
+- Keep functions focused on single responsibilities
+
+### Template Development
+- Use Jinja2 templates in `openapi_mcp_codegen/templates/`
+- Include comprehensive comments in templates
+- Test templates with multiple OpenAPI specifications
+- Document template variables and their expected types
+
+### Testing Requirements
+- Add unit tests for new functionality in `tests/`
+- Include integration tests for CLI commands
+- Test with real OpenAPI specifications from `examples/`
+- Validate generated code actually works
+
+### Documentation Updates
+- Update README.md if adding new CLI commands or major features
+- Create or update relevant documentation in `docs/docs/`
+- Include code examples and usage patterns
+- Add troubleshooting sections for complex features
+
+## Git Commit Guidelines
+
+### Conventional Commits with DCO
+Always use conventional commits format with DCO sign-off:
+
+```bash
+git commit -s -m "feat: add smart parameter handling for complex nested objects
+
+- Implement algorithm to detect deeply nested request bodies
+- Consolidate parameters into dictionary types when threshold exceeded
+- Add configuration options for parameter limits
+- Include comprehensive tests and documentation
+
+Closes #123"
+```
+
+### Commit Types
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes
+- `style:` - Code style/formatting changes
+- `refactor:` - Code refactoring without functional changes
+- `test:` - Adding or modifying tests
+- `chore:` - Maintenance tasks, dependency updates
+
+### DCO (Developer Certificate of Origin)
+Always include DCO sign-off:
+- Use `git commit -s` or add `Signed-off-by: Your Name <your.email@example.com>`
+- This certifies you have the right to contribute the code
+
+## OpenAPI Specific Guidelines
+
+### OpenAPI Enhancement
+- Follow OpenAPI Overlay Specification 1.0.0 standards
+- Use LLM prompts from `openapi_mcp_codegen/prompt.yaml`
+- Validate enhanced specifications are compliant
+- Test with multiple OpenAPI specification versions (3.0.x, 3.1.x)
+
+### MCP Server Generation
+- Ensure generated servers follow MCP protocol specifications
+- Include proper error handling and logging
+- Generate comprehensive README files for each server
+- Test generated servers with MCP clients
+
+### Example Maintenance
+- Keep examples in `examples/` directory up-to-date
+- Include real-world OpenAPI specifications
+- Provide working demonstrations for each major feature
+- Document setup and usage instructions for each example
+
+## Performance and Reliability
+
+### Code Generation Performance
+- Monitor template rendering performance
+- Optimize for large OpenAPI specifications (>1000 operations)
+- Include progress indicators for long-running operations
+- Cache intermediate results when possible
+
+### Error Handling
+- Provide clear, actionable error messages
+- Include suggestions for fixing common issues
+- Log detailed debug information for troubleshooting
+- Gracefully handle malformed OpenAPI specifications
+
+### Resource Management
+- Clean up temporary files and resources
+- Handle large OpenAPI specifications efficiently
+- Provide options for memory-constrained environments
+- Include resource usage monitoring and limits

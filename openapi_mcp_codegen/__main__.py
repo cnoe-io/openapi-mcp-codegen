@@ -12,6 +12,7 @@ import yaml
 import click
 import dotenv
 from openapi_mcp_codegen.mcp_codegen import MCPGenerator
+from openapi_mcp_codegen.a2a_agent_codegen import A2AAgentGenerator
 
 def load_spec(spec_path):
     """Load the OpenAPI spec from either JSON or YAML file"""
@@ -29,7 +30,19 @@ def get_mcp_name(spec_path):
     base_name = title.split()[0].lower()  # Take first word and convert to lowercase
     return f"{base_name}_mcp"
 
-@click.command(short_help="OpenAPI MCP Code Generator")
+@click.group(name="openapi-mcp-codegen", help="OpenAPI MCP Code Generator")
+@click.option(
+    "--log-level",
+    type=click.Choice(["critical", "error", "warning", "info", "debug"], case_sensitive=False),
+    default="info",
+    show_default=True,
+    help="Set logging level.",
+)
+def main(log_level):
+  """OpenAPI MCP Code Generator - Generate MCP servers and A2A agents from OpenAPI specs."""
+  pass
+
+@main.command(name="generate-mcp", help="Generate MCP server from OpenAPI specification")
 @click.option(
   "--spec-file",
   type=click.Path(exists=True, dir_okay=False, readable=True),
@@ -42,13 +55,6 @@ def get_mcp_name(spec_path):
   default=None,
   help="Directory to output the generated MCP server (default: <script_dir>/<mcp_name>).",
 )
-@click.option(
-    "--log-level",
-    type=click.Choice(["critical", "error", "warning", "info", "debug"], case_sensitive=False),
-    default="info",
-    show_default=True,
-    help="Set logging level.",
-  )
 @click.option(
     "--generate-agent",
     is_flag=True,
@@ -98,8 +104,7 @@ def get_mcp_name(spec_path):
   default=False,
   help="Enhance generated docstrings using an LLM and add OpenAPI spec to docstring.",
 )
-def main(
-   log_level,
+def generate_mcp(
    spec_file,
    output_dir,
    dry_run,
@@ -152,6 +157,113 @@ def main(
 
   print(f"🎉 Generated MCP server in {output_dir}")
   print("\n🚀 See the README.md to continue")
+
+@main.command(name="generate-a2a-agent", help="Generate A2A agent that connects to external MCP server")
+@click.option(
+  "--spec-file",
+  type=click.Path(exists=True, dir_okay=False, readable=True),
+  required=True,
+  help="Path to the OpenAPI spec file (YAML or JSON) - used to understand API capabilities.",
+)
+@click.option(
+  "--agent-name",
+  type=str,
+  required=True,
+  help="Name of the agent (e.g., 'argo_workflows'). Will be sanitized for use as Python package name.",
+)
+@click.option(
+  "--mcp-server-url",
+  type=str,
+  required=True,
+  help="URL of the external MCP server (e.g., 'http://localhost:3000')",
+)
+@click.option(
+  "--output-dir",
+  type=click.Path(file_okay=False, writable=True),
+  default=None,
+  help="Directory to output the generated A2A agent (default: ./agent_<agent_name>).",
+)
+@click.option(
+  "--agent-description",
+  type=str,
+  default=None,
+  help="Description of the agent (default: auto-generated from agent name).",
+)
+@click.option(
+  "--dry-run",
+  is_flag=True,
+  default=False,
+  help="Run the generator in dry-run mode without writing files.",
+)
+def generate_a2a_agent(
+   spec_file,
+   agent_name,
+   mcp_server_url,
+   output_dir,
+   agent_description,
+   dry_run,
+):
+  """Generate a standalone A2A agent that connects to an external MCP server."""
+
+  # Load environment variables from .env file if present
+  env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+  if os.path.exists(env_path):
+    dotenv.load_dotenv(env_path)
+
+  # Get the directory of this script
+  script_dir = os.path.dirname(os.path.abspath(__file__))
+
+  # Path to the OpenAPI spec
+  spec_path = spec_file
+
+  # Sanitize agent name
+  sanitized_name = agent_name.lower().replace(' ', '_').replace('-', '_')
+
+  # Output directory for the generated A2A agent
+  if output_dir is None:
+    output_dir = f"./agent_{sanitized_name}"
+
+  # Check if config file exists for the spec
+  spec_dir = os.path.dirname(spec_path)
+  config_path = os.path.join(spec_dir, 'config.yaml')
+
+  # Create a minimal config if it doesn't exist
+  if not os.path.exists(config_path):
+    print(f"Creating minimal config file: {config_path}")
+    config_data = {
+      'title': agent_name,
+      'author': 'Generated User',
+      'author_email': 'user@example.com',
+      'timestamp': '2025-01-01T00:00:00Z'
+    }
+    os.makedirs(spec_dir, exist_ok=True)
+    with open(config_path, 'w', encoding='utf-8') as f:
+      yaml.dump(config_data, f, default_flow_style=False)
+
+  print(f"Using configuration file: {config_path}")
+
+  # Create the A2A agent generator
+  generator = A2AAgentGenerator(
+      script_dir=script_dir,
+      spec_path=spec_path,
+      output_dir=output_dir,
+      config_path=config_path,
+      dry_run=dry_run,
+  )
+
+  # Generate the A2A agent
+  agent_output_dir = generator.generate_a2a_agent(
+      agent_name=agent_name,
+      mcp_server_url=mcp_server_url,
+      agent_description=agent_description
+  )
+
+  print(f"🎉 Generated A2A agent '{agent_name}' in {agent_output_dir}")
+  print(f"🔗 Connects to MCP server: {mcp_server_url}")
+  print(f"\n🚀 To run the agent:")
+  print(f"   cd {agent_output_dir}")
+  print(f"   make dev        # Setup environment")
+  print(f"   make run-a2a    # Start the agent")
 
 if __name__ == '__main__':
     main()

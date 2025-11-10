@@ -878,6 +878,7 @@ class MCPGenerator:
 
       logger.info("A2A server scaffolding generation completed")
 
+
   def generate_pyproject(self):
     """
     Generate the pyproject.toml file.

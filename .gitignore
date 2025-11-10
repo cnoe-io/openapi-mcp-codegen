@@ -184,3 +184,6 @@ generated/
 .aider*
 
 examples/argocd/mcp_server
+
+node_modules/
+.next/

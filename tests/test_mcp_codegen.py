@@ -360,6 +360,7 @@ def test_cli_accepts_enable_slim(monkeypatch, tmp_path):
     result = runner.invoke(
         main,
         [
+            "generate-mcp",
             "--spec-file",
             str(spec),
             "--output-dir",
