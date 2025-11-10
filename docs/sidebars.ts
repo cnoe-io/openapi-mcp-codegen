@@ -150,7 +150,7 @@ const sidebars: SidebarsConfig = {
       items: [
         {
           type: 'doc',
-          id: 'argocon/README',
+          id: 'argocon/index',
           label: 'Presentation Overview',
         },
         {

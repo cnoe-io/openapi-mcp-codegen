@@ -57,7 +57,7 @@ The Argo UI will be available at: http://localhost:2746
 
 Once you have Argo Workflows running:
 
-1. Generate the MCP server (see [README.md](./README.md))
+1. Generate the MCP server (see [Presentation Overview](./index.md))
 2. Configure the MCP server to point to your Argo instance
 3. Use the AI agent to interact with Argo workflows
 

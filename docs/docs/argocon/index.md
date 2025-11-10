@@ -1,5 +1,4 @@
 ---
-id: README
 title: ArgoCon 2025 Presentation
 sidebar_label: Presentation Overview
 ---

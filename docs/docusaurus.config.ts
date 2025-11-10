@@ -149,7 +149,7 @@ const config: Config = {
             },
             {
               label: 'ArgoCon 2025 Presentation',
-              to: '/argocon/README',
+              to: '/argocon',
             }
           ],
         },
