@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def archived_workflow_service_resubmit_archived_workflow(
+async def arch_wf_svc_resubmit_arch_wf(
     path_uid: str,
     body_memoized: bool = None,
     body_name: str = None,

@@ -16,16 +16,16 @@ logger = logging.getLogger("mcp_tools")
 async def workflow_template_service_list_workflow_templates(
     path_namespace: str,
     param_namePattern: str = None,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
+    param_list_options_label_selector: str = None,
+    param_list_options_field_selector: str = None,
+    param_list_options_watch: bool = False,
+    param_list_options_allow_watch_bookmarks: bool = False,
+    param_list_options_resource_version: str = None,
+    param_list_options_resource_versionMatch: str = None,
+    param_list_options_timeout_seconds: str = None,
+    param_list_options_limit: str = None,
+    param_list_options_continue: str = None,
+    param_list_options_send_initial_events: bool = False,
 ) -> Any:
     """
     Retrieve details of a specific workflow-templates
@@ -39,25 +39,25 @@ async def workflow_template_service_list_workflow_templates(
 
         param_namePattern (str): Name of the resource to operate on
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+        param_list_options_label_selector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+        param_list_options_field_selector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+        param_list_options_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+        param_list_options_allow_watch_bookmarks (bool): allow_watch_bookmarks requests watch events with type "BOOKMARK". Servers that do ...
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_list_options_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+        param_list_options_resource_versionMatch (str): resource_versionMatch determines how resource_version is applied to list calls. It...
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+        param_list_options_timeout_seconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+        param_list_options_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+        param_list_options_continue (str): The continue option should be set when retrieving more results from the server. ...
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
+        param_list_options_send_initial_events (bool): `send_initial_events=true` may be set together with `watch=true`. In that case, th...
 
 
     Returns:
@@ -74,68 +74,68 @@ async def workflow_template_service_list_workflow_templates(
     if param_namePattern is not None:
         params["namePattern"] = str(param_namePattern).lower() if isinstance(param_namePattern, bool) else param_namePattern
 
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
+    if param_list_options_label_selector is not None:
+        params["list_options_label_selector"] = (
+            str(param_list_options_label_selector).lower()
+            if isinstance(param_list_options_label_selector, bool)
+            else param_list_options_label_selector
         )
 
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
+    if param_list_options_field_selector is not None:
+        params["list_options_field_selector"] = (
+            str(param_list_options_field_selector).lower()
+            if isinstance(param_list_options_field_selector, bool)
+            else param_list_options_field_selector
         )
 
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    if param_list_options_watch is not None:
+        params["list_options_watch"] = (
+            str(param_list_options_watch).lower() if isinstance(param_list_options_watch, bool) else param_list_options_watch
         )
 
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
+    if param_list_options_allow_watch_bookmarks is not None:
+        params["list_options_allow_watch_bookmarks"] = (
+            str(param_list_options_allow_watch_bookmarks).lower()
+            if isinstance(param_list_options_allow_watch_bookmarks, bool)
+            else param_list_options_allow_watch_bookmarks
         )
 
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
+    if param_list_options_resource_version is not None:
+        params["list_options_resource_version"] = (
+            str(param_list_options_resource_version).lower()
+            if isinstance(param_list_options_resource_version, bool)
+            else param_list_options_resource_version
         )
 
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
+    if param_list_options_resource_versionMatch is not None:
+        params["list_options_resource_versionMatch"] = (
+            str(param_list_options_resource_versionMatch).lower()
+            if isinstance(param_list_options_resource_versionMatch, bool)
+            else param_list_options_resource_versionMatch
         )
 
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
+    if param_list_options_timeout_seconds is not None:
+        params["list_options_timeout_seconds"] = (
+            str(param_list_options_timeout_seconds).lower()
+            if isinstance(param_list_options_timeout_seconds, bool)
+            else param_list_options_timeout_seconds
         )
 
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    if param_list_options_limit is not None:
+        params["list_options_limit"] = (
+            str(param_list_options_limit).lower() if isinstance(param_list_options_limit, bool) else param_list_options_limit
         )
 
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    if param_list_options_continue is not None:
+        params["list_options_continue"] = (
+            str(param_list_options_continue).lower() if isinstance(param_list_options_continue, bool) else param_list_options_continue
         )
 
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
+    if param_list_options_send_initial_events is not None:
+        params["list_options_send_initial_events"] = (
+            str(param_list_options_send_initial_events).lower()
+            if isinstance(param_list_options_send_initial_events, bool)
+            else param_list_options_send_initial_events
         )
 
     flat_body = {}
@@ -151,14 +151,14 @@ async def workflow_template_service_list_workflow_templates(
 
 async def workflow_template_service_create_workflow_template(
     path_namespace: str,
-    body_createOptions__dryRun: List[str] = None,
-    body_createOptions__fieldManager: str = None,
-    body_createOptions__fieldValidation: str = None,
+    body_create_options_dry_run: List[str] = None,
+    body_create_options_fieldManager: str = None,
+    body_create_options_fieldValidation: str = None,
     body_namespace: str = None,
-    body_template__apiVersion: str = None,
-    body_template__kind: str = None,
-    body_template__metadata: Dict[str, Any] = None,
-    body_template__spec: Dict[str, Any] = None,
+    body_template_apiVersion: str = None,
+    body_template_kind: str = None,
+    body_template_metadata: Dict[str, Any] = None,
+    body_template_spec: Dict[str, Any] = None,
 ) -> Any:
     """
     Create a new workflow-templates
@@ -170,21 +170,21 @@ async def workflow_template_service_create_workflow_template(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        body_createOptions__dryRun (List[str]): OpenAPI parameter corresponding to 'body_createOptions__dryRun'
+        body_create_options_dry_run (List[str]): OpenAPI parameter corresponding to 'body_create_options_dry_run'
 
-        body_createOptions__fieldManager (str): OpenAPI parameter corresponding to 'body_createOptions__fieldManager'
+        body_create_options_fieldManager (str): OpenAPI parameter corresponding to 'body_create_options_fieldManager'
 
-        body_createOptions__fieldValidation (str): OpenAPI parameter corresponding to 'body_createOptions__fieldValidation'
+        body_create_options_fieldValidation (str): OpenAPI parameter corresponding to 'body_create_options_fieldValidation'
 
         body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
 
-        body_template__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_template_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_template__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_template_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_template__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_template_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_template__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+        body_template_spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
 
 
     Returns:
@@ -199,22 +199,22 @@ async def workflow_template_service_create_workflow_template(
     data = {}
 
     flat_body = {}
-    if body_createOptions__dryRun is not None:
-        flat_body["createOptions__dryRun"] = body_createOptions__dryRun
-    if body_createOptions__fieldManager is not None:
-        flat_body["createOptions__fieldManager"] = body_createOptions__fieldManager
-    if body_createOptions__fieldValidation is not None:
-        flat_body["createOptions__fieldValidation"] = body_createOptions__fieldValidation
+    if body_create_options_dry_run is not None:
+        flat_body["create_options_dry_run"] = body_create_options_dry_run
+    if body_create_options_fieldManager is not None:
+        flat_body["create_options_fieldManager"] = body_create_options_fieldManager
+    if body_create_options_fieldValidation is not None:
+        flat_body["create_options_fieldValidation"] = body_create_options_fieldValidation
     if body_namespace is not None:
         flat_body["namespace"] = body_namespace
-    if body_template__apiVersion is not None:
-        flat_body["template__apiVersion"] = body_template__apiVersion
-    if body_template__kind is not None:
-        flat_body["template__kind"] = body_template__kind
-    if body_template__metadata is not None:
-        flat_body["template__metadata"] = body_template__metadata
-    if body_template__spec is not None:
-        flat_body["template__spec"] = body_template__spec
+    if body_template_apiVersion is not None:
+        flat_body["template_apiVersion"] = body_template_apiVersion
+    if body_template_kind is not None:
+        flat_body["template_kind"] = body_template_kind
+    if body_template_metadata is not None:
+        flat_body["template_metadata"] = body_template_metadata
+    if body_template_spec is not None:
+        flat_body["template_spec"] = body_template_spec
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/api/v1/workflow-templates/{path_namespace}", method="POST", params=params, data=data)

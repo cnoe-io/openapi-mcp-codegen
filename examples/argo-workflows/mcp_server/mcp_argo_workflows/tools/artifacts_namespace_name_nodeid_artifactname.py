@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def artifact_service_get_output_artifact(path_namespace: str, path_name: str, path_nodeId: str, path_artifactName: str) -> Any:
+async def artifact_service_get_output_artifact(path_namespace: str, path_name: str, path_node_id: str, path_artifact_name: str) -> Any:
     """
     Get an output artifact.
 
@@ -26,9 +26,9 @@ async def artifact_service_get_output_artifact(path_namespace: str, path_name: s
 
         path_name (str): Name of the resource to operate on
 
-        path_nodeId (str): Required string parameter
+        path_node_id (str): Required string parameter
 
-        path_artifactName (str): Name of the resource to operate on
+        path_artifact_name (str): Name of the resource to operate on
 
 
     Returns:
@@ -46,7 +46,7 @@ async def artifact_service_get_output_artifact(path_namespace: str, path_name: s
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
-        f"/artifacts/{path_namespace}/{path_name}/{path_nodeId}/{path_artifactName}", method="GET", params=params, data=data
+        f"/artifacts/{path_namespace}/{path_name}/{path_node_id}/{path_artifact_name}", method="GET", params=params, data=data
     )
 
     if not success:

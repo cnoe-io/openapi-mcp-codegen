@@ -14,7 +14,7 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def artifact_service_get_artifact_file(
-    path_namespace: str, path_idDiscriminator: str, path_id: str, path_nodeId: str, path_artifactName: str, path_artifactDiscriminator: str
+    path_namespace: str, path_id_discriminator: str, path_id: str, path_node_id: str, path_artifact_name: str, path_artifact_discriminator: str
 ) -> Any:
     """
     Retrieve artifact-files information
@@ -26,15 +26,15 @@ async def artifact_service_get_artifact_file(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        path_idDiscriminator (str): Required string parameter
+        path_id_discriminator (str): Required string parameter
 
         path_id (str): Required string parameter
 
-        path_nodeId (str): Required string parameter
+        path_node_id (str): Required string parameter
 
-        path_artifactName (str): Name of the resource to operate on
+        path_artifact_name (str): Name of the resource to operate on
 
-        path_artifactDiscriminator (str): Required string parameter
+        path_artifact_discriminator (str): Required string parameter
 
 
     Returns:
@@ -52,7 +52,7 @@ async def artifact_service_get_artifact_file(
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
-        f"/artifact-files/{path_namespace}/{path_idDiscriminator}/{path_id}/{path_nodeId}/{path_artifactDiscriminator}/{path_artifactName}",
+        f"/artifact-files/{path_namespace}/{path_id_discriminator}/{path_id}/{path_node_id}/{path_artifact_discriminator}/{path_artifact_name}",
         method="GET",
         params=params,
         data=data,

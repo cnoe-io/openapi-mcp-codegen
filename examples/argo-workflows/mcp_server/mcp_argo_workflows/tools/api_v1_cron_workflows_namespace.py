@@ -15,16 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def cron_workflow_service_list_cron_workflows(
     path_namespace: str,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
+    param_list_options_label_selector: str = None,
+    param_list_options_field_selector: str = None,
+    param_list_options_watch: bool = False,
+    param_list_options_allow_watch_bookmarks: bool = False,
+    param_list_options_resource_version: str = None,
+    param_list_options_resource_versionMatch: str = None,
+    param_list_options_timeout_seconds: str = None,
+    param_list_options_limit: str = None,
+    param_list_options_continue: str = None,
+    param_list_options_send_initial_events: bool = False,
 ) -> Any:
     """
     Retrieve details of a specific cron-workflows
@@ -36,25 +36,25 @@ async def cron_workflow_service_list_cron_workflows(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+        param_list_options_label_selector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+        param_list_options_field_selector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+        param_list_options_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+        param_list_options_allow_watch_bookmarks (bool): allow_watch_bookmarks requests watch events with type "BOOKMARK". Servers that do ...
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_list_options_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+        param_list_options_resource_versionMatch (str): resource_versionMatch determines how resource_version is applied to list calls. It...
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+        param_list_options_timeout_seconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+        param_list_options_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+        param_list_options_continue (str): The continue option should be set when retrieving more results from the server. ...
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
+        param_list_options_send_initial_events (bool): `send_initial_events=true` may be set together with `watch=true`. In that case, th...
 
 
     Returns:
@@ -68,68 +68,68 @@ async def cron_workflow_service_list_cron_workflows(
     params = {}
     data = {}
 
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
+    if param_list_options_label_selector is not None:
+        params["list_options_label_selector"] = (
+            str(param_list_options_label_selector).lower()
+            if isinstance(param_list_options_label_selector, bool)
+            else param_list_options_label_selector
         )
 
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
+    if param_list_options_field_selector is not None:
+        params["list_options_field_selector"] = (
+            str(param_list_options_field_selector).lower()
+            if isinstance(param_list_options_field_selector, bool)
+            else param_list_options_field_selector
         )
 
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    if param_list_options_watch is not None:
+        params["list_options_watch"] = (
+            str(param_list_options_watch).lower() if isinstance(param_list_options_watch, bool) else param_list_options_watch
         )
 
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
+    if param_list_options_allow_watch_bookmarks is not None:
+        params["list_options_allow_watch_bookmarks"] = (
+            str(param_list_options_allow_watch_bookmarks).lower()
+            if isinstance(param_list_options_allow_watch_bookmarks, bool)
+            else param_list_options_allow_watch_bookmarks
         )
 
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
+    if param_list_options_resource_version is not None:
+        params["list_options_resource_version"] = (
+            str(param_list_options_resource_version).lower()
+            if isinstance(param_list_options_resource_version, bool)
+            else param_list_options_resource_version
         )
 
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
+    if param_list_options_resource_versionMatch is not None:
+        params["list_options_resource_versionMatch"] = (
+            str(param_list_options_resource_versionMatch).lower()
+            if isinstance(param_list_options_resource_versionMatch, bool)
+            else param_list_options_resource_versionMatch
         )
 
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
+    if param_list_options_timeout_seconds is not None:
+        params["list_options_timeout_seconds"] = (
+            str(param_list_options_timeout_seconds).lower()
+            if isinstance(param_list_options_timeout_seconds, bool)
+            else param_list_options_timeout_seconds
         )
 
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    if param_list_options_limit is not None:
+        params["list_options_limit"] = (
+            str(param_list_options_limit).lower() if isinstance(param_list_options_limit, bool) else param_list_options_limit
         )
 
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    if param_list_options_continue is not None:
+        params["list_options_continue"] = (
+            str(param_list_options_continue).lower() if isinstance(param_list_options_continue, bool) else param_list_options_continue
         )
 
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
+    if param_list_options_send_initial_events is not None:
+        params["list_options_send_initial_events"] = (
+            str(param_list_options_send_initial_events).lower()
+            if isinstance(param_list_options_send_initial_events, bool)
+            else param_list_options_send_initial_events
         )
 
     flat_body = {}
@@ -145,19 +145,19 @@ async def cron_workflow_service_list_cron_workflows(
 
 async def cron_workflow_service_create_cron_workflow(
     path_namespace: str,
-    body_createOptions__dryRun: List[str] = None,
-    body_createOptions__fieldManager: str = None,
-    body_createOptions__fieldValidation: str = None,
-    body_cronWorkflow__apiVersion: str = None,
-    body_cronWorkflow__kind: str = None,
-    body_cronWorkflow__metadata: Dict[str, Any] = None,
-    body_cronWorkflow__spec: Dict[str, Any] = None,
-    body_cronWorkflow__status__active: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__conditions: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__failed: int = None,
-    body_cronWorkflow__status__lastScheduledTime: str = None,
-    body_cronWorkflow__status__phase: str = None,
-    body_cronWorkflow__status__succeeded: int = None,
+    body_create_options_dry_run: List[str] = None,
+    body_create_options_fieldManager: str = None,
+    body_create_options_fieldValidation: str = None,
+    body_cronWorkflow_apiVersion: str = None,
+    body_cronWorkflow_kind: str = None,
+    body_cronWorkflow_metadata: Dict[str, Any] = None,
+    body_cronWorkflow_spec: Dict[str, Any] = None,
+    body_cronWorkflow_status_active: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_conditions: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_failed: int = None,
+    body_cronWorkflow_status_lastScheduledTime: str = None,
+    body_cronWorkflow_status_phase: str = None,
+    body_cronWorkflow_status_succeeded: int = None,
     body_namespace: str = None,
 ) -> Any:
     """
@@ -170,31 +170,31 @@ async def cron_workflow_service_create_cron_workflow(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        body_createOptions__dryRun (List[str]): OpenAPI parameter corresponding to 'body_createOptions__dryRun'
+        body_create_options_dry_run (List[str]): OpenAPI parameter corresponding to 'body_create_options_dry_run'
 
-        body_createOptions__fieldManager (str): OpenAPI parameter corresponding to 'body_createOptions__fieldManager'
+        body_create_options_fieldManager (str): OpenAPI parameter corresponding to 'body_create_options_fieldManager'
 
-        body_createOptions__fieldValidation (str): OpenAPI parameter corresponding to 'body_createOptions__fieldValidation'
+        body_create_options_fieldValidation (str): OpenAPI parameter corresponding to 'body_create_options_fieldValidation'
 
-        body_cronWorkflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_cronWorkflow_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_cronWorkflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_cronWorkflow_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_cronWorkflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_cronWorkflow_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_cronWorkflow__spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
+        body_cronWorkflow_spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
 
-        body_cronWorkflow__status__active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
+        body_cronWorkflow_status_active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
 
-        body_cronWorkflow__status__conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
+        body_cronWorkflow_status_conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
 
-        body_cronWorkflow__status__failed (int): v3.6 and after: Failed counts how many times child workflows failed
+        body_cronWorkflow_status_failed (int): v3.6 and after: Failed counts how many times child workflows failed
 
-        body_cronWorkflow__status__lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+        body_cronWorkflow_status_lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 
-        body_cronWorkflow__status__phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
+        body_cronWorkflow_status_phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
 
-        body_cronWorkflow__status__succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
+        body_cronWorkflow_status_succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
 
         body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
 
@@ -211,32 +211,32 @@ async def cron_workflow_service_create_cron_workflow(
     data = {}
 
     flat_body = {}
-    if body_createOptions__dryRun is not None:
-        flat_body["createOptions__dryRun"] = body_createOptions__dryRun
-    if body_createOptions__fieldManager is not None:
-        flat_body["createOptions__fieldManager"] = body_createOptions__fieldManager
-    if body_createOptions__fieldValidation is not None:
-        flat_body["createOptions__fieldValidation"] = body_createOptions__fieldValidation
-    if body_cronWorkflow__apiVersion is not None:
-        flat_body["cronWorkflow__apiVersion"] = body_cronWorkflow__apiVersion
-    if body_cronWorkflow__kind is not None:
-        flat_body["cronWorkflow__kind"] = body_cronWorkflow__kind
-    if body_cronWorkflow__metadata is not None:
-        flat_body["cronWorkflow__metadata"] = body_cronWorkflow__metadata
-    if body_cronWorkflow__spec is not None:
-        flat_body["cronWorkflow__spec"] = body_cronWorkflow__spec
-    if body_cronWorkflow__status__active is not None:
-        flat_body["cronWorkflow__status__active"] = body_cronWorkflow__status__active
-    if body_cronWorkflow__status__conditions is not None:
-        flat_body["cronWorkflow__status__conditions"] = body_cronWorkflow__status__conditions
-    if body_cronWorkflow__status__failed is not None:
-        flat_body["cronWorkflow__status__failed"] = body_cronWorkflow__status__failed
-    if body_cronWorkflow__status__lastScheduledTime is not None:
-        flat_body["cronWorkflow__status__lastScheduledTime"] = body_cronWorkflow__status__lastScheduledTime
-    if body_cronWorkflow__status__phase is not None:
-        flat_body["cronWorkflow__status__phase"] = body_cronWorkflow__status__phase
-    if body_cronWorkflow__status__succeeded is not None:
-        flat_body["cronWorkflow__status__succeeded"] = body_cronWorkflow__status__succeeded
+    if body_create_options_dry_run is not None:
+        flat_body["create_options_dry_run"] = body_create_options_dry_run
+    if body_create_options_fieldManager is not None:
+        flat_body["create_options_fieldManager"] = body_create_options_fieldManager
+    if body_create_options_fieldValidation is not None:
+        flat_body["create_options_fieldValidation"] = body_create_options_fieldValidation
+    if body_cronWorkflow_apiVersion is not None:
+        flat_body["cronWorkflow_apiVersion"] = body_cronWorkflow_apiVersion
+    if body_cronWorkflow_kind is not None:
+        flat_body["cronWorkflow_kind"] = body_cronWorkflow_kind
+    if body_cronWorkflow_metadata is not None:
+        flat_body["cronWorkflow_metadata"] = body_cronWorkflow_metadata
+    if body_cronWorkflow_spec is not None:
+        flat_body["cronWorkflow_spec"] = body_cronWorkflow_spec
+    if body_cronWorkflow_status_active is not None:
+        flat_body["cronWorkflow_status_active"] = body_cronWorkflow_status_active
+    if body_cronWorkflow_status_conditions is not None:
+        flat_body["cronWorkflow_status_conditions"] = body_cronWorkflow_status_conditions
+    if body_cronWorkflow_status_failed is not None:
+        flat_body["cronWorkflow_status_failed"] = body_cronWorkflow_status_failed
+    if body_cronWorkflow_status_lastScheduledTime is not None:
+        flat_body["cronWorkflow_status_lastScheduledTime"] = body_cronWorkflow_status_lastScheduledTime
+    if body_cronWorkflow_status_phase is not None:
+        flat_body["cronWorkflow_status_phase"] = body_cronWorkflow_status_phase
+    if body_cronWorkflow_status_succeeded is not None:
+        flat_body["cronWorkflow_status_succeeded"] = body_cronWorkflow_status_succeeded
     if body_namespace is not None:
         flat_body["namespace"] = body_namespace
     data = assemble_nested_body(flat_body)

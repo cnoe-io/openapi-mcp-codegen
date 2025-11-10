@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def archived_workflow_service_list_archived_workflow_label_keys(param_namespace: str = None) -> Any:
+async def arch_wf_svc_list_arch_wf_label_keys(param_namespace: str = None) -> Any:
     """
     List or query archived-workflows-label-keys
 

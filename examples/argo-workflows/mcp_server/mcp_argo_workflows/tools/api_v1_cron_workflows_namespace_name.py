@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None) -> Any:
+async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name: str, param_getOptions_resource_version: str = None) -> Any:
     """
     Retrieve cron-workflows information
 
@@ -26,7 +26,7 @@ async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name
 
         path_name (str): Name of the resource to operate on
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_getOptions_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
 
     Returns:
@@ -40,11 +40,11 @@ async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name
     params = {}
     data = {}
 
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
+    if param_getOptions_resource_version is not None:
+        params["getOptions_resource_version"] = (
+            str(param_getOptions_resource_version).lower()
+            if isinstance(param_getOptions_resource_version, bool)
+            else param_getOptions_resource_version
         )
 
     flat_body = {}
@@ -63,16 +63,16 @@ async def cron_workflow_service_get_cron_workflow(path_namespace: str, path_name
 async def cron_workflow_service_update_cron_workflow(
     path_namespace: str,
     path_name: str,
-    body_cronWorkflow__apiVersion: str = None,
-    body_cronWorkflow__kind: str = None,
-    body_cronWorkflow__metadata: Dict[str, Any] = None,
-    body_cronWorkflow__spec: Dict[str, Any] = None,
-    body_cronWorkflow__status__active: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__conditions: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__failed: int = None,
-    body_cronWorkflow__status__lastScheduledTime: str = None,
-    body_cronWorkflow__status__phase: str = None,
-    body_cronWorkflow__status__succeeded: int = None,
+    body_cronWorkflow_apiVersion: str = None,
+    body_cronWorkflow_kind: str = None,
+    body_cronWorkflow_metadata: Dict[str, Any] = None,
+    body_cronWorkflow_spec: Dict[str, Any] = None,
+    body_cronWorkflow_status_active: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_conditions: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_failed: int = None,
+    body_cronWorkflow_status_lastScheduledTime: str = None,
+    body_cronWorkflow_status_phase: str = None,
+    body_cronWorkflow_status_succeeded: int = None,
     body_name: str = None,
     body_namespace: str = None,
 ) -> Any:
@@ -88,25 +88,25 @@ async def cron_workflow_service_update_cron_workflow(
 
         path_name (str): DEPRECATED: This field is ignored.
 
-        body_cronWorkflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_cronWorkflow_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_cronWorkflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_cronWorkflow_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_cronWorkflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_cronWorkflow_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_cronWorkflow__spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
+        body_cronWorkflow_spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
 
-        body_cronWorkflow__status__active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
+        body_cronWorkflow_status_active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
 
-        body_cronWorkflow__status__conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
+        body_cronWorkflow_status_conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
 
-        body_cronWorkflow__status__failed (int): v3.6 and after: Failed counts how many times child workflows failed
+        body_cronWorkflow_status_failed (int): v3.6 and after: Failed counts how many times child workflows failed
 
-        body_cronWorkflow__status__lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+        body_cronWorkflow_status_lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 
-        body_cronWorkflow__status__phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
+        body_cronWorkflow_status_phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
 
-        body_cronWorkflow__status__succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
+        body_cronWorkflow_status_succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
 
         body_name (str): DEPRECATED: This field is ignored.
 
@@ -125,26 +125,26 @@ async def cron_workflow_service_update_cron_workflow(
     data = {}
 
     flat_body = {}
-    if body_cronWorkflow__apiVersion is not None:
-        flat_body["cronWorkflow__apiVersion"] = body_cronWorkflow__apiVersion
-    if body_cronWorkflow__kind is not None:
-        flat_body["cronWorkflow__kind"] = body_cronWorkflow__kind
-    if body_cronWorkflow__metadata is not None:
-        flat_body["cronWorkflow__metadata"] = body_cronWorkflow__metadata
-    if body_cronWorkflow__spec is not None:
-        flat_body["cronWorkflow__spec"] = body_cronWorkflow__spec
-    if body_cronWorkflow__status__active is not None:
-        flat_body["cronWorkflow__status__active"] = body_cronWorkflow__status__active
-    if body_cronWorkflow__status__conditions is not None:
-        flat_body["cronWorkflow__status__conditions"] = body_cronWorkflow__status__conditions
-    if body_cronWorkflow__status__failed is not None:
-        flat_body["cronWorkflow__status__failed"] = body_cronWorkflow__status__failed
-    if body_cronWorkflow__status__lastScheduledTime is not None:
-        flat_body["cronWorkflow__status__lastScheduledTime"] = body_cronWorkflow__status__lastScheduledTime
-    if body_cronWorkflow__status__phase is not None:
-        flat_body["cronWorkflow__status__phase"] = body_cronWorkflow__status__phase
-    if body_cronWorkflow__status__succeeded is not None:
-        flat_body["cronWorkflow__status__succeeded"] = body_cronWorkflow__status__succeeded
+    if body_cronWorkflow_apiVersion is not None:
+        flat_body["cronWorkflow_apiVersion"] = body_cronWorkflow_apiVersion
+    if body_cronWorkflow_kind is not None:
+        flat_body["cronWorkflow_kind"] = body_cronWorkflow_kind
+    if body_cronWorkflow_metadata is not None:
+        flat_body["cronWorkflow_metadata"] = body_cronWorkflow_metadata
+    if body_cronWorkflow_spec is not None:
+        flat_body["cronWorkflow_spec"] = body_cronWorkflow_spec
+    if body_cronWorkflow_status_active is not None:
+        flat_body["cronWorkflow_status_active"] = body_cronWorkflow_status_active
+    if body_cronWorkflow_status_conditions is not None:
+        flat_body["cronWorkflow_status_conditions"] = body_cronWorkflow_status_conditions
+    if body_cronWorkflow_status_failed is not None:
+        flat_body["cronWorkflow_status_failed"] = body_cronWorkflow_status_failed
+    if body_cronWorkflow_status_lastScheduledTime is not None:
+        flat_body["cronWorkflow_status_lastScheduledTime"] = body_cronWorkflow_status_lastScheduledTime
+    if body_cronWorkflow_status_phase is not None:
+        flat_body["cronWorkflow_status_phase"] = body_cronWorkflow_status_phase
+    if body_cronWorkflow_status_succeeded is not None:
+        flat_body["cronWorkflow_status_succeeded"] = body_cronWorkflow_status_succeeded
     if body_name is not None:
         flat_body["name"] = body_name
     if body_namespace is not None:
@@ -164,13 +164,13 @@ async def cron_workflow_service_update_cron_workflow(
 async def cron_workflow_service_delete_cron_workflow(
     path_namespace: str,
     path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+    param_delete_options_grace_period_seconds: str = None,
+    param_delete_options_preconditions_uid: str = None,
+    param_delete_options_preconditions_resource_version: str = None,
+    param_delete_options_orphan_dependents: bool = False,
+    param_delete_options_propagation_policy: str = None,
+    param_delete_options_dry_run: List[str] = None,
+    param_delete_options_ignore_store_read_error: bool = False,
 ) -> Any:
     """
     Delete a cron-workflows
@@ -184,19 +184,19 @@ async def cron_workflow_service_delete_cron_workflow(
 
         path_name (str): Name of the resource to operate on
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+        param_delete_options_grace_period_seconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+        param_delete_options_preconditions_uid (str): Specifies the target UID. +optional.
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+        param_delete_options_preconditions_resource_version (str): Specifies the target ResourceVersion +optional.
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+        param_delete_options_orphan_dependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+        param_delete_options_propagation_policy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+        param_delete_options_dry_run (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+        param_delete_options_ignore_store_read_error (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
 
 
     Returns:
@@ -210,51 +210,51 @@ async def cron_workflow_service_delete_cron_workflow(
     params = {}
     data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
+    if param_delete_options_grace_period_seconds is not None:
+        params["delete_options_grace_period_seconds"] = (
+            str(param_delete_options_grace_period_seconds).lower()
+            if isinstance(param_delete_options_grace_period_seconds, bool)
+            else param_delete_options_grace_period_seconds
         )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
+    if param_delete_options_preconditions_uid is not None:
+        params["delete_options_preconditions_uid"] = (
+            str(param_delete_options_preconditions_uid).lower()
+            if isinstance(param_delete_options_preconditions_uid, bool)
+            else param_delete_options_preconditions_uid
         )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
+    if param_delete_options_preconditions_resource_version is not None:
+        params["delete_options_preconditions_resource_version"] = (
+            str(param_delete_options_preconditions_resource_version).lower()
+            if isinstance(param_delete_options_preconditions_resource_version, bool)
+            else param_delete_options_preconditions_resource_version
         )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
+    if param_delete_options_orphan_dependents is not None:
+        params["delete_options_orphan_dependents"] = (
+            str(param_delete_options_orphan_dependents).lower()
+            if isinstance(param_delete_options_orphan_dependents, bool)
+            else param_delete_options_orphan_dependents
         )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
+    if param_delete_options_propagation_policy is not None:
+        params["delete_options_propagation_policy"] = (
+            str(param_delete_options_propagation_policy).lower()
+            if isinstance(param_delete_options_propagation_policy, bool)
+            else param_delete_options_propagation_policy
         )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    if param_delete_options_dry_run is not None:
+        params["delete_options_dry_run"] = (
+            str(param_delete_options_dry_run).lower() if isinstance(param_delete_options_dry_run, bool) else param_delete_options_dry_run
         )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    if param_delete_options_ignore_store_read_error is not None:
+        params["delete_options_ignore_store_read_error"] = (
+            str(param_delete_options_ignore_store_read_error).lower()
+            if isinstance(param_delete_options_ignore_store_read_error, bool)
+            else param_delete_options_ignore_store_read_error
         )
 
     flat_body = {}

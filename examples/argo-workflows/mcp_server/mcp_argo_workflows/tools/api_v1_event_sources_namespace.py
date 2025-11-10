@@ -15,16 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def event_source_service_list_event_sources(
     path_namespace: str,
-    param_listOptions_labelSelector: str = None,
-    param_listOptions_fieldSelector: str = None,
-    param_listOptions_watch: bool = False,
-    param_listOptions_allowWatchBookmarks: bool = False,
-    param_listOptions_resourceVersion: str = None,
-    param_listOptions_resourceVersionMatch: str = None,
-    param_listOptions_timeoutSeconds: str = None,
-    param_listOptions_limit: str = None,
-    param_listOptions_continue: str = None,
-    param_listOptions_sendInitialEvents: bool = False,
+    param_list_options_label_selector: str = None,
+    param_list_options_field_selector: str = None,
+    param_list_options_watch: bool = False,
+    param_list_options_allow_watch_bookmarks: bool = False,
+    param_list_options_resource_version: str = None,
+    param_list_options_resource_versionMatch: str = None,
+    param_list_options_timeout_seconds: str = None,
+    param_list_options_limit: str = None,
+    param_list_options_continue: str = None,
+    param_list_options_send_initial_events: bool = False,
 ) -> Any:
     """
     Retrieve details of a specific event-sources
@@ -36,25 +36,25 @@ async def event_source_service_list_event_sources(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        param_listOptions_labelSelector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
+        param_list_options_label_selector (str): A selector to restrict the list of returned objects by their labels. Defaults to...
 
-        param_listOptions_fieldSelector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
+        param_list_options_field_selector (str): A selector to restrict the list of returned objects by their fields. Defaults to...
 
-        param_listOptions_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
+        param_list_options_watch (bool): Watch for changes to the described resources and return them as a stream of add,...
 
-        param_listOptions_allowWatchBookmarks (bool): allowWatchBookmarks requests watch events with type "BOOKMARK". Servers that do ...
+        param_list_options_allow_watch_bookmarks (bool): allow_watch_bookmarks requests watch events with type "BOOKMARK". Servers that do ...
 
-        param_listOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_list_options_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
-        param_listOptions_resourceVersionMatch (str): resourceVersionMatch determines how resourceVersion is applied to list calls. It...
+        param_list_options_resource_versionMatch (str): resource_versionMatch determines how resource_version is applied to list calls. It...
 
-        param_listOptions_timeoutSeconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
+        param_list_options_timeout_seconds (str): Timeout for the list/watch call. This limits the duration of the call, regardles...
 
-        param_listOptions_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
+        param_list_options_limit (str): limit is a maximum number of responses to return for a list call. If more items ...
 
-        param_listOptions_continue (str): The continue option should be set when retrieving more results from the server. ...
+        param_list_options_continue (str): The continue option should be set when retrieving more results from the server. ...
 
-        param_listOptions_sendInitialEvents (bool): `sendInitialEvents=true` may be set together with `watch=true`. In that case, th...
+        param_list_options_send_initial_events (bool): `send_initial_events=true` may be set together with `watch=true`. In that case, th...
 
 
     Returns:
@@ -68,68 +68,68 @@ async def event_source_service_list_event_sources(
     params = {}
     data = {}
 
-    if param_listOptions_labelSelector is not None:
-        params["listOptions_labelSelector"] = (
-            str(param_listOptions_labelSelector).lower()
-            if isinstance(param_listOptions_labelSelector, bool)
-            else param_listOptions_labelSelector
+    if param_list_options_label_selector is not None:
+        params["list_options_label_selector"] = (
+            str(param_list_options_label_selector).lower()
+            if isinstance(param_list_options_label_selector, bool)
+            else param_list_options_label_selector
         )
 
-    if param_listOptions_fieldSelector is not None:
-        params["listOptions_fieldSelector"] = (
-            str(param_listOptions_fieldSelector).lower()
-            if isinstance(param_listOptions_fieldSelector, bool)
-            else param_listOptions_fieldSelector
+    if param_list_options_field_selector is not None:
+        params["list_options_field_selector"] = (
+            str(param_list_options_field_selector).lower()
+            if isinstance(param_list_options_field_selector, bool)
+            else param_list_options_field_selector
         )
 
-    if param_listOptions_watch is not None:
-        params["listOptions_watch"] = (
-            str(param_listOptions_watch).lower() if isinstance(param_listOptions_watch, bool) else param_listOptions_watch
+    if param_list_options_watch is not None:
+        params["list_options_watch"] = (
+            str(param_list_options_watch).lower() if isinstance(param_list_options_watch, bool) else param_list_options_watch
         )
 
-    if param_listOptions_allowWatchBookmarks is not None:
-        params["listOptions_allowWatchBookmarks"] = (
-            str(param_listOptions_allowWatchBookmarks).lower()
-            if isinstance(param_listOptions_allowWatchBookmarks, bool)
-            else param_listOptions_allowWatchBookmarks
+    if param_list_options_allow_watch_bookmarks is not None:
+        params["list_options_allow_watch_bookmarks"] = (
+            str(param_list_options_allow_watch_bookmarks).lower()
+            if isinstance(param_list_options_allow_watch_bookmarks, bool)
+            else param_list_options_allow_watch_bookmarks
         )
 
-    if param_listOptions_resourceVersion is not None:
-        params["listOptions_resourceVersion"] = (
-            str(param_listOptions_resourceVersion).lower()
-            if isinstance(param_listOptions_resourceVersion, bool)
-            else param_listOptions_resourceVersion
+    if param_list_options_resource_version is not None:
+        params["list_options_resource_version"] = (
+            str(param_list_options_resource_version).lower()
+            if isinstance(param_list_options_resource_version, bool)
+            else param_list_options_resource_version
         )
 
-    if param_listOptions_resourceVersionMatch is not None:
-        params["listOptions_resourceVersionMatch"] = (
-            str(param_listOptions_resourceVersionMatch).lower()
-            if isinstance(param_listOptions_resourceVersionMatch, bool)
-            else param_listOptions_resourceVersionMatch
+    if param_list_options_resource_versionMatch is not None:
+        params["list_options_resource_versionMatch"] = (
+            str(param_list_options_resource_versionMatch).lower()
+            if isinstance(param_list_options_resource_versionMatch, bool)
+            else param_list_options_resource_versionMatch
         )
 
-    if param_listOptions_timeoutSeconds is not None:
-        params["listOptions_timeoutSeconds"] = (
-            str(param_listOptions_timeoutSeconds).lower()
-            if isinstance(param_listOptions_timeoutSeconds, bool)
-            else param_listOptions_timeoutSeconds
+    if param_list_options_timeout_seconds is not None:
+        params["list_options_timeout_seconds"] = (
+            str(param_list_options_timeout_seconds).lower()
+            if isinstance(param_list_options_timeout_seconds, bool)
+            else param_list_options_timeout_seconds
         )
 
-    if param_listOptions_limit is not None:
-        params["listOptions_limit"] = (
-            str(param_listOptions_limit).lower() if isinstance(param_listOptions_limit, bool) else param_listOptions_limit
+    if param_list_options_limit is not None:
+        params["list_options_limit"] = (
+            str(param_list_options_limit).lower() if isinstance(param_list_options_limit, bool) else param_list_options_limit
         )
 
-    if param_listOptions_continue is not None:
-        params["listOptions_continue"] = (
-            str(param_listOptions_continue).lower() if isinstance(param_listOptions_continue, bool) else param_listOptions_continue
+    if param_list_options_continue is not None:
+        params["list_options_continue"] = (
+            str(param_list_options_continue).lower() if isinstance(param_list_options_continue, bool) else param_list_options_continue
         )
 
-    if param_listOptions_sendInitialEvents is not None:
-        params["listOptions_sendInitialEvents"] = (
-            str(param_listOptions_sendInitialEvents).lower()
-            if isinstance(param_listOptions_sendInitialEvents, bool)
-            else param_listOptions_sendInitialEvents
+    if param_list_options_send_initial_events is not None:
+        params["list_options_send_initial_events"] = (
+            str(param_list_options_send_initial_events).lower()
+            if isinstance(param_list_options_send_initial_events, bool)
+            else param_list_options_send_initial_events
         )
 
     flat_body = {}
@@ -145,9 +145,9 @@ async def event_source_service_list_event_sources(
 
 async def event_source_service_create_event_source(
     path_namespace: str,
-    body_eventSource__metadata: Dict[str, Any] = None,
-    body_eventSource__spec: Dict[str, Any] = None,
-    body_eventSource__status__status__conditions: List[Dict[str, Any]] = None,
+    body_eventSource_metadata: Dict[str, Any] = None,
+    body_eventSource_spec: Dict[str, Any] = None,
+    body_eventSource_status_status_conditions: List[Dict[str, Any]] = None,
     body_namespace: str = None,
 ) -> Any:
     """
@@ -160,11 +160,11 @@ async def event_source_service_create_event_source(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        body_eventSource__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_eventSource_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_eventSource__spec (Dict[str, Any]): Request body as dictionary. Contains 35 nested properties. See OpenAPI schema for detailed structure.
+        body_eventSource_spec (Dict[str, Any]): Request body as dictionary. Contains 35 nested properties. See OpenAPI schema for detailed structure.
 
-        body_eventSource__status__status__conditions (List[Dict[str, Any]]): OpenAPI parameter corresponding to 'body_eventSource__status__status__conditions'
+        body_eventSource_status_status_conditions (List[Dict[str, Any]]): OpenAPI parameter corresponding to 'body_eventSource_status_status_conditions'
 
         body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
 
@@ -181,12 +181,12 @@ async def event_source_service_create_event_source(
     data = {}
 
     flat_body = {}
-    if body_eventSource__metadata is not None:
-        flat_body["eventSource__metadata"] = body_eventSource__metadata
-    if body_eventSource__spec is not None:
-        flat_body["eventSource__spec"] = body_eventSource__spec
-    if body_eventSource__status__status__conditions is not None:
-        flat_body["eventSource__status__status__conditions"] = body_eventSource__status__status__conditions
+    if body_eventSource_metadata is not None:
+        flat_body["eventSource_metadata"] = body_eventSource_metadata
+    if body_eventSource_spec is not None:
+        flat_body["eventSource_spec"] = body_eventSource_spec
+    if body_eventSource_status_status_conditions is not None:
+        flat_body["eventSource_status_status_conditions"] = body_eventSource_status_status_conditions
     if body_namespace is not None:
         flat_body["namespace"] = body_namespace
     data = assemble_nested_body(flat_body)

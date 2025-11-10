@@ -15,16 +15,16 @@ logger = logging.getLogger("mcp_tools")
 
 async def cron_workflow_service_lint_cron_workflow(
     path_namespace: str,
-    body_cronWorkflow__apiVersion: str = None,
-    body_cronWorkflow__kind: str = None,
-    body_cronWorkflow__metadata: Dict[str, Any] = None,
-    body_cronWorkflow__spec: Dict[str, Any] = None,
-    body_cronWorkflow__status__active: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__conditions: List[Dict[str, Any]] = None,
-    body_cronWorkflow__status__failed: int = None,
-    body_cronWorkflow__status__lastScheduledTime: str = None,
-    body_cronWorkflow__status__phase: str = None,
-    body_cronWorkflow__status__succeeded: int = None,
+    body_cronWorkflow_apiVersion: str = None,
+    body_cronWorkflow_kind: str = None,
+    body_cronWorkflow_metadata: Dict[str, Any] = None,
+    body_cronWorkflow_spec: Dict[str, Any] = None,
+    body_cronWorkflow_status_active: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_conditions: List[Dict[str, Any]] = None,
+    body_cronWorkflow_status_failed: int = None,
+    body_cronWorkflow_status_lastScheduledTime: str = None,
+    body_cronWorkflow_status_phase: str = None,
+    body_cronWorkflow_status_succeeded: int = None,
     body_namespace: str = None,
 ) -> Any:
     """
@@ -37,25 +37,25 @@ async def cron_workflow_service_lint_cron_workflow(
 
         path_namespace (str): Kubernetes namespace to scope the operation
 
-        body_cronWorkflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_cronWorkflow_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_cronWorkflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_cronWorkflow_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_cronWorkflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_cronWorkflow_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_cronWorkflow__spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
+        body_cronWorkflow_spec (Dict[str, Any]): CronWorkflowSpec is the specification of a CronWorkflow
 
-        body_cronWorkflow__status__active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
+        body_cronWorkflow_status_active (List[Dict[str, Any]]): Active is a list of active workflows stemming from this CronWorkflow
 
-        body_cronWorkflow__status__conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
+        body_cronWorkflow_status_conditions (List[Dict[str, Any]]): Conditions is a list of conditions the CronWorkflow may have
 
-        body_cronWorkflow__status__failed (int): v3.6 and after: Failed counts how many times child workflows failed
+        body_cronWorkflow_status_failed (int): v3.6 and after: Failed counts how many times child workflows failed
 
-        body_cronWorkflow__status__lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
+        body_cronWorkflow_status_lastScheduledTime (str): Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.
 
-        body_cronWorkflow__status__phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
+        body_cronWorkflow_status_phase (str): v3.6 and after: Phase is an enum of Active or Stopped. It changes to Stopped when stopStrategy.expression is true
 
-        body_cronWorkflow__status__succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
+        body_cronWorkflow_status_succeeded (int): v3.6 and after: Succeeded counts how many times child workflows succeeded
 
         body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
 
@@ -72,26 +72,26 @@ async def cron_workflow_service_lint_cron_workflow(
     data = {}
 
     flat_body = {}
-    if body_cronWorkflow__apiVersion is not None:
-        flat_body["cronWorkflow__apiVersion"] = body_cronWorkflow__apiVersion
-    if body_cronWorkflow__kind is not None:
-        flat_body["cronWorkflow__kind"] = body_cronWorkflow__kind
-    if body_cronWorkflow__metadata is not None:
-        flat_body["cronWorkflow__metadata"] = body_cronWorkflow__metadata
-    if body_cronWorkflow__spec is not None:
-        flat_body["cronWorkflow__spec"] = body_cronWorkflow__spec
-    if body_cronWorkflow__status__active is not None:
-        flat_body["cronWorkflow__status__active"] = body_cronWorkflow__status__active
-    if body_cronWorkflow__status__conditions is not None:
-        flat_body["cronWorkflow__status__conditions"] = body_cronWorkflow__status__conditions
-    if body_cronWorkflow__status__failed is not None:
-        flat_body["cronWorkflow__status__failed"] = body_cronWorkflow__status__failed
-    if body_cronWorkflow__status__lastScheduledTime is not None:
-        flat_body["cronWorkflow__status__lastScheduledTime"] = body_cronWorkflow__status__lastScheduledTime
-    if body_cronWorkflow__status__phase is not None:
-        flat_body["cronWorkflow__status__phase"] = body_cronWorkflow__status__phase
-    if body_cronWorkflow__status__succeeded is not None:
-        flat_body["cronWorkflow__status__succeeded"] = body_cronWorkflow__status__succeeded
+    if body_cronWorkflow_apiVersion is not None:
+        flat_body["cronWorkflow_apiVersion"] = body_cronWorkflow_apiVersion
+    if body_cronWorkflow_kind is not None:
+        flat_body["cronWorkflow_kind"] = body_cronWorkflow_kind
+    if body_cronWorkflow_metadata is not None:
+        flat_body["cronWorkflow_metadata"] = body_cronWorkflow_metadata
+    if body_cronWorkflow_spec is not None:
+        flat_body["cronWorkflow_spec"] = body_cronWorkflow_spec
+    if body_cronWorkflow_status_active is not None:
+        flat_body["cronWorkflow_status_active"] = body_cronWorkflow_status_active
+    if body_cronWorkflow_status_conditions is not None:
+        flat_body["cronWorkflow_status_conditions"] = body_cronWorkflow_status_conditions
+    if body_cronWorkflow_status_failed is not None:
+        flat_body["cronWorkflow_status_failed"] = body_cronWorkflow_status_failed
+    if body_cronWorkflow_status_lastScheduledTime is not None:
+        flat_body["cronWorkflow_status_lastScheduledTime"] = body_cronWorkflow_status_lastScheduledTime
+    if body_cronWorkflow_status_phase is not None:
+        flat_body["cronWorkflow_status_phase"] = body_cronWorkflow_status_phase
+    if body_cronWorkflow_status_succeeded is not None:
+        flat_body["cronWorkflow_status_succeeded"] = body_cronWorkflow_status_succeeded
     if body_namespace is not None:
         flat_body["namespace"] = body_namespace
     data = assemble_nested_body(flat_body)

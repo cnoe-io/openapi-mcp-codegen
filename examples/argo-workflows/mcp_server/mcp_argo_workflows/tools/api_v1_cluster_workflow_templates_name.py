@@ -13,9 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def cluster_workflow_template_service_get_cluster_workflow_template(
-    path_name: str, param_getOptions_resourceVersion: str = None
-) -> Any:
+async def cwt_svc_get_cwt(path_name: str, param_getOptions_resource_version: str = None) -> Any:
     """
     Retrieve details of a specific cluster-workflow-templates
 
@@ -26,7 +24,7 @@ async def cluster_workflow_template_service_get_cluster_workflow_template(
 
         path_name (str): Name of the resource to operate on
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_getOptions_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
 
     Returns:
@@ -40,11 +38,11 @@ async def cluster_workflow_template_service_get_cluster_workflow_template(
     params = {}
     data = {}
 
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
+    if param_getOptions_resource_version is not None:
+        params["getOptions_resource_version"] = (
+            str(param_getOptions_resource_version).lower()
+            if isinstance(param_getOptions_resource_version, bool)
+            else param_getOptions_resource_version
         )
 
     flat_body = {}
@@ -58,13 +56,13 @@ async def cluster_workflow_template_service_get_cluster_workflow_template(
     return response
 
 
-async def cluster_workflow_template_service_update_cluster_workflow_template(
+async def cwt_svc_update_cwt(
     path_name: str,
     body_name: str = None,
-    body_template__apiVersion: str = None,
-    body_template__kind: str = None,
-    body_template__metadata: Dict[str, Any] = None,
-    body_template__spec: Dict[str, Any] = None,
+    body_template_apiVersion: str = None,
+    body_template_kind: str = None,
+    body_template_metadata: Dict[str, Any] = None,
+    body_template_spec: Dict[str, Any] = None,
 ) -> Any:
     """
     Update or replace a cluster-workflow-templates
@@ -78,13 +76,13 @@ async def cluster_workflow_template_service_update_cluster_workflow_template(
 
         body_name (str): DEPRECATED: This field is ignored.
 
-        body_template__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_template_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_template__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_template_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_template__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_template_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_template__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+        body_template_spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
 
 
     Returns:
@@ -101,14 +99,14 @@ async def cluster_workflow_template_service_update_cluster_workflow_template(
     flat_body = {}
     if body_name is not None:
         flat_body["name"] = body_name
-    if body_template__apiVersion is not None:
-        flat_body["template__apiVersion"] = body_template__apiVersion
-    if body_template__kind is not None:
-        flat_body["template__kind"] = body_template__kind
-    if body_template__metadata is not None:
-        flat_body["template__metadata"] = body_template__metadata
-    if body_template__spec is not None:
-        flat_body["template__spec"] = body_template__spec
+    if body_template_apiVersion is not None:
+        flat_body["template_apiVersion"] = body_template_apiVersion
+    if body_template_kind is not None:
+        flat_body["template_kind"] = body_template_kind
+    if body_template_metadata is not None:
+        flat_body["template_metadata"] = body_template_metadata
+    if body_template_spec is not None:
+        flat_body["template_spec"] = body_template_spec
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/api/v1/cluster-workflow-templates/{path_name}", method="PUT", params=params, data=data)
@@ -119,15 +117,15 @@ async def cluster_workflow_template_service_update_cluster_workflow_template(
     return response
 
 
-async def cluster_workflow_template_service_delete_cluster_workflow_template(
+async def cwt_svc_delete_cwt(
     path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+    param_delete_options_grace_period_seconds: str = None,
+    param_delete_options_preconditions_uid: str = None,
+    param_delete_options_preconditions_resource_version: str = None,
+    param_delete_options_orphan_dependents: bool = False,
+    param_delete_options_propagation_policy: str = None,
+    param_delete_options_dry_run: List[str] = None,
+    param_delete_options_ignore_store_read_error: bool = False,
 ) -> Any:
     """
     Delete a cluster-workflow-templates
@@ -139,19 +137,19 @@ async def cluster_workflow_template_service_delete_cluster_workflow_template(
 
         path_name (str): Name of the resource to operate on
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+        param_delete_options_grace_period_seconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+        param_delete_options_preconditions_uid (str): Specifies the target UID. +optional.
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+        param_delete_options_preconditions_resource_version (str): Specifies the target ResourceVersion +optional.
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+        param_delete_options_orphan_dependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+        param_delete_options_propagation_policy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+        param_delete_options_dry_run (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+        param_delete_options_ignore_store_read_error (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
 
 
     Returns:
@@ -165,51 +163,51 @@ async def cluster_workflow_template_service_delete_cluster_workflow_template(
     params = {}
     data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
+    if param_delete_options_grace_period_seconds is not None:
+        params["delete_options_grace_period_seconds"] = (
+            str(param_delete_options_grace_period_seconds).lower()
+            if isinstance(param_delete_options_grace_period_seconds, bool)
+            else param_delete_options_grace_period_seconds
         )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
+    if param_delete_options_preconditions_uid is not None:
+        params["delete_options_preconditions_uid"] = (
+            str(param_delete_options_preconditions_uid).lower()
+            if isinstance(param_delete_options_preconditions_uid, bool)
+            else param_delete_options_preconditions_uid
         )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
+    if param_delete_options_preconditions_resource_version is not None:
+        params["delete_options_preconditions_resource_version"] = (
+            str(param_delete_options_preconditions_resource_version).lower()
+            if isinstance(param_delete_options_preconditions_resource_version, bool)
+            else param_delete_options_preconditions_resource_version
         )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
+    if param_delete_options_orphan_dependents is not None:
+        params["delete_options_orphan_dependents"] = (
+            str(param_delete_options_orphan_dependents).lower()
+            if isinstance(param_delete_options_orphan_dependents, bool)
+            else param_delete_options_orphan_dependents
         )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
+    if param_delete_options_propagation_policy is not None:
+        params["delete_options_propagation_policy"] = (
+            str(param_delete_options_propagation_policy).lower()
+            if isinstance(param_delete_options_propagation_policy, bool)
+            else param_delete_options_propagation_policy
         )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    if param_delete_options_dry_run is not None:
+        params["delete_options_dry_run"] = (
+            str(param_delete_options_dry_run).lower() if isinstance(param_delete_options_dry_run, bool) else param_delete_options_dry_run
         )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    if param_delete_options_ignore_store_read_error is not None:
+        params["delete_options_ignore_store_read_error"] = (
+            str(param_delete_options_ignore_store_read_error).lower()
+            if isinstance(param_delete_options_ignore_store_read_error, bool)
+            else param_delete_options_ignore_store_read_error
         )
 
     flat_body = {}

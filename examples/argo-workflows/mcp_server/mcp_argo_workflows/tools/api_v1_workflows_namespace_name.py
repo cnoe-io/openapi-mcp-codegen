@@ -14,7 +14,7 @@ logger = logging.getLogger("mcp_tools")
 
 
 async def workflow_service_get_workflow(
-    path_namespace: str, path_name: str, param_getOptions_resourceVersion: str = None, param_fields: str = None
+    path_namespace: str, path_name: str, param_getOptions_resource_version: str = None, param_fields: str = None
 ) -> Any:
     """
     Retrieve workflows information
@@ -28,7 +28,7 @@ async def workflow_service_get_workflow(
 
         path_name (str): Name of the resource to operate on
 
-        param_getOptions_resourceVersion (str): resourceVersion sets a constraint on what resource versions a request may be ser...
+        param_getOptions_resource_version (str): resource_version sets a constraint on what resource versions a request may be ser...
 
         param_fields (str): Fields to be included or excluded in the response. e.g. "spec,status.phase", "-status.nodes".
 
@@ -44,11 +44,11 @@ async def workflow_service_get_workflow(
     params = {}
     data = {}
 
-    if param_getOptions_resourceVersion is not None:
-        params["getOptions_resourceVersion"] = (
-            str(param_getOptions_resourceVersion).lower()
-            if isinstance(param_getOptions_resourceVersion, bool)
-            else param_getOptions_resourceVersion
+    if param_getOptions_resource_version is not None:
+        params["getOptions_resource_version"] = (
+            str(param_getOptions_resource_version).lower()
+            if isinstance(param_getOptions_resource_version, bool)
+            else param_getOptions_resource_version
         )
 
     if param_fields is not None:
@@ -68,13 +68,13 @@ async def workflow_service_get_workflow(
 async def workflow_service_delete_workflow(
     path_namespace: str,
     path_name: str,
-    param_deleteOptions_gracePeriodSeconds: str = None,
-    param_deleteOptions_preconditions_uid: str = None,
-    param_deleteOptions_preconditions_resourceVersion: str = None,
-    param_deleteOptions_orphanDependents: bool = False,
-    param_deleteOptions_propagationPolicy: str = None,
-    param_deleteOptions_dryRun: List[str] = None,
-    param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential: bool = False,
+    param_delete_options_grace_period_seconds: str = None,
+    param_delete_options_preconditions_uid: str = None,
+    param_delete_options_preconditions_resource_version: str = None,
+    param_delete_options_orphan_dependents: bool = False,
+    param_delete_options_propagation_policy: str = None,
+    param_delete_options_dry_run: List[str] = None,
+    param_delete_options_ignore_store_read_error: bool = False,
     param_force: bool = False,
 ) -> Any:
     """
@@ -89,19 +89,19 @@ async def workflow_service_delete_workflow(
 
         path_name (str): Name of the resource to operate on
 
-        param_deleteOptions_gracePeriodSeconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
+        param_delete_options_grace_period_seconds (str): The duration in seconds before the object should be deleted. Value must be non-n...
 
-        param_deleteOptions_preconditions_uid (str): Specifies the target UID. +optional.
+        param_delete_options_preconditions_uid (str): Specifies the target UID. +optional.
 
-        param_deleteOptions_preconditions_resourceVersion (str): Specifies the target ResourceVersion +optional.
+        param_delete_options_preconditions_resource_version (str): Specifies the target ResourceVersion +optional.
 
-        param_deleteOptions_orphanDependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
+        param_delete_options_orphan_dependents (bool): Deprecated: please use the PropagationPolicy, this field will be deprecated in 1...
 
-        param_deleteOptions_propagationPolicy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
+        param_delete_options_propagation_policy (str): Whether and how garbage collection will be performed. Either this field or Orpha...
 
-        param_deleteOptions_dryRun (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
+        param_delete_options_dry_run (List[str]): When present, indicates that modifications should not be persisted. An invalid o...
 
-        param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
+        param_delete_options_ignore_store_read_error (bool): if set to true, it will trigger an unsafe deletion of the resource in case the n...
 
         param_force (bool): Optional boolean parameter
 
@@ -117,51 +117,51 @@ async def workflow_service_delete_workflow(
     params = {}
     data = {}
 
-    if param_deleteOptions_gracePeriodSeconds is not None:
-        params["deleteOptions_gracePeriodSeconds"] = (
-            str(param_deleteOptions_gracePeriodSeconds).lower()
-            if isinstance(param_deleteOptions_gracePeriodSeconds, bool)
-            else param_deleteOptions_gracePeriodSeconds
+    if param_delete_options_grace_period_seconds is not None:
+        params["delete_options_grace_period_seconds"] = (
+            str(param_delete_options_grace_period_seconds).lower()
+            if isinstance(param_delete_options_grace_period_seconds, bool)
+            else param_delete_options_grace_period_seconds
         )
 
-    if param_deleteOptions_preconditions_uid is not None:
-        params["deleteOptions_preconditions_uid"] = (
-            str(param_deleteOptions_preconditions_uid).lower()
-            if isinstance(param_deleteOptions_preconditions_uid, bool)
-            else param_deleteOptions_preconditions_uid
+    if param_delete_options_preconditions_uid is not None:
+        params["delete_options_preconditions_uid"] = (
+            str(param_delete_options_preconditions_uid).lower()
+            if isinstance(param_delete_options_preconditions_uid, bool)
+            else param_delete_options_preconditions_uid
         )
 
-    if param_deleteOptions_preconditions_resourceVersion is not None:
-        params["deleteOptions_preconditions_resourceVersion"] = (
-            str(param_deleteOptions_preconditions_resourceVersion).lower()
-            if isinstance(param_deleteOptions_preconditions_resourceVersion, bool)
-            else param_deleteOptions_preconditions_resourceVersion
+    if param_delete_options_preconditions_resource_version is not None:
+        params["delete_options_preconditions_resource_version"] = (
+            str(param_delete_options_preconditions_resource_version).lower()
+            if isinstance(param_delete_options_preconditions_resource_version, bool)
+            else param_delete_options_preconditions_resource_version
         )
 
-    if param_deleteOptions_orphanDependents is not None:
-        params["deleteOptions_orphanDependents"] = (
-            str(param_deleteOptions_orphanDependents).lower()
-            if isinstance(param_deleteOptions_orphanDependents, bool)
-            else param_deleteOptions_orphanDependents
+    if param_delete_options_orphan_dependents is not None:
+        params["delete_options_orphan_dependents"] = (
+            str(param_delete_options_orphan_dependents).lower()
+            if isinstance(param_delete_options_orphan_dependents, bool)
+            else param_delete_options_orphan_dependents
         )
 
-    if param_deleteOptions_propagationPolicy is not None:
-        params["deleteOptions_propagationPolicy"] = (
-            str(param_deleteOptions_propagationPolicy).lower()
-            if isinstance(param_deleteOptions_propagationPolicy, bool)
-            else param_deleteOptions_propagationPolicy
+    if param_delete_options_propagation_policy is not None:
+        params["delete_options_propagation_policy"] = (
+            str(param_delete_options_propagation_policy).lower()
+            if isinstance(param_delete_options_propagation_policy, bool)
+            else param_delete_options_propagation_policy
         )
 
-    if param_deleteOptions_dryRun is not None:
-        params["deleteOptions_dryRun"] = (
-            str(param_deleteOptions_dryRun).lower() if isinstance(param_deleteOptions_dryRun, bool) else param_deleteOptions_dryRun
+    if param_delete_options_dry_run is not None:
+        params["delete_options_dry_run"] = (
+            str(param_delete_options_dry_run).lower() if isinstance(param_delete_options_dry_run, bool) else param_delete_options_dry_run
         )
 
-    if param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential is not None:
-        params["deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential"] = (
-            str(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential).lower()
-            if isinstance(param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential, bool)
-            else param_deleteOptions_ignoreStoreReadErrorWithClusterBreakingPotential
+    if param_delete_options_ignore_store_read_error is not None:
+        params["delete_options_ignore_store_read_error"] = (
+            str(param_delete_options_ignore_store_read_error).lower()
+            if isinstance(param_delete_options_ignore_store_read_error, bool)
+            else param_delete_options_ignore_store_read_error
         )
 
     if param_force is not None:

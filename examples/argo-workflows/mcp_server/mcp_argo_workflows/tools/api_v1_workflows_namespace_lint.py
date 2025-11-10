@@ -16,11 +16,11 @@ logger = logging.getLogger("mcp_tools")
 async def workflow_service_lint_workflow(
     path_namespace: str,
     body_namespace: str = None,
-    body_workflow__apiVersion: str = None,
-    body_workflow__kind: str = None,
-    body_workflow__metadata: Dict[str, Any] = None,
-    body_workflow__spec: Dict[str, Any] = None,
-    body_workflow__status: Dict[str, Any] = None,
+    body_workflow_apiVersion: str = None,
+    body_workflow_kind: str = None,
+    body_workflow_metadata: Dict[str, Any] = None,
+    body_workflow_spec: Dict[str, Any] = None,
+    body_workflow_status: Dict[str, Any] = None,
 ) -> Any:
     """
     Perform an operation on lint
@@ -34,15 +34,15 @@ async def workflow_service_lint_workflow(
 
         body_namespace (str): OpenAPI parameter corresponding to 'body_namespace'
 
-        body_workflow__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_workflow_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_workflow__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_workflow_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_workflow__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_workflow_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_workflow__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+        body_workflow_spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
 
-        body_workflow__status (Dict[str, Any]): WorkflowStatus contains overall status information about a workflow
+        body_workflow_status (Dict[str, Any]): WorkflowStatus contains overall status information about a workflow
 
 
     Returns:
@@ -59,16 +59,16 @@ async def workflow_service_lint_workflow(
     flat_body = {}
     if body_namespace is not None:
         flat_body["namespace"] = body_namespace
-    if body_workflow__apiVersion is not None:
-        flat_body["workflow__apiVersion"] = body_workflow__apiVersion
-    if body_workflow__kind is not None:
-        flat_body["workflow__kind"] = body_workflow__kind
-    if body_workflow__metadata is not None:
-        flat_body["workflow__metadata"] = body_workflow__metadata
-    if body_workflow__spec is not None:
-        flat_body["workflow__spec"] = body_workflow__spec
-    if body_workflow__status is not None:
-        flat_body["workflow__status"] = body_workflow__status
+    if body_workflow_apiVersion is not None:
+        flat_body["workflow_apiVersion"] = body_workflow_apiVersion
+    if body_workflow_kind is not None:
+        flat_body["workflow_kind"] = body_workflow_kind
+    if body_workflow_metadata is not None:
+        flat_body["workflow_metadata"] = body_workflow_metadata
+    if body_workflow_spec is not None:
+        flat_body["workflow_spec"] = body_workflow_spec
+    if body_workflow_status is not None:
+        flat_body["workflow_status"] = body_workflow_status
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(f"/api/v1/workflows/{path_namespace}/lint", method="POST", params=params, data=data)

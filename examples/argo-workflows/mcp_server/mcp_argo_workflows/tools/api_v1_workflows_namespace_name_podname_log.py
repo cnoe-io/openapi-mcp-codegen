@@ -16,7 +16,7 @@ logger = logging.getLogger("mcp_tools")
 async def workflow_service_pod_logs(
     path_namespace: str,
     path_name: str,
-    path_podName: str,
+    path_pod_name: str,
     param_logOptions_container: str = None,
     param_logOptions_follow: bool = False,
     param_logOptions_previous: bool = False,
@@ -43,7 +43,7 @@ async def workflow_service_pod_logs(
 
         path_name (str): Name of the resource to operate on
 
-        path_podName (str): Name of the resource to operate on
+        path_pod_name (str): Name of the resource to operate on
 
         param_logOptions_container (str): The container for which to stream logs. Defaults to only container if there is o...
 
@@ -154,7 +154,7 @@ async def workflow_service_pod_logs(
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request(
-        f"/api/v1/workflows/{path_namespace}/{path_name}/{path_podName}/log", method="GET", params=params, data=data
+        f"/api/v1/workflows/{path_namespace}/{path_name}/{path_pod_name}/log", method="GET", params=params, data=data
     )
 
     if not success:

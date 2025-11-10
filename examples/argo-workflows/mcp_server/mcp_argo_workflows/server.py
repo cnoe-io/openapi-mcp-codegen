@@ -151,11 +151,11 @@ def main():
 
     # Register api_v1_archived_workflows_label_keys tools
 
-    mcp.tool()(api_v1_archived_workflows_label_keys.archived_workflow_service_list_archived_workflow_label_keys)
+    mcp.tool()(api_v1_archived_workflows_label_keys.arch_wf_svc_list_arch_wf_label_keys)
 
     # Register api_v1_archived_workflows_label_values tools
 
-    mcp.tool()(api_v1_archived_workflows_label_values.archived_workflow_service_list_archived_workflow_label_values)
+    mcp.tool()(api_v1_archived_workflows_label_values.arch_wf_svc_list_arch_wf_label_values)
 
     # Register api_v1_archived_workflows_uid tools
 
@@ -165,7 +165,7 @@ def main():
 
     # Register api_v1_archived_workflows_uid_resubmit tools
 
-    mcp.tool()(api_v1_archived_workflows_uid_resubmit.archived_workflow_service_resubmit_archived_workflow)
+    mcp.tool()(api_v1_archived_workflows_uid_resubmit.arch_wf_svc_resubmit_arch_wf)
 
     # Register api_v1_archived_workflows_uid_retry tools
 
@@ -173,21 +173,21 @@ def main():
 
     # Register api_v1_cluster_workflow_templates tools
 
-    mcp.tool()(api_v1_cluster_workflow_templates.cluster_workflow_template_service_list_cluster_workflow_templates)
+    mcp.tool()(api_v1_cluster_workflow_templates.cwt_svc_list_cwts)
 
-    mcp.tool()(api_v1_cluster_workflow_templates.cluster_workflow_template_service_create_cluster_workflow_template)
+    mcp.tool()(api_v1_cluster_workflow_templates.cwt_svc_create_cwt)
 
     # Register api_v1_cluster_workflow_templates_lint tools
 
-    mcp.tool()(api_v1_cluster_workflow_templates_lint.cluster_workflow_template_service_lint_cluster_workflow_template)
+    mcp.tool()(api_v1_cluster_workflow_templates_lint.cwt_svc_lint_cwt)
 
     # Register api_v1_cluster_workflow_templates_name tools
 
-    mcp.tool()(api_v1_cluster_workflow_templates_name.cluster_workflow_template_service_get_cluster_workflow_template)
+    mcp.tool()(api_v1_cluster_workflow_templates_name.cwt_svc_get_cwt)
 
-    mcp.tool()(api_v1_cluster_workflow_templates_name.cluster_workflow_template_service_update_cluster_workflow_template)
+    mcp.tool()(api_v1_cluster_workflow_templates_name.cwt_svc_update_cwt)
 
-    mcp.tool()(api_v1_cluster_workflow_templates_name.cluster_workflow_template_service_delete_cluster_workflow_template)
+    mcp.tool()(api_v1_cluster_workflow_templates_name.cwt_svc_delete_cwt)
 
     # Register api_v1_cron_workflows_namespace tools
 

@@ -13,14 +13,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("mcp_tools")
 
 
-async def cluster_workflow_template_service_lint_cluster_workflow_template(
-    body_createOptions__dryRun: List[str] = None,
-    body_createOptions__fieldManager: str = None,
-    body_createOptions__fieldValidation: str = None,
-    body_template__apiVersion: str = None,
-    body_template__kind: str = None,
-    body_template__metadata: Dict[str, Any] = None,
-    body_template__spec: Dict[str, Any] = None,
+async def cwt_svc_lint_cwt(
+    body_create_options_dry_run: List[str] = None,
+    body_create_options_fieldManager: str = None,
+    body_create_options_fieldValidation: str = None,
+    body_template_apiVersion: str = None,
+    body_template_kind: str = None,
+    body_template_metadata: Dict[str, Any] = None,
+    body_template_spec: Dict[str, Any] = None,
 ) -> Any:
     """
     Perform an operation on lint
@@ -30,19 +30,19 @@ async def cluster_workflow_template_service_lint_cluster_workflow_template(
 
     Args:
 
-        body_createOptions__dryRun (List[str]): OpenAPI parameter corresponding to 'body_createOptions__dryRun'
+        body_create_options_dry_run (List[str]): OpenAPI parameter corresponding to 'body_create_options_dry_run'
 
-        body_createOptions__fieldManager (str): OpenAPI parameter corresponding to 'body_createOptions__fieldManager'
+        body_create_options_fieldManager (str): OpenAPI parameter corresponding to 'body_create_options_fieldManager'
 
-        body_createOptions__fieldValidation (str): OpenAPI parameter corresponding to 'body_createOptions__fieldValidation'
+        body_create_options_fieldValidation (str): OpenAPI parameter corresponding to 'body_create_options_fieldValidation'
 
-        body_template__apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
+        body_template_apiVersion (str): APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#resources
 
-        body_template__kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        body_template_kind (str): Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.io.k8s.community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
 
-        body_template__metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
+        body_template_metadata (Dict[str, Any]): ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 
-        body_template__spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
+        body_template_spec (Dict[str, Any]): WorkflowSpec is the specification of a Workflow.
 
 
     Returns:
@@ -57,20 +57,20 @@ async def cluster_workflow_template_service_lint_cluster_workflow_template(
     data = {}
 
     flat_body = {}
-    if body_createOptions__dryRun is not None:
-        flat_body["createOptions__dryRun"] = body_createOptions__dryRun
-    if body_createOptions__fieldManager is not None:
-        flat_body["createOptions__fieldManager"] = body_createOptions__fieldManager
-    if body_createOptions__fieldValidation is not None:
-        flat_body["createOptions__fieldValidation"] = body_createOptions__fieldValidation
-    if body_template__apiVersion is not None:
-        flat_body["template__apiVersion"] = body_template__apiVersion
-    if body_template__kind is not None:
-        flat_body["template__kind"] = body_template__kind
-    if body_template__metadata is not None:
-        flat_body["template__metadata"] = body_template__metadata
-    if body_template__spec is not None:
-        flat_body["template__spec"] = body_template__spec
+    if body_create_options_dry_run is not None:
+        flat_body["create_options_dry_run"] = body_create_options_dry_run
+    if body_create_options_fieldManager is not None:
+        flat_body["create_options_fieldManager"] = body_create_options_fieldManager
+    if body_create_options_fieldValidation is not None:
+        flat_body["create_options_fieldValidation"] = body_create_options_fieldValidation
+    if body_template_apiVersion is not None:
+        flat_body["template_apiVersion"] = body_template_apiVersion
+    if body_template_kind is not None:
+        flat_body["template_kind"] = body_template_kind
+    if body_template_metadata is not None:
+        flat_body["template_metadata"] = body_template_metadata
+    if body_template_spec is not None:
+        flat_body["template_spec"] = body_template_spec
     data = assemble_nested_body(flat_body)
 
     success, response = await make_api_request("/api/v1/cluster-workflow-templates/lint", method="POST", params=params, data=data)

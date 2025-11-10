@@ -1110,13 +1110,13 @@ class MCPGenerator:
           for prop_name, prop in schema["properties"].items():
               # Use “__” between nesting levels so that a single “_” inside a
               # field name is preserved when we rebuild the JSON body later.
-              delim = "_"
+              delim = "_" if prefix == "body" else "__"
               param_name = f"{prefix}{delim}{prop_name}"
               if "$ref" in prop:
                   resolved_prop = self._resolve_ref(prop["$ref"])
                   # Use “__” between nesting levels so that a single “_” inside a
                   # field name is preserved when we rebuild the JSON body later.
-                  delim = "_"
+                  delim = "_" if prefix == "body" else "__"
                   param_name = f"{prefix}{delim}{prop_name}"
                   if resolved_prop.get("type") == "object" and "properties" in resolved_prop:
                       sub_params = self._extract_body_params(resolved_prop, prefix=param_name)
