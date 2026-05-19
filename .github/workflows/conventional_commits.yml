@@ -28,5 +28,5 @@ jobs:
         with:
           fetch-depth: 0
       - name: 🧹 Conventional Commits
-        uses: webiny/action-conventional-commits@v1.3.0
+        uses: webiny/action-conventional-commits@v1.4.2
 
