@@ -1,0 +1,184 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Xquik API",
+    "version": "1.0.0",
+    "description": "Search X posts through the Xquik API. Xquik is an independent third-party service. Not affiliated with X Corp. \"Twitter\" and \"X\" are trademarks of X Corp."
+  },
+  "servers": [
+    {
+      "url": "https://xquik.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/x/tweets/search": {
+      "get": {
+        "operationId": "searchTweets",
+        "summary": "Search Tweets",
+        "description": "Search X posts with optional filters and cursor pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Search query.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "queryType",
+            "in": "query",
+            "description": "Sort order.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Latest",
+                "Top"
+              ],
+              "default": "Latest"
+            }
+          },
+          {
+            "name": "sinceTime",
+            "in": "query",
+            "description": "ISO 8601 timestamp for the lower time bound.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of tweets to return.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 200
+            }
+          },
+          {
+            "name": "verifiedOnly",
+            "in": "query",
+            "description": "Only return tweets from verified authors.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "mediaType",
+            "in": "query",
+            "description": "Filter by media type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "images",
+                "videos",
+                "gifs",
+                "media",
+                "links",
+                "none"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTweets"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaginatedTweets": {
+        "type": "object",
+        "required": [
+          "tweets",
+          "has_next_page",
+          "next_cursor"
+        ],
+        "properties": {
+          "tweets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchTweet"
+            }
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "next_cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchTweet": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "author": {
+            "$ref": "#/components/schemas/TweetAuthor"
+          }
+        }
+      },
+      "TweetAuthor": {
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "verified"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

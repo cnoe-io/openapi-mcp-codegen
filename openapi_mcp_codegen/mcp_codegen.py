@@ -185,7 +185,7 @@ def truncate_function_name(name: str, http_method: str = "", used_names: set = N
         final_name = f"{prefix}_{abbreviated}"
 
         if final_name != abbreviated:
-            reason = "for consistency" if not (abbreviated in used_names) else "to avoid duplicate"
+            reason = "for consistency" if abbreviated not in used_names else "to avoid duplicate"
             logger.info(f"Added method prefix {reason}: '{abbreviated}' → '{final_name}'")
 
     # Hard limit enforcement - must not exceed max_length
@@ -664,7 +664,8 @@ class MCPGenerator:
               })
           elif p.get("in") == "query":
               # Apply snake_case conversion for better Python compliance
-              param_name = p.get("name", "param").replace('.', '_')
+              query_name = p.get("name", "param")
+              param_name = query_name.replace('.', '_')
               pname = "param_" + camel_to_snake(param_name)
               # If the schema is not defined, use the parameter object itself
               schema = p.get("schema") or p
@@ -675,14 +676,12 @@ class MCPGenerator:
               if p.get("required"):
                   params.append(f"{pname}: {ptype}")
               else:
-                  if ptype == "bool":
-                      params.append(f"{pname}: {ptype} = False")
-                  else:
-                      params.append(f"{pname}: {ptype} = None")
+                  params.append(f"{pname}: {ptype} = None")
               params_infos.append({
                   "name": pname,
                   "type": ptype,
-                  "description": desc
+                  "description": desc,
+                  "wire_name": query_name
               })
           elif p.get("in") == "body":
               schema = p.get("schema", {})
@@ -1399,7 +1398,7 @@ Always provide clear, actionable responses and include relevant resource names, 
         if result.passed:
             logger.info("✅ Function validation passed!")
             logger.info(f"   ✨ {result.total_functions} functions validated")
-            logger.info(f"   ✨ No duplicates or critical issues found")
+            logger.info("   ✨ No duplicates or critical issues found")
 
             if result.warnings:
                 logger.info(f"   ⚠️  {len(result.warnings)} minor warnings (see details above)")

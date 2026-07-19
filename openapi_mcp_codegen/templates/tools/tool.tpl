@@ -41,7 +41,7 @@ async def {{ func.operation_id }}({{ func.params | join(', ') }}) -> Any:
     {% for param in func.params_info %}
         {%- if param.name.startswith("param_") %}
     if {{ param.name }} is not None:
-        params["{{ param.name[6:] }}"] = (str({{ param.name }}).lower() if isinstance({{ param.name }}, bool) else {{ param.name }})
+        params["{{ param.get('wire_name', param.name[6:]) }}"] = (str({{ param.name }}).lower() if isinstance({{ param.name }}, bool) else {{ param.name }})
         {%- endif %}
     {% endfor %}
 
