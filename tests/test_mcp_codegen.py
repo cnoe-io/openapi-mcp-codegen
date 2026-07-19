@@ -25,7 +25,7 @@ def setup_env():
     petstore_examples_dir = os.path.join(os.getcwd(), "examples", "petstore")
     script_dir = os.path.join(os.getcwd(), "openapi_mcp_codegen")
     output_dir = tempfile.mkdtemp()
-    spec_path = os.path.join(petstore_examples_dir, "openapi_petstore.json")
+    spec_path = os.path.join(petstore_examples_dir, "openapi-petstore.json")
     config_path = os.path.join(petstore_examples_dir, "config.yaml")
 
     print("========== Setup Environment ==========")
@@ -296,6 +296,33 @@ def test_tool_parameter_descriptions(setup_env):
     assert "Status values that need to be considered for filter" in content, \
         "Parameter description not found in the function docstring"
 
+def test_xquik_search_query_parameters_keep_wire_names(tmp_path):
+    script_dir = os.path.join(os.getcwd(), "openapi_mcp_codegen")
+    output_dir = tmp_path / "xquik_output"
+    spec_path = os.path.join(os.getcwd(), "tests", "openapi_xquik_search.json")
+    config_path = os.path.join(os.getcwd(), "tests", "config_xquik.yaml")
+
+    gen = MCPGenerator(
+        script_dir=script_dir,
+        output_dir=str(output_dir),
+        spec_path=spec_path,
+        config_path=config_path,
+    )
+    gen.generate_tool_modules()
+
+    module_file = output_dir / "mcp_xquik" / "tools" / "api_v1_x_tweets_search.py"
+    assert module_file.exists(), f"Expected file {module_file} does not exist"
+
+    content = module_file.read_text(encoding="utf-8")
+    assert "async def get_search_tweets(" in content
+    assert "param_q: str" in content
+    assert 'param_query_type: Literal["Latest", "Top"] = None' in content
+    assert "param_verified_only: bool = None" in content
+    assert "if param_verified_only is not None:" in content
+    assert 'params["queryType"]' in content
+    assert 'params["sinceTime"]' in content
+    assert 'params["verifiedOnly"]' in content
+
 def test_query_parameter_without_schema(setup_env):
     import shutil
     # Instantiate the generator using the fixture
@@ -348,7 +375,7 @@ def test_cli_accepts_enable_slim(monkeypatch, tmp_path):
     Smoke test that the CLI accepts --enable-slim and finishes successfully.
     """
     from click.testing import CliRunner
-    from openapi_mcp_codegen.__main__ import main
+    from openapi_mcp_codegen.__main__ import cli
 
     runner = CliRunner()
     spec = tmp_path / "spec.yaml"
@@ -358,7 +385,7 @@ def test_cli_accepts_enable_slim(monkeypatch, tmp_path):
     out = tmp_path / "cli_out"
 
     result = runner.invoke(
-        main,
+        cli,
         [
             "generate-mcp",
             "--spec-file",
