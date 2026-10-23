@@ -678,7 +678,7 @@ class MCPGenerator:
                   if ptype == "bool":
                       params.append(f"{pname}: {ptype} = False")
                   else:
-                      params.append(f"{pname}: {ptype} = None")
+                      params.append(f"{pname}: Optional[{ptype}] = None")
               params_infos.append({
                   "name": pname,
                   "type": ptype,
@@ -1246,7 +1246,7 @@ Always provide clear, actionable responses and include relevant resource names, 
       param_count = self._count_nested_params(schema)
       if param_count > max_params:
           logger.info(f"Body schema has {param_count} nested params (limit: {max_params}), using dict mode for {prefix}")
-          sig = f"{prefix}: Dict[str, Any] = None"
+          sig = f"{prefix}: Optional[Dict[str, Any]] = None"
           desc = schema.get("description", "")
           if not desc:
               desc = f"Request body as dictionary. Contains {param_count} nested properties. See OpenAPI schema for detailed structure."
@@ -1270,7 +1270,7 @@ Always provide clear, actionable responses and include relevant resource names, 
               # If total exceeds limit, use dict mode
               if total_count > max_params:
                   logger.info(f"Composition schema ({key}) has {total_count} total nested params (limit: {max_params}), using dict mode for {prefix}")
-                  sig = f"{prefix}: Dict[str, Any] = None"
+                  sig = f"{prefix}: Optional[Dict[str, Any]] = None"
                   desc = schema.get("description", "")
                   if not desc:
                       desc = f"Request body as dictionary. Contains {total_count} nested properties across {len(schema[key])} {key} branches. See OpenAPI schema for detailed structure."
@@ -1331,7 +1331,7 @@ Always provide clear, actionable responses and include relevant resource names, 
                   if prop_name in required_fields:
                       sig = f"{param_name}: {py_type}"
                   else:
-                      sig = f"{param_name}: {py_type} = None"
+                      sig = f"{param_name}: Optional[{py_type}] = None"
                   params.append(sig)
                   params_info.append({
                       "name": param_name,
