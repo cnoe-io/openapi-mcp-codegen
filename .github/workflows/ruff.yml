@@ -21,7 +21,7 @@ jobs:
       statuses: write
     steps:
       - name: 🔒 harden runner
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.1.7
