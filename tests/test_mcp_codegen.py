@@ -95,7 +95,7 @@ def test_extract_body_params_simple(setup_env):
     params = gen._extract_body_params(schema, prefix="body")
     # Expect a required parameter for "name" and an optional one for "age"
     assert any("body_name: str" in p for p in params)
-    assert any("body_age: int = None" in p for p in params)
+    assert any("body_age: Optional[int] = None" in p for p in params)
 
 def test_render_template_creates_file(setup_env):
     gen = MCPGenerator(**setup_env)
@@ -371,3 +371,87 @@ def test_cli_accepts_enable_slim(monkeypatch, tmp_path):
     )
     # Ensure command exits cleanly
     assert result.exit_code == 0, result.output
+
+def test_optional_parameters_accept_explicit_null(tmp_path):
+    """
+    Optional query/body parameters default to None, so the generated signature
+    must allow None. Otherwise the MCP tool schema advertises "default": null on a
+    type that excludes null, and a client that sends the default explicitly gets
+    an input validation error before the tool runs.
+    """
+    import asyncio
+    import importlib.util
+    import sys
+    import types
+    from fastmcp import FastMCP, Client
+
+    tests_dir = os.path.dirname(os.path.abspath(__file__))
+    gen = MCPGenerator(
+        script_dir=os.path.join(os.path.dirname(tests_dir), "openapi_mcp_codegen"),
+        spec_path=os.path.join(tests_dir, "openapi_petstore.json"),
+        output_dir=str(tmp_path),
+        config_path=os.path.join(tests_dir, "config.yaml"),
+    )
+    gen.spec = {
+        "paths": {
+            "/dummy": {
+                "post": {
+                    "operationId": "postDummy",
+                    "parameters": [
+                        {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+                        {"name": "tags", "in": "query", "schema": {"type": "array", "items": {"type": "string"}}},
+                    ],
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {"type": "string"},
+                                        "note": {"type": "string"},
+                                    },
+                                    "required": ["name"],
+                                }
+                            }
+                        }
+                    },
+                    "responses": {"200": {"description": "Success"}},
+                }
+            }
+        }
+    }
+    os.makedirs(os.path.join(gen.src_output_dir, "tools"), exist_ok=True)
+    gen.generate_tool_modules()
+
+    # Stand in for the generated API client so the tool never makes a request.
+    async def fake_request(*args, **kwargs):
+        return True, {"ok": True}
+    client_mod = types.ModuleType("client")
+    client_mod.make_api_request = fake_request
+    client_mod.assemble_nested_body = lambda flat: flat
+    client_name = f"mcp_{gen.mcp_name}.api.client"
+    sys.modules[client_name] = client_mod
+    try:
+        module_file = os.path.join(gen.src_output_dir, "tools", "dummy.py")
+        spec = importlib.util.spec_from_file_location("generated_dummy_tools", module_file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        mcp = FastMCP("test")
+        mcp.tool()(module.post_dummy)
+
+        async def check():
+            async with Client(mcp) as client:
+                (tool,) = await client.list_tools()
+                props = tool.inputSchema["properties"]
+                optional = [name for name, schema in props.items() if schema.get("default", ...) is None]
+                assert set(optional) == {"param_limit", "param_tags", "body_note"}
+                for name in optional:
+                    result = await client.call_tool(
+                        "post_dummy", {"body_name": "x", name: None}, raise_on_error=False
+                    )
+                    assert not result.is_error, f"{name}=None rejected: {result.content}"
+
+        asyncio.run(check())
+    finally:
+        sys.modules.pop(client_name, None)
